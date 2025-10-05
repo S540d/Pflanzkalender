@@ -4,13 +4,13 @@
 echo "Building app..."
 npx expo export --platform web --output-dir dist
 
-# Prepare for GitHub Pages
-echo "Preparing for GitHub Pages..."
+# Fix paths for GitHub Pages
+echo "Fixing paths for GitHub Pages..."
+node scripts/fix-paths.js
+
+# Create .nojekyll
 cd dist
-
-# Create .nojekyll to prevent GitHub from processing files
 touch .nojekyll
-
 cd ..
 
 # Deploy to gh-pages
