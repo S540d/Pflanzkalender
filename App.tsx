@@ -1,20 +1,58 @@
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { CalendarScreen } from './src/screens/CalendarScreen';
+import { SettingsScreen } from './src/screens/SettingsScreen';
+import { useTheme } from './src/hooks/useTheme';
+import { PlantProvider } from './src/contexts/PlantContext';
 
-export default function App() {
+const Tab = createBottomTabNavigator();
+
+function AppContent() {
+  const { theme, isDark } = useTheme();
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <>
+      <StatusBar style={isDark ? 'light' : 'dark'} />
+      <NavigationContainer>
+        <Tab.Navigator
+          screenOptions={{
+            headerShown: false,
+            tabBarStyle: {
+              backgroundColor: theme.surface,
+              borderTopColor: theme.border,
+            },
+            tabBarActiveTintColor: theme.primary,
+            tabBarInactiveTintColor: theme.textSecondary,
+          }}
+        >
+          <Tab.Screen
+            name="Kalender"
+            component={CalendarScreen}
+            options={{
+              tabBarLabel: 'Kalender',
+              tabBarIcon: () => null,
+            }}
+          />
+          <Tab.Screen
+            name="Einstellungen"
+            component={SettingsScreen}
+            options={{
+              tabBarLabel: 'Einstellungen',
+              tabBarIcon: () => null,
+            }}
+          />
+        </Tab.Navigator>
+      </NavigationContainer>
+    </>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default function App() {
+  return (
+    <PlantProvider>
+      <AppContent />
+    </PlantProvider>
+  );
+}
