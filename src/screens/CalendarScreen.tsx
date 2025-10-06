@@ -176,12 +176,21 @@ export const CalendarScreen: React.FC = () => {
                   activities: visibleActivities,
                 };
 
+                // Debug: Log when activity is clicked
+                const handleActivityClick = (activityId: string) => {
+                  handlePressActivity(plant.id, activityId);
+                };
+
+                const handleMonthClick = (monthIndex: number) => {
+                  handlePressMonth(plant.id, monthIndex + (isSmallScreen ? monthOffset : 0));
+                };
+
                 return (
                   <PlantRow
                     key={plant.id}
                     plant={visiblePlant}
-                    onPressActivity={(activityId) => handlePressActivity(plant.id, activityId)}
-                    onPressMonth={(monthIndex) => handlePressMonth(plant.id, monthIndex + (isSmallScreen ? monthOffset : 0))}
+                    onPressActivity={handleActivityClick}
+                    onPressMonth={handleMonthClick}
                     onPressPlant={() => {}}
                   />
                 );
