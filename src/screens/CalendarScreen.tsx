@@ -112,8 +112,17 @@ export const CalendarScreen: React.FC = () => {
         }
       />
 
-      <ScrollView style={styles.scrollView}>
-        <ScrollView horizontal showsHorizontalScrollIndicator={true}>
+      <ScrollView
+        style={styles.scrollView}
+        scrollEnabled={true}
+        nestedScrollEnabled={true}
+      >
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={true}
+          scrollEnabled={true}
+          nestedScrollEnabled={true}
+        >
           <View>
             {/* Header mit Monaten */}
             <View style={[styles.headerRow, { backgroundColor: theme.background }]}>
