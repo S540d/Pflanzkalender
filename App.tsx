@@ -25,7 +25,14 @@ function AppContent() {
         >
           <Stack.Screen name="Kalender" component={CalendarScreen} />
           <Stack.Screen name="Agenda" component={AgendaScreen} />
-          <Stack.Screen name="Einstellungen" component={SettingsScreen} />
+          <Stack.Screen
+            name="Einstellungen"
+            component={SettingsScreen}
+            options={{
+              presentation: 'modal',
+              headerShown: false,
+            }}
+          />
         </Stack.Navigator>
       </NavigationContainer>
     </>

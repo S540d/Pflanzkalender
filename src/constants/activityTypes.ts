@@ -5,14 +5,14 @@ export interface ActivityType {
 }
 
 export const ACTIVITY_TYPES: ActivityType[] = [
-  { type: 'sow', color: '#8B4513', label: 'Aussäen' },
-  { type: 'plant', color: '#228B22', label: 'Pflanzen' },
-  { type: 'fertilize', color: '#FFD700', label: 'Düngen' },
-  { type: 'water', color: '#4169E1', label: 'Gießen' },
-  { type: 'prune', color: '#FF8C00', label: 'Zurückschneiden' },
-  { type: 'harvest', color: '#DC143C', label: 'Ernten' },
-  { type: 'protect', color: '#9370DB', label: 'Winterschutz' },
-  { type: 'mulch', color: '#A0522D', label: 'Mulchen' },
+  { type: 'sow', color: '#4CAF50', label: 'Aussäen' },       // Grün
+  { type: 'plant', color: '#66BB6A', label: 'Pflanzen' },    // Hellgrün
+  { type: 'fertilize', color: '#FFA726', label: 'Düngen' },  // Orange
+  { type: 'water', color: '#42A5F5', label: 'Gießen' },      // Hellblau
+  { type: 'prune', color: '#FFEB3B', label: 'Zurückschneiden' }, // Gelb
+  { type: 'harvest', color: '#EF5350', label: 'Ernten' },    // Rot
+  { type: 'protect', color: '#7E57C2', label: 'Winterschutz' }, // Lila
+  { type: 'mulch', color: '#FF9800', label: 'Mulchen' },     // Orange
 ];
 
 export const getActivityTypeByType = (type: string): ActivityType | undefined => {

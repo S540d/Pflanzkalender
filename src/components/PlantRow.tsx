@@ -10,6 +10,9 @@ interface PlantRowProps {
   onPressActivity?: (activityId: string) => void;
   onPressMonth?: (monthIndex: number) => void;
   onPressPlant?: () => void;
+  totalMonths?: number; // Anzahl der sichtbaren Monate
+  currentHalfMonth?: number; // Aktueller Halbmonat (0-23)
+  monthOffset?: number; // Offset für mobile Ansicht
 }
 
 export const PlantRow: React.FC<PlantRowProps> = ({
@@ -17,10 +20,13 @@ export const PlantRow: React.FC<PlantRowProps> = ({
   onPressActivity,
   onPressMonth,
   onPressPlant,
+  totalMonths = 24,
+  currentHalfMonth,
+  monthOffset = 0,
 }) => {
   const { theme } = useTheme();
 
-  const months = Array.from({ length: 24 }, (_, i) => i);
+  const months = Array.from({ length: totalMonths }, (_, i) => i);
 
   // Berechne kompakte Zeilen für Aktivitäten
   const activitiesWithRows = useMemo(
@@ -34,28 +40,26 @@ export const PlantRow: React.FC<PlantRowProps> = ({
 
   return (
     <View style={[styles.row, { minHeight }]}>
-      {/* Pflanzenname */}
-      <TouchableOpacity
-        style={[styles.plantNameCell, { borderColor: theme.border }]}
-        onPress={onPressPlant}
-      >
-        <Text style={[styles.plantName, { color: theme.text }]} numberOfLines={2}>
-          {plant.name}
-        </Text>
-        {plant.isDefault && (
-          <Text style={[styles.defaultBadge, { color: theme.textSecondary }]}>●</Text>
-        )}
-      </TouchableOpacity>
-
       {/* Monats-Zellen mit Aktivitäten */}
       <View style={styles.monthsContainer}>
-        {months.map(monthIndex => (
-          <TouchableOpacity
-            key={monthIndex}
-            style={[styles.monthCell, { borderColor: theme.border }]}
-            onPress={() => onPressMonth?.(monthIndex)}
-          />
-        ))}
+        {months.map(monthIndex => {
+          const absoluteMonthIndex = monthIndex + monthOffset;
+          const isCurrentHalfMonth = currentHalfMonth !== undefined && absoluteMonthIndex === currentHalfMonth;
+
+          return (
+            <TouchableOpacity
+              key={monthIndex}
+              style={[
+                styles.monthCell,
+                {
+                  borderColor: theme.border,
+                  backgroundColor: isCurrentHalfMonth ? theme.border : 'transparent'
+                }
+              ]}
+              onPress={() => onPressMonth?.(monthIndex)}
+            />
+          );
+        })}
 
         {/* Aktivitätsbalken über den Monaten */}
         <View style={styles.activitiesLayer}>
@@ -67,6 +71,7 @@ export const PlantRow: React.FC<PlantRowProps> = ({
               <ActivityBar
                 activity={activity}
                 onPress={() => onPressActivity?.(activity.id)}
+                totalMonths={totalMonths}
               />
             </View>
           ))}
@@ -87,21 +92,6 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     minHeight: 60,
-  },
-  plantNameCell: {
-    width: 120,
-    padding: 8,
-    borderWidth: 1,
-    borderTopWidth: 0,
-    justifyContent: 'center',
-  },
-  plantName: {
-    fontSize: 14,
-    fontWeight: '500',
-  },
-  defaultBadge: {
-    fontSize: 8,
-    marginTop: 2,
   },
   monthsContainer: {
     flexDirection: 'row',

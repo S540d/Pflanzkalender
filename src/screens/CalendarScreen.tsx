@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef } from 'react';
 import { View, Text, StyleSheet, ScrollView, ActivityIndicator, TouchableOpacity, Linking, Dimensions } from 'react-native';
 import { useTheme } from '../hooks/useTheme';
 import { usePlants } from '../contexts/PlantContext';
@@ -18,6 +18,7 @@ export const CalendarScreen: React.FC = () => {
   const [selectedActivityId, setSelectedActivityId] = useState<string | null>(null);
   const [selectedMonth, setSelectedMonth] = useState(0);
   const [monthOffset, setMonthOffset] = useState(0);
+  const fixedScrollRef = useRef<ScrollView>(null);
 
   const allMonths = [
     'Jan', 'Jan', 'Feb', 'Feb', 'Mär', 'Mär',
@@ -40,6 +41,11 @@ export const CalendarScreen: React.FC = () => {
 
   const canGoBack = monthOffset > 0;
   const canGoForward = monthOffset + monthsToShow < 24;
+
+  // Berechne aktuellen Halbmonat
+  const now = new Date();
+  const currentMonth = now.getMonth();
+  const currentHalfMonth = currentMonth * 2 + (now.getDate() <= 15 ? 0 : 1);
 
   if (loading) {
     return (
@@ -113,6 +119,44 @@ export const CalendarScreen: React.FC = () => {
       />
 
       <View style={styles.tableContainer}>
+        <View style={styles.fixedColumn}>
+          {/* Fixed Header - Pflanze */}
+          <View style={[styles.fixedHeaderCell, { borderColor: theme.border, backgroundColor: theme.surface }]}>
+            <Text style={[styles.headerText, { color: theme.text }]}>Pflanze</Text>
+          </View>
+
+          {/* Fixed Plant Names */}
+          <ScrollView
+            style={styles.fixedColumnScroll}
+            showsVerticalScrollIndicator={false}
+            scrollEnabled={false}
+            ref={(ref) => {
+              if (ref && !fixedScrollRef.current) {
+                fixedScrollRef.current = ref;
+              }
+            }}
+          >
+            {plants.length === 0 ? (
+              <View style={[styles.fixedPlantCell, { borderColor: theme.border }]}>
+                <Text style={[styles.emptyText, { color: theme.textSecondary }]}>-</Text>
+              </View>
+            ) : (
+              plants.map(plant => (
+                <View key={plant.id} style={[styles.fixedPlantCell, { borderColor: theme.border, backgroundColor: theme.surface }]}>
+                  <Text style={[styles.plantNameText, { color: theme.text }]} numberOfLines={2}>
+                    {plant.name}
+                  </Text>
+                </View>
+              ))
+            )}
+            <View style={[styles.fixedPlantCell, { borderColor: theme.border, backgroundColor: theme.surface }]}>
+              <TouchableOpacity onPress={() => setShowAddPlant(true)}>
+                <Text style={[styles.addPlantText, { color: theme.primary }]}>+ Pflanze</Text>
+              </TouchableOpacity>
+            </View>
+          </ScrollView>
+        </View>
+
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={true}
@@ -123,23 +167,40 @@ export const CalendarScreen: React.FC = () => {
             style={styles.verticalScroll}
             showsVerticalScrollIndicator={true}
             nestedScrollEnabled={true}
+            onScroll={(e) => {
+              if (fixedScrollRef.current) {
+                fixedScrollRef.current.scrollTo({ y: e.nativeEvent.contentOffset.y, animated: false });
+              }
+            }}
+            scrollEventThrottle={16}
           >
             <View style={styles.tableWrapper}>
               {/* Header mit Monaten */}
               <View style={[styles.headerRow, { backgroundColor: theme.background }]}>
-                <View style={[styles.plantNameCell, { borderColor: theme.border, backgroundColor: theme.surface }]}>
-                  <Text style={[styles.headerText, { color: theme.text }]}>Pflanze</Text>
-                </View>
-                {months.map((month, index) => (
-                  <View key={index + monthOffset} style={[styles.monthCell, { borderColor: theme.border, backgroundColor: theme.surface }]}>
-                    <Text style={[styles.monthText, { color: theme.textSecondary }]}>
-                      {index % 2 === 0 ? month : ''}
-                    </Text>
-                    <Text style={[styles.halfMonthText, { color: theme.textSecondary }]}>
-                      {index % 2 === 0 ? '1' : '2'}
-                    </Text>
-                  </View>
-                ))}
+                {months.map((month, index) => {
+                  const absoluteMonthIndex = index + (isSmallScreen ? monthOffset : 0);
+                  const isCurrentHalfMonth = absoluteMonthIndex === currentHalfMonth;
+
+                  return (
+                    <View
+                      key={index + monthOffset}
+                      style={[
+                        styles.monthCell,
+                        {
+                          borderColor: theme.border,
+                          backgroundColor: isCurrentHalfMonth ? theme.border : theme.surface
+                        }
+                      ]}
+                    >
+                      <Text style={[styles.monthText, { color: theme.textSecondary }]}>
+                        {index % 2 === 0 ? month : ''}
+                      </Text>
+                      <Text style={[styles.halfMonthText, { color: theme.textSecondary }]}>
+                        {index % 2 === 0 ? '1' : '2'}
+                      </Text>
+                    </View>
+                  );
+                })}
                 <View style={[styles.notesCell, { borderColor: theme.border, backgroundColor: theme.surface }]}>
                   <Text style={[styles.headerText, { color: theme.text }]}>Notizen</Text>
                 </View>
@@ -153,7 +214,7 @@ export const CalendarScreen: React.FC = () => {
               </View>
             ) : (
               plants.map(plant => {
-                // Filtere Aktivitäten für sichtbare Monate
+                // Filtere Aktivitäten für sichtbare Monate und behalte Original-IDs
                 const visibleActivities = plant.activities.filter(activity => {
                   const actStart = activity.startMonth;
                   const actEnd = activity.endMonth;
@@ -164,6 +225,7 @@ export const CalendarScreen: React.FC = () => {
                   return !(actEnd < rangeStart || actStart > rangeEnd);
                 }).map(activity => ({
                   ...activity,
+                  id: activity.id, // Explizit Original-ID beibehalten
                   // Passe Start/End an sichtbaren Bereich an
                   startMonth: Math.max(0, activity.startMonth - (isSmallScreen ? monthOffset : 0)),
                   endMonth: Math.min(
@@ -193,6 +255,9 @@ export const CalendarScreen: React.FC = () => {
                     onPressActivity={handleActivityClick}
                     onPressMonth={handleMonthClick}
                     onPressPlant={() => {}}
+                    totalMonths={months.length}
+                    currentHalfMonth={currentHalfMonth}
+                    monthOffset={isSmallScreen ? monthOffset : 0}
                   />
                 );
               })
@@ -200,15 +265,23 @@ export const CalendarScreen: React.FC = () => {
 
             {/* + Pflanze Button Zeile */}
             <View style={styles.addPlantRow}>
-              <TouchableOpacity
-                style={[styles.addPlantCell, { borderColor: theme.border, backgroundColor: theme.surface }]}
-                onPress={() => setShowAddPlant(true)}
-              >
-                <Text style={[styles.addPlantText, { color: theme.primary }]}>+ Pflanze</Text>
-              </TouchableOpacity>
-              {months.map((month, index) => (
-                <View key={index} style={[styles.monthCell, { borderColor: theme.border }]} />
-              ))}
+              {months.map((month, index) => {
+                const absoluteMonthIndex = index + (isSmallScreen ? monthOffset : 0);
+                const isCurrentHalfMonth = absoluteMonthIndex === currentHalfMonth;
+
+                return (
+                  <View
+                    key={index}
+                    style={[
+                      styles.monthCell,
+                      {
+                        borderColor: theme.border,
+                        backgroundColor: isCurrentHalfMonth ? theme.border : 'transparent'
+                      }
+                    ]}
+                  />
+                );
+              })}
               <View style={[styles.notesCell, { borderColor: theme.border }]} />
             </View>
             </View>
@@ -264,6 +337,32 @@ const styles = StyleSheet.create({
   },
   tableContainer: {
     flex: 1,
+    flexDirection: 'row',
+  },
+  fixedColumn: {
+    width: 120,
+    zIndex: 10,
+  },
+  fixedHeaderCell: {
+    width: 120,
+    padding: 8,
+    borderWidth: 1,
+    justifyContent: 'center',
+    minHeight: 60,
+  },
+  fixedColumnScroll: {
+    flex: 1,
+  },
+  fixedPlantCell: {
+    width: 120,
+    minHeight: 60,
+    padding: 8,
+    borderWidth: 1,
+    borderTopWidth: 0,
+    justifyContent: 'center',
+  },
+  plantNameText: {
+    fontSize: 14,
   },
   horizontalScroll: {
     flex: 1,
@@ -291,15 +390,6 @@ const styles = StyleSheet.create({
   addPlantRow: {
     flexDirection: 'row',
   },
-  addPlantCell: {
-    width: 120,
-    minHeight: 60,
-    padding: 8,
-    borderWidth: 1,
-    borderTopWidth: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   addPlantText: {
     fontSize: 14,
     fontWeight: '600',
@@ -310,12 +400,6 @@ const styles = StyleSheet.create({
   },
   headerRow: {
     flexDirection: 'row',
-  },
-  plantNameCell: {
-    width: 120,
-    padding: 8,
-    borderWidth: 1,
-    justifyContent: 'center',
   },
   monthCell: {
     width: 40,

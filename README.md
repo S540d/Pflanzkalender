@@ -10,11 +10,19 @@ Eine Progressive Web App (PWA) zur Verwaltung von Pflanzkalendern mit monatliche
 
 - 📅 **Pflanzkalender** mit halber Monatsauflösung (24 Halbmonate)
 - 📱 **Responsive Design** - automatische Anpassung auf kleinen Displays (3 Monate mit Navigation)
+- 📌 **Fixierte Pflanzennamen-Spalte** - bleibt beim horizontalen Scrollen sichtbar
 - 🌿 **20 vordefinierte Pflanzen** mit recherchierten, typischen Aktivitäten
 - ✏️ **Eigene Pflanzen** hinzufügen und verwalten
-- 🎨 **Farbcodierte Aktivitäten** (Aussäen, Pflanzen, Ernten, etc.)
+- 🗑️ **Pflanzen löschen** - direkt in den Einstellungen
+- 🎨 **Farbcodierte Aktivitäten** mit einheitlichem Farbschema:
+  - 🌱 Aussäen/Pflanzen: Grüntöne
+  - 🍅 Ernten: Rot/Pink
+  - 🧪 Pflegen/Düngen/Schnitt: Gelb/Orange
+  - ❄️ Winterschutz: Blau/Lila
+- 💬 **Tooltips** - Hover über Aktivitäten zeigt Details (Web)
 - 📊 **Agenda-Ansicht** mit 3-Spalten-Layout (Vorher | Aktuell | Demnächst)
 - 🎯 **Kompaktes Layout** - Aktivitäten in derselben Zeile wenn keine Überlappung
+- 📍 **Aktuelle Periode hervorgehoben** - grauer Hintergrund für aktuellen Halbmonat
 - 🖱️ **Interaktive Aktivitäten** - Klick zum Bearbeiten und Löschen
 - 💾 **Lokale Datenspeicherung** ohne Anmeldung
 - 🌓 **Dark/Light Mode** mit System-Theme Option
@@ -94,9 +102,10 @@ Dreispaltige Übersicht:
 - **Mitte:** Aktuelle Aktivitäten (aktueller Halbmonat)
 - **Rechts:** Kommende Aktivitäten (nächster Zeitraum)
 
-### Einstellungen
+### Einstellungen (Modal-Popup)
 
 - **Dark Mode:** Umschalten zwischen Hell/Dunkel/System
+- **Pflanzen verwalten:** Alle Pflanzen mit Löschen-Button
 - **Daten zurücksetzen:** Auf Standard-Pflanzen zurücksetzen
 - **Feedback:** Direkte E-Mail an devsven@posteo.de
 - **Lizenzen:** Open Source unter MIT Lizenz
@@ -117,14 +126,14 @@ Alle vordefinierten Pflanzen können bearbeitet und gelöscht werden.
 
 ## 🎨 Aktivitätstypen
 
-- 🌱 **Aussäen** (Braun #8B4513)
-- 🌿 **Pflanzen** (Grün #228B22)
-- 💧 **Gießen** (Blau #4682B4)
-- 🌾 **Düngen** (Gold #FFD700)
-- ✂️ **Zurückschneiden** (Orange #FF8C00)
-- 🍅 **Ernten** (Rot #DC143C)
-- 🛡️ **Winterschutz** (Lila #9370DB)
-- 🍂 **Mulchen** (Braun #8B4513)
+- 🌱 **Aussäen** (Grün #4CAF50)
+- 🌿 **Pflanzen** (Hellgrün #66BB6A)
+- 💧 **Gießen** (Hellblau #42A5F5)
+- 🌾 **Düngen** (Orange #FFA726)
+- ✂️ **Zurückschneiden** (Gelb #FFEB3B)
+- 🍅 **Ernten** (Rot #EF5350)
+- 🛡️ **Winterschutz** (Lila #7E57C2)
+- 🍂 **Mulchen** (Orange #FF9800)
 
 ## 📱 PWA Installation
 
@@ -159,6 +168,18 @@ Wenn dir diese App gefällt, kannst du mich gerne unterstützen:
 Bugs bitte als [GitHub Issue](https://github.com/s540d/Pflanzkalender/issues) melden.
 
 ## 📝 Changelog
+
+### Version 1.1.0 (2025-10-06)
+
+- ✨ **NEU:** Fixierte Pflanzennamen-Spalte beim horizontalen Scrollen
+- ✨ **NEU:** Einheitliches Farbschema für Aktivitätstypen
+- ✨ **NEU:** Tooltips für Aktivitätsbalken (Web) mit Zeitraum-Info
+- ✨ **NEU:** Aktueller Halbmonat wird grau hervorgehoben
+- ✨ **NEU:** Pflanzen-Verwaltung in Einstellungen mit Löschen-Funktion
+- ✨ **NEU:** Einstellungen als Modal-Popup
+- 🐛 **FIX:** Aktivitätsbalken-Klicks funktionieren jetzt konsistent
+- 🐛 **FIX:** Doppelte Pflanzennamen-Anzeige entfernt
+- 🐛 **FIX:** Scrolling auf Mobile und Desktop optimiert
 
 ### Version 1.0.0 (2025-10-06)
 
