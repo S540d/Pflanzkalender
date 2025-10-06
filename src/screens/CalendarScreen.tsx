@@ -112,18 +112,17 @@ export const CalendarScreen: React.FC = () => {
         }
       />
 
-      <ScrollView
-        style={styles.scrollView}
-        scrollEnabled={true}
-        nestedScrollEnabled={true}
-      >
+      <View style={styles.tableContainer}>
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={true}
-          scrollEnabled={true}
-          nestedScrollEnabled={true}
+          style={styles.horizontalScroll}
         >
-          <View>
+          <ScrollView
+            style={styles.verticalScroll}
+            showsVerticalScrollIndicator={true}
+          >
+            <View>
             {/* Header mit Monaten */}
             <View style={[styles.headerRow, { backgroundColor: theme.background }]}>
               <View style={[styles.plantNameCell, { borderColor: theme.border, backgroundColor: theme.surface }]}>
@@ -210,9 +209,10 @@ export const CalendarScreen: React.FC = () => {
               ))}
               <View style={[styles.notesCell, { borderColor: theme.border }]} />
             </View>
-          </View>
+            </View>
+          </ScrollView>
         </ScrollView>
-      </ScrollView>
+      </View>
 
       <View style={[styles.footer, { backgroundColor: theme.surface, borderTopColor: theme.border }]}>
         <TouchableOpacity
@@ -260,6 +260,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  tableContainer: {
+    flex: 1,
+  },
+  horizontalScroll: {
+    flex: 1,
+  },
+  verticalScroll: {
+    flex: 1,
+  },
   navButtons: {
     flexDirection: 'row',
     gap: 8,
@@ -290,9 +299,6 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: 12,
     fontSize: 16,
-  },
-  scrollView: {
-    flex: 1,
   },
   headerRow: {
     flexDirection: 'row',
