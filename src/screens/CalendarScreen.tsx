@@ -117,32 +117,34 @@ export const CalendarScreen: React.FC = () => {
           horizontal
           showsHorizontalScrollIndicator={true}
           style={styles.horizontalScroll}
+          contentContainerStyle={styles.horizontalContent}
         >
           <ScrollView
             style={styles.verticalScroll}
             showsVerticalScrollIndicator={true}
+            nestedScrollEnabled={true}
           >
-            <View>
-            {/* Header mit Monaten */}
-            <View style={[styles.headerRow, { backgroundColor: theme.background }]}>
-              <View style={[styles.plantNameCell, { borderColor: theme.border, backgroundColor: theme.surface }]}>
-                <Text style={[styles.headerText, { color: theme.text }]}>Pflanze</Text>
-              </View>
-              {months.map((month, index) => (
-                <View key={index + monthOffset} style={[styles.monthCell, { borderColor: theme.border, backgroundColor: theme.surface }]}>
-                  <Text style={[styles.monthText, { color: theme.textSecondary }]}>
-                    {index % 2 === 0 ? month : ''}
-                  </Text>
-                  <Text style={[styles.halfMonthText, { color: theme.textSecondary }]}>
-                    {index % 2 === 0 ? '1' : '2'}
-                  </Text>
+            <View style={styles.tableWrapper}>
+              {/* Header mit Monaten */}
+              <View style={[styles.headerRow, { backgroundColor: theme.background }]}>
+                <View style={[styles.plantNameCell, { borderColor: theme.border, backgroundColor: theme.surface }]}>
+                  <Text style={[styles.headerText, { color: theme.text }]}>Pflanze</Text>
                 </View>
-              ))}
-              <View style={[styles.notesCell, { borderColor: theme.border, backgroundColor: theme.surface }]}>
-                <Text style={[styles.headerText, { color: theme.text }]}>Notizen</Text>
+                {months.map((month, index) => (
+                  <View key={index + monthOffset} style={[styles.monthCell, { borderColor: theme.border, backgroundColor: theme.surface }]}>
+                    <Text style={[styles.monthText, { color: theme.textSecondary }]}>
+                      {index % 2 === 0 ? month : ''}
+                    </Text>
+                    <Text style={[styles.halfMonthText, { color: theme.textSecondary }]}>
+                      {index % 2 === 0 ? '1' : '2'}
+                    </Text>
+                  </View>
+                ))}
+                <View style={[styles.notesCell, { borderColor: theme.border, backgroundColor: theme.surface }]}>
+                  <Text style={[styles.headerText, { color: theme.text }]}>Notizen</Text>
+                </View>
               </View>
-            </View>
-            {/* Pflanzenzeilen mit Aktivitätsbalken */}
+              {/* Pflanzenzeilen mit Aktivitätsbalken */}
             {plants.length === 0 ? (
               <View style={styles.emptyState}>
                 <Text style={[styles.emptyText, { color: theme.textSecondary }]}>
@@ -266,8 +268,14 @@ const styles = StyleSheet.create({
   horizontalScroll: {
     flex: 1,
   },
+  horizontalContent: {
+    flexGrow: 1,
+  },
   verticalScroll: {
     flex: 1,
+  },
+  tableWrapper: {
+    minWidth: '100%',
   },
   navButtons: {
     flexDirection: 'row',
