@@ -1,49 +1,32 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createStackNavigator } from '@react-navigation/stack';
 import { StatusBar } from 'expo-status-bar';
 import { CalendarScreen } from './src/screens/CalendarScreen';
+import { AgendaScreen } from './src/screens/AgendaScreen';
 import { SettingsScreen } from './src/screens/SettingsScreen';
 import { useTheme } from './src/hooks/useTheme';
 import { PlantProvider } from './src/contexts/PlantContext';
 
-const Tab = createBottomTabNavigator();
+const Stack = createStackNavigator();
 
 function AppContent() {
-  const { theme, isDark } = useTheme();
+  const { isDark } = useTheme();
 
   return (
     <>
       <StatusBar style={isDark ? 'light' : 'dark'} />
       <NavigationContainer>
-        <Tab.Navigator
+        <Stack.Navigator
+          initialRouteName="Kalender"
           screenOptions={{
             headerShown: false,
-            tabBarStyle: {
-              backgroundColor: theme.surface,
-              borderTopColor: theme.border,
-            },
-            tabBarActiveTintColor: theme.primary,
-            tabBarInactiveTintColor: theme.textSecondary,
           }}
         >
-          <Tab.Screen
-            name="Kalender"
-            component={CalendarScreen}
-            options={{
-              tabBarLabel: 'Kalender',
-              tabBarIcon: () => null,
-            }}
-          />
-          <Tab.Screen
-            name="Einstellungen"
-            component={SettingsScreen}
-            options={{
-              tabBarLabel: 'Einstellungen',
-              tabBarIcon: () => null,
-            }}
-          />
-        </Tab.Navigator>
+          <Stack.Screen name="Kalender" component={CalendarScreen} />
+          <Stack.Screen name="Agenda" component={AgendaScreen} />
+          <Stack.Screen name="Einstellungen" component={SettingsScreen} />
+        </Stack.Navigator>
       </NavigationContainer>
     </>
   );

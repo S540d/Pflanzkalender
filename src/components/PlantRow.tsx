@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Plant } from '../types';
 import { ActivityBar } from './ActivityBar';
 import { useTheme } from '../hooks/useTheme';
+import { calculateActivityRows } from '../utils/activityLayout';
 
 interface PlantRowProps {
   plant: Plant;
@@ -21,8 +22,15 @@ export const PlantRow: React.FC<PlantRowProps> = ({
 
   const months = Array.from({ length: 24 }, (_, i) => i);
 
-  // Berechne minimale Höhe basierend auf Anzahl der Aktivitäten
-  const minHeight = Math.max(60, plant.activities.length * 28 + 8);
+  // Berechne kompakte Zeilen für Aktivitäten
+  const activitiesWithRows = useMemo(
+    () => calculateActivityRows(plant.activities),
+    [plant.activities]
+  );
+
+  // Berechne minimale Höhe basierend auf Anzahl der Zeilen
+  const maxRow = activitiesWithRows.reduce((max, a) => Math.max(max, a.row), 0);
+  const minHeight = Math.max(60, (maxRow + 1) * 28 + 8);
 
   return (
     <View style={[styles.row, { minHeight }]}>
@@ -51,10 +59,10 @@ export const PlantRow: React.FC<PlantRowProps> = ({
 
         {/* Aktivitätsbalken über den Monaten */}
         <View style={styles.activitiesLayer}>
-          {plant.activities.map((activity, index) => (
+          {activitiesWithRows.map((activity) => (
             <View
               key={activity.id}
-              style={[styles.activityContainer, { top: index * 28 }]}
+              style={[styles.activityContainer, { top: activity.row * 28 }]}
             >
               <ActivityBar
                 activity={activity}

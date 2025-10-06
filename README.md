@@ -8,33 +8,31 @@ Eine Progressive Web App (PWA) zur Verwaltung von Pflanzkalendern mit monatliche
 
 ## 🎯 Features
 
-- 📅 **Pflanzkalender** mit monatlicher Übersicht (halbe Monate)
-- 🌿 **20 vordefinierte Pflanzen** mit typischen Aktivitäten
+- 📅 **Pflanzkalender** mit halber Monatsauflösung (24 Halbmonate)
+- 📱 **Responsive Design** - automatische Anpassung auf kleinen Displays (3 Monate mit Navigation)
+- 🌿 **20 vordefinierte Pflanzen** mit recherchierten, typischen Aktivitäten
 - ✏️ **Eigene Pflanzen** hinzufügen und verwalten
 - 🎨 **Farbcodierte Aktivitäten** (Aussäen, Pflanzen, Ernten, etc.)
-- 💾 **Lokaler Testzugang** ohne Anmeldung
-- 🔐 **Google Sign-In** für Cloud-Synchronisation (geplant)
-- 🌓 **Dark/Light Mode** - folgt Systemeinstellung
-- 📱 **Responsive Design** - funktioniert auf Desktop und Mobile
+- 📊 **Agenda-Ansicht** mit 3-Spalten-Layout (Vorher | Aktuell | Demnächst)
+- 🎯 **Kompaktes Layout** - Aktivitäten in derselben Zeile wenn keine Überlappung
+- 🖱️ **Interaktive Aktivitäten** - Klick zum Bearbeiten und Löschen
+- 💾 **Lokale Datenspeicherung** ohne Anmeldung
+- 🌓 **Dark/Light Mode** mit System-Theme Option
 - 📴 **Offline-fähig** - PWA mit Service Worker
+- ☕ **Support-Link** für Entwickler-Unterstützung
 
 ## 🚀 Live Demo
 
-🔗 **[https://s540d.github.io/Pflanzkalender/](https://s540d.github.io/Pflanzkalender/)** _(noch nicht deployed)_
-
-## 📸 Screenshots
-
-_Coming soon..._
+🔗 **[https://s540d.github.io/Pflanzkalender/](https://s540d.github.io/Pflanzkalender/)**
 
 ## 🛠️ Technologie-Stack
 
 - **Framework:** React Native + Expo
 - **Web:** React Native Web
-- **Navigation:** React Navigation
+- **Navigation:** React Navigation (Stack Navigator)
 - **State Management:** React Context / Hooks
-- **Storage:** AsyncStorage (lokal) + Firebase Firestore (Cloud)
-- **Authentifizierung:** Firebase Authentication (Google)
-- **Deployment:** GitHub Pages
+- **Storage:** AsyncStorage (lokal)
+- **Deployment:** GitHub Pages mit automatischem Cache-Busting
 
 ## 📋 Installation
 
@@ -65,77 +63,68 @@ npm run android
 
 Die App öffnet sich automatisch im Browser unter `http://localhost:8081`.
 
-## 🔧 Firebase Setup (Optional)
-
-Für Cloud-Synchronisation:
-
-1. Firebase-Projekt erstellen auf [firebase.google.com](https://firebase.google.com)
-2. Web-App hinzufügen und Config kopieren
-3. Datei `src/services/firebase.ts` anpassen:
-
-```typescript
-const firebaseConfig = {
-  apiKey: "DEIN_API_KEY",
-  authDomain: "DEIN_AUTH_DOMAIN",
-  projectId: "DEIN_PROJECT_ID",
-  storageBucket: "DEIN_STORAGE_BUCKET",
-  messagingSenderId: "DEIN_MESSAGING_SENDER_ID",
-  appId: "DEIN_APP_ID"
-};
-```
-
-4. Firebase Authentication aktivieren (Google Sign-In)
-5. Firestore Database erstellen
-
 ## 📦 PWA Deployment (GitHub Pages)
 
 ```bash
-# Build für Production
-npm run build
-
-# Deploy auf GitHub Pages
+# Deploy auf GitHub Pages (baut automatisch)
 npm run deploy
 ```
 
+Das Deploy-Script:
+- Erstellt einen Production-Build
+- Passt Pfade für GitHub Pages an
+- Deployed auf gh-pages Branch
+- Aktiviert Cache-Busting für Updates
+
 ## 📖 Verwendung
 
-### Testzugang
+### Kalender-Ansicht
 
-- Beim ersten Start startet die App im **Testzugang**
-- Daten werden **nur lokal** auf deinem Gerät gespeichert
-- 20 vordefinierte Pflanzen sind bereits vorhanden
-- Du kannst eigene Pflanzen hinzufügen und bearbeiten
+- **Desktop:** Zeigt alle 24 Halbmonate auf einen Blick
+- **Mobile:** Zeigt 3 Monate (6 Halbmonate) mit ← → Navigation
+- **Sticky Header:** Tabellenkopf bleibt beim Scrollen sichtbar
+- **Aktivitäten anklicken:** Öffnet Bearbeitungs-Dialog
+- **Leere Zellen klicken:** Neue Aktivität für den Monat hinzufügen
+- **+ Pflanze:** Neue Pflanze in leerer Zeile unter letzter Pflanze
 
-### Google Anmeldung _(geplant)_
+### Agenda-Ansicht
 
-- Melde dich mit deinem Google-Konto an
-- Deine Daten werden in der Cloud gespeichert
-- Synchronisation über alle Geräte
+Dreispaltige Übersicht:
+- **Links:** Aktivitäten vom vorherigen Zeitraum
+- **Mitte:** Aktuelle Aktivitäten (aktueller Halbmonat)
+- **Rechts:** Kommende Aktivitäten (nächster Zeitraum)
+
+### Einstellungen
+
+- **Dark Mode:** Umschalten zwischen Hell/Dunkel/System
+- **Daten zurücksetzen:** Auf Standard-Pflanzen zurücksetzen
+- **Feedback:** Direkte E-Mail an devsven@posteo.de
+- **Lizenzen:** Open Source unter MIT Lizenz
 
 ## 🌿 Vordefinierte Pflanzen
 
-Die App enthält 20 häufige Pflanzen:
+Die App enthält 20 recherchierte Pflanzen mit typischen Aktivitäten:
 
-- Gemüse: Tomaten, Gurken, Paprika, Zucchini, Salat, Karotten, Radieschen, Kartoffeln, Zwiebeln, Knoblauch, Spinat
-- Kräuter: Basilikum, Petersilie, Schnittlauch, Lavendel
-- Obst: Erdbeeren, Himbeeren, Apfelbaum, Kürbis
-- Zierpflanzen: Rosen
+**Gemüse:** Tomaten, Gurken, Paprika, Zucchini, Salat, Karotten, Radieschen, Kartoffeln, Zwiebeln, Knoblauch, Spinat
 
-Alle vordefinierten Pflanzen können:
-- ✏️ Bearbeitet werden
-- 🗑️ Gelöscht werden
-- 📋 Als Vorlage für eigene Pflanzen dienen
+**Kräuter:** Basilikum, Petersilie, Schnittlauch, Lavendel
+
+**Obst:** Erdbeeren, Himbeeren, Apfelbaum, Kürbis
+
+**Zierpflanzen:** Rosen
+
+Alle vordefinierten Pflanzen können bearbeitet und gelöscht werden.
 
 ## 🎨 Aktivitätstypen
 
-- 🌱 **Aussäen** (Braun)
-- 🌿 **Pflanzen** (Grün)
-- 💧 **Gießen** (Blau)
-- 🌾 **Düngen** (Gold)
-- ✂️ **Zurückschneiden** (Orange)
-- 🍅 **Ernten** (Rot)
-- 🛡️ **Winterschutz** (Lila)
-- 🍂 **Mulchen** (Braun)
+- 🌱 **Aussäen** (Braun #8B4513)
+- 🌿 **Pflanzen** (Grün #228B22)
+- 💧 **Gießen** (Blau #4682B4)
+- 🌾 **Düngen** (Gold #FFD700)
+- ✂️ **Zurückschneiden** (Orange #FF8C00)
+- 🍅 **Ernten** (Rot #DC143C)
+- 🛡️ **Winterschutz** (Lila #9370DB)
+- 🍂 **Mulchen** (Braun #8B4513)
 
 ## 📱 PWA Installation
 
@@ -157,7 +146,7 @@ Contributions sind willkommen! Bitte:
 
 ## 📄 Lizenz
 
-Dieses Projekt ist unter der MIT-Lizenz lizenziert - siehe [LICENSE](LICENSE) Datei.
+Dieses Projekt ist unter der MIT-Lizenz lizenziert. Kommerzielle Nutzung ist ausgeschlossen.
 
 ## 💖 Support
 
@@ -171,27 +160,28 @@ Bugs bitte als [GitHub Issue](https://github.com/s540d/Pflanzkalender/issues) me
 
 ## 📝 Changelog
 
-### Version 1.0.0 (In Entwicklung)
+### Version 1.0.0 (2025-10-06)
 
-- ✅ Grundlegende Projektstruktur
-- ✅ Dark/Light Mode
-- ✅ Navigation (React Navigation)
-- ✅ Firebase Setup
-- ✅ 20 vordefinierte Pflanzen
+- ✅ Pflanzkalender-Grid mit 24 Halbmonaten
+- ✅ Responsive Layout (Desktop: 24, Mobile: 6 Halbmonate)
+- ✅ 20 vordefinierte, recherchierte Pflanzen
+- ✅ Kompaktes Aktivitäten-Layout
+- ✅ Interaktive Aktivitäten (Bearbeiten/Löschen)
+- ✅ Agenda-Ansicht (3 Spalten)
+- ✅ Dark/Light/System Theme
 - ✅ Lokale Datenspeicherung
-- ⏳ Pflanzkalender-Grid
-- ⏳ Aktivitätsverwaltung
-- ⏳ Google Authentifizierung
-- ⏳ PWA Setup
-- ⏳ GitHub Pages Deployment
+- ✅ Navigation im Header (Kalender/Agenda/Einstellungen)
+- ✅ PWA mit Service Worker
+- ✅ GitHub Pages Deployment mit Cache-Busting
 
 ## 👨‍💻 Autor
 
 **Sven Strohkark**
 
 - GitHub: [@s540d](https://github.com/s540d)
+- E-Mail: devsven@posteo.de
 - Buy Me a Coffee: [@sven4321](https://buymeacoffee.com/sven4321)
 
 ---
 
-**Hinweis:** Dieses Projekt befindet sich in aktiver Entwicklung. Weitere Features folgen in Kürze.
+🌱 **Made with ❤️ for gardeners and plant lovers**
