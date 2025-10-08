@@ -20,6 +20,7 @@ export const CalendarScreen: React.FC = () => {
   const [selectedMonth, setSelectedMonth] = useState(0);
   const [monthOffset, setMonthOffset] = useState(0);
   const fixedScrollRef = useRef<ScrollView>(null);
+  const headerScrollRef = useRef<ScrollView>(null);
 
   const allMonths = [
     'Jan', 'Jan', 'Feb', 'Feb', 'Mär', 'Mär',
@@ -172,9 +173,7 @@ export const CalendarScreen: React.FC = () => {
             showsHorizontalScrollIndicator={false}
             style={styles.stickyHeaderScroll}
             scrollEnabled={false}
-            ref={(ref) => {
-              // Will be synced with main horizontal scroll
-            }}
+            ref={headerScrollRef}
           >
             <View style={[styles.headerRow, { backgroundColor: theme.background }]}>
               {months.map((month, index) => {
@@ -213,6 +212,12 @@ export const CalendarScreen: React.FC = () => {
             showsHorizontalScrollIndicator={true}
             style={styles.horizontalScroll}
             contentContainerStyle={styles.horizontalContent}
+            onScroll={(e) => {
+              if (headerScrollRef.current) {
+                headerScrollRef.current.scrollTo({ x: e.nativeEvent.contentOffset.x, animated: false });
+              }
+            }}
+            scrollEventThrottle={16}
           >
             <ScrollView
               style={styles.verticalScroll}
