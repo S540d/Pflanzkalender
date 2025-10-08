@@ -7,6 +7,7 @@ import { AddPlantModal } from '../components/AddPlantModal';
 import { AddActivityModal } from '../components/AddActivityModal';
 import { EditActivityModal } from '../components/EditActivityModal';
 import { AppHeader } from '../components/AppHeader';
+import { calculateActivityRows } from '../utils/activityLayout';
 
 export const CalendarScreen: React.FC = () => {
   const { theme } = useTheme();
@@ -19,6 +20,7 @@ export const CalendarScreen: React.FC = () => {
   const [selectedMonth, setSelectedMonth] = useState(0);
   const [monthOffset, setMonthOffset] = useState(0);
   const fixedScrollRef = useRef<ScrollView>(null);
+  const headerScrollRef = useRef<ScrollView>(null);
 
   const allMonths = [
     'Jan', 'Jan', 'Feb', 'Feb', 'Mär', 'Mär',
@@ -141,13 +143,20 @@ export const CalendarScreen: React.FC = () => {
                 <Text style={[styles.emptyText, { color: theme.textSecondary }]}>-</Text>
               </View>
             ) : (
-              plants.map(plant => (
-                <View key={plant.id} style={[styles.fixedPlantCell, { borderColor: theme.border, backgroundColor: theme.surface }]}>
-                  <Text style={[styles.plantNameText, { color: theme.text }]} numberOfLines={2}>
-                    {plant.name}
-                  </Text>
-                </View>
-              ))
+              plants.map(plant => {
+                // Calculate same height as PlantRow
+                const activitiesWithRows = calculateActivityRows(plant.activities);
+                const maxRow = activitiesWithRows.reduce((max, a) => Math.max(max, a.row), 0);
+                const minHeight = Math.max(60, (maxRow + 1) * 28 + 8);
+                
+                return (
+                  <View key={plant.id} style={[styles.fixedPlantCell, { borderColor: theme.border, backgroundColor: theme.surface, minHeight }]}>
+                    <Text style={[styles.plantNameText, { color: theme.text }]} numberOfLines={2}>
+                      {plant.name}
+                    </Text>
+                  </View>
+                );
+              })
             )}
             <View style={[styles.fixedPlantCell, { borderColor: theme.border, backgroundColor: theme.surface }]}>
               <TouchableOpacity onPress={() => setShowAddPlant(true)}>
@@ -157,54 +166,71 @@ export const CalendarScreen: React.FC = () => {
           </ScrollView>
         </View>
 
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={true}
-          style={styles.horizontalScroll}
-          contentContainerStyle={styles.horizontalContent}
-        >
+        <View style={styles.scrollableColumn}>
+          {/* Sticky Header */}
           <ScrollView
-            style={styles.verticalScroll}
-            showsVerticalScrollIndicator={true}
-            nestedScrollEnabled={true}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={styles.stickyHeaderScroll}
+            scrollEnabled={false}
+            ref={headerScrollRef}
+          >
+            <View style={[styles.headerRow, { backgroundColor: theme.background }]}>
+              {months.map((month, index) => {
+                const absoluteMonthIndex = index + (isSmallScreen ? monthOffset : 0);
+                const isCurrentHalfMonth = absoluteMonthIndex === currentHalfMonth;
+
+                return (
+                  <View
+                    key={index + monthOffset}
+                    style={[
+                      styles.monthCell,
+                      {
+                        borderColor: theme.border,
+                        backgroundColor: isCurrentHalfMonth ? theme.border : theme.surface
+                      }
+                    ]}
+                  >
+                    <Text style={[styles.monthText, { color: theme.textSecondary }]}>
+                      {index % 2 === 0 ? month : ''}
+                    </Text>
+                    <Text style={[styles.halfMonthText, { color: theme.textSecondary }]}>
+                      {index % 2 === 0 ? '1' : '2'}
+                    </Text>
+                  </View>
+                );
+              })}
+              <View style={[styles.notesCell, { borderColor: theme.border, backgroundColor: theme.surface }]}>
+                <Text style={[styles.headerText, { color: theme.text }]}>Notizen</Text>
+              </View>
+            </View>
+          </ScrollView>
+
+          {/* Scrollable content */}
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={true}
+            style={styles.horizontalScroll}
+            contentContainerStyle={styles.horizontalContent}
             onScroll={(e) => {
-              if (fixedScrollRef.current) {
-                fixedScrollRef.current.scrollTo({ y: e.nativeEvent.contentOffset.y, animated: false });
+              if (headerScrollRef.current) {
+                headerScrollRef.current.scrollTo({ x: e.nativeEvent.contentOffset.x, animated: false });
               }
             }}
             scrollEventThrottle={16}
           >
-            <View style={styles.tableWrapper}>
-              {/* Header mit Monaten */}
-              <View style={[styles.headerRow, { backgroundColor: theme.background }]}>
-                {months.map((month, index) => {
-                  const absoluteMonthIndex = index + (isSmallScreen ? monthOffset : 0);
-                  const isCurrentHalfMonth = absoluteMonthIndex === currentHalfMonth;
-
-                  return (
-                    <View
-                      key={index + monthOffset}
-                      style={[
-                        styles.monthCell,
-                        {
-                          borderColor: theme.border,
-                          backgroundColor: isCurrentHalfMonth ? theme.border : theme.surface
-                        }
-                      ]}
-                    >
-                      <Text style={[styles.monthText, { color: theme.textSecondary }]}>
-                        {index % 2 === 0 ? month : ''}
-                      </Text>
-                      <Text style={[styles.halfMonthText, { color: theme.textSecondary }]}>
-                        {index % 2 === 0 ? '1' : '2'}
-                      </Text>
-                    </View>
-                  );
-                })}
-                <View style={[styles.notesCell, { borderColor: theme.border, backgroundColor: theme.surface }]}>
-                  <Text style={[styles.headerText, { color: theme.text }]}>Notizen</Text>
-                </View>
-              </View>
+            <ScrollView
+              style={styles.verticalScroll}
+              showsVerticalScrollIndicator={true}
+              nestedScrollEnabled={true}
+              onScroll={(e) => {
+                if (fixedScrollRef.current) {
+                  fixedScrollRef.current.scrollTo({ y: e.nativeEvent.contentOffset.y, animated: false });
+                }
+              }}
+              scrollEventThrottle={16}
+            >
+              <View style={styles.tableWrapper}>
               {/* Pflanzenzeilen mit Aktivitätsbalken */}
             {plants.length === 0 ? (
               <View style={styles.emptyState}>
@@ -262,42 +288,10 @@ export const CalendarScreen: React.FC = () => {
                 );
               })
             )}
-
-            {/* + Pflanze Button Zeile */}
-            <View style={styles.addPlantRow}>
-              {months.map((month, index) => {
-                const absoluteMonthIndex = index + (isSmallScreen ? monthOffset : 0);
-                const isCurrentHalfMonth = absoluteMonthIndex === currentHalfMonth;
-
-                return (
-                  <View
-                    key={index}
-                    style={[
-                      styles.monthCell,
-                      {
-                        borderColor: theme.border,
-                        backgroundColor: isCurrentHalfMonth ? theme.border : 'transparent'
-                      }
-                    ]}
-                  />
-                );
-              })}
-              <View style={[styles.notesCell, { borderColor: theme.border }]} />
-            </View>
             </View>
           </ScrollView>
         </ScrollView>
-      </View>
-
-      <View style={[styles.footer, { backgroundColor: theme.surface, borderTopColor: theme.border }]}>
-        <TouchableOpacity
-          style={styles.supportLink}
-          onPress={() => Linking.openURL('https://buymeacoffee.com/sven4321')}
-        >
-          <Text style={[styles.supportText, { color: theme.textSecondary }]}>
-            ☕ Support me
-          </Text>
-        </TouchableOpacity>
+        </View>
       </View>
 
       {/* Modals */}
@@ -343,6 +337,12 @@ const styles = StyleSheet.create({
     width: 120,
     zIndex: 10,
   },
+  scrollableColumn: {
+    flex: 1,
+  },
+  stickyHeaderScroll: {
+    maxHeight: 60,
+  },
   fixedHeaderCell: {
     width: 120,
     padding: 8,
@@ -386,9 +386,6 @@ const styles = StyleSheet.create({
   navButtonText: {
     fontSize: 20,
     fontWeight: 'bold',
-  },
-  addPlantRow: {
-    flexDirection: 'row',
   },
   addPlantText: {
     fontSize: 14,
@@ -435,17 +432,5 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textAlign: 'center',
     marginBottom: 4,
-  },
-  footer: {
-    padding: 12,
-    borderTopWidth: 1,
-    alignItems: 'center',
-  },
-  supportLink: {
-    padding: 4,
-  },
-  supportText: {
-    fontSize: 12,
-    textDecorationLine: 'underline',
   },
 });

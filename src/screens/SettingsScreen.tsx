@@ -1,18 +1,13 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Linking, ScrollView, Switch, Modal } from 'react-native';
+import React from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Linking, ScrollView } from 'react-native';
 import { useTheme } from '../hooks/useTheme';
 import { usePlants } from '../contexts/PlantContext';
 import { useNavigation } from '@react-navigation/native';
 
 export const SettingsScreen: React.FC = () => {
-  const { theme, isDark, toggleTheme } = useTheme();
+  const { theme, isDark } = useTheme();
   const { plants, resetToDefaults, deletePlant } = usePlants();
   const navigation = useNavigation();
-  const [useSystemTheme, setUseSystemTheme] = useState(false);
-
-  const handleSupport = () => {
-    Linking.openURL('https://buymeacoffee.com/sven4321');
-  };
 
   const handleFeedback = () => {
     Linking.openURL('mailto:devsven@posteo.de?subject=Feedback zu Pflanzkalender');
@@ -49,19 +44,9 @@ export const SettingsScreen: React.FC = () => {
           <View style={[styles.card, { backgroundColor: theme.surface }]}>
             <View style={styles.row}>
               <Text style={[styles.label, { color: theme.text }]}>Dark Mode</Text>
-              <Switch
-                value={isDark}
-                onValueChange={toggleTheme}
-                disabled={useSystemTheme}
-              />
-            </View>
-
-            <View style={[styles.row, { marginTop: 12 }]}>
-              <Text style={[styles.label, { color: theme.text }]}>System-Theme verwenden</Text>
-              <Switch
-                value={useSystemTheme}
-                onValueChange={setUseSystemTheme}
-              />
+              <Text style={[styles.hint, { color: theme.textSecondary }]}>
+                {isDark ? 'Aktiv' : 'Inaktiv'} (folgt System-Einstellung)
+              </Text>
             </View>
           </View>
         </View>
@@ -87,23 +72,42 @@ export const SettingsScreen: React.FC = () => {
         {/* Pflanzen verwalten */}
         <View style={styles.section}>
           <Text style={[styles.sectionTitle, { color: theme.text }]}>Pflanzen verwalten</Text>
-
-          {plants.map(plant => (
-            <View key={plant.id} style={[styles.plantRow, { backgroundColor: theme.surface, borderColor: theme.border }]}>
-              <Text style={[styles.plantRowText, { color: theme.text }]}>{plant.name}</Text>
-              <TouchableOpacity
-                style={[styles.deleteButton, { backgroundColor: '#EF5350' }]}
-                onPress={() => handleDeletePlant(plant.id)}
-              >
-                <Text style={styles.deleteButtonText}>Löschen</Text>
-              </TouchableOpacity>
+          
+          <View style={[styles.card, { backgroundColor: theme.surface }]}>
+            <Text style={[styles.hint, { color: theme.textSecondary, marginBottom: 12 }]}>
+              {plants.length} Pflanze(n) im Kalender
+            </Text>
+            
+            <View style={styles.plantList}>
+              {plants.map((plant, index) => (
+                <View key={plant.id} style={[
+                  styles.plantListItem,
+                  { borderBottomColor: theme.border },
+                  index === plants.length - 1 && styles.plantListItemLast
+                ]}>
+                  <View style={styles.plantInfo}>
+                    <Text style={[styles.plantName, { color: theme.text }]}>{plant.name}</Text>
+                    {plant.notes && (
+                      <Text style={[styles.plantNotes, { color: theme.textSecondary }]} numberOfLines={1}>
+                        {plant.notes}
+                      </Text>
+                    )}
+                  </View>
+                  <TouchableOpacity
+                    style={styles.deleteIcon}
+                    onPress={() => handleDeletePlant(plant.id)}
+                  >
+                    <Text style={styles.deleteIconText}>🗑️</Text>
+                  </TouchableOpacity>
+                </View>
+              ))}
             </View>
-          ))}
+          </View>
         </View>
 
-        {/* Support */}
+        {/* Feedback */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: theme.text }]}>Support</Text>
+          <Text style={[styles.sectionTitle, { color: theme.text }]}>Feedback</Text>
 
           <TouchableOpacity
             style={[styles.button, { backgroundColor: theme.border }]}
@@ -239,27 +243,36 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
   },
-  plantRow: {
+  plantList: {
+    marginTop: 8,
+  },
+  plantListItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 12,
-    borderRadius: 8,
-    marginBottom: 8,
-    borderWidth: 1,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
   },
-  plantRowText: {
-    fontSize: 14,
+  plantListItemLast: {
+    borderBottomWidth: 0,
+  },
+  plantInfo: {
     flex: 1,
+    marginRight: 12,
   },
-  deleteButton: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 6,
+  plantName: {
+    fontSize: 15,
+    fontWeight: '500',
+    marginBottom: 2,
   },
-  deleteButtonText: {
-    color: '#FFFFFF',
+  plantNotes: {
     fontSize: 12,
-    fontWeight: '600',
+    lineHeight: 16,
+  },
+  deleteIcon: {
+    padding: 8,
+  },
+  deleteIconText: {
+    fontSize: 18,
   },
 });

@@ -73,7 +73,7 @@ export const AgendaScreen: React.FC = () => {
         activities.map((activity, index) => (
           <View
             key={index}
-            style={[styles.card, { backgroundColor: theme.card, borderColor: theme.border }]}
+            style={[styles.card, { backgroundColor: theme.surface, borderColor: theme.border }]}
           >
             <View style={styles.cardHeader}>
               <View style={[styles.colorDot, { backgroundColor: activity.activityColor }]} />
