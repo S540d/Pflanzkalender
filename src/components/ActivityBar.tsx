@@ -24,22 +24,28 @@ export const ActivityBar: React.FC<ActivityBarProps> = ({ activity, onPress, tot
 
   const tooltipText = `${activity.label}\n${getMonthLabel(activity.startMonth)} - ${getMonthLabel(activity.endMonth)}`;
 
+  const touchableProps: any = {
+    style: [
+      styles.activityBar,
+      {
+        left: `${startPosition}%`,
+        width: `${width}%`,
+        backgroundColor: activity.color,
+      },
+    ],
+    onPress,
+    activeOpacity: 0.7,
+  };
+
+  // Add web-only hover handlers
+  if (Platform.OS === 'web') {
+    touchableProps.onMouseEnter = () => setIsHovered(true);
+    touchableProps.onMouseLeave = () => setIsHovered(false);
+  }
+
   return (
     <>
-      <TouchableOpacity
-        style={[
-          styles.activityBar,
-          {
-            left: `${startPosition}%`,
-            width: `${width}%`,
-            backgroundColor: activity.color,
-          },
-        ]}
-        onPress={onPress}
-        activeOpacity={0.7}
-        onMouseEnter={() => Platform.OS === 'web' && setIsHovered(true)}
-        onMouseLeave={() => Platform.OS === 'web' && setIsHovered(false)}
-      >
+      <TouchableOpacity {...touchableProps}>
         <Text style={styles.label} numberOfLines={1}>
           {activity.label}
         </Text>
