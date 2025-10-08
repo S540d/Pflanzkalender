@@ -6,7 +6,7 @@ import { PlantRow } from '../components/PlantRow';
 import { AddPlantModal } from '../components/AddPlantModal';
 import { AddActivityModal } from '../components/AddActivityModal';
 import { EditActivityModal } from '../components/EditActivityModal';
-import { AppHeader } from '../components/AppHeader';
+// import { AppHeader } from '../components/AppHeader'; // Temporär deaktiviert
 import { calculateActivityRows } from '../utils/activityLayout';
 
 export const CalendarScreen: React.FC = () => {
@@ -51,15 +51,14 @@ export const CalendarScreen: React.FC = () => {
 
   if (loading) {
     return (
-      <View style={[styles.container, { backgroundColor: theme.background, justifyContent: 'center', alignItems: 'center' }]}>
+      <View style={[styles.container, { backgroundColor: theme.background, justifyContent: 'center', alignItems: 'center' }]}> 
         <ActivityIndicator size="large" color={theme.primary} />
         <Text style={[styles.loadingText, { color: theme.text }]}>Lade Pflanzen...</Text>
       </View>
     );
   }
-
-  const selectedPlant = plants.find(p => p.id === selectedPlantId);
-  const selectedActivity = selectedPlant?.activities.find(a => a.id === selectedActivityId) || null;
+  const selectedPlant = plants.find((p) => p.id === selectedPlantId) || null;
+  const selectedActivity = selectedPlant?.activities.find((a: any) => a.id === selectedActivityId) || null;
 
   const handleAddPlant = (name: string, notes: string) => {
     addPlant({ name, notes, isDefault: false, userId: null, activities: [] });
@@ -97,28 +96,7 @@ export const CalendarScreen: React.FC = () => {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
-      <AppHeader
-        rightContent={
-          isSmallScreen ? (
-            <View style={styles.navButtons}>
-              <TouchableOpacity
-                style={[styles.navButton, { opacity: canGoBack ? 1 : 0.3 }]}
-                onPress={() => canGoBack && setMonthOffset(monthOffset - monthsToShow)}
-                disabled={!canGoBack}
-              >
-                <Text style={[styles.navButtonText, { color: theme.text }]}>←</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.navButton, { opacity: canGoForward ? 1 : 0.3 }]}
-                onPress={() => canGoForward && setMonthOffset(monthOffset + monthsToShow)}
-                disabled={!canGoForward}
-              >
-                <Text style={[styles.navButtonText, { color: theme.text }]}>→</Text>
-              </TouchableOpacity>
-            </View>
-          ) : undefined
-        }
-      />
+      {/* AppHeader temporär deaktiviert - Navigation ist jetzt im Haupt-Header */}
 
       <View style={styles.tableContainer}>
         <View style={styles.fixedColumn}>

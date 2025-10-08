@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { useTheme } from '../hooks/useTheme';
 import { usePlants } from '../contexts/PlantContext';
-import { AppHeader } from '../components/AppHeader';
+// import { AppHeader } from '../components/AppHeader'; // Temporär deaktiviert
 
 interface ActivityInfo {
   plantName: string;
@@ -97,7 +97,7 @@ export const AgendaScreen: React.FC = () => {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
-      <AppHeader />
+      {/* <AppHeader /> Temporär deaktiviert */}
       <ScrollView style={styles.scrollView}>
         <View style={styles.columnsContainer}>
           {renderColumn('Vorher', previousActivities, previousMonth)}
