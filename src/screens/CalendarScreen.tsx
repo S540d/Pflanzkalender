@@ -138,7 +138,7 @@ export const CalendarScreen: React.FC = () => {
             )}
             <View style={[styles.fixedPlantCell, { borderColor: theme.border, backgroundColor: theme.surface }]}>
               <TouchableOpacity onPress={() => setShowAddPlant(true)}>
-                <Text style={[styles.addPlantText, { color: theme.primary }]}>+ Pflanze</Text>
+                <Text style={[styles.addPlantText, { color: theme.primary }]}>+ weitere Pflanze</Text>
               </TouchableOpacity>
             </View>
           </ScrollView>

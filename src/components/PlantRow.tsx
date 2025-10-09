@@ -1,8 +1,9 @@
-import React, { useMemo } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useMemo, useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
 import { Plant } from '../types';
 import { ActivityBar } from './ActivityBar';
 import { useTheme } from '../hooks/useTheme';
+import { usePlants } from '../contexts/PlantContext';
 import { calculateActivityRows } from '../utils/activityLayout';
 
 interface PlantRowProps {
@@ -25,6 +26,9 @@ export const PlantRow: React.FC<PlantRowProps> = ({
   monthOffset = 0,
 }) => {
   const { theme } = useTheme();
+  const { updatePlant } = usePlants();
+  const [isEditingNotes, setIsEditingNotes] = useState(false);
+  const [notesText, setNotesText] = useState(plant.notes);
 
   const months = Array.from({ length: totalMonths }, (_, i) => i);
 
@@ -37,6 +41,21 @@ export const PlantRow: React.FC<PlantRowProps> = ({
   // Berechne minimale Höhe basierend auf Anzahl der Zeilen
   const maxRow = activitiesWithRows.reduce((max, a) => Math.max(max, a.row), 0);
   const minHeight = Math.max(60, (maxRow + 1) * 28 + 8);
+
+  const handleNotesPress = () => {
+    setIsEditingNotes(true);
+  };
+
+  const handleNotesSubmit = () => {
+    setIsEditingNotes(false);
+    if (notesText !== plant.notes) {
+      updatePlant(plant.id, { notes: notesText });
+    }
+  };
+
+  const handleNotesBlur = () => {
+    handleNotesSubmit();
+  };
 
   return (
     <View style={[styles.row, { minHeight }]}>
@@ -80,9 +99,24 @@ export const PlantRow: React.FC<PlantRowProps> = ({
 
       {/* Notizen */}
       <View style={[styles.notesCell, { borderColor: theme.border }]}>
-        <Text style={[styles.notes, { color: theme.textSecondary }]} numberOfLines={2}>
-          {plant.notes}
-        </Text>
+        {isEditingNotes ? (
+          <TextInput
+            style={[styles.notesInput, { color: theme.textSecondary }]}
+            value={notesText}
+            onChangeText={setNotesText}
+            onSubmitEditing={handleNotesSubmit}
+            onBlur={handleNotesBlur}
+            multiline
+            numberOfLines={2}
+            autoFocus
+          />
+        ) : (
+          <TouchableOpacity onPress={handleNotesPress}>
+            <Text style={[styles.notes, { color: theme.textSecondary }]} numberOfLines={2}>
+              {plant.notes || 'Notizen hinzufügen...'}
+            </Text>
+          </TouchableOpacity>
+        )}
       </View>
     </View>
   );
@@ -114,6 +148,11 @@ const styles = StyleSheet.create({
   },
   notes: {
     fontSize: 11,
+  },
+  notesInput: {
+    fontSize: 11,
+    padding: 0,
+    minHeight: 30,
   },
   activitiesLayer: {
     position: 'absolute',
