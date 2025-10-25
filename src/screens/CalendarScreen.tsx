@@ -18,31 +18,25 @@ export const CalendarScreen: React.FC = () => {
   const [selectedPlantId, setSelectedPlantId] = useState<string | null>(null);
   const [selectedActivityId, setSelectedActivityId] = useState<string | null>(null);
   const [selectedMonth, setSelectedMonth] = useState(0);
-  const [monthOffset, setMonthOffset] = useState(0);
   const fixedScrollRef = useRef<ScrollView>(null);
   const headerScrollRef = useRef<ScrollView>(null);
 
-  const allMonths = [
-    'Jan', 'Jan', 'Feb', 'Feb', 'Mär', 'Mär',
-    'Apr', 'Apr', 'Mai', 'Mai', 'Jun', 'Jun',
-    'Jul', 'Jul', 'Aug', 'Aug', 'Sep', 'Sep',
-    'Okt', 'Okt', 'Nov', 'Nov', 'Dez', 'Dez'
-  ];
+  // Responsive: Portrait zeigt 6 2-Monats-Slots, Landscape zeigt 24 Halbmonate
+  const { width, height } = Dimensions.get('window');
+  const isPortrait = height > width;
 
-  // Responsive: Zeige 4 Halbmonate auf kleinen Screens, alle 24 auf großen
-  const screenWidth = Dimensions.get('window').width;
-  const isSmallScreen = screenWidth < 768;
-  const monthsToShow = isSmallScreen ? 4 : 24; // 2 Monate auf kleinen Screens
-
+  // Portrait: 6 Spalten (je 2 Monate), Landscape: 24 Halbmonate
   const months = useMemo(() => {
-    if (isSmallScreen) {
-      return allMonths.slice(monthOffset, monthOffset + monthsToShow);
+    if (isPortrait) {
+      return ['Jan-Feb', 'Mär-Apr', 'Mai-Jun', 'Jul-Aug', 'Sep-Okt', 'Nov-Dez'];
     }
-    return allMonths;
-  }, [monthOffset, isSmallScreen]);
-
-  const canGoBack = monthOffset > 0;
-  const canGoForward = monthOffset + monthsToShow < 24;
+    return [
+      'Jan', 'Jan', 'Feb', 'Feb', 'Mär', 'Mär',
+      'Apr', 'Apr', 'Mai', 'Mai', 'Jun', 'Jun',
+      'Jul', 'Jul', 'Aug', 'Aug', 'Sep', 'Sep',
+      'Okt', 'Okt', 'Nov', 'Nov', 'Dez', 'Dez'
+    ];
+  }, [isPortrait]);
 
   // Berechne aktuellen Halbmonat
   const now = new Date();
@@ -77,7 +71,8 @@ export const CalendarScreen: React.FC = () => {
 
   const handlePressMonth = (plantId: string, monthIndex: number) => {
     setSelectedPlantId(plantId);
-    setSelectedMonth(monthIndex);
+    // Im Portrait-Modus: Konvertiere 2-Monats-Slot-Index zu Halbmonat
+    setSelectedMonth(isPortrait ? monthIndex * 4 : monthIndex);
     setShowAddActivity(true);
   };
 
@@ -160,26 +155,37 @@ export const CalendarScreen: React.FC = () => {
           >
             <View style={[styles.headerRow, { backgroundColor: theme.background }]}>
               {months.map((month, index) => {
-                const absoluteMonthIndex = index + (isSmallScreen ? monthOffset : 0);
-                const isCurrentHalfMonth = absoluteMonthIndex === currentHalfMonth;
+                let isCurrentPeriod = false;
+
+                if (isPortrait) {
+                  // Im Portrait: Prüfe ob aktueller Halbmonat in diesem 2-Monats-Slot ist
+                  const slotStart = index * 4;
+                  const slotEnd = slotStart + 3;
+                  isCurrentPeriod = currentHalfMonth >= slotStart && currentHalfMonth <= slotEnd;
+                } else {
+                  // Im Landscape: Wie bisher
+                  isCurrentPeriod = index === currentHalfMonth;
+                }
 
                 return (
                   <View
-                    key={index + monthOffset}
+                    key={index}
                     style={[
-                      styles.monthCell,
+                      isPortrait ? styles.twoMonthCell : styles.monthCell,
                       {
                         borderColor: theme.border,
-                        backgroundColor: isCurrentHalfMonth ? theme.border : theme.surface
+                        backgroundColor: isCurrentPeriod ? theme.border : theme.surface
                       }
                     ]}
                   >
                     <Text style={[styles.monthText, { color: theme.textSecondary }]}>
-                      {index % 2 === 0 ? month : ''}
+                      {isPortrait ? month : (index % 2 === 0 ? month : '')}
                     </Text>
-                    <Text style={[styles.halfMonthText, { color: theme.textSecondary }]}>
-                      {index % 2 === 0 ? '1' : '2'}
-                    </Text>
+                    {!isPortrait && (
+                      <Text style={[styles.halfMonthText, { color: theme.textSecondary }]}>
+                        {index % 2 === 0 ? '1' : '2'}
+                      </Text>
+                    )}
                   </View>
                 );
               })}
@@ -223,38 +229,37 @@ export const CalendarScreen: React.FC = () => {
               </View>
             ) : (
               sortedPlants.map(plant => {
-                // Filtere Aktivitäten für sichtbare Monate und behalte Original-IDs
-                const visibleActivities = plant.activities.filter(activity => {
-                  const actStart = activity.startMonth;
-                  const actEnd = activity.endMonth;
-                  const rangeStart = isSmallScreen ? monthOffset : 0;
-                  const rangeEnd = isSmallScreen ? monthOffset + monthsToShow - 1 : 23;
-
-                  // Zeige Aktivität wenn sie den sichtbaren Bereich überlappt
-                  return !(actEnd < rangeStart || actStart > rangeEnd);
-                }).map(activity => ({
-                  ...activity,
-                  id: activity.id, // Explizit Original-ID beibehalten
-                  // Passe Start/End an sichtbaren Bereich an
-                  startMonth: Math.max(0, activity.startMonth - (isSmallScreen ? monthOffset : 0)),
-                  endMonth: Math.min(
-                    months.length - 1,
-                    activity.endMonth - (isSmallScreen ? monthOffset : 0)
-                  ),
-                }));
+                // Im Portrait: Konvertiere Halbmonate zu 2-Monats-Slots
+                const visibleActivities = plant.activities.map(activity => {
+                  if (isPortrait) {
+                    // Konvertiere Halbmonat-Index zu 2-Monats-Slot-Index
+                    // Slot 0: Halbmonate 0-3 (Jan-Feb)
+                    // Slot 1: Halbmonate 4-7 (Mär-Apr)
+                    // usw.
+                    const startSlot = Math.floor(activity.startMonth / 4);
+                    const endSlot = Math.floor(activity.endMonth / 4);
+                    return {
+                      ...activity,
+                      id: activity.id,
+                      startMonth: startSlot,
+                      endMonth: endSlot,
+                    };
+                  }
+                  // Landscape: Keine Änderung
+                  return activity;
+                });
 
                 const visiblePlant = {
                   ...plant,
                   activities: visibleActivities,
                 };
 
-                // Debug: Log when activity is clicked
                 const handleActivityClick = (activityId: string) => {
                   handlePressActivity(plant.id, activityId);
                 };
 
                 const handleMonthClick = (monthIndex: number) => {
-                  handlePressMonth(plant.id, monthIndex + (isSmallScreen ? monthOffset : 0));
+                  handlePressMonth(plant.id, monthIndex);
                 };
 
                 return (
@@ -265,8 +270,9 @@ export const CalendarScreen: React.FC = () => {
                     onPressMonth={handleMonthClick}
                     onPressPlant={() => {}}
                     totalMonths={months.length}
-                    currentHalfMonth={currentHalfMonth}
-                    monthOffset={isSmallScreen ? monthOffset : 0}
+                    currentHalfMonth={isPortrait ? Math.floor(currentHalfMonth / 4) : currentHalfMonth}
+                    monthOffset={0}
+                    cellWidth={isPortrait ? 60 : 40}
                   />
                 );
               })
@@ -383,6 +389,14 @@ const styles = StyleSheet.create({
   },
   monthCell: {
     width: 40,
+    padding: 4,
+    borderWidth: 1,
+    borderLeftWidth: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  twoMonthCell: {
+    width: 60,
     padding: 4,
     borderWidth: 1,
     borderLeftWidth: 0,
