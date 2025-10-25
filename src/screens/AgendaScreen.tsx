@@ -44,7 +44,8 @@ export const AgendaScreen: React.FC = () => {
       });
     });
 
-    return activities;
+    // Sortiere Aktivitäten alphabetisch nach Pflanzennamen
+    return activities.sort((a, b) => a.plantName.localeCompare(b.plantName, 'de'));
   };
 
   const previousActivities = useMemo(() => getActivitiesForMonth(previousMonth), [plants, previousMonth]);
