@@ -1,0 +1,64 @@
+name: Deploy to Testing Environment
+
+# Manuell startbar über GitHub Actions UI
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to deploy (default: current branch)'
+        required: false
+        type: string
+
+jobs:
+  deploy-testing:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.branch || github.ref }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build app for testing
+        run: npx expo export --platform web --output-dir dist
+        env:
+          NODE_ENV: production
+
+      - name: Fix paths for Testing GitHub Pages
+        run: node scripts/fix-paths-testing.js
+
+      - name: Create .nojekyll file
+        run: touch dist/.nojekyll
+
+      - name: Add testing marker
+        run: |
+          echo "<!-- TESTING ENVIRONMENT -->" >> dist/index.html
+          echo "⚠️ Testing Environment - $(date)" > dist/TESTING.txt
+
+      - name: Deploy to gh-pages-testing
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          publish_branch: gh-pages-testing
+          force_orphan: true
+          commit_message: 'deploy: Testing environment from ${{ inputs.branch || github.ref_name }}'
+
+      - name: Summary
+        run: |
+          echo "✅ Deployed to testing environment!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "🔗 **Testing URL:** https://s540d.github.io/Pflanzkalender-testing/" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "📦 **Branch:** ${{ inputs.branch || github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "⏰ **Time:** $(date)" >> $GITHUB_STEP_SUMMARY
