@@ -29,10 +29,10 @@ export const CalendarScreen: React.FC = () => {
     'Okt', 'Okt', 'Nov', 'Nov', 'Dez', 'Dez'
   ];
 
-  // Responsive: Zeige 4-8 Halbmonate auf kleinen Screens, alle 24 auf großen
+  // Responsive: Zeige 4 Halbmonate auf kleinen Screens, alle 24 auf großen
   const screenWidth = Dimensions.get('window').width;
   const isSmallScreen = screenWidth < 768;
-  const monthsToShow = isSmallScreen ? 6 : 24; // 3 Monate auf kleinen Screens
+  const monthsToShow = isSmallScreen ? 4 : 24; // 2 Monate auf kleinen Screens
 
   const months = useMemo(() => {
     if (isSmallScreen) {
@@ -49,6 +49,11 @@ export const CalendarScreen: React.FC = () => {
   const currentMonth = now.getMonth();
   const currentHalfMonth = currentMonth * 2 + (now.getDate() <= 15 ? 0 : 1);
 
+  // Sortiere Pflanzen alphabetisch
+  const sortedPlants = useMemo(() => {
+    return [...plants].sort((a, b) => a.name.localeCompare(b.name, 'de'));
+  }, [plants]);
+
   if (loading) {
     return (
       <View style={[styles.container, { backgroundColor: theme.background, justifyContent: 'center', alignItems: 'center' }]}> 
@@ -57,7 +62,7 @@ export const CalendarScreen: React.FC = () => {
       </View>
     );
   }
-  const selectedPlant = plants.find((p) => p.id === selectedPlantId) || null;
+  const selectedPlant = sortedPlants.find((p) => p.id === selectedPlantId) || null;
   const selectedActivity = selectedPlant?.activities.find((a: any) => a.id === selectedActivityId) || null;
 
   const handleAddPlant = (name: string, notes: string) => {
@@ -116,12 +121,12 @@ export const CalendarScreen: React.FC = () => {
               }
             }}
           >
-            {plants.length === 0 ? (
+            {sortedPlants.length === 0 ? (
               <View style={[styles.fixedPlantCell, { borderColor: theme.border }]}>
                 <Text style={[styles.emptyText, { color: theme.textSecondary }]}>-</Text>
               </View>
             ) : (
-              plants.map(plant => {
+              sortedPlants.map(plant => {
                 // Calculate same height as PlantRow
                 const activitiesWithRows = calculateActivityRows(plant.activities);
                 const maxRow = activitiesWithRows.reduce((max, a) => Math.max(max, a.row), 0);
@@ -210,14 +215,14 @@ export const CalendarScreen: React.FC = () => {
             >
               <View style={styles.tableWrapper}>
               {/* Pflanzenzeilen mit Aktivitätsbalken */}
-            {plants.length === 0 ? (
+            {sortedPlants.length === 0 ? (
               <View style={styles.emptyState}>
                 <Text style={[styles.emptyText, { color: theme.textSecondary }]}>
                   Noch keine Pflanzen vorhanden.
                 </Text>
               </View>
             ) : (
-              plants.map(plant => {
+              sortedPlants.map(plant => {
                 // Filtere Aktivitäten für sichtbare Monate und behalte Original-IDs
                 const visibleActivities = plant.activities.filter(activity => {
                   const actStart = activity.startMonth;
