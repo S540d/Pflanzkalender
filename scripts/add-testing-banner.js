@@ -19,7 +19,24 @@ const testingBanner = `
 
 html = html.replace('</head>', testingBanner + '</head>');
 
+// Add aggressive cache-busting for testing
+const timestamp = Date.now();
+const version = require('../package.json').version + '-testing';
+const cacheBustingMeta = `
+  <!-- Aggressive Cache Busting (Testing) -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <meta name="version" content="${version}">
+  <meta name="build-timestamp" content="${timestamp}">
+  <meta name="last-modified" content="${new Date().toISOString()}">
+`;
+
+html = html.replace('</head>', cacheBustingMeta + '</head>');
+
 // Write back
 fs.writeFileSync(indexPath, html, 'utf8');
 
 console.log('✓ Added testing environment banner to index.html');
+console.log(`✓ Added cache-busting headers (${version}, timestamp: ${timestamp})`);
+

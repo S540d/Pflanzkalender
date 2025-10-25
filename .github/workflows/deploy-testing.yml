@@ -44,8 +44,11 @@ jobs:
           NODE_ENV: production
           CI: true
 
-      - name: Add testing banner
+      - name: Add testing banner and cache busting
         run: node scripts/add-testing-banner.js
+
+      - name: Add service worker
+        run: node scripts/add-service-worker.js
 
       - name: Create .nojekyll file
         run: touch dist/.nojekyll
