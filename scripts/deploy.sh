@@ -8,6 +8,10 @@ npx expo export --platform web --output-dir dist
 echo "Fixing paths for GitHub Pages..."
 node scripts/fix-paths.js
 
+# Add service worker and cache busting
+echo "Adding service worker and cache busting..."
+node scripts/add-service-worker.js
+
 # Create .nojekyll
 cd dist
 touch .nojekyll
