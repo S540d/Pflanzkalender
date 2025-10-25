@@ -49,6 +49,8 @@ jobs:
 
       - name: Add service worker
         run: node scripts/add-service-worker.js
+        env:
+          TESTING: true
 
       - name: Create .nojekyll file
         run: touch dist/.nojekyll
