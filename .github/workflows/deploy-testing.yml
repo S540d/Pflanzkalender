@@ -9,6 +9,12 @@ on:
         required: false
         type: string
 
+# Erforderliche Berechtigungen für GitHub Pages
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
 jobs:
   deploy-testing:
     runs-on: ubuntu-latest
@@ -28,13 +34,18 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Prepare testing build configuration
+        run: bash scripts/prepare-testing-build.sh
+
       - name: Build app for testing
-        run: npx expo export --platform web --output-dir dist
+        run: |
+          npx expo export --platform web --output-dir dist
         env:
           NODE_ENV: production
+          CI: true
 
-      - name: Fix paths for Testing GitHub Pages
-        run: node scripts/fix-paths-testing.js
+      - name: Add testing banner
+        run: node scripts/add-testing-banner.js
 
       - name: Create .nojekyll file
         run: touch dist/.nojekyll
@@ -45,12 +56,14 @@ jobs:
           echo "⚠️ Testing Environment - $(date)" > dist/TESTING.txt
 
       - name: Deploy to gh-pages-testing
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist
           publish_branch: gh-pages-testing
           force_orphan: true
+          user_name: 'github-actions[bot]'
+          user_email: 'github-actions[bot]@users.noreply.github.com'
           commit_message: 'deploy: Testing environment from ${{ inputs.branch || github.ref_name }}'
 
       - name: Summary
