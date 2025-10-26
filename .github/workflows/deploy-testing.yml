@@ -51,6 +51,9 @@ jobs:
         env:
           TESTING: true
 
+      - name: Add force cache clear script
+        run: node scripts/force-cache-clear.js
+
       - name: Create .nojekyll file
         run: touch dist/.nojekyll
 

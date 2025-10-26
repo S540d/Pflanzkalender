@@ -37,6 +37,9 @@ jobs:
       - name: Add service worker and cache-busting
         run: node scripts/add-service-worker.js
 
+      - name: Add force cache clear script
+        run: node scripts/force-cache-clear.js
+
       - name: Create .nojekyll
         run: touch dist/.nojekyll
 
