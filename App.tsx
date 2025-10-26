@@ -4,6 +4,7 @@ import { StatusBar } from 'expo-status-bar';
 import Svg, { Circle } from 'react-native-svg';
 import { CalendarScreen } from './src/screens/CalendarScreen';
 import { AgendaScreen } from './src/screens/AgendaScreen';
+import { PlantManagementScreen } from './src/screens/PlantManagementScreen';
 import { SettingsScreen } from './src/screens/SettingsScreen';
 import { useTheme } from './src/hooks/useTheme';
 import { PlantProvider } from './src/contexts/PlantContext';
@@ -20,6 +21,8 @@ function AppContent() {
         return <CalendarScreen />;
       case 'Agenda':
         return <AgendaScreen />;
+      case 'Pflanzen':
+        return <PlantManagementScreen />;
       case 'Einstellungen':
         return <SettingsScreen />;
       default:
@@ -55,6 +58,17 @@ function AppContent() {
               }}
             >
               <Text style={{ color: 'white', fontSize: 14 }}>📋</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => setCurrentScreen('Pflanzen')}
+              style={{
+                paddingHorizontal: 12,
+                paddingVertical: 6,
+                backgroundColor: currentScreen === 'Pflanzen' ? 'rgba(255,255,255,0.3)' : 'transparent',
+                borderRadius: 15,
+              }}
+            >
+              <Text style={{ color: 'white', fontSize: 14 }}>🌱</Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => setCurrentScreen('Einstellungen')}
