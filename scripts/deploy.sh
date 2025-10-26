@@ -16,6 +16,10 @@ node scripts/add-service-worker.js
 echo "Adding force cache clear..."
 node scripts/force-cache-clear.js
 
+# Add failsafe debug banner
+echo "Adding failsafe debug banner..."
+node scripts/add-failsafe-banner.js
+
 # Add mobile debug overlay
 echo "Adding mobile debug overlay..."
 node scripts/add-mobile-debug.js
