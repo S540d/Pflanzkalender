@@ -37,6 +37,9 @@ jobs:
       - name: Add service worker and cache-busting
         run: node scripts/add-service-worker.js
 
+      - name: Add ultra-visible marker (FIRST!)
+        run: node scripts/add-ultra-visible-marker.js
+
       - name: Add force cache clear script
         run: node scripts/force-cache-clear.js
 
