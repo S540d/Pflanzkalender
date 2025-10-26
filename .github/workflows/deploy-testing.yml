@@ -41,12 +41,10 @@ jobs:
           NODE_ENV: production
           CI: true
 
-      - name: Fix paths for testing environment
-        run: node scripts/fix-paths-testing.js
 
+      - name: Prepare testing deployment (fix paths, banner, cache-busting)
+        run: node scripts/prepare-testing-deployment.js
 
-      - name: Add testing banner and cache busting
-        run: node scripts/add-testing-banner.js
 
       - name: Add service worker
         run: node scripts/add-service-worker.js
