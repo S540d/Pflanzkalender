@@ -13,8 +13,8 @@ if (!fs.existsSync(indexPath)) {
 
 let html = fs.readFileSync(indexPath, 'utf8');
 
-// Add mobile debug overlay that shows errors visually
-const mobileDebugScript = `
+// Add CSS styles to the head
+const debugStyles = `
   <style>
     #mobile-debug-overlay {
       position: fixed;
@@ -71,6 +71,10 @@ const mobileDebugScript = `
       box-shadow: 0 2px 10px rgba(0,0,0,0.3);
     }
   </style>
+`;
+
+// Add DIV elements and script to the body
+const debugElements = `
   <div id="mobile-debug-toggle">DEBUG</div>
   <div id="mobile-debug-overlay">
     <div style="font-weight: bold; margin-bottom: 10px; color: white;">📱 Mobile Debug Console</div>
@@ -202,8 +206,11 @@ const mobileDebugScript = `
   </script>
 `;
 
-// Insert right after <head> tag (before other scripts)
-html = html.replace('<head>', '<head>' + mobileDebugScript);
+// Insert styles in the head
+html = html.replace('</head>', debugStyles + '</head>');
+
+// Insert debug elements at the beginning of body
+html = html.replace('<body>', '<body>' + debugElements);
 
 fs.writeFileSync(indexPath, html, 'utf8');
 console.log('✅ Mobile debug overlay added!');
