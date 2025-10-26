@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { useTheme } from '../hooks/useTheme';
 import { usePlants } from '../contexts/PlantContext';
+import { useLanguage } from '../contexts/LanguageContext';
 // import { AppHeader } from '../components/AppHeader'; // Temporär deaktiviert
 
 interface ActivityInfo {
@@ -14,6 +15,7 @@ interface ActivityInfo {
 export const AgendaScreen: React.FC = () => {
   const { theme } = useTheme();
   const { plants } = usePlants();
+  const { t } = useLanguage();
 
   // Aktuellen Monat bestimmen (0-23 Halbmonate)
   const currentMonth = useMemo(() => {
@@ -52,12 +54,7 @@ export const AgendaScreen: React.FC = () => {
   const currentActivities = useMemo(() => getActivitiesForMonth(currentMonth), [plants, currentMonth]);
   const nextActivities = useMemo(() => getActivitiesForMonth(nextMonth), [plants, nextMonth]);
 
-  const monthNames = [
-    'Jan 1-15', 'Jan 16-31', 'Feb 1-15', 'Feb 16-28', 'Mär 1-15', 'Mär 16-31',
-    'Apr 1-15', 'Apr 16-30', 'Mai 1-15', 'Mai 16-31', 'Jun 1-15', 'Jun 16-30',
-    'Jul 1-15', 'Jul 16-31', 'Aug 1-15', 'Aug 16-31', 'Sep 1-15', 'Sep 16-30',
-    'Okt 1-15', 'Okt 16-31', 'Nov 1-15', 'Nov 16-30', 'Dez 1-15', 'Dez 16-31',
-  ];
+  const monthNames = t('agenda.months') as any;
 
   const renderColumn = (title: string, activities: ActivityInfo[], monthIndex: number) => (
     <View style={styles.column}>
@@ -68,7 +65,7 @@ export const AgendaScreen: React.FC = () => {
 
       {activities.length === 0 ? (
         <Text style={[styles.emptyText, { color: theme.textSecondary }]}>
-          Keine Aktivitäten
+          {t('agenda.noActivities')}
         </Text>
       ) : (
         activities.map((activity, index) => (
@@ -99,11 +96,11 @@ export const AgendaScreen: React.FC = () => {
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       {/* <AppHeader /> Temporär deaktiviert */}
-      <ScrollView style={styles.scrollView}>
+      <ScrollView horizontal style={styles.scrollView}>
         <View style={styles.columnsContainer}>
-          {renderColumn('Vorher', previousActivities, previousMonth)}
-          {renderColumn('Aktuell', currentActivities, currentMonth)}
-          {renderColumn('Demnächst', nextActivities, nextMonth)}
+          {renderColumn(t('agenda.previous'), previousActivities, previousMonth)}
+          {renderColumn(t('agenda.current'), currentActivities, currentMonth)}
+          {renderColumn(t('agenda.next'), nextActivities, nextMonth)}
         </View>
       </ScrollView>
     </View>
@@ -123,8 +120,7 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   column: {
-    flex: 1,
-    minWidth: 250,
+    width: 160,
   },
   columnTitle: {
     fontSize: 18,
