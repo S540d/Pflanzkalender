@@ -2,6 +2,9 @@
 const CACHE_VERSION = 'v' + Date.now(); // New version on every deployment
 const CACHE_NAME = 'pflanzkalender-testing-' + CACHE_VERSION;
 
+// IMPORTANT: Set to true to force unregister this service worker
+const FORCE_UNREGISTER = false;
+
 // Files to cache
 const urlsToCache = [
   '/Pflanzkalender-testing/',
@@ -11,6 +14,12 @@ const urlsToCache = [
 // Install event - cache files
 self.addEventListener('install', (event) => {
   console.log('[ServiceWorker-Testing] Installing version:', CACHE_VERSION);
+
+  if (FORCE_UNREGISTER) {
+    console.log('[ServiceWorker-Testing] FORCE_UNREGISTER is true - skipping cache setup');
+    event.waitUntil(self.skipWaiting());
+    return;
+  }
 
   event.waitUntil(
     caches.open(CACHE_NAME)
@@ -28,6 +37,33 @@ self.addEventListener('install', (event) => {
 // Activate event - clean up old caches
 self.addEventListener('activate', (event) => {
   console.log('[ServiceWorker-Testing] Activating version:', CACHE_VERSION);
+
+  if (FORCE_UNREGISTER) {
+    console.log('[ServiceWorker-Testing] FORCE_UNREGISTER is true - unregistering self');
+    event.waitUntil(
+      caches.keys().then((cacheNames) => {
+        // Delete ALL caches
+        return Promise.all(
+          cacheNames.map((cacheName) => {
+            console.log('[ServiceWorker-Testing] Force deleting cache:', cacheName);
+            return caches.delete(cacheName);
+          })
+        );
+      }).then(() => {
+        // Unregister this service worker
+        return self.registration.unregister();
+      }).then(() => {
+        console.log('[ServiceWorker-Testing] Successfully unregistered');
+        // Tell all clients to reload
+        return self.clients.matchAll().then(clients => {
+          clients.forEach(client => {
+            client.postMessage({ type: 'FORCE_RELOAD' });
+          });
+        });
+      })
+    );
+    return;
+  }
 
   event.waitUntil(
     caches.keys().then((cacheNames) => {
