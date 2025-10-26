@@ -41,6 +41,9 @@ jobs:
       - name: Disable service worker (prevent reload loop)
         run: node scripts/disable-service-worker.js
 
+      - name: Add JavaScript test
+        run: node scripts/add-js-test.js
+
       - name: Add ultra-visible marker (FIRST!)
         run: node scripts/add-ultra-visible-marker.js
 
