@@ -49,15 +49,7 @@ const forceClearScript = `
         });
       }
 
-      // 3. Clear localStorage flag for version checking
-      try {
-        localStorage.removeItem('app-version');
-        console.log('[CacheClear] Cleared app-version from localStorage');
-      } catch (e) {
-        console.error('[CacheClear] Could not clear localStorage:', e);
-      }
-
-      console.log('[CacheClear] Cache cleanup complete!');
+      console.log('[CacheClear] Cache cleanup complete! NO RELOAD - app continues loading...');
     })();
   </script>
 `;

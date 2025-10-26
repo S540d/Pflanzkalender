@@ -34,8 +34,12 @@ jobs:
       - name: Fix paths for GitHub Pages
         run: node scripts/fix-paths.js
 
-      - name: Add service worker and cache-busting
-        run: node scripts/add-service-worker.js
+      # TEMPORARILY DISABLED - causes reload loop
+      # - name: Add service worker and cache-busting
+      #   run: node scripts/add-service-worker.js
+
+      - name: Disable service worker (prevent reload loop)
+        run: node scripts/disable-service-worker.js
 
       - name: Add ultra-visible marker (FIRST!)
         run: node scripts/add-ultra-visible-marker.js
