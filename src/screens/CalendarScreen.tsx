@@ -3,7 +3,6 @@ import { View, Text, StyleSheet, ScrollView, ActivityIndicator, TouchableOpacity
 import { useTheme } from '../hooks/useTheme';
 import { usePlants } from '../contexts/PlantContext';
 import { PlantRow } from '../components/PlantRow';
-import { AddPlantModal } from '../components/AddPlantModal';
 import { AddActivityModal } from '../components/AddActivityModal';
 import { EditActivityModal } from '../components/EditActivityModal';
 // import { AppHeader } from '../components/AppHeader'; // Temporär deaktiviert
@@ -11,8 +10,7 @@ import { calculateActivityRows } from '../utils/activityLayout';
 
 export const CalendarScreen: React.FC = () => {
   const { theme } = useTheme();
-  const { plants, loading, addPlant, addActivity, updateActivity, deleteActivity } = usePlants();
-  const [showAddPlant, setShowAddPlant] = useState(false);
+  const { plants, loading, addActivity, updateActivity, deleteActivity } = usePlants();
   const [showAddActivity, setShowAddActivity] = useState(false);
   const [showEditActivity, setShowEditActivity] = useState(false);
   const [selectedPlantId, setSelectedPlantId] = useState<string | null>(null);
@@ -58,10 +56,6 @@ export const CalendarScreen: React.FC = () => {
   }
   const selectedPlant = sortedPlants.find((p) => p.id === selectedPlantId) || null;
   const selectedActivity = selectedPlant?.activities.find((a: any) => a.id === selectedActivityId) || null;
-
-  const handleAddPlant = (name: string, notes: string) => {
-    addPlant({ name, notes, isDefault: false, userId: null, activities: [] });
-  };
 
   const handleAddActivity = (type: string, startMonth: number, endMonth: number, color: string, label: string) => {
     if (selectedPlantId) {
@@ -136,11 +130,6 @@ export const CalendarScreen: React.FC = () => {
                 );
               })
             )}
-            <View style={[styles.fixedPlantCell, { borderColor: theme.border, backgroundColor: theme.surface }]}>
-              <TouchableOpacity onPress={() => setShowAddPlant(true)}>
-                <Text style={[styles.addPlantText, { color: theme.primary }]}>+ weitere Pflanze</Text>
-              </TouchableOpacity>
-            </View>
           </ScrollView>
         </View>
 
@@ -284,12 +273,6 @@ export const CalendarScreen: React.FC = () => {
       </View>
 
       {/* Modals */}
-      <AddPlantModal
-        visible={showAddPlant}
-        onClose={() => setShowAddPlant(false)}
-        onAdd={handleAddPlant}
-      />
-
       {selectedPlant && (
         <AddActivityModal
           visible={showAddActivity}
@@ -375,10 +358,6 @@ const styles = StyleSheet.create({
   navButtonText: {
     fontSize: 20,
     fontWeight: 'bold',
-  },
-  addPlantText: {
-    fontSize: 14,
-    fontWeight: '600',
   },
   loadingText: {
     marginTop: 12,
