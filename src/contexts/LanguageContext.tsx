@@ -6,7 +6,7 @@ type Language = 'de' | 'en';
 interface LanguageContextType {
   language: Language;
   setLanguage: (lang: Language) => void;
-  t: (key: string) => string;
+  t: (key: string) => any;
 }
 
 const translations = {
@@ -94,15 +94,8 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }
     }
   };
 
-  const t = (key: string): string => {
-    const keys = key.split('.');
-    let value: any = translations[language];
-
-    for (const k of keys) {
-      value = value?.[k];
-    }
-
-    return value || key;
+  const t = (key: string): any => {
+    return translations[language][key] || key;
   };
 
   // Load language from storage on mount
