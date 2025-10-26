@@ -38,26 +38,16 @@ jobs:
       # - name: Add service worker and cache-busting
       #   run: node scripts/add-service-worker.js
 
+      # Clean deployment - removed all test markers, only essential debugging
+
       - name: Disable service worker (prevent reload loop)
         run: node scripts/disable-service-worker.js
 
-      - name: Add JavaScript test
-        run: node scripts/add-js-test.js
-
-      - name: Add ultra-visible marker (FIRST!)
-        run: node scripts/add-ultra-visible-marker.js
-
-      - name: Add force cache clear script
+      - name: Add force cache clear (NO reload)
         run: node scripts/force-cache-clear.js
-
-      - name: Add failsafe debug banner
-        run: node scripts/add-failsafe-banner.js
 
       - name: Add mobile debug overlay
         run: node scripts/add-mobile-debug.js
-
-      - name: Add loading diagnostics
-        run: node scripts/add-loading-diagnostics.js
 
       - name: Create .nojekyll
         run: touch dist/.nojekyll
