@@ -12,22 +12,22 @@ Eine Progressive Web App (PWA) zur Verwaltung von Pflanzkalendern mit monatliche
 - 📱 **Responsive Design** - automatische Anpassung auf kleinen Displays (3 Monate mit Navigation)
 - 📌 **Fixierte Pflanzennamen-Spalte** - bleibt beim horizontalen Scrollen sichtbar
 - 🌿 **20 vordefinierte Pflanzen** mit recherchierten, typischen Aktivitäten
-- ✏️ **Eigene Pflanzen** hinzufügen und verwalten
-- 🗑️ **Pflanzen löschen** - direkt in den Einstellungen
+- 🌱 **Pflanzen-Verwaltung** - Dedizierter Screen zum Hinzufügen und Löschen von Pflanzen
+- 🌍 **Mehrsprachig** - Deutsch/Englisch Umschaltung
 - 🎨 **Farbcodierte Aktivitäten** mit einheitlichem Farbschema:
   - 🌱 Aussäen/Pflanzen: Grüntöne
   - 🍅 Ernten: Rot/Pink
   - 🧪 Pflegen/Düngen/Schnitt: Gelb/Orange
   - ❄️ Winterschutz: Blau/Lila
 - 💬 **Tooltips** - Hover über Aktivitäten zeigt Details (Web)
-- 📊 **Agenda-Ansicht** mit 3-Spalten-Layout (Vorher | Aktuell | Demnächst)
+- 📊 **Agenda-Ansicht** mit horizontalem Scrolling und kompakten Spalten
 - 🎯 **Kompaktes Layout** - Aktivitäten in derselben Zeile wenn keine Überlappung
 - 📍 **Aktuelle Periode hervorgehoben** - grauer Hintergrund für aktuellen Halbmonat
 - 🖱️ **Interaktive Aktivitäten** - Klick zum Bearbeiten und Löschen
 - 💾 **Lokale Datenspeicherung** ohne Anmeldung
 - 🌓 **Dark/Light Mode** mit System-Theme Option
 - 📴 **Offline-fähig** - PWA mit Service Worker
-- ☕ **Support-Link** für Entwickler-Unterstützung
+- ☕ **Support-Link** in den Einstellungen
 
 ## 🚀 Live Demo
 
@@ -86,29 +86,38 @@ Das Deploy-Script:
 
 ## 📖 Verwendung
 
-### Kalender-Ansicht
+### Kalender-Ansicht (📅)
 
 - **Desktop:** Zeigt alle 24 Halbmonate auf einen Blick
 - **Mobile:** Zeigt 3 Monate (6 Halbmonate) mit ← → Navigation
 - **Sticky Header:** Tabellenkopf bleibt beim Scrollen sichtbar
 - **Aktivitäten anklicken:** Öffnet Bearbeitungs-Dialog
 - **Leere Zellen klicken:** Neue Aktivität für den Monat hinzufügen
-- **+ Pflanze:** Neue Pflanze in leerer Zeile unter letzter Pflanze
 
-### Agenda-Ansicht
+### Agenda-Ansicht (📋)
 
-Dreispaltige Übersicht:
+Dreispaltige Übersicht mit horizontalem Scrolling:
 - **Links:** Aktivitäten vom vorherigen Zeitraum
 - **Mitte:** Aktuelle Aktivitäten (aktueller Halbmonat)
 - **Rechts:** Kommende Aktivitäten (nächster Zeitraum)
+- **Kompakte Spalten:** 160px Breite, horizontal scrollbar
 
-### Einstellungen (Modal-Popup)
+### Pflanzen-Verwaltung (🌱)
 
-- **Dark Mode:** Umschalten zwischen Hell/Dunkel/System
-- **Pflanzen verwalten:** Alle Pflanzen mit Löschen-Button
-- **Daten zurücksetzen:** Auf Standard-Pflanzen zurücksetzen
-- **Feedback:** Direkte E-Mail an devsven@posteo.de
-- **Lizenzen:** Open Source unter MIT Lizenz
+Zentraler Screen zur Verwaltung aller Pflanzen:
+- **Neue Pflanze hinzufügen:** Großer Button am oberen Rand
+- **Pflanzenliste:** Übersicht mit Name, Notizen und Aktivitätsanzahl
+- **Löschen:** Jede Pflanze kann einzeln gelöscht werden
+- **Sortierung:** Alphabetisch nach Pflanzennamen
+
+### Einstellungen (⋮)
+
+- **Theme:** Umschalten zwischen Hell/Dunkel/System
+- **Sprache:** Deutsch ⇄ English
+- **Daten exportieren:** Als JSON-Datei
+- **Support:** Buy me a Coffee Link
+- **Feedback:** E-Mail an devsven@posteo.de
+- **Info:** Version und Lizenz
 
 ## 🌿 Vordefinierte Pflanzen
 
@@ -168,6 +177,27 @@ Wenn dir diese App gefällt, kannst du mich gerne unterstützen:
 Bugs bitte als [GitHub Issue](https://github.com/s540d/Pflanzkalender/issues) melden.
 
 ## 📝 Changelog
+
+### Version 1.2.0 (2025-10-26)
+
+- ✨ **NEU:** Dedizierter Pflanzen-Verwaltungs-Screen (🌱)
+  - Zentrale Ansicht zum Hinzufügen und Löschen von Pflanzen
+  - Übersichtliche Liste mit Pflanzenname, Notizen und Aktivitätsanzahl
+  - Navigation über neuen 🌱 Button im Header
+- ✨ **NEU:** Mehrsprachigkeit (Deutsch/English)
+  - Vollständige i18n-Unterstützung
+  - Sprachumschalter in Einstellungen
+  - Automatische Speicherung der Sprachpräferenz
+- ✨ **NEU:** Optimierte Agenda-Ansicht
+  - Kompakte Spalten (160px) für bessere Übersicht
+  - Horizontales Scrolling für alle drei Zeiträume
+  - Mehrsprachige Überschriften
+- 🎨 **VERBESSERT:** UI-Optimierungen
+  - Footer entfernt für mehr Platzgewinn
+  - Support-Link in Einstellungen verschoben
+  - Metrik-Feature entfernt für klarere UI
+  - "Neue Pflanze" Button entfernt (jetzt über 🌱 Screen)
+- 🐛 **FIX:** Navigation im 4-Tab-Layout (Kalender/Agenda/Pflanzen/Einstellungen)
 
 ### Version 1.1.0 (2025-10-06)
 
