@@ -2,14 +2,23 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Linking, ScrollView, Switch, Share } from 'react-native';
 import { useTheme } from '../hooks/useTheme';
 import { usePlants } from '../contexts/PlantContext';
+import { useLanguage } from '../contexts/LanguageContext';
 
 export const SettingsScreen: React.FC = () => {
   const { theme, isDark, themeMode, setThemeMode } = useTheme();
   const { plants, resetToDefaults, deletePlant } = usePlants();
-  const [showMetrics, setShowMetrics] = useState(false);
+  const { language, setLanguage, t } = useLanguage();
 
   const handleFeedback = () => {
     Linking.openURL('mailto:devsven@posteo.de?subject=Feedback zu Pflanzkalender');
+  };
+
+  const handleSupportPress = () => {
+    Linking.openURL('https://buymeacoffee.com/sven4321');
+  };
+
+  const handleLanguageToggle = (value: boolean) => {
+    setLanguage(value ? 'en' : 'de');
   };
 
   const handleReset = () => {
@@ -46,53 +55,13 @@ export const SettingsScreen: React.FC = () => {
     setThemeMode(value ? 'dark' : 'system');
   };
 
-  if (showMetrics) {
-    return (
-      <ScrollView style={[styles.container, { backgroundColor: theme.background }]}>
-        <View style={styles.content}>
-          <Text style={[styles.appName, { color: theme.text }]}>Pflanzkalender - Metriken</Text>
-          
-          <View style={styles.settingsOption}>
-            <Text style={[styles.label, { color: theme.text }]}>Zurück zu Einstellungen</Text>
-            <Switch
-              value={false}
-              onValueChange={() => setShowMetrics(false)}
-              trackColor={{ false: theme.border, true: theme.primary }}
-              thumbColor={theme.surface}
-            />
-          </View>
-
-          <View style={[styles.metricsCard, { backgroundColor: theme.surface }]}>
-            <Text style={[styles.metricsTitle, { color: theme.text }]}>📊 Statistiken</Text>
-            <View style={styles.metricsRow}>
-              <Text style={[styles.metricsLabel, { color: theme.textSecondary }]}>Anzahl Pflanzen:</Text>
-              <Text style={[styles.metricsValue, { color: theme.text }]}>{plants.length}</Text>
-            </View>
-            <View style={styles.metricsRow}>
-              <Text style={[styles.metricsLabel, { color: theme.textSecondary }]}>Aktivitäten gesamt:</Text>
-              <Text style={[styles.metricsValue, { color: theme.text }]}>
-                {plants.reduce((sum, plant) => sum + plant.activities.length, 0)}
-              </Text>
-            </View>
-            <View style={styles.metricsRow}>
-              <Text style={[styles.metricsLabel, { color: theme.textSecondary }]}>Ø Aktivitäten/Pflanze:</Text>
-              <Text style={[styles.metricsValue, { color: theme.text }]}>
-                {plants.length > 0 ? Math.round((plants.reduce((sum, plant) => sum + plant.activities.length, 0) / plants.length) * 10) / 10 : 0}
-              </Text>
-            </View>
-          </View>
-        </View>
-      </ScrollView>
-    );
-  }
-
   return (
-    <ScrollView style={[styles.container, { backgroundColor: theme.background }]}> 
+    <ScrollView style={[styles.container, { backgroundColor: theme.background }]}>
       <View style={styles.content}>
-        <Text style={[styles.appName, { color: theme.text }]}>Pflanzkalender</Text>
+        <Text style={[styles.appName, { color: theme.text }]}>{t('settings.title')}</Text>
 
         <View style={styles.settingsOption}>
-          <Text style={[styles.label, { color: theme.text }]}>🌙 System / Dunkel</Text>
+          <Text style={[styles.label, { color: theme.text }]}>{t('settings.theme')}</Text>
           <Switch
             value={themeMode === 'dark'}
             onValueChange={handleThemeToggle}
@@ -102,48 +71,40 @@ export const SettingsScreen: React.FC = () => {
         </View>
 
         <View style={styles.settingsOption}>
-          <Text style={[styles.label, { color: theme.text }]}>🌐 Deutsch / English</Text>
+          <Text style={[styles.label, { color: theme.text }]}>{t('settings.language')}</Text>
           <Switch
-            value={false}
-            onValueChange={() => {}} // Language toggle - future implementation
-            trackColor={{ false: theme.border, true: theme.primary }}
-            thumbColor={theme.surface}
-            disabled
-          />
-        </View>
-
-        <View style={styles.settingsOption}>
-          <Text style={[styles.label, { color: theme.text }]}>📊 Metrik anzeigen</Text>
-          <Switch
-            value={showMetrics}
-            onValueChange={setShowMetrics}
+            value={language === 'en'}
+            onValueChange={handleLanguageToggle}
             trackColor={{ false: theme.border, true: theme.primary }}
             thumbColor={theme.surface}
           />
         </View>
 
         <TouchableOpacity style={[styles.exportButton, { backgroundColor: theme.border }]} onPress={handleExportData}>
-          <Text style={[styles.exportButtonText, { color: theme.text }]}>📤 Daten als JSON exportieren</Text>
+          <Text style={[styles.exportButtonText, { color: theme.text }]}>{t('settings.export')}</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={[styles.supportButton, { backgroundColor: '#FFD700' }]} onPress={handleSupportPress}>
+          <Text style={styles.supportButtonText}>{t('settings.support')}</Text>
         </TouchableOpacity>
 
         <View style={styles.spacer} />
 
-        <Text style={[styles.feedbackText, { color: theme.textSecondary }]}>📧 Feedback</Text>
+        <Text style={[styles.feedbackText, { color: theme.textSecondary }]}>{t('settings.feedback')}</Text>
         <TouchableOpacity onPress={handleFeedback}>
           <Text style={[styles.feedbackEmail, { color: theme.primary }]}>devsven@posteo.de</Text>
         </TouchableOpacity>
 
         <View style={styles.spacer} />
 
-        <Text style={[styles.aboutText, { color: theme.textSecondary }]}>Über</Text>
-        <Text style={[styles.versionText, { color: theme.textSecondary }]}>Version 1.0.0 • {new Date().getFullYear()}</Text>
+        <Text style={[styles.aboutText, { color: theme.textSecondary }]}>{t('settings.about')}</Text>
+        <Text style={[styles.versionText, { color: theme.textSecondary }]}>{t('settings.version')} • {new Date().getFullYear()}</Text>
 
         <View style={styles.spacer} />
 
-        <Text style={[styles.licenseText, { color: theme.textSecondary }]}>Lizenz</Text>
+        <Text style={[styles.licenseText, { color: theme.textSecondary }]}>{t('settings.license')}</Text>
         <Text style={[styles.licenseDetails, { color: theme.textSecondary }]}>
-          Open Source • MIT Lizenz{'\n'}
-          Keine kommerzielle Nutzung ohne Genehmigung
+          {t('settings.licenseDetails')}
         </Text>
 
       </View>
@@ -180,12 +141,30 @@ const styles = StyleSheet.create({
     padding: 14,
     borderRadius: 8,
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 12,
   },
-  
+
   exportButtonText: {
     fontSize: 14,
     fontWeight: '600'
+  },
+
+  supportButton: {
+    padding: 14,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginBottom: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+
+  supportButtonText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#333',
   },
   
   spacer: {

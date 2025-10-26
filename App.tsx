@@ -5,9 +5,9 @@ import Svg, { Circle } from 'react-native-svg';
 import { CalendarScreen } from './src/screens/CalendarScreen';
 import { AgendaScreen } from './src/screens/AgendaScreen';
 import { SettingsScreen } from './src/screens/SettingsScreen';
-import { Footer } from './src/components/Footer';
 import { useTheme } from './src/hooks/useTheme';
 import { PlantProvider } from './src/contexts/PlantContext';
+import { LanguageProvider } from './src/contexts/LanguageContext';
 import { ErrorBoundary } from './src/components/ErrorBoundary';
 
 function AppContent() {
@@ -75,12 +75,9 @@ function AppContent() {
         </View>
         
         {/* Screen Content */}
-        <View style={{ flex: 1, paddingBottom: 60 }}>
+        <View style={{ flex: 1 }}>
           {renderScreen()}
         </View>
-        
-        {/* Sticky Footer */}
-        <Footer />
       </View>
     </>
   );
@@ -89,9 +86,11 @@ function AppContent() {
 export default function App() {
   return (
     <ErrorBoundary>
-      <PlantProvider>
-        <AppContent />
-      </PlantProvider>
+      <LanguageProvider>
+        <PlantProvider>
+          <AppContent />
+        </PlantProvider>
+      </LanguageProvider>
     </ErrorBoundary>
   );
 }
