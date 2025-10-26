@@ -43,6 +43,9 @@ jobs:
       - name: Disable service worker (prevent reload loop)
         run: node scripts/disable-service-worker.js
 
+      - name: Add bundle load monitor
+        run: node scripts/add-bundle-monitor.js
+
       - name: Add force cache clear (NO reload)
         run: node scripts/force-cache-clear.js
 
