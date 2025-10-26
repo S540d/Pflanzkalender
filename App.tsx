@@ -8,6 +8,7 @@ import { SettingsScreen } from './src/screens/SettingsScreen';
 import { Footer } from './src/components/Footer';
 import { useTheme } from './src/hooks/useTheme';
 import { PlantProvider } from './src/contexts/PlantContext';
+import { ErrorBoundary } from './src/components/ErrorBoundary';
 
 function AppContent() {
   const { isDark } = useTheme();
@@ -87,8 +88,10 @@ function AppContent() {
 
 export default function App() {
   return (
-    <PlantProvider>
-      <AppContent />
-    </PlantProvider>
+    <ErrorBoundary>
+      <PlantProvider>
+        <AppContent />
+      </PlantProvider>
+    </ErrorBoundary>
   );
 }

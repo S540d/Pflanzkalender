@@ -12,6 +12,18 @@ node scripts/fix-paths.js
 echo "Adding service worker and cache busting..."
 node scripts/add-service-worker.js
 
+# Add force cache clear
+echo "Adding force cache clear..."
+node scripts/force-cache-clear.js
+
+# Add mobile debug overlay
+echo "Adding mobile debug overlay..."
+node scripts/add-mobile-debug.js
+
+# Add loading diagnostics
+echo "Adding loading diagnostics..."
+node scripts/add-loading-diagnostics.js
+
 # Create .nojekyll
 cd dist
 touch .nojekyll
