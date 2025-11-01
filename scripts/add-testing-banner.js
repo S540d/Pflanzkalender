@@ -7,16 +7,23 @@ const indexPath = path.join(distPath, 'index.html');
 // Read index.html
 let html = fs.readFileSync(indexPath, 'utf8');
 
-// Replace absolute paths with paths including /Pflanzkalender/
-html = html.replace(/href="\/_expo/g, 'href="/Pflanzkalender/_expo');
-html = html.replace(/src="\/_expo/g, 'src="/Pflanzkalender/_expo');
-html = html.replace(/href="\/favicon/g, 'href="/Pflanzkalender/favicon');
+// Add testing environment banner
+const testingBanner = `
+<div style="position: fixed; top: 0; left: 0; right: 0; background: #ff9800; color: #000; padding: 8px; text-align: center; font-weight: bold; z-index: 9999; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+  ⚠️ TESTING ENVIRONMENT - Not for production use
+</div>
+<style>
+  body { padding-top: 40px !important; }
+</style>
+`;
 
-// Add aggressive cache-busting meta tags
+html = html.replace('</head>', testingBanner + '</head>');
+
+// Add aggressive cache-busting for testing
 const timestamp = Date.now();
-const version = require('../package.json').version;
+const version = require('../package.json').version + '-testing';
 const cacheBustingMeta = `
-  <!-- Aggressive Cache Busting -->
+  <!-- Aggressive Cache Busting (Testing) -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
@@ -27,15 +34,9 @@ const cacheBustingMeta = `
 
 html = html.replace('</head>', cacheBustingMeta + '</head>');
 
-// Add version info to body
-const versionInfo = `
-  <!-- Deployment Info: v${version} - ${new Date().toISOString()} -->
-`;
-
-html = html.replace('<body>', '<body>' + versionInfo);
-
 // Write back
 fs.writeFileSync(indexPath, html, 'utf8');
 
-console.log('✓ Fixed paths in index.html for GitHub Pages');
-console.log(`✓ Added cache-busting headers (v${version}, timestamp: ${timestamp})`);
+console.log('✓ Added testing environment banner to index.html');
+console.log(`✓ Added cache-busting headers (${version}, timestamp: ${timestamp})`);
+

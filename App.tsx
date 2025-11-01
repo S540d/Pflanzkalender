@@ -4,10 +4,12 @@ import { StatusBar } from 'expo-status-bar';
 import Svg, { Circle } from 'react-native-svg';
 import { CalendarScreen } from './src/screens/CalendarScreen';
 import { AgendaScreen } from './src/screens/AgendaScreen';
+import { PlantManagementScreen } from './src/screens/PlantManagementScreen';
 import { SettingsScreen } from './src/screens/SettingsScreen';
-import { Footer } from './src/components/Footer';
 import { useTheme } from './src/hooks/useTheme';
 import { PlantProvider } from './src/contexts/PlantContext';
+import { LanguageProvider } from './src/contexts/LanguageContext';
+import { ErrorBoundary } from './src/components/ErrorBoundary';
 
 function AppContent() {
   const { isDark } = useTheme();
@@ -19,6 +21,8 @@ function AppContent() {
         return <CalendarScreen />;
       case 'Agenda':
         return <AgendaScreen />;
+      case 'Pflanzen':
+        return <PlantManagementScreen />;
       case 'Einstellungen':
         return <SettingsScreen />;
       default:
@@ -56,6 +60,17 @@ function AppContent() {
               <Text style={{ color: 'white', fontSize: 14 }}>📋</Text>
             </TouchableOpacity>
             <TouchableOpacity
+              onPress={() => setCurrentScreen('Pflanzen')}
+              style={{
+                paddingHorizontal: 12,
+                paddingVertical: 6,
+                backgroundColor: currentScreen === 'Pflanzen' ? 'rgba(255,255,255,0.3)' : 'transparent',
+                borderRadius: 15,
+              }}
+            >
+              <Text style={{ color: 'white', fontSize: 14 }}>🌱</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
               onPress={() => setCurrentScreen('Einstellungen')}
               style={{
                 paddingHorizontal: 12,
@@ -74,12 +89,9 @@ function AppContent() {
         </View>
         
         {/* Screen Content */}
-        <View style={{ flex: 1, paddingBottom: 60 }}>
+        <View style={{ flex: 1 }}>
           {renderScreen()}
         </View>
-        
-        {/* Sticky Footer */}
-        <Footer />
       </View>
     </>
   );
@@ -87,8 +99,12 @@ function AppContent() {
 
 export default function App() {
   return (
-    <PlantProvider>
-      <AppContent />
-    </PlantProvider>
+    <ErrorBoundary>
+      <LanguageProvider>
+        <PlantProvider>
+          <AppContent />
+        </PlantProvider>
+      </LanguageProvider>
+    </ErrorBoundary>
   );
 }

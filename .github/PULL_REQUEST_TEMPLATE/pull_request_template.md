@@ -38,7 +38,7 @@ git push origin testing
 
 **Automatisch passiert:**
 - ✅ Deploy auf `gh-pages-testing` Branch
-- ✅ Verfügbar unter: https://s540d.github.io/Eisenhauer-testing/
+- ✅ Verfügbar unter: https://s540d.github.io/Pflanzkalender-testing/
 - ✅ Testing-Marker wird hinzugefügt
 
 **Partner testet online:**

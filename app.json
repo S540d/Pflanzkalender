@@ -2,11 +2,12 @@
   "expo": {
     "name": "Pflanzkalender",
     "slug": "Pflanzkalender",
-    "version": "1.0.0",
+    "version": "1.2.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
+    "platforms": ["web"],
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",

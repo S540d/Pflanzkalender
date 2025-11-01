@@ -14,6 +14,7 @@ interface PlantRowProps {
   totalMonths?: number; // Anzahl der sichtbaren Monate
   currentHalfMonth?: number; // Aktueller Halbmonat (0-23)
   monthOffset?: number; // Offset für mobile Ansicht
+  cellWidth?: number; // Breite der Monatszellen
 }
 
 export const PlantRow: React.FC<PlantRowProps> = ({
@@ -24,6 +25,7 @@ export const PlantRow: React.FC<PlantRowProps> = ({
   totalMonths = 24,
   currentHalfMonth,
   monthOffset = 0,
+  cellWidth = 40,
 }) => {
   const { theme } = useTheme();
   const { updatePlant } = usePlants();
@@ -71,6 +73,7 @@ export const PlantRow: React.FC<PlantRowProps> = ({
               style={[
                 styles.monthCell,
                 {
+                  width: cellWidth,
                   borderColor: theme.border,
                   backgroundColor: isCurrentHalfMonth ? theme.border : 'transparent'
                 }
