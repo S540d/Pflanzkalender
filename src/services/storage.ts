@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Plant } from '../types';
+import { Share } from 'react-native';
 
 const STORAGE_KEYS = {
   PLANTS: '@Pflanzkalender:plants',
@@ -54,6 +55,53 @@ export const storageService = {
       await AsyncStorage.multiRemove([STORAGE_KEYS.PLANTS, STORAGE_KEYS.IS_GUEST]);
     } catch (error) {
       console.error('Error clearing storage:', error);
+    }
+  },
+
+  // Export plants as JSON
+  async exportPlants(): Promise<void> {
+    try {
+      const plants = await this.loadPlants();
+      const exportData = {
+        version: '1.0.0',
+        timestamp: new Date().toISOString(),
+        plants,
+      };
+
+      const jsonString = JSON.stringify(exportData, null, 2);
+      const fileName = `Pflanzkalender_Export_${new Date().toISOString().split('T')[0]}.json`;
+
+      // For React Native, use Share API
+      try {
+        await Share.share({
+          message: jsonString,
+          title: fileName,
+          url: undefined,
+        });
+      } catch (shareError) {
+        console.error('Error sharing file:', shareError);
+        // Fallback: Copy to clipboard
+        alert('Export data ready. Please copy the data manually.');
+      }
+    } catch (error) {
+      console.error('Error exporting plants:', error);
+      throw error;
+    }
+  },
+
+  // Import plants from JSON
+  async importPlants(jsonString: string): Promise<Plant[]> {
+    try {
+      const importData = JSON.parse(jsonString);
+
+      if (!Array.isArray(importData.plants)) {
+        throw new Error('Invalid export format: plants must be an array');
+      }
+
+      return importData.plants;
+    } catch (error) {
+      console.error('Error importing plants:', error);
+      throw error;
     }
   },
 };

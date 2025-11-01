@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Linking, ScrollView, Platform } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Linking, ScrollView, Platform, Alert } from 'react-native';
 import { useTheme } from '../hooks/useTheme';
+import { storageService } from '../services/storage';
 
 const APP_VERSION = '1.0.0';
 
@@ -17,8 +18,11 @@ const translations = {
     german: 'German',
     feedback: 'Send Feedback',
     support: 'Buy Me a Coffee',
+    export: 'EXPORT',
+    exportData: 'Export as JSON',
     about: 'ABOUT',
     version: 'Version',
+    exportSuccess: 'Export successful!',
   },
   de: {
     settings: 'Einstellungen',
@@ -30,8 +34,11 @@ const translations = {
     german: 'Deutsch',
     feedback: 'Feedback senden',
     support: 'Buy Me a Coffee',
+    export: 'EXPORTIEREN',
+    exportData: 'Als JSON exportieren',
     about: 'ÜBER',
     version: 'Version',
+    exportSuccess: 'Export erfolgreich!',
   },
 };
 
@@ -39,6 +46,16 @@ export const SettingsScreen: React.FC = () => {
   const { theme, themeMode, setThemeMode } = useTheme();
   const [language, setLanguage] = useState<Language>('en');
   const t = translations[language];
+
+  const handleExport = async () => {
+    try {
+      await storageService.exportPlants();
+      Alert.alert('Success', t.exportSuccess);
+    } catch (error) {
+      Alert.alert('Error', 'Failed to export data. Please try again.');
+      console.error('Export error:', error);
+    }
+  };
 
   return (
     <ScrollView style={[styles.container, { backgroundColor: theme.background }]}>
@@ -147,6 +164,33 @@ export const SettingsScreen: React.FC = () => {
 
         <View style={[styles.separator, { backgroundColor: theme.border }]} />
 
+        {/* Export Section */}
+        <View style={styles.section}>
+          <Text style={[styles.sectionTitle, { color: theme.textSecondary }]}>{t.export}</Text>
+          <TouchableOpacity
+            style={[
+              styles.exportButton,
+              {
+                backgroundColor: '#6200EE',
+              },
+            ]}
+            onPress={handleExport}
+          >
+            <Text
+              style={[
+                styles.exportButtonText,
+                {
+                  color: '#fff',
+                },
+              ]}
+            >
+              {t.exportData}
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={[styles.separator, { backgroundColor: theme.border }]} />
+
         {/* Feedback and Support in One Row */}
         <View style={[styles.section, styles.sectionRow]}>
           <TouchableOpacity
@@ -246,5 +290,22 @@ const styles = StyleSheet.create({
   infoText: {
     fontSize: 13,
     marginTop: 4,
+  },
+
+  exportButton: {
+    width: '100%',
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    borderRadius: 6,
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 44,
+  },
+
+  exportButtonText: {
+    fontSize: 12,
+    fontWeight: '600',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
 });
