@@ -35,51 +35,71 @@ function AppContent() {
       <StatusBar style={isDark ? 'light' : 'dark'} />
       <View style={{ flex: 1, backgroundColor: '#f5f5f5' }}>
         {/* Header with Navigation */}
-        <View style={{ padding: 20, backgroundColor: '#4CAF50', flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center' }}>
-          <View style={{ flexDirection: 'row', gap: 10 }}>
+        <View style={{ padding: 16, backgroundColor: '#4CAF50', flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center' }}>
+          <View style={{ flexDirection: 'row', gap: 8 }}>
             <TouchableOpacity
               onPress={() => setCurrentScreen('Kalender')}
               style={{
-                paddingHorizontal: 12,
-                paddingVertical: 6,
+                paddingHorizontal: 16,
+                paddingVertical: 8,
                 backgroundColor: currentScreen === 'Kalender' ? 'rgba(255,255,255,0.3)' : 'transparent',
-                borderRadius: 15,
+                borderRadius: 4,
+                minWidth: 44,
+                minHeight: 44,
+                justifyContent: 'center',
+                alignItems: 'center',
               }}
+              accessibilityLabel="Kalender"
             >
-              <Text style={{ color: 'white', fontSize: 14 }}>📅</Text>
+              <Text style={{ color: 'white', fontSize: 12, fontWeight: '600' }}>Calendar</Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => setCurrentScreen('Agenda')}
               style={{
-                paddingHorizontal: 12,
-                paddingVertical: 6,
+                paddingHorizontal: 16,
+                paddingVertical: 8,
                 backgroundColor: currentScreen === 'Agenda' ? 'rgba(255,255,255,0.3)' : 'transparent',
-                borderRadius: 15,
+                borderRadius: 4,
+                minWidth: 44,
+                minHeight: 44,
+                justifyContent: 'center',
+                alignItems: 'center',
               }}
+              accessibilityLabel="Agenda"
             >
-              <Text style={{ color: 'white', fontSize: 14 }}>📋</Text>
+              <Text style={{ color: 'white', fontSize: 12, fontWeight: '600' }}>Agenda</Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => setCurrentScreen('Pflanzen')}
               style={{
-                paddingHorizontal: 12,
-                paddingVertical: 6,
+                paddingHorizontal: 16,
+                paddingVertical: 8,
                 backgroundColor: currentScreen === 'Pflanzen' ? 'rgba(255,255,255,0.3)' : 'transparent',
-                borderRadius: 15,
+                borderRadius: 4,
+                minWidth: 44,
+                minHeight: 44,
+                justifyContent: 'center',
+                alignItems: 'center',
               }}
+              accessibilityLabel="Pflanzen"
             >
-              <Text style={{ color: 'white', fontSize: 14 }}>🌱</Text>
+              <Text style={{ color: 'white', fontSize: 12, fontWeight: '600' }}>Plants</Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => setCurrentScreen('Einstellungen')}
               style={{
-                paddingHorizontal: 12,
-                paddingVertical: 6,
+                paddingHorizontal: 16,
+                paddingVertical: 8,
                 backgroundColor: currentScreen === 'Einstellungen' ? 'rgba(255,255,255,0.3)' : 'transparent',
-                borderRadius: 15,
+                borderRadius: 4,
+                minWidth: 44,
+                minHeight: 44,
+                justifyContent: 'center',
+                alignItems: 'center',
               }}
+              accessibilityLabel="Einstellungen"
             >
-              <Svg width="14" height="14" viewBox="0 0 24 24" fill="white">
+              <Svg width="16" height="16" viewBox="0 0 24 24" fill="white">
                 <Circle cx="12" cy="5" r="2" />
                 <Circle cx="12" cy="12" r="2" />
                 <Circle cx="12" cy="19" r="2" />

@@ -3,11 +3,11 @@ import { useColorScheme } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { lightTheme, darkTheme, Theme } from '../constants/theme';
 
-type ThemeMode = 'system' | 'dark';
+type ThemeMode = 'light' | 'dark' | 'system';
 
-export const useTheme = (): { 
-  theme: Theme; 
-  isDark: boolean; 
+export const useTheme = (): {
+  theme: Theme;
+  isDark: boolean;
   themeMode: ThemeMode;
   setThemeMode: (mode: ThemeMode) => void;
 } => {
@@ -22,8 +22,8 @@ export const useTheme = (): {
     const loadThemePreference = async () => {
       try {
         const savedTheme = await AsyncStorage.getItem('theme');
-        if (savedTheme === 'system' || savedTheme === 'dark') {
-          setThemeModeState(savedTheme);
+        if (savedTheme === 'light' || savedTheme === 'dark' || savedTheme === 'system') {
+          setThemeModeState(savedTheme as ThemeMode);
         }
       } catch (error) {
         console.error('Error loading theme preference:', error);
