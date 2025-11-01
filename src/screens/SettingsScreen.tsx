@@ -1,58 +1,167 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Linking, ScrollView, Platform } from 'react-native';
 import { useTheme } from '../hooks/useTheme';
 
 const APP_VERSION = '1.0.0';
 
+type Language = 'en' | 'de';
+
+const translations = {
+  en: {
+    settings: 'Settings',
+    appearance: 'APPEARANCE',
+    dark: 'Dark',
+    system: 'System',
+    language: 'LANGUAGE',
+    english: 'English',
+    german: 'German',
+    feedback: 'Send Feedback',
+    support: 'Buy Me a Coffee',
+    about: 'ABOUT',
+    version: 'Version',
+  },
+  de: {
+    settings: 'Einstellungen',
+    appearance: 'ERSCHEINUNGSBILD',
+    dark: 'Dunkel',
+    system: 'System',
+    language: 'SPRACHE',
+    english: 'English',
+    german: 'Deutsch',
+    feedback: 'Feedback senden',
+    support: 'Buy Me a Coffee',
+    about: 'ÜBER',
+    version: 'Version',
+  },
+};
+
 export const SettingsScreen: React.FC = () => {
   const { theme, themeMode, setThemeMode } = useTheme();
+  const [language, setLanguage] = useState<Language>('en');
+  const t = translations[language];
 
   return (
     <ScrollView style={[styles.container, { backgroundColor: theme.background }]}>
       <View style={styles.content}>
-        <Text style={[styles.settingsTitle, { color: theme.text }]}>Settings</Text>
+        <Text style={[styles.settingsTitle, { color: theme.text }]}>{t.settings}</Text>
 
-        {/* Appearance Settings */}
+        {/* Appearance Settings - Dark/System Only */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: theme.textSecondary }]}>APPEARANCE</Text>
+          <Text style={[styles.sectionTitle, { color: theme.textSecondary }]}>{t.appearance}</Text>
           <View style={styles.themeToggleContainer}>
-            {(['light', 'dark', 'system'] as const).map((mode) => (
-              <TouchableOpacity
-                key={mode}
+            <TouchableOpacity
+              style={[
+                styles.themeButton,
+                {
+                  backgroundColor: themeMode === 'dark' ? '#6200EE' : theme.border,
+                  flex: 1,
+                },
+              ]}
+              onPress={() => setThemeMode('dark')}
+            >
+              <Text
                 style={[
-                  styles.themeButton,
+                  styles.themeButtonText,
                   {
-                    backgroundColor: themeMode === mode ? '#6200EE' : theme.border,
-                    flex: 1,
+                    color: themeMode === 'dark' ? '#fff' : theme.text,
                   },
                 ]}
-                onPress={() => setThemeMode(mode)}
               >
-                <Text
-                  style={[
-                    styles.themeButtonText,
-                    {
-                      color: themeMode === mode ? '#fff' : theme.text,
-                    },
-                  ]}
-                >
-                  {mode.charAt(0).toUpperCase() + mode.slice(1)}
-                </Text>
-              </TouchableOpacity>
-            ))}
+                {t.dark}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.themeButton,
+                {
+                  backgroundColor: themeMode === 'system' ? '#6200EE' : theme.border,
+                  flex: 1,
+                },
+              ]}
+              onPress={() => setThemeMode('system')}
+            >
+              <Text
+                style={[
+                  styles.themeButtonText,
+                  {
+                    color: themeMode === 'system' ? '#fff' : theme.text,
+                  },
+                ]}
+              >
+                {t.system}
+              </Text>
+            </TouchableOpacity>
           </View>
         </View>
 
         <View style={[styles.separator, { backgroundColor: theme.border }]} />
 
-        {/* Feedback */}
+        {/* Language Settings */}
         <View style={styles.section}>
+          <Text style={[styles.sectionTitle, { color: theme.textSecondary }]}>{t.language}</Text>
+          <View style={styles.themeToggleContainer}>
+            <TouchableOpacity
+              style={[
+                styles.themeButton,
+                {
+                  backgroundColor: language === 'en' ? '#6200EE' : theme.border,
+                  flex: 1,
+                },
+              ]}
+              onPress={() => setLanguage('en')}
+            >
+              <Text
+                style={[
+                  styles.themeButtonText,
+                  {
+                    color: language === 'en' ? '#fff' : theme.text,
+                  },
+                ]}
+              >
+                {t.english}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.themeButton,
+                {
+                  backgroundColor: language === 'de' ? '#6200EE' : theme.border,
+                  flex: 1,
+                },
+              ]}
+              onPress={() => setLanguage('de')}
+            >
+              <Text
+                style={[
+                  styles.themeButtonText,
+                  {
+                    color: language === 'de' ? '#fff' : theme.text,
+                  },
+                ]}
+              >
+                {t.german}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        <View style={[styles.separator, { backgroundColor: theme.border }]} />
+
+        {/* Feedback and Support in One Row */}
+        <View style={[styles.section, styles.sectionRow]}>
           <TouchableOpacity
+            style={styles.linkItemFlex}
             onPress={() => {
               Linking.openURL('mailto:feedback@example.com');
             }}
           >
-            <Text style={[styles.linkText, { color: '#6200EE' }]}>Send Feedback</Text>
+            <Text style={[styles.linkText, { color: '#6200EE' }]}>{t.feedback}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.linkItemFlex}
+            onPress={() => Linking.openURL('https://buymeacoffee.com/sven4321')}
+          >
+            <Text style={[styles.linkText, { color: '#6200EE' }]}>{t.support}</Text>
           </TouchableOpacity>
         </View>
 
@@ -60,21 +169,10 @@ export const SettingsScreen: React.FC = () => {
 
         {/* About */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: theme.textSecondary }]}>ABOUT</Text>
+          <Text style={[styles.sectionTitle, { color: theme.textSecondary }]}>{t.about}</Text>
           <Text style={[styles.infoText, { color: theme.textSecondary }]}>
-            Version {APP_VERSION}
+            {t.version} {APP_VERSION}
           </Text>
-        </View>
-
-        <View style={[styles.separator, { backgroundColor: theme.border }]} />
-
-        {/* Support */}
-        <View style={styles.section}>
-          <TouchableOpacity
-            onPress={() => Linking.openURL('https://buymeacoffee.com/sven4321')}
-          >
-            <Text style={[styles.linkText, { color: '#6200EE' }]}>Buy Me a Coffee</Text>
-          </TouchableOpacity>
         </View>
       </View>
     </ScrollView>
@@ -93,6 +191,12 @@ const styles = StyleSheet.create({
 
   section: {
     paddingVertical: 12,
+  },
+
+  sectionRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 0,
   },
 
   sectionTitle: {
@@ -131,6 +235,12 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '500',
     paddingVertical: 12,
+  },
+
+  linkItemFlex: {
+    flex: 1,
+    paddingHorizontal: 8,
+    alignItems: 'center',
   },
 
   infoText: {
