@@ -8,7 +8,9 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "build": "expo export --platform web",
-    "deploy": "bash scripts/deploy.sh"
+    "deploy": "bash scripts/deploy.sh",
+    "validate": "./scripts/validate-release.sh",
+    "prepare": "husky install"
   },
   "homepage": "https://s540d.github.io/Pflanzkalender",
   "dependencies": {
@@ -30,6 +32,7 @@
   "devDependencies": {
     "@types/react": "~19.1.0",
     "gh-pages": "^6.3.0",
+    "husky": "^9.1.7",
     "typescript": "~5.9.2"
   },
   "private": true
