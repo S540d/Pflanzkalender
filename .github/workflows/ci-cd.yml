@@ -91,7 +91,7 @@ jobs:
         run: npm ci
 
       - name: Build Web
-        run: npm run build:web
+        run: npm run build
 
       - name: Check bundle size
         run: |
@@ -107,36 +107,6 @@ jobs:
           name: web-build
           path: dist/
           retention-days: 7
-
-  build-android:
-    name: 🤖 Build Android
-    runs-on: ubuntu-latest
-    needs: code-quality
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
-
-      - name: Build Android Release
-        working-directory: ./Android
-        run: ./gradlew assembleRelease --no-daemon
-
-      - name: Verify APK exists
-        run: |
-          if [ -f "Android/app/build/outputs/apk/release/app-release.apk" ]; then
-            echo "✅ Android APK built successfully"
-          else
-            echo "❌ ERROR: Android APK not found!"
-            exit 1
-          fi
 
   # ============================================================================
   # JOB 3: Platform Compatibility Checks
@@ -154,11 +124,11 @@ jobs:
 
           PACKAGE_VERSION=$(node -p "require('./package.json').version")
           APP_JSON_VERSION=$(node -p "require('./app.json').expo.version")
-          APP_VERSION=$(grep "APP_VERSION = " App.tsx | sed -E "s/.*'(.*)'.*/\1/")
+          APP_VERSION=$(grep "APP_VERSION = " src/screens/SettingsScreen.tsx | sed -E "s/.*'(.*)'.*/\1/")
 
           echo "package.json: $PACKAGE_VERSION"
           echo "app.json: $APP_JSON_VERSION"
-          echo "App.tsx: $APP_VERSION"
+          echo "SettingsScreen.tsx: $APP_VERSION"
 
           if [ "$PACKAGE_VERSION" != "$APP_JSON_VERSION" ] || [ "$PACKAGE_VERSION" != "$APP_VERSION" ]; then
             echo "❌ ERROR: Version mismatch!"
@@ -167,22 +137,6 @@ jobs:
           fi
 
           echo "✅ All versions are consistent"
-
-      - name: Check Android versionCode increment
-        run: |
-          echo "Checking Android version..."
-          GRADLE_VERSION_CODE=$(grep "versionCode = " Android/app/build.gradle.kts | sed -E "s/.*= ([0-9]+).*/\1/")
-          APP_JSON_VERSION_CODE=$(node -p "require('./app.json').expo.android.versionCode")
-
-          echo "build.gradle.kts versionCode: $GRADLE_VERSION_CODE"
-          echo "app.json versionCode: $APP_JSON_VERSION_CODE"
-
-          if [ "$GRADLE_VERSION_CODE" != "$APP_JSON_VERSION_CODE" ]; then
-            echo "❌ ERROR: Android versionCode mismatch!"
-            exit 1
-          fi
-
-          echo "✅ Android versions are consistent"
 
       - name: Validate UX Guidelines compliance
         run: |
@@ -228,11 +182,6 @@ jobs:
             echo "⚠️  WARNING: Potential sensitive data found!"
           fi
 
-          # Check for hardcoded credentials in build.gradle.kts
-          if grep -q "storePassword = \"" Android/app/build.gradle.kts; then
-            echo "⚠️  WARNING: Keystore password in build.gradle.kts"
-            echo "Consider using environment variables or CI secrets"
-          fi
 
   # ============================================================================
   # JOB 5: Release Readiness Report
@@ -240,7 +189,7 @@ jobs:
   release-checklist:
     name: 📋 Release Readiness Report
     runs-on: ubuntu-latest
-    needs: [code-quality, build-web, build-android, platform-checks]
+    needs: [code-quality, build-web, platform-checks]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 
     steps:
@@ -254,7 +203,6 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "- ✅ Code Quality & Linting" >> $GITHUB_STEP_SUMMARY
           echo "- ✅ Web Build Successful" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ Android Build Successful" >> $GITHUB_STEP_SUMMARY
           echo "- ✅ Platform Compatibility" >> $GITHUB_STEP_SUMMARY
           echo "- ✅ Version Consistency" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
@@ -262,7 +210,6 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "Before deploying, manually verify:" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "- [ ] Test app on physical Android device" >> $GITHUB_STEP_SUMMARY
           echo "- [ ] Test all features in web browser" >> $GITHUB_STEP_SUMMARY
           echo "- [ ] Dark mode works correctly" >> $GITHUB_STEP_SUMMARY
           echo "- [ ] Settings persist correctly" >> $GITHUB_STEP_SUMMARY
