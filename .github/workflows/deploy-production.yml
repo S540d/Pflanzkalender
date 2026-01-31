@@ -55,6 +55,56 @@ jobs:
           user_email: 'github-actions[bot]@users.noreply.github.com'
           commit_message: 'deploy: Production deployment'
 
+      - name: Cleanup sensitive files from gh-pages
+        run: |
+          echo "🧹 Cleaning up sensitive files from gh-pages branch..."
+
+          # Save current working directory state
+          git stash --include-untracked || true
+
+          # Checkout gh-pages branch
+          git fetch origin gh-pages
+          git checkout gh-pages
+
+          # List of files/directories to remove
+          FILES_TO_REMOVE=(
+            "node_modules/"
+            "credentials.json"
+            ".env"
+            ".env.*"
+            ".vscode/"
+            ".husky/"
+            "coverage/"
+            ".expo/"
+            ".templates/"
+            "*.log"
+          )
+
+          # Remove files if they exist
+          REMOVED=0
+          for item in "${FILES_TO_REMOVE[@]}"; do
+            if [ -e "$item" ] || [ -d "$item" ]; then
+              echo "  Removing: $item"
+              rm -rf "$item"
+              REMOVED=1
+            fi
+          done
+
+          # Commit and push if changes were made
+          if [ $REMOVED -eq 1 ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add -A
+            git commit -m "🧹 Auto-cleanup: Remove sensitive files from gh-pages" || true
+            git push origin gh-pages
+            echo "✅ Cleanup completed and pushed"
+          else
+            echo "✅ No cleanup needed - gh-pages is already clean"
+          fi
+
+          # Switch back to original branch
+          git checkout -
+
       - name: Summary
         run: |
           echo "✅ Deployed to production!" >> $GITHUB_STEP_SUMMARY
