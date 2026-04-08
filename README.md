@@ -11,8 +11,10 @@ Eine Progressive Web App (PWA) zur Verwaltung von Pflanzkalendern mit monatliche
 - 📅 **Pflanzkalender** mit halber Monatsauflösung (24 Halbmonate)
 - 📱 **Responsive Design** - automatische Anpassung auf kleinen Displays (3 Monate mit Navigation)
 - 📌 **Fixierte Pflanzennamen-Spalte** - bleibt beim horizontalen Scrollen sichtbar
-- 🌿 **20 vordefinierte Pflanzen** mit recherchierten, typischen Aktivitäten
+- 🌿 **32 vordefinierte Pflanzen** in drei Kategorien (Nutzpflanzen, Blumen, Bäume)
 - 🌱 **Pflanzen-Verwaltung** - Dedizierter Screen zum Hinzufügen und Löschen von Pflanzen
+- 🗂️ **Kategorien-Filter** – Kalender und Agenda nach Nutzpflanzen / Blumen / Bäume filtern
+- 📍 **Standortempfehlungen** – Sonne, Halbschatten, Schatten pro Pflanze
 - 🌍 **Mehrsprachig** - Deutsch/Englisch Umschaltung
 - 🎨 **Farbcodierte Aktivitäten** mit einheitlichem Farbschema:
   - 🌱 Aussäen/Pflanzen: Grüntöne
@@ -115,21 +117,22 @@ Zentraler Screen zur Verwaltung aller Pflanzen:
 - **Theme:** Umschalten zwischen Hell/Dunkel/System
 - **Sprache:** Deutsch ⇄ English
 - **Daten exportieren:** Als JSON-Datei
-- **Support:** Buy me a Coffee Link
+- **Support:** Ko-fi Link (https://ko-fi.com/devsven)
 - **Feedback:** E-Mail an devsven@posteo.de
 - **Info:** Version und Lizenz
 
 ## 🌿 Vordefinierte Pflanzen
 
-Die App enthält 20 recherchierte Pflanzen mit typischen Aktivitäten:
+Die App enthält 32 recherchierte Pflanzen mit typischen Aktivitäten, aufgeteilt in drei Kategorien:
 
-**Gemüse:** Tomaten, Gurken, Paprika, Zucchini, Salat, Karotten, Radieschen, Kartoffeln, Zwiebeln, Knoblauch, Spinat
+**🥦 Nutzpflanzen (21):**
+Tomaten, Gurken, Paprika, Zucchini, Salat, Karotten, Radieschen, Kartoffeln, Zwiebeln, Knoblauch, Spinat, Kürbis, Erdbeeren, Himbeeren, Basilikum, Petersilie, Schnittlauch
 
-**Kräuter:** Basilikum, Petersilie, Schnittlauch, Lavendel
+**🌸 Blumen (10):**
+Rosen, Lavendel, Tulpen, Sonnenblumen, Dahlien, Geranien, Hortensien, Pfingstrosen, Chrysanthemen, Ringelblumen
 
-**Obst:** Erdbeeren, Himbeeren, Apfelbaum, Kürbis
-
-**Zierpflanzen:** Rosen
+**🌳 Bäume (5):**
+Apfelbaum, Birnbaum, Kirschbaum, Pflaume, Haselnuss
 
 Alle vordefinierten Pflanzen können bearbeitet und gelöscht werden.
 
@@ -170,7 +173,7 @@ Dieses Projekt ist unter der MIT-Lizenz lizenziert. Kommerzielle Nutzung ist aus
 
 Wenn dir diese App gefällt, kannst du mich gerne unterstützen:
 
-☕ [Buy Me a Coffee](https://buymeacoffee.com/sven4321)
+☕ [Ko-fi](https://ko-fi.com/devsven)
 
 ## 🐛 Bug Reports
 
@@ -231,7 +234,7 @@ Bugs bitte als [GitHub Issue](https://github.com/s540d/Pflanzkalender/issues) me
 
 - GitHub: [@s540d](https://github.com/s540d)
 - E-Mail: devsven@posteo.de
-- Buy Me a Coffee: [@sven4321](https://buymeacoffee.com/sven4321)
+- Ko-fi: [ko-fi.com/devsven](https://ko-fi.com/devsven)
 
 ---
 
