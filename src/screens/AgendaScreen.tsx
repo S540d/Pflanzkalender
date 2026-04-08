@@ -14,11 +14,11 @@ interface ActivityInfo {
 
 type CategoryFilter = PlantCategory | 'all';
 
-const CATEGORY_TABS: { value: CategoryFilter; labelDe: string; labelEn: string; icon: string }[] = [
-  { value: 'all', labelDe: 'Alle', labelEn: 'All', icon: '🌿' },
-  { value: 'vegetable', labelDe: 'Nutzpflanzen', labelEn: 'Vegetables', icon: '🥦' },
-  { value: 'flower', labelDe: 'Blumen', labelEn: 'Flowers', icon: '🌸' },
-  { value: 'tree', labelDe: 'Bäume', labelEn: 'Trees', icon: '🌳' },
+const CATEGORY_TABS: { value: CategoryFilter; labelDe: string; labelEn: string; icon: string; color: string }[] = [
+  { value: 'all',       labelDe: 'Alle',        labelEn: 'All',        icon: '🌿', color: '#4CAF50' },
+  { value: 'vegetable', labelDe: 'Nutzpflanzen', labelEn: 'Vegetables', icon: '🥦', color: '#F57C00' },
+  { value: 'flower',    labelDe: 'Blumen',       labelEn: 'Flowers',    icon: '🌸', color: '#E91E63' },
+  { value: 'tree',      labelDe: 'Bäume',        labelEn: 'Trees',      icon: '🌳', color: '#2E7D32' },
 ];
 
 export const AgendaScreen: React.FC = () => {
@@ -111,21 +111,23 @@ export const AgendaScreen: React.FC = () => {
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       {/* Kategorie-Tabs */}
-      <View style={[styles.tabBar, { borderBottomColor: theme.border, backgroundColor: theme.surface }]}>
+      <View style={[styles.tabBar, { borderBottomColor: theme.border, backgroundColor: theme.background }]}>
         {CATEGORY_TABS.map((tab) => {
           const isActive = activeCategory === tab.value;
           const label = language === 'de' ? tab.labelDe : tab.labelEn;
           return (
             <TouchableOpacity
               key={tab.value}
-              style={[
-                styles.tab,
-                isActive && { borderBottomColor: theme.primary, borderBottomWidth: 2 },
-              ]}
+              style={styles.tab}
               onPress={() => setActiveCategory(tab.value)}
             >
-              <Text style={styles.tabIcon}>{tab.icon}</Text>
-              <Text style={[styles.tabLabel, { color: isActive ? theme.primary : theme.textSecondary }]}>
+              <View style={[
+                styles.iconBadge,
+                { backgroundColor: isActive ? tab.color : tab.color + '30' },
+              ]}>
+                <Text style={styles.tabIcon}>{tab.icon}</Text>
+              </View>
+              <Text style={[styles.tabLabel, { color: isActive ? tab.color : theme.textSecondary, fontWeight: isActive ? '700' : '400' }]}>
                 {label}
               </Text>
             </TouchableOpacity>
@@ -151,23 +153,26 @@ const styles = StyleSheet.create({
   tabBar: {
     flexDirection: 'row',
     borderBottomWidth: 1,
-    paddingHorizontal: 8,
+    paddingHorizontal: 4,
+    paddingVertical: 8,
   },
   tab: {
     flex: 1,
     alignItems: 'center',
-    paddingVertical: 10,
-    paddingHorizontal: 4,
-    borderBottomWidth: 2,
-    borderBottomColor: 'transparent',
+    gap: 4,
+  },
+  iconBadge: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   tabIcon: {
-    fontSize: 16,
-    marginBottom: 2,
+    fontSize: 18,
   },
   tabLabel: {
     fontSize: 10,
-    fontWeight: '600',
   },
   scrollView: {
     flex: 1,
