@@ -11,11 +11,27 @@ import {
   Platform,
 } from 'react-native';
 import { useTheme } from '../hooks/useTheme';
+import { PlantLocation, PlantCategory } from '../types';
+import { PLANT_LOCATION_METADATA, PLANT_CATEGORY_METADATA } from '../constants/plantMetadata';
+
+const LOCATION_OPTIONS: { value: PlantLocation; label: string; icon: string }[] =
+  (Object.keys(PLANT_LOCATION_METADATA) as PlantLocation[]).map((value) => ({
+    value,
+    label: PLANT_LOCATION_METADATA[value].de,
+    icon: PLANT_LOCATION_METADATA[value].icon,
+  }));
+
+const CATEGORY_OPTIONS: { value: PlantCategory; label: string; icon: string }[] =
+  (Object.keys(PLANT_CATEGORY_METADATA) as PlantCategory[]).map((value) => ({
+    value,
+    label: PLANT_CATEGORY_METADATA[value].de,
+    icon: PLANT_CATEGORY_METADATA[value].icon,
+  }));
 
 interface AddPlantModalProps {
   visible: boolean;
   onClose: () => void;
-  onAdd: (name: string, notes: string) => void;
+  onAdd: (name: string, notes: string, location?: PlantLocation, category?: PlantCategory) => void;
 }
 
 export const AddPlantModal: React.FC<AddPlantModalProps> = ({
@@ -26,12 +42,16 @@ export const AddPlantModal: React.FC<AddPlantModalProps> = ({
   const { theme } = useTheme();
   const [name, setName] = useState('');
   const [notes, setNotes] = useState('');
+  const [location, setLocation] = useState<PlantLocation | undefined>(undefined);
+  const [category, setCategory] = useState<PlantCategory | undefined>(undefined);
 
   const handleAdd = () => {
     if (name.trim()) {
-      onAdd(name.trim(), notes.trim());
+      onAdd(name.trim(), notes.trim(), location, category);
       setName('');
       setNotes('');
+      setLocation(undefined);
+      setCategory(undefined);
       onClose();
     }
   };
@@ -39,6 +59,8 @@ export const AddPlantModal: React.FC<AddPlantModalProps> = ({
   const handleCancel = () => {
     setName('');
     setNotes('');
+    setLocation(undefined);
+    setCategory(undefined);
     onClose();
   };
 
@@ -106,6 +128,54 @@ export const AddPlantModal: React.FC<AddPlantModalProps> = ({
                 multiline
                 numberOfLines={3}
               />
+            </View>
+
+            <View style={styles.field}>
+              <Text style={[styles.label, { color: theme.text }]}>Standort</Text>
+              <View style={styles.locationRow}>
+                {LOCATION_OPTIONS.map((opt) => (
+                  <TouchableOpacity
+                    key={opt.value}
+                    style={[
+                      styles.locationButton,
+                      {
+                        backgroundColor: location === opt.value ? theme.primary : theme.surface,
+                        borderColor: location === opt.value ? theme.primary : theme.border,
+                      },
+                    ]}
+                    onPress={() => setLocation(location === opt.value ? undefined : opt.value)}
+                  >
+                    <Text style={styles.locationIcon}>{opt.icon}</Text>
+                    <Text style={[styles.locationLabel, { color: location === opt.value ? '#fff' : theme.text }]}>
+                      {opt.label}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+
+            <View style={styles.field}>
+              <Text style={[styles.label, { color: theme.text }]}>Kategorie</Text>
+              <View style={styles.locationRow}>
+                {CATEGORY_OPTIONS.map((opt) => (
+                  <TouchableOpacity
+                    key={opt.value}
+                    style={[
+                      styles.locationButton,
+                      {
+                        backgroundColor: category === opt.value ? theme.primary : theme.surface,
+                        borderColor: category === opt.value ? theme.primary : theme.border,
+                      },
+                    ]}
+                    onPress={() => setCategory(category === opt.value ? undefined : opt.value)}
+                  >
+                    <Text style={styles.locationIcon}>{opt.icon}</Text>
+                    <Text style={[styles.locationLabel, { color: category === opt.value ? '#fff' : theme.text }]}>
+                      {opt.label}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
             </View>
 
             <View style={styles.hint}>
@@ -186,6 +256,25 @@ const styles = StyleSheet.create({
   textArea: {
     minHeight: 80,
     textAlignVertical: 'top',
+  },
+  locationRow: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  locationButton: {
+    flex: 1,
+    alignItems: 'center',
+    paddingVertical: 10,
+    borderRadius: 8,
+    borderWidth: 1,
+  },
+  locationIcon: {
+    fontSize: 18,
+    marginBottom: 2,
+  },
+  locationLabel: {
+    fontSize: 11,
+    fontWeight: '600',
   },
   hint: {
     marginTop: 8,

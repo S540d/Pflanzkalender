@@ -7,6 +7,16 @@ import { AddActivityModal } from '../components/AddActivityModal';
 import { EditActivityModal } from '../components/EditActivityModal';
 // import { AppHeader } from '../components/AppHeader'; // Temporär deaktiviert
 import { calculateActivityRows } from '../utils/activityLayout';
+import { PlantCategory } from '../types';
+
+type CategoryFilter = PlantCategory | 'all';
+
+const CATEGORY_TABS: { value: CategoryFilter; label: string; icon: string; color: string }[] = [
+  { value: 'all',       label: 'Alle',         icon: '🌿', color: '#4CAF50' },
+  { value: 'vegetable', label: 'Nutzpflanzen', icon: '🥦', color: '#F57C00' },
+  { value: 'flower',    label: 'Blumen',        icon: '🌸', color: '#E91E63' },
+  { value: 'tree',      label: 'Bäume',         icon: '🌳', color: '#2E7D32' },
+];
 
 export const CalendarScreen: React.FC = () => {
   const { theme } = useTheme();
@@ -16,6 +26,7 @@ export const CalendarScreen: React.FC = () => {
   const [selectedPlantId, setSelectedPlantId] = useState<string | null>(null);
   const [selectedActivityId, setSelectedActivityId] = useState<string | null>(null);
   const [selectedMonth, setSelectedMonth] = useState(0);
+  const [activeCategory, setActiveCategory] = useState<CategoryFilter>('all');
   const fixedScrollRef = useRef<ScrollView>(null);
   const headerScrollRef = useRef<ScrollView>(null);
 
@@ -41,10 +52,13 @@ export const CalendarScreen: React.FC = () => {
   const currentMonth = now.getMonth();
   const currentHalfMonth = currentMonth * 2 + (now.getDate() <= 15 ? 0 : 1);
 
-  // Sortiere Pflanzen alphabetisch
+  // Sortiere und filtere Pflanzen nach Kategorie
   const sortedPlants = useMemo(() => {
-    return [...plants].sort((a, b) => a.name.localeCompare(b.name, 'de'));
-  }, [plants]);
+    const filtered = activeCategory === 'all'
+      ? plants
+      : plants.filter(p => (p.category ?? 'vegetable') === activeCategory);
+    return filtered.sort((a, b) => a.name.localeCompare(b.name, 'de'));
+  }, [plants, activeCategory]);
 
   if (loading) {
     return (
@@ -91,6 +105,30 @@ export const CalendarScreen: React.FC = () => {
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       {/* AppHeader temporär deaktiviert - Navigation ist jetzt im Haupt-Header */}
+
+      {/* Kategorie-Tabs */}
+      <View style={[styles.tabBar, { borderBottomColor: theme.border, backgroundColor: theme.background }]}>
+        {CATEGORY_TABS.map((tab) => {
+          const isActive = activeCategory === tab.value;
+          return (
+            <TouchableOpacity
+              key={tab.value}
+              style={styles.tab}
+              onPress={() => setActiveCategory(tab.value)}
+            >
+              <View style={[
+                styles.iconBadge,
+                { backgroundColor: isActive ? tab.color : tab.color + '30' },
+              ]}>
+                <Text style={styles.tabIcon}>{tab.icon}</Text>
+              </View>
+              <Text style={[styles.tabLabel, { color: isActive ? tab.color : theme.textSecondary, fontWeight: isActive ? '700' : '400' }]}>
+                {tab.label}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
+      </View>
 
       <View style={styles.tableContainer}>
         <View style={styles.fixedColumn}>
@@ -300,6 +338,30 @@ export const CalendarScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  tabBar: {
+    flexDirection: 'row',
+    borderBottomWidth: 1,
+    paddingHorizontal: 4,
+    paddingVertical: 8,
+  },
+  tab: {
+    flex: 1,
+    alignItems: 'center',
+    gap: 4,
+  },
+  iconBadge: {
+    width: 32,
+    height: 32,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  tabIcon: {
+    fontSize: 16,
+  },
+  tabLabel: {
+    fontSize: 9,
   },
   tableContainer: {
     flex: 1,

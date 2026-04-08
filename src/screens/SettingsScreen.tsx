@@ -17,7 +17,7 @@ const translations = {
     english: 'English',
     german: 'German',
     feedback: 'Send Feedback',
-    support: 'Buy Me a Coffee',
+    support: 'Ko-fi',
     export: 'EXPORT',
     exportData: 'Export as JSON',
     about: 'ABOUT',
@@ -33,7 +33,7 @@ const translations = {
     english: 'English',
     german: 'Deutsch',
     feedback: 'Feedback senden',
-    support: 'Buy Me a Coffee',
+    support: 'Ko-fi',
     export: 'EXPORTIEREN',
     exportData: 'Als JSON exportieren',
     about: 'ÜBER',
@@ -203,7 +203,7 @@ export const SettingsScreen: React.FC = () => {
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.linkItemFlex}
-            onPress={() => Linking.openURL('https://buymeacoffee.com/sven4321')}
+            onPress={() => Linking.openURL('https://ko-fi.com/devsven')}
           >
             <Text style={[styles.linkText, { color: '#6200EE' }]}>{t.support}</Text>
           </TouchableOpacity>

@@ -1,9 +1,9 @@
-import React, { useMemo } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import React, { useMemo, useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useTheme } from '../hooks/useTheme';
 import { usePlants } from '../contexts/PlantContext';
 import { useLanguage } from '../contexts/LanguageContext';
-// import { AppHeader } from '../components/AppHeader'; // Temporär deaktiviert
+import { PlantCategory } from '../types';
 
 interface ActivityInfo {
   plantName: string;
@@ -12,10 +12,20 @@ interface ActivityInfo {
   notes?: string;
 }
 
+type CategoryFilter = PlantCategory | 'all';
+
+const CATEGORY_TABS: { value: CategoryFilter; labelDe: string; labelEn: string; icon: string; color: string }[] = [
+  { value: 'all',       labelDe: 'Alle',        labelEn: 'All',        icon: '🌿', color: '#4CAF50' },
+  { value: 'vegetable', labelDe: 'Nutzpflanzen', labelEn: 'Vegetables', icon: '🥦', color: '#F57C00' },
+  { value: 'flower',    labelDe: 'Blumen',       labelEn: 'Flowers',    icon: '🌸', color: '#E91E63' },
+  { value: 'tree',      labelDe: 'Bäume',        labelEn: 'Trees',      icon: '🌳', color: '#2E7D32' },
+];
+
 export const AgendaScreen: React.FC = () => {
   const { theme } = useTheme();
   const { plants } = usePlants();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  const [activeCategory, setActiveCategory] = useState<CategoryFilter>('all');
 
   // Aktuellen Monat bestimmen (0-23 Halbmonate)
   const currentMonth = useMemo(() => {
@@ -26,6 +36,12 @@ export const AgendaScreen: React.FC = () => {
     return month * 2 + halfMonth;
   }, []);
 
+  // Gefilterte Pflanzen nach Kategorie
+  const filteredPlants = useMemo(() => {
+    if (activeCategory === 'all') return plants;
+    return plants.filter(p => (p.category ?? 'vegetable') === activeCategory);
+  }, [plants, activeCategory]);
+
   // Aktivitäten für drei Zeiträume sammeln (vorher, aktuell, danach)
   const previousMonth = currentMonth > 0 ? currentMonth - 1 : 23;
   const nextMonth = currentMonth < 23 ? currentMonth + 1 : 0;
@@ -33,7 +49,7 @@ export const AgendaScreen: React.FC = () => {
   const getActivitiesForMonth = (monthIndex: number): ActivityInfo[] => {
     const activities: ActivityInfo[] = [];
 
-    plants.forEach(plant => {
+    filteredPlants.forEach(plant => {
       plant.activities.forEach(activity => {
         if (activity.startMonth <= monthIndex && activity.endMonth >= monthIndex) {
           activities.push({
@@ -46,13 +62,12 @@ export const AgendaScreen: React.FC = () => {
       });
     });
 
-    // Sortiere Aktivitäten alphabetisch nach Pflanzennamen
     return activities.sort((a, b) => a.plantName.localeCompare(b.plantName, 'de'));
   };
 
-  const previousActivities = useMemo(() => getActivitiesForMonth(previousMonth), [plants, previousMonth]);
-  const currentActivities = useMemo(() => getActivitiesForMonth(currentMonth), [plants, currentMonth]);
-  const nextActivities = useMemo(() => getActivitiesForMonth(nextMonth), [plants, nextMonth]);
+  const previousActivities = useMemo(() => getActivitiesForMonth(previousMonth), [filteredPlants, previousMonth]);
+  const currentActivities = useMemo(() => getActivitiesForMonth(currentMonth), [filteredPlants, currentMonth]);
+  const nextActivities = useMemo(() => getActivitiesForMonth(nextMonth), [filteredPlants, nextMonth]);
 
   const monthNames = t('agenda.months') as any;
 
@@ -95,7 +110,31 @@ export const AgendaScreen: React.FC = () => {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
-      {/* <AppHeader /> Temporär deaktiviert */}
+      {/* Kategorie-Tabs */}
+      <View style={[styles.tabBar, { borderBottomColor: theme.border, backgroundColor: theme.background }]}>
+        {CATEGORY_TABS.map((tab) => {
+          const isActive = activeCategory === tab.value;
+          const label = language === 'de' ? tab.labelDe : tab.labelEn;
+          return (
+            <TouchableOpacity
+              key={tab.value}
+              style={styles.tab}
+              onPress={() => setActiveCategory(tab.value)}
+            >
+              <View style={[
+                styles.iconBadge,
+                { backgroundColor: isActive ? tab.color : tab.color + '30' },
+              ]}>
+                <Text style={styles.tabIcon}>{tab.icon}</Text>
+              </View>
+              <Text style={[styles.tabLabel, { color: isActive ? tab.color : theme.textSecondary, fontWeight: isActive ? '700' : '400' }]}>
+                {label}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
+      </View>
+
       <ScrollView horizontal style={styles.scrollView}>
         <View style={styles.columnsContainer}>
           {renderColumn(t('agenda.previous'), previousActivities, previousMonth)}
@@ -110,6 +149,30 @@ export const AgendaScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  tabBar: {
+    flexDirection: 'row',
+    borderBottomWidth: 1,
+    paddingHorizontal: 4,
+    paddingVertical: 8,
+  },
+  tab: {
+    flex: 1,
+    alignItems: 'center',
+    gap: 4,
+  },
+  iconBadge: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  tabIcon: {
+    fontSize: 18,
+  },
+  tabLabel: {
+    fontSize: 10,
   },
   scrollView: {
     flex: 1,

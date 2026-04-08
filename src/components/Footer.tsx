@@ -6,7 +6,7 @@ export const Footer: React.FC = () => {
   const { theme } = useTheme();
 
   const handleSupportPress = () => {
-    Linking.openURL('https://buymeacoffee.com/sven4321');
+    Linking.openURL('https://ko-fi.com/devsven');
   };
 
   return (

@@ -4,6 +4,8 @@ import { useTheme } from '../hooks/useTheme';
 import { usePlants } from '../contexts/PlantContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { AddPlantModal } from '../components/AddPlantModal';
+import { PlantLocation, PlantCategory } from '../types';
+import { PLANT_LOCATION_METADATA, PLANT_CATEGORY_METADATA } from '../constants/plantMetadata';
 
 export const PlantManagementScreen: React.FC = () => {
   const { theme } = useTheme();
@@ -16,8 +18,8 @@ export const PlantManagementScreen: React.FC = () => {
     return [...plants].sort((a, b) => a.name.localeCompare(b.name, 'de'));
   }, [plants]);
 
-  const handleAddPlant = (name: string, notes: string) => {
-    addPlant({ name, notes, isDefault: false, userId: null, activities: [] });
+  const handleAddPlant = (name: string, notes: string, location?: PlantLocation, category?: PlantCategory) => {
+    addPlant({ name, notes, location, category, isDefault: false, userId: null, activities: [] });
     setShowAddPlant(false);
   };
 
@@ -61,6 +63,18 @@ export const PlantManagementScreen: React.FC = () => {
                 >
                   <View style={styles.plantInfo}>
                     <Text style={[styles.plantName, { color: theme.text }]}>{plant.name}</Text>
+                    <View style={styles.plantMeta}>
+                      {plant.category && (
+                        <Text style={[styles.plantMetaText, { color: theme.textSecondary }]}>
+                          {PLANT_CATEGORY_METADATA[plant.category].icon} {PLANT_CATEGORY_METADATA[plant.category][language]}
+                        </Text>
+                      )}
+                      {plant.location && (
+                        <Text style={[styles.plantMetaText, { color: theme.textSecondary }]}>
+                          {PLANT_LOCATION_METADATA[plant.location].icon} {PLANT_LOCATION_METADATA[plant.location][language]}
+                        </Text>
+                      )}
+                    </View>
                     {plant.notes && (
                       <Text style={[styles.plantNotes, { color: theme.textSecondary }]}>
                         {plant.notes}
@@ -149,6 +163,14 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
     marginBottom: 4,
+  },
+  plantMeta: {
+    flexDirection: 'row',
+    gap: 12,
+    marginBottom: 4,
+  },
+  plantMetaText: {
+    fontSize: 13,
   },
   plantNotes: {
     fontSize: 14,

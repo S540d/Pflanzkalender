@@ -5,6 +5,32 @@ Alle wesentlichen Änderungen an diesem Projekt werden in dieser Datei dokumenti
 Das Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.0.0/),
 und dieses Projekt folgt [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Hinzugefügt
+- **Pflanzenkategorien** (Nutzpflanzen / Blumen / Bäume):
+  - Neuer Typ `PlantCategory` im Datenmodell (optionales Feld, rückwärtskompatibel)
+  - Kategorie-Tabs mit farbigen Icon-Badges in Kalender- und Agenda-Ansicht
+  - Kategorie-Auswahl beim Anlegen neuer Pflanzen
+  - Anzeige von Kategorie + Standort in der Pflanzenverwaltung
+- **32 vordefinierte Pflanzen** (vorher: 20):
+  - 21 Nutzpflanzen (unverändert)
+  - 10 Blumen: Rosen, Lavendel, Tulpen, Sonnenblumen, Dahlien, Geranien, Hortensien, Pfingstrosen, Chrysanthemen, Ringelblumen
+  - 5 Bäume: Apfelbaum, Birnbaum, Kirschbaum, Pflaume, Haselnuss
+- **Pflanzstandort-Empfehlungen** (#38):
+  - Neues optionales Feld `location` (Sonne / Halbschatten / Schatten)
+  - Standort-Auswahl im „Neue Pflanze"-Dialog
+  - Alle 32 Default-Pflanzen mit Standortempfehlung versehen
+- **Herbst-Schnitt** (#43):
+  - Rosen: Rückschnitt Oktober (zusätzlich zum Frühjahrsschnitt)
+  - Himbeeren: Rückschnitt September–Oktober (alte Ruten nach Ernte)
+  - Lavendel: Rückschnitt August–September (nach der Blüte)
+  - Label vereinheitlicht: „Schnitt" → „Zurückschneiden"; Farbe konsistent mit `activityTypes`
+
+### Geändert
+- **Ko-fi Support-Link** (#40): URL von `buymeacoffee.com/sven4321` auf `https://ko-fi.com/devsven` aktualisiert, Label auf „Ko-fi" geändert (Settings + Footer)
+- **Kategorie-Icons**: Farbige abgerundete Badges statt Unterstriche – auf jedem Hintergrund erkennbar
+
 ## [1.2.0] - 2025-10-26
 
 ### Hinzugefügt
