@@ -1,4 +1,4 @@
-import { Plant, PlantLocation, PlantCategory } from '../types';
+import { Plant } from '../types';
 
 // Hilfsfunktion zum Erstellen von Aktivitäten
 const createActivity = (type: string, startMonth: number, endMonth: number, color: string, label: string) => ({
@@ -10,9 +10,9 @@ const createActivity = (type: string, startMonth: number, endMonth: number, colo
   label,
 });
 
-const v = 'vegetable' as PlantCategory;
-const f = 'flower' as PlantCategory;
-const t = 'tree' as PlantCategory;
+const v = 'vegetable' as const;
+const f = 'flower' as const;
+const t = 'tree' as const;
 
 export const DEFAULT_PLANTS: Omit<Plant, 'id' | 'createdAt' | 'updatedAt'>[] = [
   {
@@ -20,7 +20,7 @@ export const DEFAULT_PLANTS: Omit<Plant, 'id' | 'createdAt' | 'updatedAt'>[] = [
     isDefault: true,
     userId: null,
     notes: 'Beliebtes Gemüse für Garten und Balkon',
-    location: 'sun' as PlantLocation,
+    location: 'sun',
     category: v,
     activities: [
       createActivity('sow', 3, 5, '#8B4513', 'Aussäen'), // Feb-März
@@ -34,7 +34,7 @@ export const DEFAULT_PLANTS: Omit<Plant, 'id' | 'createdAt' | 'updatedAt'>[] = [
     isDefault: true,
     userId: null,
     notes: 'Mehrjährige Pflanze',
-    location: 'partial-shade' as PlantLocation,
+    location: 'partial-shade',
     category: v,
     activities: [
       createActivity('plant', 15, 17, '#228B22', 'Pflanzen'), // Aug-Sep
@@ -47,7 +47,7 @@ export const DEFAULT_PLANTS: Omit<Plant, 'id' | 'createdAt' | 'updatedAt'>[] = [
     isDefault: true,
     userId: null,
     notes: 'Schnell wachsend',
-    location: 'partial-shade' as PlantLocation,
+    location: 'partial-shade',
     category: v,
     activities: [
       createActivity('sow', 5, 15, '#8B4513', 'Aussäen'), // März-Aug
@@ -59,7 +59,7 @@ export const DEFAULT_PLANTS: Omit<Plant, 'id' | 'createdAt' | 'updatedAt'>[] = [
     isDefault: true,
     userId: null,
     notes: 'Wurzelgemüse',
-    location: 'sun' as PlantLocation,
+    location: 'sun',
     category: v,
     activities: [
       createActivity('sow', 5, 13, '#8B4513', 'Aussäen'), // März-Jul
@@ -71,12 +71,12 @@ export const DEFAULT_PLANTS: Omit<Plant, 'id' | 'createdAt' | 'updatedAt'>[] = [
     isDefault: true,
     userId: null,
     notes: 'Zierpflanze',
-    location: 'sun' as PlantLocation,
+    location: 'sun',
     category: f,
     activities: [
       createActivity('prune', 4, 5, '#FFEB3B', 'Zurückschneiden'), // März (Frühjahr)
       createActivity('fertilize', 7, 15, '#FFD700', 'Düngen'), // Apr-Aug
-      createActivity('prune', 19, 20, '#FFEB3B', 'Zurückschneiden'), // Okt (Herbst)
+      createActivity('prune', 18, 19, '#FFEB3B', 'Zurückschneiden'), // Okt (Herbst)
       createActivity('protect', 21, 23, '#9370DB', 'Winterschutz'), // Nov-Dez
     ],
   },
@@ -85,7 +85,7 @@ export const DEFAULT_PLANTS: Omit<Plant, 'id' | 'createdAt' | 'updatedAt'>[] = [
     isDefault: true,
     userId: null,
     notes: 'Wärmeliebendes Gemüse',
-    location: 'sun' as PlantLocation,
+    location: 'sun',
     category: v,
     activities: [
       createActivity('sow', 3, 5, '#8B4513', 'Aussäen'), // Feb-März
@@ -98,7 +98,7 @@ export const DEFAULT_PLANTS: Omit<Plant, 'id' | 'createdAt' | 'updatedAt'>[] = [
     isDefault: true,
     userId: null,
     notes: 'Ertragreiche Kürbispflanze',
-    location: 'sun' as PlantLocation,
+    location: 'sun',
     category: v,
     activities: [
       createActivity('sow', 7, 9, '#8B4513', 'Aussäen'), // Apr-Mai
@@ -111,7 +111,7 @@ export const DEFAULT_PLANTS: Omit<Plant, 'id' | 'createdAt' | 'updatedAt'>[] = [
     isDefault: true,
     userId: null,
     notes: 'Kletterpflanze',
-    location: 'sun' as PlantLocation,
+    location: 'sun',
     category: v,
     activities: [
       createActivity('sow', 7, 9, '#8B4513', 'Aussäen'), // Apr-Mai
@@ -124,7 +124,7 @@ export const DEFAULT_PLANTS: Omit<Plant, 'id' | 'createdAt' | 'updatedAt'>[] = [
     isDefault: true,
     userId: null,
     notes: 'Schnellwachsend',
-    location: 'partial-shade' as PlantLocation,
+    location: 'partial-shade',
     category: v,
     activities: [
       createActivity('sow', 5, 17, '#8B4513', 'Aussäen'), // März-Sep
@@ -136,7 +136,7 @@ export const DEFAULT_PLANTS: Omit<Plant, 'id' | 'createdAt' | 'updatedAt'>[] = [
     isDefault: true,
     userId: null,
     notes: 'Beliebtes Küchenkraut',
-    location: 'sun' as PlantLocation,
+    location: 'sun',
     category: v,
     activities: [
       createActivity('sow', 7, 9, '#8B4513', 'Aussäen'), // Apr-Mai
@@ -148,7 +148,7 @@ export const DEFAULT_PLANTS: Omit<Plant, 'id' | 'createdAt' | 'updatedAt'>[] = [
     isDefault: true,
     userId: null,
     notes: 'Große Früchte',
-    location: 'sun' as PlantLocation,
+    location: 'sun',
     category: v,
     activities: [
       createActivity('sow', 7, 9, '#8B4513', 'Aussäen'), // Apr-Mai
@@ -161,7 +161,7 @@ export const DEFAULT_PLANTS: Omit<Plant, 'id' | 'createdAt' | 'updatedAt'>[] = [
     isDefault: true,
     userId: null,
     notes: 'Grundnahrungsmittel',
-    location: 'sun' as PlantLocation,
+    location: 'sun',
     category: v,
     activities: [
       createActivity('plant', 5, 9, '#228B22', 'Pflanzen'), // März-Mai
@@ -173,7 +173,7 @@ export const DEFAULT_PLANTS: Omit<Plant, 'id' | 'createdAt' | 'updatedAt'>[] = [
     isDefault: true,
     userId: null,
     notes: 'Lagerfähig',
-    location: 'sun' as PlantLocation,
+    location: 'sun',
     category: v,
     activities: [
       createActivity('plant', 5, 7, '#228B22', 'Steckzwiebeln'), // März-Apr
@@ -185,7 +185,7 @@ export const DEFAULT_PLANTS: Omit<Plant, 'id' | 'createdAt' | 'updatedAt'>[] = [
     isDefault: true,
     userId: null,
     notes: 'Herbstpflanzung',
-    location: 'sun' as PlantLocation,
+    location: 'sun',
     category: v,
     activities: [
       createActivity('plant', 17, 21, '#228B22', 'Pflanzen'), // Sep-Nov
@@ -197,7 +197,7 @@ export const DEFAULT_PLANTS: Omit<Plant, 'id' | 'createdAt' | 'updatedAt'>[] = [
     isDefault: true,
     userId: null,
     notes: 'Beerenobst',
-    location: 'partial-shade' as PlantLocation,
+    location: 'partial-shade',
     category: v,
     activities: [
       createActivity('prune', 3, 5, '#FFEB3B', 'Zurückschneiden'), // Feb-März (Frühjahr)
@@ -211,7 +211,7 @@ export const DEFAULT_PLANTS: Omit<Plant, 'id' | 'createdAt' | 'updatedAt'>[] = [
     isDefault: true,
     userId: null,
     notes: 'Duftpflanze',
-    location: 'sun' as PlantLocation,
+    location: 'sun',
     category: f,
     activities: [
       createActivity('prune', 5, 7, '#FFEB3B', 'Zurückschneiden'), // März-Apr (Frühjahr)
@@ -224,7 +224,7 @@ export const DEFAULT_PLANTS: Omit<Plant, 'id' | 'createdAt' | 'updatedAt'>[] = [
     isDefault: true,
     userId: null,
     notes: 'Zweijähriges Kraut',
-    location: 'partial-shade' as PlantLocation,
+    location: 'partial-shade',
     category: v,
     activities: [
       createActivity('sow', 5, 13, '#8B4513', 'Aussäen'), // März-Jul
@@ -236,7 +236,7 @@ export const DEFAULT_PLANTS: Omit<Plant, 'id' | 'createdAt' | 'updatedAt'>[] = [
     isDefault: true,
     userId: null,
     notes: 'Mehrjährig',
-    location: 'partial-shade' as PlantLocation,
+    location: 'partial-shade',
     category: v,
     activities: [
       createActivity('sow', 5, 9, '#8B4513', 'Aussäen'), // März-Mai
@@ -248,7 +248,7 @@ export const DEFAULT_PLANTS: Omit<Plant, 'id' | 'createdAt' | 'updatedAt'>[] = [
     isDefault: true,
     userId: null,
     notes: 'Frühjahrs- und Herbstanbau',
-    location: 'partial-shade' as PlantLocation,
+    location: 'partial-shade',
     category: v,
     activities: [
       createActivity('sow', 3, 9, '#8B4513', 'Aussäen'), // Feb-Mai
@@ -262,7 +262,7 @@ export const DEFAULT_PLANTS: Omit<Plant, 'id' | 'createdAt' | 'updatedAt'>[] = [
     isDefault: true,
     userId: null,
     notes: 'Obstbaum',
-    location: 'sun' as PlantLocation,
+    location: 'sun',
     category: t,
     activities: [
       createActivity('prune', 1, 5, '#FFEB3B', 'Zurückschneiden'), // Jan-März (Winterschnitt)
@@ -276,7 +276,7 @@ export const DEFAULT_PLANTS: Omit<Plant, 'id' | 'createdAt' | 'updatedAt'>[] = [
     isDefault: true,
     userId: null,
     notes: 'Frühjahrszwiebel',
-    location: 'sun' as PlantLocation,
+    location: 'sun',
     category: f,
     activities: [
       createActivity('plant', 17, 21, '#228B22', 'Zwiebeln pflanzen'), // Sep-Nov
@@ -288,7 +288,7 @@ export const DEFAULT_PLANTS: Omit<Plant, 'id' | 'createdAt' | 'updatedAt'>[] = [
     isDefault: true,
     userId: null,
     notes: 'Einjährige Sommerblume',
-    location: 'sun' as PlantLocation,
+    location: 'sun',
     category: f,
     activities: [
       createActivity('sow', 7, 9, '#8B4513', 'Aussäen'),             // Apr-Mai
@@ -300,7 +300,7 @@ export const DEFAULT_PLANTS: Omit<Plant, 'id' | 'createdAt' | 'updatedAt'>[] = [
     isDefault: true,
     userId: null,
     notes: 'Knollenblume, nicht frosthart',
-    location: 'sun' as PlantLocation,
+    location: 'sun',
     category: f,
     activities: [
       createActivity('plant', 9, 10, '#228B22', 'Knollen einpflanzen'), // Mai
@@ -313,7 +313,7 @@ export const DEFAULT_PLANTS: Omit<Plant, 'id' | 'createdAt' | 'updatedAt'>[] = [
     isDefault: true,
     userId: null,
     notes: 'Balkonpflanze (Pelargonien)',
-    location: 'sun' as PlantLocation,
+    location: 'sun',
     category: f,
     activities: [
       createActivity('plant', 9, 10, '#228B22', 'Einpflanzen'),   // Mai
@@ -326,7 +326,7 @@ export const DEFAULT_PLANTS: Omit<Plant, 'id' | 'createdAt' | 'updatedAt'>[] = [
     isDefault: true,
     userId: null,
     notes: 'Schattenliebender Strauch',
-    location: 'partial-shade' as PlantLocation,
+    location: 'partial-shade',
     category: f,
     activities: [
       createActivity('prune', 3, 5, '#FFEB3B', 'Zurückschneiden'), // Feb-März
@@ -339,7 +339,7 @@ export const DEFAULT_PLANTS: Omit<Plant, 'id' | 'createdAt' | 'updatedAt'>[] = [
     isDefault: true,
     userId: null,
     notes: 'Mehrjährige Staude',
-    location: 'sun' as PlantLocation,
+    location: 'sun',
     category: f,
     activities: [
       createActivity('plant', 17, 19, '#228B22', 'Pflanzen'),   // Sep-Okt (Herbst)
@@ -352,7 +352,7 @@ export const DEFAULT_PLANTS: Omit<Plant, 'id' | 'createdAt' | 'updatedAt'>[] = [
     isDefault: true,
     userId: null,
     notes: 'Herbstblüher',
-    location: 'sun' as PlantLocation,
+    location: 'sun',
     category: f,
     activities: [
       createActivity('plant', 9, 11, '#228B22', 'Pflanzen'),      // Mai-Jun
@@ -365,7 +365,7 @@ export const DEFAULT_PLANTS: Omit<Plant, 'id' | 'createdAt' | 'updatedAt'>[] = [
     isDefault: true,
     userId: null,
     notes: 'Einjährige Heilpflanze',
-    location: 'sun' as PlantLocation,
+    location: 'sun',
     category: f,
     activities: [
       createActivity('sow', 5, 7, '#8B4513', 'Aussäen'),         // März-Apr
@@ -378,7 +378,7 @@ export const DEFAULT_PLANTS: Omit<Plant, 'id' | 'createdAt' | 'updatedAt'>[] = [
     isDefault: true,
     userId: null,
     notes: 'Obstbaum',
-    location: 'sun' as PlantLocation,
+    location: 'sun',
     category: t,
     activities: [
       createActivity('prune', 1, 5, '#FFEB3B', 'Zurückschneiden'), // Jan-März
@@ -391,7 +391,7 @@ export const DEFAULT_PLANTS: Omit<Plant, 'id' | 'createdAt' | 'updatedAt'>[] = [
     isDefault: true,
     userId: null,
     notes: 'Süß- oder Sauerkirsche',
-    location: 'sun' as PlantLocation,
+    location: 'sun',
     category: t,
     activities: [
       createActivity('prune', 11, 13, '#FFEB3B', 'Zurückschneiden'), // Jun-Jul (nach Ernte)
@@ -404,7 +404,7 @@ export const DEFAULT_PLANTS: Omit<Plant, 'id' | 'createdAt' | 'updatedAt'>[] = [
     isDefault: true,
     userId: null,
     notes: 'Steinobst / Zwetschge',
-    location: 'sun' as PlantLocation,
+    location: 'sun',
     category: t,
     activities: [
       createActivity('prune', 3, 5, '#FFEB3B', 'Zurückschneiden'), // Feb-März
@@ -416,7 +416,7 @@ export const DEFAULT_PLANTS: Omit<Plant, 'id' | 'createdAt' | 'updatedAt'>[] = [
     isDefault: true,
     userId: null,
     notes: 'Strauch / kleiner Baum',
-    location: 'partial-shade' as PlantLocation,
+    location: 'partial-shade',
     category: t,
     activities: [
       createActivity('prune', 3, 5, '#FFEB3B', 'Zurückschneiden'), // Feb-März

@@ -12,18 +12,21 @@ import {
 } from 'react-native';
 import { useTheme } from '../hooks/useTheme';
 import { PlantLocation, PlantCategory } from '../types';
+import { PLANT_LOCATION_METADATA, PLANT_CATEGORY_METADATA } from '../constants/plantMetadata';
 
-const LOCATION_OPTIONS: { value: PlantLocation; label: string; icon: string }[] = [
-  { value: 'sun', label: 'Sonne', icon: '☀️' },
-  { value: 'partial-shade', label: 'Halbschatten', icon: '⛅' },
-  { value: 'shade', label: 'Schatten', icon: '🌥️' },
-];
+const LOCATION_OPTIONS: { value: PlantLocation; label: string; icon: string }[] =
+  (Object.keys(PLANT_LOCATION_METADATA) as PlantLocation[]).map((value) => ({
+    value,
+    label: PLANT_LOCATION_METADATA[value].de,
+    icon: PLANT_LOCATION_METADATA[value].icon,
+  }));
 
-const CATEGORY_OPTIONS: { value: PlantCategory; label: string; icon: string }[] = [
-  { value: 'vegetable', label: 'Nutzpflanze', icon: '🥦' },
-  { value: 'flower', label: 'Blume', icon: '🌸' },
-  { value: 'tree', label: 'Baum', icon: '🌳' },
-];
+const CATEGORY_OPTIONS: { value: PlantCategory; label: string; icon: string }[] =
+  (Object.keys(PLANT_CATEGORY_METADATA) as PlantCategory[]).map((value) => ({
+    value,
+    label: PLANT_CATEGORY_METADATA[value].de,
+    icon: PLANT_CATEGORY_METADATA[value].icon,
+  }));
 
 interface AddPlantModalProps {
   visible: boolean;

@@ -5,18 +5,7 @@ import { usePlants } from '../contexts/PlantContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { AddPlantModal } from '../components/AddPlantModal';
 import { PlantLocation, PlantCategory } from '../types';
-
-const LOCATION_LABELS: Record<PlantLocation, { de: string; en: string; icon: string }> = {
-  sun: { de: 'Sonne', en: 'Sun', icon: '☀️' },
-  'partial-shade': { de: 'Halbschatten', en: 'Partial Shade', icon: '⛅' },
-  shade: { de: 'Schatten', en: 'Shade', icon: '🌥️' },
-};
-
-const CATEGORY_LABELS: Record<PlantCategory, { de: string; en: string; icon: string }> = {
-  vegetable: { de: 'Nutzpflanze', en: 'Vegetable / Herb', icon: '🥦' },
-  flower: { de: 'Blume', en: 'Flower', icon: '🌸' },
-  tree: { de: 'Baum', en: 'Tree', icon: '🌳' },
-};
+import { PLANT_LOCATION_METADATA, PLANT_CATEGORY_METADATA } from '../constants/plantMetadata';
 
 export const PlantManagementScreen: React.FC = () => {
   const { theme } = useTheme();
@@ -77,12 +66,12 @@ export const PlantManagementScreen: React.FC = () => {
                     <View style={styles.plantMeta}>
                       {plant.category && (
                         <Text style={[styles.plantMetaText, { color: theme.textSecondary }]}>
-                          {CATEGORY_LABELS[plant.category].icon} {CATEGORY_LABELS[plant.category][language]}
+                          {PLANT_CATEGORY_METADATA[plant.category].icon} {PLANT_CATEGORY_METADATA[plant.category][language]}
                         </Text>
                       )}
                       {plant.location && (
                         <Text style={[styles.plantMetaText, { color: theme.textSecondary }]}>
-                          {LOCATION_LABELS[plant.location].icon} {LOCATION_LABELS[plant.location][language]}
+                          {PLANT_LOCATION_METADATA[plant.location].icon} {PLANT_LOCATION_METADATA[plant.location][language]}
                         </Text>
                       )}
                     </View>
