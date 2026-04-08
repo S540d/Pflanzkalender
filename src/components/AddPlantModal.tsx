@@ -11,11 +11,18 @@ import {
   Platform,
 } from 'react-native';
 import { useTheme } from '../hooks/useTheme';
+import { PlantLocation } from '../types';
+
+const LOCATION_OPTIONS: { value: PlantLocation; label: string; icon: string }[] = [
+  { value: 'sun', label: 'Sonne', icon: '☀️' },
+  { value: 'partial-shade', label: 'Halbschatten', icon: '⛅' },
+  { value: 'shade', label: 'Schatten', icon: '🌥️' },
+];
 
 interface AddPlantModalProps {
   visible: boolean;
   onClose: () => void;
-  onAdd: (name: string, notes: string) => void;
+  onAdd: (name: string, notes: string, location?: PlantLocation) => void;
 }
 
 export const AddPlantModal: React.FC<AddPlantModalProps> = ({
@@ -26,12 +33,14 @@ export const AddPlantModal: React.FC<AddPlantModalProps> = ({
   const { theme } = useTheme();
   const [name, setName] = useState('');
   const [notes, setNotes] = useState('');
+  const [location, setLocation] = useState<PlantLocation | undefined>(undefined);
 
   const handleAdd = () => {
     if (name.trim()) {
-      onAdd(name.trim(), notes.trim());
+      onAdd(name.trim(), notes.trim(), location);
       setName('');
       setNotes('');
+      setLocation(undefined);
       onClose();
     }
   };
@@ -39,6 +48,7 @@ export const AddPlantModal: React.FC<AddPlantModalProps> = ({
   const handleCancel = () => {
     setName('');
     setNotes('');
+    setLocation(undefined);
     onClose();
   };
 
@@ -106,6 +116,30 @@ export const AddPlantModal: React.FC<AddPlantModalProps> = ({
                 multiline
                 numberOfLines={3}
               />
+            </View>
+
+            <View style={styles.field}>
+              <Text style={[styles.label, { color: theme.text }]}>Standort</Text>
+              <View style={styles.locationRow}>
+                {LOCATION_OPTIONS.map((opt) => (
+                  <TouchableOpacity
+                    key={opt.value}
+                    style={[
+                      styles.locationButton,
+                      {
+                        backgroundColor: location === opt.value ? theme.primary : theme.surface,
+                        borderColor: location === opt.value ? theme.primary : theme.border,
+                      },
+                    ]}
+                    onPress={() => setLocation(location === opt.value ? undefined : opt.value)}
+                  >
+                    <Text style={styles.locationIcon}>{opt.icon}</Text>
+                    <Text style={[styles.locationLabel, { color: location === opt.value ? '#fff' : theme.text }]}>
+                      {opt.label}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
             </View>
 
             <View style={styles.hint}>
@@ -186,6 +220,25 @@ const styles = StyleSheet.create({
   textArea: {
     minHeight: 80,
     textAlignVertical: 'top',
+  },
+  locationRow: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  locationButton: {
+    flex: 1,
+    alignItems: 'center',
+    paddingVertical: 10,
+    borderRadius: 8,
+    borderWidth: 1,
+  },
+  locationIcon: {
+    fontSize: 18,
+    marginBottom: 2,
+  },
+  locationLabel: {
+    fontSize: 11,
+    fontWeight: '600',
   },
   hint: {
     marginTop: 8,

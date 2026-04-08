@@ -4,6 +4,13 @@ import { useTheme } from '../hooks/useTheme';
 import { usePlants } from '../contexts/PlantContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { AddPlantModal } from '../components/AddPlantModal';
+import { PlantLocation } from '../types';
+
+const LOCATION_LABELS: Record<PlantLocation, { de: string; en: string; icon: string }> = {
+  sun: { de: 'Sonne', en: 'Sun', icon: '☀️' },
+  'partial-shade': { de: 'Halbschatten', en: 'Partial Shade', icon: '⛅' },
+  shade: { de: 'Schatten', en: 'Shade', icon: '🌥️' },
+};
 
 export const PlantManagementScreen: React.FC = () => {
   const { theme } = useTheme();
@@ -16,8 +23,8 @@ export const PlantManagementScreen: React.FC = () => {
     return [...plants].sort((a, b) => a.name.localeCompare(b.name, 'de'));
   }, [plants]);
 
-  const handleAddPlant = (name: string, notes: string) => {
-    addPlant({ name, notes, isDefault: false, userId: null, activities: [] });
+  const handleAddPlant = (name: string, notes: string, location?: PlantLocation) => {
+    addPlant({ name, notes, location, isDefault: false, userId: null, activities: [] });
     setShowAddPlant(false);
   };
 
@@ -61,6 +68,11 @@ export const PlantManagementScreen: React.FC = () => {
                 >
                   <View style={styles.plantInfo}>
                     <Text style={[styles.plantName, { color: theme.text }]}>{plant.name}</Text>
+                    {plant.location && (
+                      <Text style={[styles.plantLocation, { color: theme.textSecondary }]}>
+                        {LOCATION_LABELS[plant.location].icon} {LOCATION_LABELS[plant.location][language]}
+                      </Text>
+                    )}
                     {plant.notes && (
                       <Text style={[styles.plantNotes, { color: theme.textSecondary }]}>
                         {plant.notes}
@@ -148,6 +160,10 @@ const styles = StyleSheet.create({
   plantName: {
     fontSize: 18,
     fontWeight: '600',
+    marginBottom: 4,
+  },
+  plantLocation: {
+    fontSize: 13,
     marginBottom: 4,
   },
   plantNotes: {

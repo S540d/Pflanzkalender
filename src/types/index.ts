@@ -7,6 +7,8 @@ export interface Activity {
   label: string;
 }
 
+export type PlantLocation = 'sun' | 'partial-shade' | 'shade';
+
 export interface Plant {
   id: string;
   name: string;
@@ -14,6 +16,7 @@ export interface Plant {
   userId: string | null;
   activities: Activity[];
   notes: string;
+  location?: PlantLocation;
   createdAt: number;
   updatedAt: number;
 }
