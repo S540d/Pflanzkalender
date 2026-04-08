@@ -11,7 +11,7 @@ import {
   Platform,
 } from 'react-native';
 import { useTheme } from '../hooks/useTheme';
-import { PlantLocation } from '../types';
+import { PlantLocation, PlantCategory } from '../types';
 
 const LOCATION_OPTIONS: { value: PlantLocation; label: string; icon: string }[] = [
   { value: 'sun', label: 'Sonne', icon: '☀️' },
@@ -19,10 +19,16 @@ const LOCATION_OPTIONS: { value: PlantLocation; label: string; icon: string }[] 
   { value: 'shade', label: 'Schatten', icon: '🌥️' },
 ];
 
+const CATEGORY_OPTIONS: { value: PlantCategory; label: string; icon: string }[] = [
+  { value: 'vegetable', label: 'Nutzpflanze', icon: '🥦' },
+  { value: 'flower', label: 'Blume', icon: '🌸' },
+  { value: 'tree', label: 'Baum', icon: '🌳' },
+];
+
 interface AddPlantModalProps {
   visible: boolean;
   onClose: () => void;
-  onAdd: (name: string, notes: string, location?: PlantLocation) => void;
+  onAdd: (name: string, notes: string, location?: PlantLocation, category?: PlantCategory) => void;
 }
 
 export const AddPlantModal: React.FC<AddPlantModalProps> = ({
@@ -34,13 +40,15 @@ export const AddPlantModal: React.FC<AddPlantModalProps> = ({
   const [name, setName] = useState('');
   const [notes, setNotes] = useState('');
   const [location, setLocation] = useState<PlantLocation | undefined>(undefined);
+  const [category, setCategory] = useState<PlantCategory | undefined>(undefined);
 
   const handleAdd = () => {
     if (name.trim()) {
-      onAdd(name.trim(), notes.trim(), location);
+      onAdd(name.trim(), notes.trim(), location, category);
       setName('');
       setNotes('');
       setLocation(undefined);
+      setCategory(undefined);
       onClose();
     }
   };
@@ -49,6 +57,7 @@ export const AddPlantModal: React.FC<AddPlantModalProps> = ({
     setName('');
     setNotes('');
     setLocation(undefined);
+    setCategory(undefined);
     onClose();
   };
 
@@ -135,6 +144,30 @@ export const AddPlantModal: React.FC<AddPlantModalProps> = ({
                   >
                     <Text style={styles.locationIcon}>{opt.icon}</Text>
                     <Text style={[styles.locationLabel, { color: location === opt.value ? '#fff' : theme.text }]}>
+                      {opt.label}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+
+            <View style={styles.field}>
+              <Text style={[styles.label, { color: theme.text }]}>Kategorie</Text>
+              <View style={styles.locationRow}>
+                {CATEGORY_OPTIONS.map((opt) => (
+                  <TouchableOpacity
+                    key={opt.value}
+                    style={[
+                      styles.locationButton,
+                      {
+                        backgroundColor: category === opt.value ? theme.primary : theme.surface,
+                        borderColor: category === opt.value ? theme.primary : theme.border,
+                      },
+                    ]}
+                    onPress={() => setCategory(category === opt.value ? undefined : opt.value)}
+                  >
+                    <Text style={styles.locationIcon}>{opt.icon}</Text>
+                    <Text style={[styles.locationLabel, { color: category === opt.value ? '#fff' : theme.text }]}>
                       {opt.label}
                     </Text>
                   </TouchableOpacity>

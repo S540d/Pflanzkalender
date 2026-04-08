@@ -8,6 +8,7 @@ export interface Activity {
 }
 
 export type PlantLocation = 'sun' | 'partial-shade' | 'shade';
+export type PlantCategory = 'vegetable' | 'flower' | 'tree';
 
 export interface Plant {
   id: string;
@@ -17,6 +18,7 @@ export interface Plant {
   activities: Activity[];
   notes: string;
   location?: PlantLocation;
+  category?: PlantCategory;
   createdAt: number;
   updatedAt: number;
 }
