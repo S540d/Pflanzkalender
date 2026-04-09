@@ -1,7 +1,9 @@
 name: Deploy to Testing Environment
 
-# Manuell startbar über GitHub Actions UI
 on:
+  push:
+    branches:
+      - testing
   workflow_dispatch:
     inputs:
       branch:
