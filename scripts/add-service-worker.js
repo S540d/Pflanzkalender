@@ -31,78 +31,37 @@ if (fs.existsSync(indexPath)) {
 
   const swRegistration = `
   <script>
-    // Service Worker Registration with Update Check
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
         navigator.serviceWorker.register('${baseUrl}/service-worker.js')
           .then(function(registration) {
-            console.log('[App] ServiceWorker registered:', registration.scope);
+            // Periodically check for updates
+            setInterval(function() { registration.update(); }, 60000);
 
-            // Check for updates every 30 seconds
-            setInterval(function() {
-              registration.update();
-            }, 30000);
-
-            // Listen for new service worker installation
+            // When a new SW is found, ask it to take over immediately
             registration.addEventListener('updatefound', function() {
-              const newWorker = registration.installing;
-
+              var newWorker = registration.installing;
               newWorker.addEventListener('statechange', function() {
                 if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                  // New version available - force reload
-                  console.log('[App] New version available! Reloading...');
-
-                  // Ask new service worker to skip waiting
                   newWorker.postMessage({ type: 'SKIP_WAITING' });
-
-                  // Reload after a short delay
-                  setTimeout(function() {
-                    window.location.reload(true);
-                  }, 1000);
                 }
               });
             });
           })
           .catch(function(err) {
-            console.error('[App] ServiceWorker registration failed:', err);
+            console.error('[SW] Registration failed:', err);
           });
 
-        // Reload page when service worker takes control
+        // Reload once when new SW takes control (flag prevents loop)
+        var reloading = false;
         navigator.serviceWorker.addEventListener('controllerchange', function() {
-          console.log('[App] Controller changed, reloading...');
-          window.location.reload(true);
+          if (!reloading) {
+            reloading = true;
+            window.location.reload();
+          }
         });
       });
     }
-
-    // Force clear cache on version mismatch
-    (function checkVersion() {
-      const currentVersion = document.querySelector('meta[name="version"]')?.content;
-      const storedVersion = localStorage.getItem('app-version');
-
-      if (storedVersion && storedVersion !== currentVersion) {
-        console.log('[App] Version changed:', storedVersion, '->', currentVersion);
-        console.log('[App] Clearing cache and reloading...');
-
-        // Clear all caches
-        if ('caches' in window) {
-          caches.keys().then(function(names) {
-            names.forEach(function(name) {
-              caches.delete(name);
-            });
-          });
-        }
-
-        // Clear localStorage
-        localStorage.clear();
-
-        // Set new version and reload
-        localStorage.setItem('app-version', currentVersion);
-        window.location.reload(true);
-      } else if (currentVersion) {
-        localStorage.setItem('app-version', currentVersion);
-      }
-    })();
   </script>
   `;
 
