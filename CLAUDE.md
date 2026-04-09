@@ -152,15 +152,30 @@ Vollständige Roadmap: https://github.com/S540d/Pflanzkalender/issues/47
 
 ---
 
-## Offene Issues (Stand 2026-04-08)
+## CI/CD – Deploy-Trigger (Stand 2026-04-09)
 
-- **#39** Android 15 Edge-to-Edge + deprecated setStatusBarColor/setNavigationBarColor (Milestone: release 1.3. minor bugfix)
-- **#47** Roadmap: PWA-Modernisierung, Tests & Play Store Readiness
+| Workflow | Trigger |
+|---|---|
+| `deploy-production.yml` | Push auf `main` (automatisch nach Merge) + `workflow_dispatch` |
+| `deploy-testing.yml` | Push auf `testing` (automatisch) + `workflow_dispatch` |
+
+**Service Worker:** `scripts/add-service-worker.js` wird im Production-Deploy ausgeführt und injiziert die SW-Registrierung in `index.html`. Nicht deaktivieren – ohne das Script sehen Nutzer mit altem SW immer die gecachte Version.
 
 ---
 
-## Letzte Merges
+## Offene Issues (Stand 2026-04-09)
 
-| PR | Was | Wann |
-|---|---|---|
-| #46 | Issues #38 (Standortempfehlungen), #40 (Ko-fi), #43 (Herbstschnitt), 32 Default-Pflanzen, plantMetadata.ts | 2026-04-08 |
+- **#39** Android 15 Edge-to-Edge + deprecated setStatusBarColor/setNavigationBarColor (Milestone: 1.2.1)
+- **#47** Roadmap: PWA-Modernisierung, Tests & Play Store Readiness
+- **#48** Klimazonen-Unterstützung – unterschiedliche Aktivitätszeiträume je Region (Ziel: v2.0.0)
+
+---
+
+## Letzte Merges / Fixes
+
+| Was | Wann |
+|---|---|
+| PR #46: Issues #38, #40, #43 – Standortempfehlungen, Ko-fi, Herbstschnitt, 32 Default-Pflanzen | 2026-04-08 |
+| fix: package-lock.json Integrität wiederhergestellt (npm ci schlägt fehl bei manuellen Edits) | 2026-04-08 |
+| ci: Deploy-Trigger automatisiert (push auf main/testing) | 2026-04-09 |
+| fix: SW-Injection reaktiviert, Reload-Loop behoben (`reloading`-Flag), `localStorage.clear()` entfernt | 2026-04-09 |
