@@ -3,28 +3,34 @@ echo "🔍 Running pre-commit checks..."
 
 # Check for console.log in staged files
 echo "Checking for console.log statements..."
-if git diff --cached --name-only | grep -E '\.(ts|tsx|js|jsx)$' | xargs grep -n "console\.log\|console\.debug" 2>/dev/null; then
-  echo "❌ ERROR: Found console.log/debug in staged files!"
-  echo "Please remove debug statements before committing."
-  exit 1
+STAGED_CODE=$(git diff --cached --name-only | grep -E '\.(ts|tsx|js|jsx)$' || true)
+if [ -n "$STAGED_CODE" ]; then
+  if echo "$STAGED_CODE" | xargs grep -n "console\.log\|console\.debug" 2>/dev/null; then
+    echo "❌ ERROR: Found console.log/debug in staged files!"
+    echo "Please remove debug statements before committing."
+    exit 1
+  fi
 fi
 
 # Check for Web APIs without Platform.OS check
 echo "Checking for unsafe Web API usage..."
-if git diff --cached --name-only | grep -E '\.(ts|tsx)$' | xargs grep -n "window\." 2>/dev/null | grep -v "Platform.OS === 'web'" | grep -v "// platform-safe"; then
-  echo "❌ ERROR: Found window.* without Platform.OS check!"
-  echo "Add 'Platform.OS === \"web\"' check or // platform-safe comment"
-  exit 1
-fi
+STAGED_TS=$(git diff --cached --name-only | grep -E '\.(ts|tsx)$' || true)
+if [ -n "$STAGED_TS" ]; then
+  if echo "$STAGED_TS" | xargs grep -n "window\." 2>/dev/null | grep -v "Platform.OS === 'web'" | grep -v "// platform-safe" | grep -q .; then
+    echo "❌ ERROR: Found window.* without Platform.OS check!"
+    echo "Add 'Platform.OS === \"web\"' check or // platform-safe comment"
+    exit 1
+  fi
 
-if git diff --cached --name-only | grep -E '\.(ts|tsx)$' | xargs grep -n "localStorage\." 2>/dev/null | grep -v "Platform.OS === 'web'" | grep -v "// platform-safe"; then
-  echo "❌ ERROR: Found localStorage without Platform.OS check!"
-  echo "Use AsyncStorage for mobile or add Platform.OS check"
-  exit 1
+  if echo "$STAGED_TS" | xargs grep -n "localStorage\." 2>/dev/null | grep -v "Platform.OS === 'web'" | grep -v "// platform-safe" | grep -q .; then
+    echo "❌ ERROR: Found localStorage without Platform.OS check!"
+    echo "Use AsyncStorage for mobile or add Platform.OS check"
+    exit 1
+  fi
 fi
 
 # Check version consistency if package.json or app.json changed
-if git diff --cached --name-only | grep -E "(package\.json|app\.json|App\.tsx|build\.gradle\.kts)" >/dev/null; then
+if git diff --cached --name-only | grep -qE "(package\.json|app\.json|App\.tsx|build\.gradle\.kts)"; then
   echo "Checking version consistency..."
 
   PACKAGE_VERSION=$(node -p "require('./package.json').version" 2>/dev/null)
