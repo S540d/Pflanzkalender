@@ -10,7 +10,9 @@
     "build": "expo export --platform web",
     "deploy": "bash scripts/deploy.sh",
     "validate": "./scripts/validate-release.sh",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "test": "jest",
+    "test:coverage": "jest --coverage"
   },
   "homepage": "https://s540d.github.io/Pflanzkalender",
   "dependencies": {
@@ -30,9 +32,13 @@
     "react-native-web": "^0.21.0"
   },
   "devDependencies": {
+    "@testing-library/react-native": "^12.9.0",
+    "@types/jest": "^29.5.14",
     "@types/react": "~19.1.0",
     "gh-pages": "^6.3.0",
     "husky": "^9.1.7",
+    "jest": "^29.7.0",
+    "jest-expo": "~54.0.1",
     "typescript": "~5.9.2"
   },
   "private": true
