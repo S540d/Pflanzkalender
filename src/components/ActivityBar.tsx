@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Platform } from 'react-native';
 import { Activity } from '../types';
+import { getContrastTextColor } from '../utils/colorUtils';
 
 interface ActivityBarProps {
   activity: Activity;
@@ -46,7 +47,7 @@ export const ActivityBar: React.FC<ActivityBarProps> = ({ activity, onPress, tot
   return (
     <>
       <TouchableOpacity {...touchableProps}>
-        <Text style={styles.label} numberOfLines={1}>
+        <Text style={[styles.label, { color: getContrastTextColor(activity.color) }]} numberOfLines={1}>
           {activity.label}
         </Text>
       </TouchableOpacity>
@@ -70,12 +71,11 @@ const styles = StyleSheet.create({
     marginVertical: 2,
   },
   label: {
-    color: '#FFFFFF',
     fontSize: 10,
     fontWeight: '600',
-    textShadowColor: 'rgba(0, 0, 0, 0.5)',
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
     textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 2,
+    textShadowRadius: 1,
   },
   tooltip: {
     position: 'absolute',
