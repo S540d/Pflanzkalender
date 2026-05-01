@@ -1,0 +1,31 @@
+{
+  "name": "Pflanzkalender",
+  "short_name": "Pflanzkalender",
+  "description": "Gartenaktivitäten planen und verwalten – mit halber Monatsauflösung.",
+  "start_url": "/Pflanzkalender/",
+  "scope": "/Pflanzkalender/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#4CAF50",
+  "background_color": "#ffffff",
+  "lang": "de",
+  "icons": [
+    {
+      "src": "/Pflanzkalender/assets/icon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/Pflanzkalender/assets/icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/Pflanzkalender/assets/adaptive-icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "categories": ["lifestyle", "productivity"]
+}

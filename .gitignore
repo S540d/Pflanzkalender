@@ -40,3 +40,9 @@ yarn-error.*
 /ios
 /android
 coverage/
+
+# Private documentation (local only, never commit)
+docs/private/
+
+# Keystore & signing files
+*.keystore
