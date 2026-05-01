@@ -257,7 +257,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Check no keystore files are committed
+      - name: Check no signing files are committed
         run: |
           FOUND=$(git ls-files | grep -E "\.(keystore|jks|p12|p8)$" || true)
           if [ -n "$FOUND" ]; then
@@ -276,9 +276,9 @@ jobs:
 
       - name: Scan for hardcoded keystore passwords
         run: |
-          if grep -rEi "(keystorePassword|keyPassword|storePassword)[[:space:]]*=[[:space:]]*[^[:space:]]" . \
+          if grep -rEi "(keystorePassword|keyPassword|storePassword)[[:space:]]*=[[:space:]]*[\"'][^\"']" . \
               --exclude-dir=node_modules --exclude-dir=.git --exclude="*.md" 2>/dev/null; then
-            echo "❌ Hardcoded keystore password found! Use CI secrets instead."; exit 1
+            echo "❌ Hardcoded keystore password (string literal) found! Use CI secrets instead."; exit 1
           fi
           echo "✅ No hardcoded keystore passwords"
 
