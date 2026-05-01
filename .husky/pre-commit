@@ -59,6 +59,7 @@ STAGED_KEYSTORE=$(git diff --cached --name-only | grep -E "\.(keystore|jks|p12|p
 if [ -n "$STAGED_KEYSTORE" ]; then
   echo "❌ ERROR: Keystore/signing file staged for commit!"
   echo "File: $STAGED_KEYSTORE"
+  echo "Keystore lokal ablegen: ~/Documents/Programmierung/Projects/Keystore/Keystore_Pflanzkalender/"
   exit 1
 fi
 

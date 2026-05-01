@@ -44,5 +44,6 @@ coverage/
 # Private documentation (local only, never commit)
 docs/private/
 
-# Keystore & signing files
+# Keystore & signing files – lokal ablegen unter:
+# ~/Documents/Programmierung/Projects/Keystore/Keystore_Pflanzkalender/
 *.keystore
