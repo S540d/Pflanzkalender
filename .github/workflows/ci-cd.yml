@@ -259,22 +259,24 @@ jobs:
 
       - name: Check no keystore files are committed
         run: |
-          FOUND=$(git ls-files | grep -E "\.(keystore|jks)$" || true)
+          FOUND=$(git ls-files | grep -E "\.(keystore|jks|p12|p8)$" || true)
           if [ -n "$FOUND" ]; then
-            echo "❌ Keystore committed: $FOUND"; exit 1
+            echo "❌ Signing file committed: $FOUND"; exit 1
           fi
-          echo "✅ No keystore files found"
+          echo "✅ No signing files found"
 
-      - name: Check .gitignore covers keystore patterns
+      - name: Check .gitignore covers signing file patterns
         run: |
-          if ! grep -q "\.jks" .gitignore; then
-            echo "❌ .gitignore missing *.jks"; exit 1
-          fi
-          echo "✅ Keystore patterns are gitignored"
+          for pat in "\.jks" "\.keystore" "\.p12" "\.p8"; do
+            if ! grep -q "$pat" .gitignore; then
+              echo "❌ .gitignore missing $pat"; exit 1
+            fi
+          done
+          echo "✅ Signing file patterns are gitignored"
 
       - name: Scan for hardcoded keystore passwords
         run: |
-          if grep -rEi "(keystorePassword|keyPassword|storePassword)\s*=\s*\S" . \
+          if grep -rEi "(keystorePassword|keyPassword|storePassword)[[:space:]]*=[[:space:]]*[^[:space:]]" . \
               --exclude-dir=node_modules --exclude-dir=.git --exclude="*.md" 2>/dev/null; then
             echo "❌ Hardcoded keystore password found! Use CI secrets instead."; exit 1
           fi
