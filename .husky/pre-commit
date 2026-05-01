@@ -1,9 +1,9 @@
 #!/usr/bin/env sh
 echo "🔍 Running pre-commit checks..."
 
-# Check for console.log in staged files
+# Check for console.log in staged app code (exclude scripts/, jest.config.js, __tests__)
 echo "Checking for console.log statements..."
-STAGED_CODE=$(git diff --cached --name-only | grep -E '\.(ts|tsx|js|jsx)$' || true)
+STAGED_CODE=$(git diff --cached --name-only | grep -E '\.(ts|tsx|js|jsx)$' | grep -vE '^(scripts/|jest\.config|__tests__|__mocks__)' || true)
 if [ -n "$STAGED_CODE" ]; then
   if echo "$STAGED_CODE" | xargs grep -n "console\.log\|console\.debug" 2>/dev/null; then
     echo "❌ ERROR: Found console.log/debug in staged files!"
@@ -42,6 +42,32 @@ if git diff --cached --name-only | grep -qE "(package\.json|app\.json|App\.tsx|b
     echo "app.json: $APP_JSON_VERSION"
     exit 1
   fi
+fi
+
+# Block docs/private/ from being committed (#45)
+echo "Checking for private docs..."
+STAGED_PRIVATE=$(git diff --cached --name-only | grep "^docs/private/" || true)
+if [ -n "$STAGED_PRIVATE" ]; then
+  echo "❌ ERROR: Files from docs/private/ cannot be committed!"
+  echo "These files are local-only: $STAGED_PRIVATE"
+  exit 1
+fi
+
+# Block keystore/signing files (#44)
+echo "Checking for keystore files..."
+STAGED_KEYSTORE=$(git diff --cached --name-only | grep -E "\.(keystore|jks|p12|p8)$" || true)
+if [ -n "$STAGED_KEYSTORE" ]; then
+  echo "❌ ERROR: Keystore/signing file staged for commit!"
+  echo "File: $STAGED_KEYSTORE"
+  exit 1
+fi
+
+# Scan staged diff for hardcoded credentials (#44)
+echo "Checking for hardcoded credentials..."
+if git diff --cached | grep "^+" | grep -v "^+++" | grep -qEi "(keystorePassword|keyPassword|storePassword)\s*=\s*\S"; then
+  echo "❌ ERROR: Hardcoded keystore password detected in staged changes!"
+  echo "Use environment variables or CI secrets instead."
+  exit 1
 fi
 
 echo "✅ Pre-commit checks passed!"
