@@ -64,7 +64,7 @@ fi
 
 # Scan staged diff for hardcoded credentials (#44)
 echo "Checking for hardcoded credentials..."
-if git diff --cached | grep "^+" | grep -v "^+++" | grep -qEi "(keystorePassword|keyPassword|storePassword)\s*=\s*\S"; then
+if git diff --cached | grep "^+" | grep -v "^+++" | grep -qEi "(keystorePassword|keyPassword|storePassword)[[:space:]]*=[[:space:]]*[^[:space:]]"; then
   echo "❌ ERROR: Hardcoded keystore password detected in staged changes!"
   echo "Use environment variables or CI secrets instead."
   exit 1
