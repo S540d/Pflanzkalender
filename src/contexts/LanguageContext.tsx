@@ -3,13 +3,19 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type Language = 'de' | 'en';
 
+type TranslationValue = string | string[];
+
+interface Translations {
+  [key: string]: TranslationValue;
+}
+
 interface LanguageContextType {
   language: Language;
   setLanguage: (lang: Language) => void;
-  t: (key: string) => any;
+  t: (key: string) => TranslationValue | string;
 }
 
-const translations = {
+const translations: Record<Language, Translations> = {
   de: {
     // Navigation
     'nav.calendar': '📅',
@@ -94,7 +100,7 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }
     }
   };
 
-  const t = (key: string): any => {
+  const t = (key: string): TranslationValue | string => {
     return translations[language][key] || key;
   };
 
