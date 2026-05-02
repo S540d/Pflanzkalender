@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-nati
 import { useTheme } from '../hooks/useTheme';
 import { usePlants } from '../contexts/PlantContext';
 import { useLanguage } from '../contexts/LanguageContext';
-import { PlantCategory } from '../types';
+import { CATEGORY_TABS_I18N, CategoryFilter } from '../constants/categoryTabs';
 
 interface ActivityInfo {
   plantName: string;
@@ -11,15 +11,6 @@ interface ActivityInfo {
   activityColor: string;
   notes?: string;
 }
-
-type CategoryFilter = PlantCategory | 'all';
-
-const CATEGORY_TABS: { value: CategoryFilter; labelDe: string; labelEn: string; icon: string; color: string }[] = [
-  { value: 'all',       labelDe: 'Alle',        labelEn: 'All',        icon: '🌿', color: '#4CAF50' },
-  { value: 'vegetable', labelDe: 'Nutzpflanzen', labelEn: 'Vegetables', icon: '🥦', color: '#F57C00' },
-  { value: 'flower',    labelDe: 'Blumen',       labelEn: 'Flowers',    icon: '🌸', color: '#E91E63' },
-  { value: 'tree',      labelDe: 'Bäume',        labelEn: 'Trees',      icon: '🌳', color: '#2E7D32' },
-];
 
 export const AgendaScreen: React.FC = () => {
   const { theme } = useTheme();
@@ -112,7 +103,7 @@ export const AgendaScreen: React.FC = () => {
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       {/* Kategorie-Tabs */}
       <View style={[styles.tabBar, { borderBottomColor: theme.border, backgroundColor: theme.background }]}>
-        {CATEGORY_TABS.map((tab) => {
+        {CATEGORY_TABS_I18N.map((tab) => {
           const isActive = activeCategory === tab.value;
           const label = language === 'de' ? tab.labelDe : tab.labelEn;
           return (
