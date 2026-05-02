@@ -155,10 +155,8 @@ describe('storageService.importPlants', () => {
   });
 
   it('throws when plants is not an array', async () => {
-    const badJson = JSON.stringify({ version: '1.0.0', plants: 'not-an-array' });
-    await expect(storageService.importPlants(badJson)).rejects.toThrow(
-      'Invalid export format: plants must be an array',
-    );
+    const badJson = JSON.stringify({ version: '1.0.0', timestamp: new Date().toISOString(), plants: 'not-an-array' });
+    await expect(storageService.importPlants(badJson)).rejects.toThrow('Invalid import format');
   });
 
   it('throws when JSON is malformed', async () => {
@@ -166,8 +164,59 @@ describe('storageService.importPlants', () => {
   });
 
   it('returns an empty array when plants field is an empty array', async () => {
-    const emptyExport = JSON.stringify({ version: '1.0.0', plants: [] });
+    const emptyExport = JSON.stringify({ version: '1.0.0', timestamp: new Date().toISOString(), plants: [] });
     const result = await storageService.importPlants(emptyExport);
+    expect(result).toEqual([]);
+  });
+
+  it('throws with path info when a plant field is invalid', async () => {
+    const badPlant = { ...makePlant('p2'), name: '' };
+    const json = JSON.stringify({ version: '1.0.0', timestamp: new Date().toISOString(), plants: [badPlant] });
+    await expect(storageService.importPlants(json)).rejects.toThrow('Invalid import format');
+  });
+
+  it('throws when version is not 1.0.0', async () => {
+    const plants = [makePlant('p3')];
+    const json = JSON.stringify({ version: '2.0.0', timestamp: new Date().toISOString(), plants });
+    await expect(storageService.importPlants(json)).rejects.toThrow('Invalid import format');
+  });
+
+  it('throws when timestamp is not ISO datetime', async () => {
+    const plants = [makePlant('p4')];
+    const json = JSON.stringify({ version: '1.0.0', timestamp: 'yesterday', plants });
+    await expect(storageService.importPlants(json)).rejects.toThrow('Invalid import format');
+  });
+
+  it('throws when version field is missing', async () => {
+    const json = JSON.stringify({ timestamp: new Date().toISOString(), plants: [] });
+    await expect(storageService.importPlants(json)).rejects.toThrow('Invalid import format');
+  });
+});
+
+describe('storageService.loadPlants – Zod-Filterung', () => {
+  beforeEach(async () => {
+    await AsyncStorage.clear();
+    jest.clearAllMocks();
+  });
+
+  it('filtert korrupte Einträge heraus und behält valide', async () => {
+    const good = makePlant('good');
+    const corrupt = { id: 'bad', name: '' }; // name leer → schlägt fehl
+    jest.spyOn(AsyncStorage, 'getItem').mockResolvedValueOnce(JSON.stringify([good, corrupt]));
+    const result = await storageService.loadPlants();
+    expect(result).toHaveLength(1);
+    expect(result[0].id).toBe('good');
+  });
+
+  it('gibt Rohdaten zurück wenn alle Einträge ungültig sind (verhindert Datenverlust)', async () => {
+    const allCorrupt = [{ id: 'x', name: '' }, { id: 'y', name: '' }];
+    jest.spyOn(AsyncStorage, 'getItem').mockResolvedValueOnce(JSON.stringify(allCorrupt));
+    const result = await storageService.loadPlants();
+    expect(result).toHaveLength(2);
+  });
+
+  it('gibt leeres Array zurück wenn Storage leer ist', async () => {
+    const result = await storageService.loadPlants();
     expect(result).toEqual([]);
   });
 });
