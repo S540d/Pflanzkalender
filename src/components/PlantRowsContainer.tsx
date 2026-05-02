@@ -56,7 +56,20 @@ export const PlantRowsContainer: React.FC<PlantRowsContainerProps> = ({
             </View>
           ) : (
             sortedPlants.map(plant => {
-              const activitiesWithRows = calculateActivityRows(plant.activities);
+              const visibleActivities = plant.activities.map(activity => {
+                if (isPortrait) {
+                  const startSlot = Math.floor(activity.startMonth / 4);
+                  const endSlot = Math.floor(activity.endMonth / 4);
+                  return {
+                    ...activity,
+                    startMonth: startSlot,
+                    endMonth: endSlot,
+                  };
+                }
+                return activity;
+              });
+
+              const activitiesWithRows = calculateActivityRows(visibleActivities);
               const maxRow = activitiesWithRows.reduce((max, a) => Math.max(max, a.row), 0);
               const minHeight = Math.max(60, (maxRow + 1) * 28 + 8);
 
