@@ -23,8 +23,8 @@ export const PlantSchema = z.object({
 });
 
 export const ImportDataSchema = z.object({
-  version: z.string(),
-  timestamp: z.string(),
+  version: z.literal('1.0.0'),
+  timestamp: z.string().datetime(),
   plants: z.array(PlantSchema),
 });
 

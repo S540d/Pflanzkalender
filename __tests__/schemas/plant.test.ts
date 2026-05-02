@@ -88,6 +88,14 @@ describe('ImportDataSchema', () => {
     expect(ImportDataSchema.safeParse(noVersion).success).toBe(false);
   });
 
+  it('lehnt unbekannte version ab', () => {
+    expect(ImportDataSchema.safeParse({ ...validImport, version: '2.0.0' }).success).toBe(false);
+  });
+
+  it('lehnt nicht-ISO timestamp ab', () => {
+    expect(ImportDataSchema.safeParse({ ...validImport, timestamp: 'yesterday' }).success).toBe(false);
+  });
+
   it('lehnt ungültige Pflanze im Array ab', () => {
     const broken = { ...validImport, plants: [{ id: 'x' }] };
     expect(ImportDataSchema.safeParse(broken).success).toBe(false);

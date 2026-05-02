@@ -26,7 +26,21 @@ export const storageService = {
       if (!data) return [];
       const parsed = JSON.parse(data);
       if (!Array.isArray(parsed)) return [];
-      return parsed.filter((item: unknown) => PlantSchema.safeParse(item).success) as Plant[];
+      const valid: Plant[] = [];
+      for (const item of parsed) {
+        const result = PlantSchema.safeParse(item);
+        if (result.success) {
+          valid.push(result.data as Plant);
+        } else {
+          console.error('Skipping corrupt plant entry:', result.error.issues.map(i => `${i.path.join('.')}: ${i.message}`).join(', '));
+        }
+      }
+      // Nur leeres Array zurückgeben wenn tatsächlich keine Daten gespeichert waren
+      if (valid.length === 0 && parsed.length > 0) {
+        console.error('All stored plants failed validation – returning raw data to prevent data loss');
+        return parsed as Plant[];
+      }
+      return valid;
     } catch (error) {
       console.error('Error loading plants:', error);
       return [];
@@ -99,7 +113,8 @@ export const storageService = {
       const raw = JSON.parse(jsonString);
       const result = ImportDataSchema.safeParse(raw);
       if (!result.success) {
-        throw new Error(`Invalid import format: ${result.error.issues.map(i => i.message).join(', ')}`);
+        const details = result.error.issues.map(i => `${i.path.join('.') || 'root'}: ${i.message}`).join('; ');
+        throw new Error(`Invalid import format: ${details}`);
       }
       return result.data.plants as Plant[];
     } catch (error) {
