@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Modal, TouchableOpacity, TextInput } from 'react-native';
+import { View, Text, StyleSheet, Modal, TouchableOpacity, TextInput, Alert } from 'react-native';
 import { useTheme } from '../hooks/useTheme';
 import { Activity } from '../types';
 
@@ -37,10 +37,14 @@ export const EditActivityModal: React.FC<EditActivityModalProps> = ({
   };
 
   const handleDelete = () => {
-    if (confirm('Aktivität wirklich löschen?')) {
-      onDelete(activity.id);
-      onClose();
-    }
+    Alert.alert(
+      'Aktivität löschen',
+      'Aktivität wirklich löschen?',
+      [
+        { text: 'Abbrechen', style: 'cancel' },
+        { text: 'Löschen', style: 'destructive', onPress: () => { onDelete(activity.id); onClose(); } },
+      ]
+    );
   };
 
   return (
