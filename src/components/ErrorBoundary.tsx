@@ -33,15 +33,12 @@ export class ErrorBoundary extends Component<Props, State> {
     });
   }
 
-  handleReload = () => {
+  handleReload = async () => {
     if (Platform.OS === 'web') {
-      // Clear all caches and reload (web only) // platform-safe
+      // Clear all caches before reloading (web only) // platform-safe
       if ('caches' in window) {
-        caches.keys().then((names) => {
-          names.forEach((name) => {
-            caches.delete(name);
-          });
-        });
+        const names = await caches.keys(); // platform-safe
+        await Promise.all(names.map((name) => caches.delete(name))); // platform-safe
       }
       window.location.reload(); // platform-safe
     } else {
@@ -137,7 +134,7 @@ export class ErrorBoundary extends Component<Props, State> {
             }}
           >
             <Text style={{ color: 'white', fontSize: 16, fontWeight: 'bold' }}>
-              🔄 Cache leeren & Neu laden
+              {Platform.OS === 'web' ? '🔄 Cache leeren & Neu laden' : '🔄 App zurücksetzen'}
             </Text>
           </TouchableOpacity>
         </View>
