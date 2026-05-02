@@ -1,5 +1,5 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
-import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Platform } from 'react-native';
 
 interface Props {
   children: ReactNode;
@@ -34,28 +34,27 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   handleReload = () => {
-    // Clear all caches and reload
-    if ('caches' in window) {
-      caches.keys().then((names) => {
-        names.forEach((name) => {
-          caches.delete(name);
+    if (Platform.OS === 'web') {
+      // Clear all caches and reload (web only) // platform-safe
+      if ('caches' in window) {
+        caches.keys().then((names) => {
+          names.forEach((name) => {
+            caches.delete(name);
+          });
         });
-      });
+      }
+      window.location.reload(); // platform-safe
+    } else {
+      // On native: reset error state so the component tree re-renders
+      this.setState({ hasError: false, error: null, errorInfo: null });
     }
-
-    // Clear localStorage
-    try {
-      localStorage.clear();
-    } catch (e) {
-      console.error('Could not clear localStorage:', e);
-    }
-
-    // Reload page
-    window.location.reload();
   };
 
   render() {
     if (this.state.hasError) {
+      const webUserAgent = Platform.OS === 'web' ? navigator.userAgent : ''; // platform-safe
+      const webScreen = Platform.OS === 'web' ? `${window.innerWidth}x${window.innerHeight}` : ''; // platform-safe
+      const webUrl = Platform.OS === 'web' ? window.location.href : ''; // platform-safe
       return (
         <View style={{ flex: 1, backgroundColor: '#1a1a1a', padding: 20 }}>
           <View style={{
@@ -104,25 +103,27 @@ export class ErrorBoundary extends Component<Props, State> {
               )}
             </View>
 
-            <View style={{
-              backgroundColor: '#2a2a2a',
-              padding: 15,
-              borderRadius: 8,
-              marginBottom: 15
-            }}>
-              <Text style={{ color: '#00ff00', fontSize: 12, marginBottom: 10 }}>
-                Debug-Informationen:
-              </Text>
-              <Text style={{ color: '#aaa', fontSize: 11, fontFamily: 'monospace' }}>
-                User Agent: {navigator.userAgent}
-              </Text>
-              <Text style={{ color: '#aaa', fontSize: 11, fontFamily: 'monospace' }}>
-                Bildschirm: {window.innerWidth}x{window.innerHeight}
-              </Text>
-              <Text style={{ color: '#aaa', fontSize: 11, fontFamily: 'monospace' }}>
-                URL: {window.location.href}
-              </Text>
-            </View>
+            {Platform.OS === 'web' && (
+              <View style={{
+                backgroundColor: '#2a2a2a',
+                padding: 15,
+                borderRadius: 8,
+                marginBottom: 15
+              }}>
+                <Text style={{ color: '#00ff00', fontSize: 12, marginBottom: 10 }}>
+                  Debug-Informationen:
+                </Text>
+                <Text style={{ color: '#aaa', fontSize: 11, fontFamily: 'monospace' }}>
+                  User Agent: {webUserAgent}
+                </Text>
+                <Text style={{ color: '#aaa', fontSize: 11, fontFamily: 'monospace' }}>
+                  Bildschirm: {webScreen}
+                </Text>
+                <Text style={{ color: '#aaa', fontSize: 11, fontFamily: 'monospace' }}>
+                  URL: {webUrl}
+                </Text>
+              </View>
+            )}
           </ScrollView>
 
           <TouchableOpacity
