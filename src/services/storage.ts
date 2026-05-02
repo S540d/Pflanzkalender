@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Plant } from '../types';
 import { Share } from 'react-native';
+import { PlantSchema, ImportDataSchema } from '../schemas/plant';
 
 const STORAGE_KEYS = {
   PLANTS: '@Pflanzkalender:plants',
@@ -22,7 +23,10 @@ export const storageService = {
   async loadPlants(): Promise<Plant[]> {
     try {
       const data = await AsyncStorage.getItem(STORAGE_KEYS.PLANTS);
-      return data ? JSON.parse(data) : [];
+      if (!data) return [];
+      const parsed = JSON.parse(data);
+      if (!Array.isArray(parsed)) return [];
+      return parsed.filter((item: unknown) => PlantSchema.safeParse(item).success) as Plant[];
     } catch (error) {
       console.error('Error loading plants:', error);
       return [];
@@ -92,13 +96,12 @@ export const storageService = {
   // Import plants from JSON
   async importPlants(jsonString: string): Promise<Plant[]> {
     try {
-      const importData = JSON.parse(jsonString);
-
-      if (!Array.isArray(importData.plants)) {
-        throw new Error('Invalid export format: plants must be an array');
+      const raw = JSON.parse(jsonString);
+      const result = ImportDataSchema.safeParse(raw);
+      if (!result.success) {
+        throw new Error(`Invalid import format: ${result.error.issues.map(i => i.message).join(', ')}`);
       }
-
-      return importData.plants;
+      return result.data.plants as Plant[];
     } catch (error) {
       console.error('Error importing plants:', error);
       throw error;
