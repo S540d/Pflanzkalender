@@ -13,8 +13,8 @@ interface PlantRowsContainerProps {
   onPressActivity: (plantId: string, activityId: string) => void;
   onPressMonth: (plantId: string, monthIndex: number) => void;
   onFixedScrollOffset?: (offset: number) => void;
-  fixedScrollRef?: React.RefObject<ScrollView>;
-  headerScrollRef?: React.RefObject<ScrollView>;
+  fixedScrollRef?: React.RefObject<ScrollView | null>;
+  headerScrollRef?: React.RefObject<ScrollView | null>;
   loading?: boolean;
 }
 
@@ -38,11 +38,6 @@ export const PlantRowsContainer: React.FC<PlantRowsContainerProps> = ({
     <View style={styles.tableContainer}>
       {/* Fixed Column */}
       <View style={styles.fixedColumn}>
-        {/* Fixed Header */}
-        <View style={[styles.fixedHeaderCell, { borderColor: theme.border, backgroundColor: theme.surface }]}>
-          <Text style={[styles.headerText, { color: theme.text }]}>Pflanze</Text>
-        </View>
-
         {/* Fixed Plant Names */}
         <ScrollView
           style={styles.fixedColumnScroll}
@@ -177,13 +172,6 @@ const styles = StyleSheet.create({
   scrollableColumn: {
     flex: 1,
   },
-  fixedHeaderCell: {
-    width: 120,
-    padding: 8,
-    borderWidth: 1,
-    justifyContent: 'center',
-    minHeight: 60,
-  },
   fixedColumnScroll: {
     flex: 1,
   },
@@ -197,10 +185,6 @@ const styles = StyleSheet.create({
   },
   plantNameText: {
     fontSize: 14,
-  },
-  headerText: {
-    fontSize: 14,
-    fontWeight: '600',
   },
   horizontalScroll: {
     flex: 1,

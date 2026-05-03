@@ -34,13 +34,11 @@ export const PlantRow: React.FC<PlantRowProps> = ({
 
   const months = Array.from({ length: totalMonths }, (_, i) => i);
 
-  // Berechne kompakte Zeilen für Aktivitäten
   const activitiesWithRows = useMemo(
     () => calculateActivityRows(plant.activities),
     [plant.activities]
   );
 
-  // Berechne minimale Höhe basierend auf Anzahl der Zeilen
   const maxRow = activitiesWithRows.reduce((max, a) => Math.max(max, a.row), 0);
   const minHeight = Math.max(60, (maxRow + 1) * 28 + 8);
 
@@ -61,7 +59,6 @@ export const PlantRow: React.FC<PlantRowProps> = ({
 
   return (
     <View style={[styles.row, { minHeight }]}>
-      {/* Monats-Zellen mit Aktivitäten */}
       <View style={styles.monthsContainer}>
         {months.map(monthIndex => {
           const absoluteMonthIndex = monthIndex + monthOffset;
@@ -83,7 +80,6 @@ export const PlantRow: React.FC<PlantRowProps> = ({
           );
         })}
 
-        {/* Aktivitätsbalken über den Monaten */}
         <View style={styles.activitiesLayer}>
           {activitiesWithRows.map((activity) => (
             <View
@@ -100,7 +96,6 @@ export const PlantRow: React.FC<PlantRowProps> = ({
         </View>
       </View>
 
-      {/* Notizen */}
       <View style={[styles.notesCell, { borderColor: theme.border }]}>
         {isEditingNotes ? (
           <TextInput

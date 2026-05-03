@@ -7,7 +7,7 @@ interface TableHeaderProps {
   isPortrait: boolean;
   currentHalfMonth: number;
   onHeaderScroll?: (offset: number) => void;
-  headerScrollRef?: React.RefObject<ScrollView>;
+  headerScrollRef?: React.RefObject<ScrollView | null>;
 }
 
 export const TableHeader: React.FC<TableHeaderProps> = ({
@@ -22,60 +22,79 @@ export const TableHeader: React.FC<TableHeaderProps> = ({
   const ref = headerScrollRef || localRef;
 
   return (
-    <ScrollView
-      horizontal
-      showsHorizontalScrollIndicator={false}
-      style={styles.stickyHeaderScroll}
-      scrollEnabled={false}
-      ref={ref}
-      onScroll={onHeaderScroll ? (e) => onHeaderScroll(e.nativeEvent.contentOffset.x) : undefined}
-      scrollEventThrottle={16}
-    >
-      <View style={[styles.headerRow, { backgroundColor: theme.background }]}>
-        {months.map((month, index) => {
-          let isCurrentPeriod = false;
-
-          if (isPortrait) {
-            const slotStart = index * 4;
-            const slotEnd = slotStart + 3;
-            isCurrentPeriod = currentHalfMonth >= slotStart && currentHalfMonth <= slotEnd;
-          } else {
-            isCurrentPeriod = index === currentHalfMonth;
-          }
-
-          return (
-            <View
-              key={index}
-              style={[
-                isPortrait ? styles.twoMonthCell : styles.monthCell,
-                {
-                  borderColor: theme.border,
-                  backgroundColor: isCurrentPeriod ? theme.border : theme.surface
-                }
-              ]}
-            >
-              <Text style={[styles.monthText, { color: theme.textSecondary }]}>
-                {isPortrait ? month : (index % 2 === 0 ? month : '')}
-              </Text>
-              {!isPortrait && (
-                <Text style={[styles.halfMonthText, { color: theme.textSecondary }]}>
-                  {index % 2 === 0 ? '1' : '2'}
-                </Text>
-              )}
-            </View>
-          );
-        })}
-        <View style={[styles.notesCell, { borderColor: theme.border, backgroundColor: theme.surface }]}>
-          <Text style={[styles.headerText, { color: theme.text }]}>Notizen</Text>
-        </View>
+    <View style={styles.headerContainer}>
+      {/* Fixed "Pflanze" Column */}
+      <View style={[styles.fixedHeaderColumn, { borderColor: theme.border, backgroundColor: theme.surface }]}>
+        <Text style={[styles.headerText, { color: theme.text }]}>Pflanze</Text>
       </View>
-    </ScrollView>
+
+      {/* Scrollable Months Header */}
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={styles.scrollableHeaderScroll}
+        scrollEnabled={false}
+        ref={ref}
+        onScroll={onHeaderScroll ? (e) => onHeaderScroll(e.nativeEvent.contentOffset.x) : undefined}
+        scrollEventThrottle={16}
+      >
+        <View style={[styles.headerRow, { backgroundColor: theme.background }]}>
+          {months.map((month, index) => {
+            let isCurrentPeriod = false;
+
+            if (isPortrait) {
+              const slotStart = index * 4;
+              const slotEnd = slotStart + 3;
+              isCurrentPeriod = currentHalfMonth >= slotStart && currentHalfMonth <= slotEnd;
+            } else {
+              isCurrentPeriod = index === currentHalfMonth;
+            }
+
+            return (
+              <View
+                key={index}
+                style={[
+                  isPortrait ? styles.twoMonthCell : styles.monthCell,
+                  {
+                    borderColor: theme.border,
+                    backgroundColor: isCurrentPeriod ? theme.border : theme.surface
+                  }
+                ]}
+              >
+                <Text style={[styles.monthText, { color: theme.textSecondary }]}>
+                  {isPortrait ? month : (index % 2 === 0 ? month : '')}
+                </Text>
+                {!isPortrait && (
+                  <Text style={[styles.halfMonthText, { color: theme.textSecondary }]}>
+                    {index % 2 === 0 ? '1' : '2'}
+                  </Text>
+                )}
+              </View>
+            );
+          })}
+          <View style={[styles.notesCell, { borderColor: theme.border, backgroundColor: theme.surface }]}>
+            <Text style={[styles.headerText, { color: theme.text }]}>Notizen</Text>
+          </View>
+        </View>
+      </ScrollView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  stickyHeaderScroll: {
-    maxHeight: 60,
+  headerContainer: {
+    flexDirection: 'row',
+    height: 60,
+  },
+  fixedHeaderColumn: {
+    width: 120,
+    padding: 8,
+    borderWidth: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  scrollableHeaderScroll: {
+    flex: 1,
   },
   headerRow: {
     flexDirection: 'row',
