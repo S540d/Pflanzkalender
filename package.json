@@ -1,13 +1,14 @@
 {
   "name": "pflanzkalender",
-  "version": "1.2.1",
+
+  "version": "1.3.0",
   "main": "index.ts",
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "build": "expo export --platform web",
+    "build": "expo export --platform web && node scripts/add-pwa-meta-tags.js",
     "deploy": "bash scripts/deploy.sh",
     "validate": "./scripts/validate-release.sh",
     "prepare": "husky install",

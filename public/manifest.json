@@ -1,26 +1,61 @@
 {
   "name": "Pflanzkalender",
-  "short_name": "Pflanzkalender",
-  "description": "Gartenaktivitäten planen und verwalten – mit halber Monatsauflösung.",
+  "short_name": "Kalender",
+  "description": "Plant Calendar – Gartenaktivitäten mit halber Monatsauflösung planen und verwalten",
   "start_url": "/Pflanzkalender/",
   "scope": "/Pflanzkalender/",
   "display": "standalone",
   "orientation": "portrait",
-  "theme_color": "#4CAF50",
   "background_color": "#ffffff",
-  "lang": "de",
+  "theme_color": "#4CAF50",
   "icons": [
     {
-      "src": "/Pflanzkalender/assets/icon.png",
-      "sizes": "1024x1024",
-      "type": "image/png"
+      "src": "/Pflanzkalender/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
     },
     {
-      "src": "/Pflanzkalender/assets/adaptive-icon.png",
-      "sizes": "1024x1024",
+      "src": "/Pflanzkalender/icon-192-maskable.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/Pflanzkalender/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/Pflanzkalender/icon-512-maskable.png",
+      "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
     }
   ],
-  "categories": ["lifestyle", "productivity"]
+  "categories": ["productivity", "lifestyle"],
+  "screenshots": [
+    {
+      "src": "/Pflanzkalender/assets/screenshot-540x720.png",
+      "sizes": "540x720",
+      "type": "image/png",
+      "form_factor": "narrow"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Kalender",
+      "short_name": "Kalender",
+      "description": "Pflanzkalender anzeigen",
+      "url": "/Pflanzkalender/",
+      "icons": [
+        {
+          "src": "/Pflanzkalender/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
+  ]
 }

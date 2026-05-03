@@ -34,10 +34,10 @@ describe('CalendarScreen – Rendering', () => {
       </LanguageProvider>
     );
 
-    const { container } = render(<CalendarScreen />, { wrapper });
+    const { root } = render(<CalendarScreen />, { wrapper });
 
-    // Verify screen renders (container exists and is not empty)
-    expect(container).toBeTruthy();
+    // Verify screen renders (root exists and is not empty)
+    expect(root).toBeTruthy();
   });
 
   it('is a valid React component', () => {
