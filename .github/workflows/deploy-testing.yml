@@ -48,6 +48,12 @@ jobs:
         run: node scripts/prepare-testing-deployment.js
 
 
+      - name: Generate PWA icons
+        run: node scripts/generate-icons.js
+
+      - name: Copy icons to dist
+        run: cp assets/icon-*.png dist/ || echo "No icons to copy"
+
       - name: Add service worker
         run: node scripts/add-service-worker.js
         env:
@@ -64,6 +70,9 @@ jobs:
 
       - name: Add loading diagnostics
         run: node scripts/add-loading-diagnostics.js
+
+      - name: Add PWA meta tags and .well-known
+        run: node scripts/add-pwa-meta-tags.js
 
       - name: Create .nojekyll file
         run: touch dist/.nojekyll

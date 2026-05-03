@@ -36,6 +36,22 @@ if (fs.existsSync(manifestSourcePath)) {
       ...icon,
       src: icon.src.replace('/Pflanzkalender/', '/Pflanzkalender-testing/'),
     }));
+    if (manifest.screenshots) {
+      manifest.screenshots = manifest.screenshots.map(screenshot => ({
+        ...screenshot,
+        src: screenshot.src.replace('/Pflanzkalender/', '/Pflanzkalender-testing/'),
+      }));
+    }
+    if (manifest.shortcuts) {
+      manifest.shortcuts = manifest.shortcuts.map(shortcut => ({
+        ...shortcut,
+        url: shortcut.url.replace('/Pflanzkalender/', '/Pflanzkalender-testing/'),
+        icons: shortcut.icons ? shortcut.icons.map(icon => ({
+          ...icon,
+          src: icon.src.replace('/Pflanzkalender/', '/Pflanzkalender-testing/'),
+        })) : undefined,
+      }));
+    }
   }
   fs.writeFileSync(manifestDestPath, JSON.stringify(manifest, null, 2), 'utf8');
   console.log('✓ Copied manifest.json to dist');

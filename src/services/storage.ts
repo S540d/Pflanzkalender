@@ -35,10 +35,9 @@ export const storageService = {
           console.error('Skipping corrupt plant entry:', result.error.issues.map(i => `${i.path.join('.')}: ${i.message}`).join(', '));
         }
       }
-      // Nur leeres Array zurückgeben wenn tatsächlich keine Daten gespeichert waren
+      // Nur validated data zurückgeben – niemals ungültige Daten
       if (valid.length === 0 && parsed.length > 0) {
-        console.error('All stored plants failed validation – returning raw data to prevent data loss');
-        return parsed as Plant[];
+        console.error('All stored plants failed validation – data appears corrupted. Returning empty array to prevent crashes. Please re-import your plant data.');
       }
       return valid;
     } catch (error) {
