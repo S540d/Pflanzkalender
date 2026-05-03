@@ -1,6 +1,6 @@
 {
   "name": "pflanzkalender",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "main": "index.ts",
   "scripts": {
     "start": "expo start",
@@ -21,6 +21,7 @@
     "@react-navigation/native": "^7.1.18",
     "@react-navigation/stack": "^7.4.9",
     "expo": "~54.0.12",
+    "expo-navigation-bar": "~3.0.0",
     "expo-status-bar": "~3.0.8",
     "firebase": "^12.3.0",
     "react": "19.1.0",
