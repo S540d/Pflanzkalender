@@ -277,7 +277,7 @@ jobs:
       - name: Scan for hardcoded keystore passwords
         run: |
           if grep -rEi "(keystorePassword|keyPassword|storePassword)[[:space:]]*=[[:space:]]*[\"'][^\"']" . \
-              --exclude-dir=node_modules --exclude-dir=.git --exclude="*.md" 2>/dev/null; then
+              --exclude-dir=node_modules --exclude-dir=.git --exclude="*.md" --exclude="*.png" --exclude="*.jpg" --exclude="*.jpeg" 2>/dev/null; then
             echo "❌ Hardcoded keystore password (string literal) found! Use CI secrets instead."; exit 1
           fi
           echo "✅ No hardcoded keystore passwords"
