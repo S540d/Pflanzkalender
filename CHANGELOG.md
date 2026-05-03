@@ -7,29 +7,34 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-05-10
+
 ### Hinzugefügt
-- **Pflanzenkategorien** (Nutzpflanzen / Blumen / Bäume):
-  - Neuer Typ `PlantCategory` im Datenmodell (optionales Feld, rückwärtskompatibel)
-  - Kategorie-Tabs mit farbigen Icon-Badges in Kalender- und Agenda-Ansicht
-  - Kategorie-Auswahl beim Anlegen neuer Pflanzen
-  - Anzeige von Kategorie + Standort in der Pflanzenverwaltung
-- **32 vordefinierte Pflanzen** (vorher: 20):
-  - 21 Nutzpflanzen (unverändert)
-  - 10 Blumen: Rosen, Lavendel, Tulpen, Sonnenblumen, Dahlien, Geranien, Hortensien, Pfingstrosen, Chrysanthemen, Ringelblumen
-  - 5 Bäume: Apfelbaum, Birnbaum, Kirschbaum, Pflaume, Haselnuss
-- **Pflanzstandort-Empfehlungen** (#38):
-  - Neues optionales Feld `location` (Sonne / Halbschatten / Schatten)
-  - Standort-Auswahl im „Neue Pflanze"-Dialog
-  - Alle 32 Default-Pflanzen mit Standortempfehlung versehen
-- **Herbst-Schnitt** (#43):
-  - Rosen: Rückschnitt Oktober (zusätzlich zum Frühjahrsschnitt)
-  - Himbeeren: Rückschnitt September–Oktober (alte Ruten nach Ernte)
-  - Lavendel: Rückschnitt August–September (nach der Blüte)
-  - Label vereinheitlicht: „Schnitt" → „Zurückschneiden"; Farbe konsistent mit `activityTypes`
+- **PWA-Features** (Phase 2):
+  - Web App Manifest (`manifest.json`) mit vollständiger PWA-Konfiguration
+  - Icons in mehreren Größen (192x192, 512x512) und maskable Varianten für modernes OS-Styling
+  - Meta-Tags für Apple Mobile Web App (iOS Standalone-Modus)
+  - Theme-Color-Integration für Status-Bar (#4CAF50 Grün)
+  - Service Worker Upgrade mit erweiterter Asset-Caching-Strategie
+  - Web Asset Links (`.well-known/assetlinks.json`) für Trusted Web Activity Verifizierung
+  - Post-Build-Script (`add-pwa-meta-tags.js`) für dynamische Meta-Tag-Injection
+- **Offline-Unterstützung & Installation**:
+  - App kann jetzt zu Home-Screen installiert werden (Chrome, Firefox, Safari, Edge)
+  - Volle Offline-Funktionalität mit Progressive Enhancement
+  - Automatische Cache-Invalidation bei neuen Deployments
+- **Test-Suite Erweiterung** (Phase 3):
+  - Umfassende Jest-Tests (123 Tests, 14 Test-Suites)
+  - Context-Tests für PlantContext und LanguageContext (mit waitFor, nicht hardcoded timeouts)
+  - Hook-Tests für useTheme mit echtem Behavior-Testing
+  - Component-Rendering-Tests für AddPlantModal, ActivityBar
+  - Constants-Tests mit Type-Safety für categoryTabs
+  - Service Worker und Storage-Tests mit 95%+ Coverage
 
 ### Geändert
-- **Ko-fi Support-Link** (#40): URL von `buymeacoffee.com/sven4321` auf `https://ko-fi.com/devsven` aktualisiert, Label auf „Ko-fi" geändert (Settings + Footer)
-- **Kategorie-Icons**: Farbige abgerundete Badges statt Unterstriche – auf jedem Hintergrund erkennbar
+- Build-Prozess: Post-Build-Scripts für PWA Meta-Tags und Asset-Verarbeitung
+- Service Worker: Erweiterte Asset-Caching-Strategie (Manifest, Icons)
+- app.json: Web-Konfiguration mit PWA-Support (`viewportFit: cover`, `themeColor`)
+- package.json: Build-Script integrated mit `add-pwa-meta-tags.js`
 
 ## [1.2.0] - 2025-10-26
 

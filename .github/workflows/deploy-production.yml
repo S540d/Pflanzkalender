@@ -40,6 +40,15 @@ jobs:
       - name: Add service worker and cache-busting
         run: node scripts/add-service-worker.js
 
+      - name: Generate PWA icons
+        run: node scripts/generate-icons.js
+
+      - name: Copy icons to dist
+        run: cp assets/icon-*.png dist/ || echo "No icons to copy"
+
+      - name: Add PWA meta tags and .well-known
+        run: node scripts/add-pwa-meta-tags.js
+
       - name: Create .nojekyll
         run: touch dist/.nojekyll
 

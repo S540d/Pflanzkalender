@@ -4,6 +4,15 @@ export interface ActivityWithRow extends Activity {
   row: number;
 }
 
+// Konvertiert Activities für Portrait-Modus (24 Halbmonate → 6 Slots à 4 Halbmonate)
+export const convertActivitiesToPortraitSlots = (activities: Activity[]): Activity[] => {
+  return activities.map(activity => ({
+    ...activity,
+    startMonth: Math.floor(activity.startMonth / 4),
+    endMonth: Math.floor(activity.endMonth / 4),
+  }));
+};
+
 // Prüft ob sich zwei Aktivitäten überlappen
 const overlaps = (a: Activity, b: Activity): boolean => {
   return !(a.endMonth < b.startMonth || b.endMonth < a.startMonth);

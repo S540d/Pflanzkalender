@@ -28,9 +28,14 @@ export const PlantManagementScreen: React.FC = () => {
       ? `Möchtest du "${plantName}" wirklich löschen?`
       : `Do you really want to delete "${plantName}"?`;
 
-    if (confirm(message)) {
-      deletePlant(plantId);
-    }
+    Alert.alert(
+      language === 'de' ? 'Pflanze löschen' : 'Delete Plant',
+      message,
+      [
+        { text: language === 'de' ? 'Abbrechen' : 'Cancel', style: 'cancel' },
+        { text: language === 'de' ? 'Löschen' : 'Delete', style: 'destructive', onPress: () => deletePlant(plantId) },
+      ]
+    );
   };
 
   return (
