@@ -1,5 +1,5 @@
 import React from 'react';
-import { renderHook, act } from '@testing-library/react-native';
+import { renderHook, act, waitFor } from '@testing-library/react-native';
 import { PlantProvider, usePlants } from '../../src/contexts/PlantContext';
 
 describe('PlantContext – CRUD Operations', () => {
@@ -12,23 +12,42 @@ describe('PlantContext – CRUD Operations', () => {
 
     expect(result.current.loading).toBe(true);
 
-    // Wait for async load
-    await act(async () => {
-      await new Promise(resolve => setTimeout(resolve, 100));
-    });
+    await waitFor(
+      () => {
+        expect(result.current.loading).toBe(false);
+      },
+      { timeout: 3000 }
+    );
 
     expect(Array.isArray(result.current.plants)).toBe(true);
+    expect(result.current.plants.length).toBeGreaterThanOrEqual(0);
   });
 
-  it('provides CRUD methods', async () => {
+  it('provides CRUD methods that work', async () => {
     const { result } = renderHook(() => usePlants(), { wrapper });
 
+    await waitFor(
+      () => {
+        expect(result.current.loading).toBe(false);
+      },
+      { timeout: 3000 }
+    );
+
+    const initialCount = result.current.plants.length;
+
+    // Test addPlant
     await act(async () => {
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await result.current.addPlant({
+        id: 'test-plant',
+        name: 'Test Plant',
+        activities: [],
+        isDefault: false,
+      });
     });
 
-    // Verify all CRUD methods are defined
-    expect(typeof result.current.addPlant).toBe('function');
+    expect(result.current.plants.length).toBe(initialCount + 1);
+
+    // Verify CRUD methods are callable
     expect(typeof result.current.deletePlant).toBe('function');
     expect(typeof result.current.updatePlant).toBe('function');
     expect(typeof result.current.addActivity).toBe('function');
