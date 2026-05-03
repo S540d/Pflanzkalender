@@ -30,7 +30,7 @@ export const storageService = {
       for (const item of parsed) {
         const result = PlantSchema.safeParse(item);
         if (result.success) {
-          valid.push(result.data as Plant);
+          valid.push(result.data);
         } else {
           console.error('Skipping corrupt plant entry:', result.error.issues.map(i => `${i.path.join('.')}: ${i.message}`).join(', '));
         }
