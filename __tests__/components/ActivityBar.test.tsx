@@ -27,11 +27,11 @@ describe('ActivityBar Component', () => {
   };
 
   it('renders without crashing', () => {
-    const { container } = render(
+    const { root } = render(
       <ActivityBar activity={mockActivity} index={0} totalActivities={1} />
     );
 
-    expect(container).toBeTruthy();
+    expect(root).toBeTruthy();
   });
 
   it('is a valid React component', () => {
@@ -47,7 +47,7 @@ describe('ActivityBar Component', () => {
   });
 
   it('renders activity bar with correct styling', () => {
-    const { container } = render(
+    const { root } = render(
       <ActivityBar
         activity={{
           ...mockActivity,
@@ -62,6 +62,6 @@ describe('ActivityBar Component', () => {
       />
     );
 
-    expect(container).toBeTruthy();
+    expect(root).toBeTruthy();
   });
 });
