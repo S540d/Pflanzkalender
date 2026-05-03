@@ -73,6 +73,8 @@ jobs:
 
       - name: Add PWA meta tags and .well-known
         run: node scripts/add-pwa-meta-tags.js
+        env:
+          TESTING: true
 
       - name: Create .nojekyll file
         run: touch dist/.nojekyll
