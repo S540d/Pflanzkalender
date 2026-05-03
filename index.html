@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <script>
+    // Track page load performance
+    (function() {
+      const startTime = Date.now();
+
+      // Track what gets loaded
+      const loadedResources = {
+        scripts: [],
+        stylesheets: [],
+        failed: []
+      };
+
+      // Monitor all script tags
+      document.addEventListener('DOMContentLoaded', function() {
+        const scripts = document.querySelectorAll('script[src]');
+        scripts.forEach(function(script) {
+          const src = script.src;
+
+          script.addEventListener('load', function() {
+            loadedResources.scripts.push(src);
+            console.log('[Loading] ✅ Script loaded:', src);
+          });
+
+          script.addEventListener('error', function() {
+            loadedResources.failed.push(src);
+            console.error('[Loading] ❌ Script failed:', src);
+          });
+        });
+
+        // Check if app root exists
+        setTimeout(function() {
+          const root = document.getElementById('root');
+          if (!root) {
+            console.error('[Loading] ❌ No root element found!');
+          } else if (root.children.length === 0) {
+            console.error('[Loading] ❌ Root element is empty - app not rendering');
+            console.log('[Loading] Loaded scripts:', loadedResources.scripts.length);
+            console.log('[Loading] Failed scripts:', loadedResources.failed.length);
+          } else {
+            console.log('[Loading] ✅ App rendered successfully');
+          }
+        }, 3000);
+      });
+
+      // Log page load complete
+      window.addEventListener('load', function() {
+        const loadTime = Date.now() - startTime;
+        console.log('[Loading] Page load complete in ' + loadTime + 'ms');
+      });
+    })();
+  </script>
+
+  <script>
+    // FORCE CACHE CLEAR - This runs immediately before anything else
+    (function() {
+      console.log('[CacheClear] Starting aggressive cache cleanup...');
+
+      // 1. Unregister ALL service workers
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(function(registrations) {
+          console.log('[CacheClear] Found ' + registrations.length + ' service worker(s)');
+          for (let registration of registrations) {
+            registration.unregister().then(function(success) {
+              if (success) {
+                console.log('[CacheClear] Unregistered service worker:', registration.scope);
+              }
+            });
+          }
+        });
+      }
+
+      // 2. Delete ALL caches
+      if ('caches' in window) {
+        caches.keys().then(function(cacheNames) {
+          console.log('[CacheClear] Found ' + cacheNames.length + ' cache(s)');
+          return Promise.all(
+            cacheNames.map(function(cacheName) {
+              console.log('[CacheClear] Deleting cache:', cacheName);
+              return caches.delete(cacheName);
+            })
+          );
+        }).then(function() {
+          console.log('[CacheClear] All caches deleted');
+        });
+      }
+
+      console.log('[CacheClear] Cache cleanup complete! NO RELOAD - app continues loading...');
+    })();
+  </script>
+
+    <meta charset="utf-8" />
+    <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <title>Pflanzkalender</title>
+    <!-- The `react-native-web` recommended style reset: https://necolas.github.io/react-native-web/docs/setup/#root-element -->
+    <style id="expo-reset">
+      /* These styles make the body full-height */
+      html,
+      body {
+        height: 100%;
+      }
+      /* These styles disable body scrolling if you are using <ScrollView> */
+      body {
+        overflow: hidden;
+      }
+      /* These styles make the root element full-height */
+      #root {
+        display: flex;
+        height: 100%;
+        flex: 1;
+      }
+    </style>
+  <meta name="theme-color" content="#4CAF50">
+<link rel="icon" href="/Pflanzkalender-testing/favicon.ico" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta name="version" content="1.3.0-testing">
+<meta name="build-timestamp" content="1777810792977">
+
+  <link rel="manifest" href="/Pflanzkalender-testing/manifest.json">
+  <meta name="theme-color" content="#4CAF50">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Pflanzkalender">
+  <meta name="mobile-web-app-capable" content="yes">
+
+  <style>
+    #mobile-debug-overlay {
+      position: fixed;
+      top: 60px;
+      left: 10px;
+      right: 10px;
+      background: rgba(0, 0, 0, 0.95);
+      color: #00ff00;
+      padding: 15px;
+      font-family: monospace;
+      font-size: 11px;
+      z-index: 999999;
+      max-height: 80vh;
+      overflow-y: auto;
+      border: 2px solid #00ff00;
+      border-radius: 5px;
+      display: none;
+    }
+    #mobile-debug-overlay.visible {
+      display: block;
+    }
+    #mobile-debug-overlay .error {
+      color: #ff4444;
+      margin: 5px 0;
+      border-left: 3px solid #ff4444;
+      padding-left: 8px;
+    }
+    #mobile-debug-overlay .info {
+      color: #00ff00;
+      margin: 5px 0;
+    }
+    #mobile-debug-overlay .warning {
+      color: #ffaa00;
+      margin: 5px 0;
+      border-left: 3px solid #ffaa00;
+      padding-left: 8px;
+    }
+    #mobile-debug-overlay .timestamp {
+      color: #888;
+      font-size: 9px;
+    }
+    #mobile-debug-toggle {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      background: #00ff00;
+      color: black;
+      padding: 10px 15px;
+      border-radius: 20px;
+      z-index: 9999999;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 14px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    }
+  </style>
+</head>
+
+  <body>
+  <div id="mobile-debug-toggle">DEBUG</div>
+  <div id="mobile-debug-overlay">
+    <div style="font-weight: bold; margin-bottom: 10px; color: white;">📱 Mobile Debug Console</div>
+    <div id="debug-log"></div>
+  </div>
+  <script>
+    (function() {
+      // Mobile Debug Logger
+      const debugOverlay = document.getElementById('mobile-debug-overlay');
+      const debugLog = document.getElementById('debug-log');
+      const debugToggle = document.getElementById('mobile-debug-toggle');
+      let isVisible = true; // Start visible to show initial loading
+
+      debugOverlay.classList.add('visible');
+
+      debugToggle.addEventListener('click', function() {
+        isVisible = !isVisible;
+        if (isVisible) {
+          debugOverlay.classList.add('visible');
+        } else {
+          debugOverlay.classList.remove('visible');
+        }
+      });
+
+      function addLog(message, type = 'info') {
+        const timestamp = new Date().toLocaleTimeString();
+        const entry = document.createElement('div');
+        entry.className = type;
+        entry.innerHTML = '<span class="timestamp">[' + timestamp + ']</span> ' + message;
+        debugLog.appendChild(entry);
+        debugLog.scrollTop = debugLog.scrollHeight;
+      }
+
+      // Log initial info
+      addLog('🚀 App starting...', 'info');
+      addLog('User Agent: ' + navigator.userAgent, 'info');
+      addLog('Screen: ' + window.innerWidth + 'x' + window.innerHeight, 'info');
+      addLog('Base URL: ' + window.location.href, 'info');
+
+      // Intercept console methods
+      const originalLog = console.log;
+      const originalError = console.error;
+      const originalWarn = console.warn;
+
+      console.log = function(...args) {
+        addLog(args.join(' '), 'info');
+        originalLog.apply(console, args);
+      };
+
+      console.error = function(...args) {
+        addLog('❌ ' + args.join(' '), 'error');
+        originalError.apply(console, args);
+      };
+
+      console.warn = function(...args) {
+        addLog('⚠️ ' + args.join(' '), 'warning');
+        originalWarn.apply(console, args);
+      };
+
+      // Catch all unhandled errors
+      window.addEventListener('error', function(event) {
+        addLog('❌ ERROR: ' + event.message + ' at ' + event.filename + ':' + event.lineno, 'error');
+      });
+
+      // Catch unhandled promise rejections
+      window.addEventListener('unhandledrejection', function(event) {
+        addLog('❌ PROMISE REJECTION: ' + (event.reason?.message || event.reason), 'error');
+      });
+
+      // Check if React bundle loads
+      addLog('⏳ Waiting for React to load...', 'info');
+
+      // Check after 3 seconds if React loaded
+      setTimeout(function() {
+        if (typeof React === 'undefined') {
+          addLog('❌ React not loaded after 3s - bundle may have failed', 'error');
+        } else {
+          addLog('✅ React is loaded', 'info');
+        }
+      }, 3000);
+
+      // Check after 5 seconds if app rendered
+      setTimeout(function() {
+        const appRoot = document.getElementById('root');
+        if (appRoot && appRoot.children.length === 0) {
+          addLog('❌ App root is empty - React app not rendering', 'error');
+        } else if (appRoot && appRoot.children.length > 0) {
+          addLog('✅ App rendered successfully', 'info');
+        }
+      }, 5000);
+
+      // Log service worker status
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(function(registrations) {
+          if (registrations.length > 0) {
+            addLog('ℹ️ Service Workers found: ' + registrations.length, 'info');
+            registrations.forEach(function(reg) {
+              addLog('  - Scope: ' + reg.scope, 'info');
+            });
+          } else {
+            addLog('ℹ️ No Service Workers registered', 'info');
+          }
+        });
+      }
+
+      // Log cache status
+      if ('caches' in window) {
+        caches.keys().then(function(names) {
+          if (names.length > 0) {
+            addLog('ℹ️ Caches found: ' + names.join(', '), 'info');
+          } else {
+            addLog('ℹ️ No caches found', 'info');
+          }
+        });
+      }
+
+      // Check if main bundle exists
+      addLog('🔍 Checking for main bundle...', 'info');
+      fetch(window.location.origin + window.location.pathname + '_expo/static/js/web/entry-*.js'.replace('*', ''))
+        .then(function() {
+          addLog('✅ Main bundle found', 'info');
+        })
+        .catch(function() {
+          addLog('⚠️ Could not verify main bundle', 'warning');
+        });
+
+      addLog('📊 Debug logger initialized', 'info');
+    })();
+  </script>
+
+  <div id="failsafe-banner" style="
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px;
+    text-align: center;
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    font-weight: bold;
+    z-index: 99999999;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    border-bottom: 4px solid #fff;
+  ">
+    <div style="font-size: 24px; margin-bottom: 10px;">🔍 DEBUG MODUS</div>
+    <div id="status-message" style="font-size: 14px; margin-bottom: 10px;">⏳ Seite lädt...</div>
+    <div style="font-size: 12px; opacity: 0.9;">Wenn diese Nachricht verschwindet, funktioniert JavaScript!</div>
+  </div>
+  <script>
+    // This script runs IMMEDIATELY and updates the banner
+    (function() {
+      var statusMsg = document.getElementById('status-message');
+      var banner = document.getElementById('failsafe-banner');
+
+      // Step 1: JavaScript is running
+      statusMsg.innerHTML = '✅ JavaScript läuft!';
+      statusMsg.style.color = '#00ff00';
+
+      // Step 2: Check if DOM loaded
+      document.addEventListener('DOMContentLoaded', function() {
+        statusMsg.innerHTML = '✅ DOM geladen! Warte auf React...';
+
+        // Step 3: Check if React loaded after 2 seconds
+        setTimeout(function() {
+          if (typeof React !== 'undefined') {
+            statusMsg.innerHTML = '✅ React geladen! App sollte rendern...';
+          } else {
+            statusMsg.innerHTML = '❌ React nicht gefunden!';
+            statusMsg.style.color = '#ff4444';
+          }
+        }, 2000);
+
+        // Step 4: Check if app rendered after 5 seconds
+        setTimeout(function() {
+          var root = document.getElementById('root');
+          if (root && root.children.length > 0) {
+            statusMsg.innerHTML = '✅ APP FUNKTIONIERT!';
+            statusMsg.style.color = '#00ff00';
+            // Hide banner after success
+            setTimeout(function() {
+              banner.style.display = 'none';
+            }, 3000);
+          } else {
+            statusMsg.innerHTML = '❌ APP RENDERT NICHT! Root ist leer.';
+            statusMsg.style.color = '#ff4444';
+            // Keep banner visible to show error
+          }
+        }, 5000);
+      });
+
+      // Catch any errors
+      window.addEventListener('error', function(e) {
+        statusMsg.innerHTML = '❌ FEHLER: ' + e.message;
+        statusMsg.style.color = '#ff4444';
+        banner.style.background = 'linear-gradient(135deg, #ff4444 0%, #cc0000 100%)';
+      });
+    })();
+  </script>
+
+<div style="position: fixed; top: 0; left: 0; right: 0; background: #ff9800; color: #000; padding: 8px; text-align: center; font-weight: bold; z-index: 99999999;">
+  ⚠️ TESTING ENVIRONMENT
+</div>
+
+    <!-- Use static rendering with Expo Router to support running without JavaScript. -->
+    <noscript>
+      You need to enable JavaScript to run this app.
+    </noscript>
+    <!-- The root element for your Expo app. -->
+    <div id="root"></div>
+  <script src="/Pflanzkalender-testing/_expo/static/js/web/index-b20b8abd152b74a4a2ce79983fd8c44a.js" defer></script>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/Pflanzkalender-testing/service-worker.js?v=1777810793015')
+          .then(function(registration) {
+            // Periodically check for updates
+            setInterval(function() { registration.update(); }, 60000);
+
+            // When a new SW is found, ask it to take over immediately
+            registration.addEventListener('updatefound', function() {
+              var newWorker = registration.installing;
+              newWorker.addEventListener('statechange', function() {
+                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                  newWorker.postMessage({ type: 'SKIP_WAITING' });
+                }
+              });
+            });
+          })
+          .catch(function(err) {
+            console.error('[SW] Registration failed:', err);
+          });
+
+        // Reload once when new SW takes control (flag prevents loop)
+        var reloading = false;
+        navigator.serviceWorker.addEventListener('controllerchange', function() {
+          if (!reloading) {
+            reloading = true;
+            window.location.reload();
+          }
+        });
+      });
+    }
+  </script>
+  </body>
+</html>
+<!-- TESTING ENVIRONMENT -->
