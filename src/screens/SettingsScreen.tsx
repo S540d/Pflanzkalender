@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Linking, ScrollView, Platform
 import { useTheme } from '../hooks/useTheme';
 import { storageService } from '../services/storage';
 
-const APP_VERSION = '1.2.0';
+const APP_VERSION = '1.2.1';
 
 type Language = 'en' | 'de';
 
