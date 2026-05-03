@@ -98,9 +98,21 @@ describe('categoryTabs Constants', () => {
   });
 
   describe('CategoryFilter Type', () => {
-    it('accepts valid category values', () => {
+    it('has 4 valid category filter values', () => {
+      // Runtime check: TypeScript compilation ensures type safety
       const validValues: CategoryFilter[] = ['all', 'vegetable', 'flower', 'tree'];
       expect(validValues.length).toBe(4);
+    });
+
+    it('CategoryFilter type covers all CATEGORY_TABS values', () => {
+      const tabValues = CATEGORY_TABS.map(tab => tab.value as CategoryFilter);
+      expect(tabValues.length).toBe(4);
+
+      // Each tab value should be a valid CategoryFilter
+      const validFilterValues: CategoryFilter[] = ['all', 'vegetable', 'flower', 'tree'];
+      tabValues.forEach(value => {
+        expect(validFilterValues).toContain(value);
+      });
     });
   });
 });
