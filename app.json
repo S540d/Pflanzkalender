@@ -2,7 +2,7 @@
   "expo": {
     "name": "Pflanzkalender",
     "slug": "Pflanzkalender",
-    "version": "1.2.1",
+    "version": "1.3.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -27,7 +27,8 @@
     "web": {
       "favicon": "./assets/favicon.png",
       "bundler": "metro",
-      "viewportFit": "cover"
+      "viewportFit": "cover",
+      "themeColor": "#4CAF50"
     }
   }
 }
