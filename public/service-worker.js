@@ -8,7 +8,12 @@ const FORCE_UNREGISTER = false;
 // Files to cache
 const urlsToCache = [
   '/Pflanzkalender/',
-  '/Pflanzkalender/index.html'
+  '/Pflanzkalender/index.html',
+  '/Pflanzkalender/manifest.json',
+  '/Pflanzkalender/icon-192.png',
+  '/Pflanzkalender/icon-512.png',
+  '/Pflanzkalender/icon-192-maskable.png',
+  '/Pflanzkalender/icon-512-maskable.png'
 ];
 
 // Install event - cache files
