@@ -1,5 +1,5 @@
 import React from 'react';
-import { renderHook, act } from '@testing-library/react-native';
+import { renderHook, act, waitFor } from '@testing-library/react-native';
 import { LanguageProvider, useLanguage } from '../../src/contexts/LanguageContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -8,15 +8,36 @@ jest.mock('@react-native-async-storage/async-storage');
 describe('LanguageContext – Language Management', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    (AsyncStorage.getItem as jest.Mock).mockResolvedValue(null);
+    (AsyncStorage.setItem as jest.Mock).mockResolvedValue(undefined);
   });
 
   const wrapper = ({ children }: { children: React.ReactNode }) => (
     <LanguageProvider>{children}</LanguageProvider>
   );
 
-  it('initializes with default language (de)', () => {
+  it('initializes with default language (de) after mount', async () => {
+    (AsyncStorage.getItem as jest.Mock).mockResolvedValue(null);
+
     const { result } = renderHook(() => useLanguage(), { wrapper });
+
     expect(result.current.language).toBe('de');
+
+    await waitFor(() => {
+      expect(AsyncStorage.getItem).toHaveBeenCalledWith('language');
+    });
+  });
+
+  it('loads persisted language from AsyncStorage on mount', async () => {
+    (AsyncStorage.getItem as jest.Mock).mockResolvedValue('en');
+
+    const { result } = renderHook(() => useLanguage(), { wrapper });
+
+    await waitFor(() => {
+      expect(result.current.language).toBe('en');
+    });
+
+    expect(AsyncStorage.getItem).toHaveBeenCalledWith('language');
   });
 
   it('changes language', async () => {
@@ -29,7 +50,7 @@ describe('LanguageContext – Language Management', () => {
     expect(result.current.language).toBe('en');
   });
 
-  it('persists language to AsyncStorage', async () => {
+  it('persists language to AsyncStorage when changed', async () => {
     const { result } = renderHook(() => useLanguage(), { wrapper });
 
     await act(async () => {
