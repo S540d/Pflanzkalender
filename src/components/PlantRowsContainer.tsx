@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, ScrollView, ActivityIndicator } from 'react-nat
 import { useTheme } from '../hooks/useTheme';
 import { Plant } from '../types';
 import { PlantRow } from './PlantRow';
-import { calculateActivityRows } from '../utils/activityLayout';
+import { calculateActivityRows, convertActivitiesToPortraitSlots } from '../utils/activityLayout';
 
 interface PlantRowsContainerProps {
   sortedPlants: Plant[];
@@ -51,19 +51,7 @@ export const PlantRowsContainer: React.FC<PlantRowsContainerProps> = ({
             </View>
           ) : (
             sortedPlants.map(plant => {
-              const visibleActivities = plant.activities.map(activity => {
-                if (isPortrait) {
-                  const startSlot = Math.floor(activity.startMonth / 4);
-                  const endSlot = Math.floor(activity.endMonth / 4);
-                  return {
-                    ...activity,
-                    startMonth: startSlot,
-                    endMonth: endSlot,
-                  };
-                }
-                return activity;
-              });
-
+              const visibleActivities = isPortrait ? convertActivitiesToPortraitSlots(plant.activities) : plant.activities;
               const activitiesWithRows = calculateActivityRows(visibleActivities);
               const maxRow = activitiesWithRows.reduce((max, a) => Math.max(max, a.row), 0);
               const minHeight = Math.max(60, (maxRow + 1) * 28 + 8);

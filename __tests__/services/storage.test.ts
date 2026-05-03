@@ -208,11 +208,14 @@ describe('storageService.loadPlants – Zod-Filterung', () => {
     expect(result[0].id).toBe('good');
   });
 
-  it('gibt Rohdaten zurück wenn alle Einträge ungültig sind (verhindert Datenverlust)', async () => {
+  it('gibt leeres Array zurück wenn alle Einträge ungültig sind (verhindert Crashes)', async () => {
     const allCorrupt = [{ id: 'x', name: '' }, { id: 'y', name: '' }];
     jest.spyOn(AsyncStorage, 'getItem').mockResolvedValueOnce(JSON.stringify(allCorrupt));
+    const errorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
     const result = await storageService.loadPlants();
-    expect(result).toHaveLength(2);
+    expect(result).toEqual([]);
+    expect(errorSpy).toHaveBeenCalledWith(expect.stringContaining('All stored plants failed validation'));
+    errorSpy.mockRestore();
   });
 
   it('gibt leeres Array zurück wenn Storage leer ist', async () => {
