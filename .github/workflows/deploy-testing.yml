@@ -52,6 +52,12 @@ jobs:
       - name: Copy icons to dist
         run: cp assets/icon-*.png dist/ || echo "No icons to copy"
 
+      - name: Generate PWA icons
+        run: node scripts/generate-icons.js
+
+      - name: Copy icons to dist
+        run: cp assets/icon-*.png dist/ || echo "No icons to copy"
+
       - name: Add service worker
         run: node scripts/add-service-worker.js
         env:
