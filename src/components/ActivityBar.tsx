@@ -9,14 +9,31 @@ interface ActivityBarProps {
   totalMonths?: number; // Anzahl der sichtbaren Monate (default: 24)
 }
 
-export const ActivityBar: React.FC<ActivityBarProps> = ({ activity, onPress, totalMonths = 24 }) => {
+export const ActivityBar: React.FC<ActivityBarProps> = ({
+  activity,
+  onPress,
+  totalMonths = 24,
+}) => {
   const [isHovered, setIsHovered] = useState(false);
 
   // Berechne Position und Breite basierend auf Start- und Endmonat
   const startPosition = (activity.startMonth / totalMonths) * 100;
   const width = ((activity.endMonth - activity.startMonth + 1) / totalMonths) * 100;
 
-  const monthNames = ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'];
+  const monthNames = [
+    'Jan',
+    'Feb',
+    'Mär',
+    'Apr',
+    'Mai',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Okt',
+    'Nov',
+    'Dez',
+  ];
   const getMonthLabel = (halfMonth: number) => {
     const monthIndex = Math.floor(halfMonth / 2);
     const half = halfMonth % 2 === 0 ? '1. H' : '2. H';
@@ -47,7 +64,10 @@ export const ActivityBar: React.FC<ActivityBarProps> = ({ activity, onPress, tot
   return (
     <>
       <TouchableOpacity {...touchableProps}>
-        <Text style={[styles.label, { color: getContrastTextColor(activity.color) }]} numberOfLines={1}>
+        <Text
+          style={[styles.label, { color: getContrastTextColor(activity.color) }]}
+          numberOfLines={1}
+        >
           {activity.label}
         </Text>
       </TouchableOpacity>

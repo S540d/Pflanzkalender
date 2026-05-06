@@ -30,7 +30,7 @@ export const AgendaScreen: React.FC = () => {
   // Gefilterte Pflanzen nach Kategorie
   const filteredPlants = useMemo(() => {
     if (activeCategory === 'all') return plants;
-    return plants.filter(p => (p.category ?? 'vegetable') === activeCategory);
+    return plants.filter((p) => (p.category ?? 'vegetable') === activeCategory);
   }, [plants, activeCategory]);
 
   // Aktivitäten für drei Zeiträume sammeln (vorher, aktuell, danach)
@@ -40,8 +40,8 @@ export const AgendaScreen: React.FC = () => {
   const getActivitiesForMonth = (monthIndex: number): ActivityInfo[] => {
     const activities: ActivityInfo[] = [];
 
-    filteredPlants.forEach(plant => {
-      plant.activities.forEach(activity => {
+    filteredPlants.forEach((plant) => {
+      plant.activities.forEach((activity) => {
         if (activity.startMonth <= monthIndex && activity.endMonth >= monthIndex) {
           activities.push({
             plantName: plant.name,
@@ -56,9 +56,18 @@ export const AgendaScreen: React.FC = () => {
     return activities.sort((a, b) => a.plantName.localeCompare(b.plantName, 'de'));
   };
 
-  const previousActivities = useMemo(() => getActivitiesForMonth(previousMonth), [filteredPlants, previousMonth]);
-  const currentActivities = useMemo(() => getActivitiesForMonth(currentMonth), [filteredPlants, currentMonth]);
-  const nextActivities = useMemo(() => getActivitiesForMonth(nextMonth), [filteredPlants, nextMonth]);
+  const previousActivities = useMemo(
+    () => getActivitiesForMonth(previousMonth),
+    [filteredPlants, previousMonth]
+  );
+  const currentActivities = useMemo(
+    () => getActivitiesForMonth(currentMonth),
+    [filteredPlants, currentMonth]
+  );
+  const nextActivities = useMemo(
+    () => getActivitiesForMonth(nextMonth),
+    [filteredPlants, nextMonth]
+  );
 
   const monthNames = t('agenda.months') as any;
 
@@ -85,13 +94,9 @@ export const AgendaScreen: React.FC = () => {
                 {activity.activityLabel}
               </Text>
             </View>
-            <Text style={[styles.plantName, { color: theme.text }]}>
-              {activity.plantName}
-            </Text>
+            <Text style={[styles.plantName, { color: theme.text }]}>{activity.plantName}</Text>
             {activity.notes && (
-              <Text style={[styles.notes, { color: theme.textSecondary }]}>
-                {activity.notes}
-              </Text>
+              <Text style={[styles.notes, { color: theme.textSecondary }]}>{activity.notes}</Text>
             )}
           </View>
         ))
@@ -102,7 +107,12 @@ export const AgendaScreen: React.FC = () => {
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       {/* Kategorie-Tabs */}
-      <View style={[styles.tabBar, { borderBottomColor: theme.border, backgroundColor: theme.background }]}>
+      <View
+        style={[
+          styles.tabBar,
+          { borderBottomColor: theme.border, backgroundColor: theme.background },
+        ]}
+      >
         {CATEGORY_TABS_I18N.map((tab) => {
           const isActive = activeCategory === tab.value;
           const label = language === 'de' ? tab.labelDe : tab.labelEn;
@@ -112,13 +122,23 @@ export const AgendaScreen: React.FC = () => {
               style={styles.tab}
               onPress={() => setActiveCategory(tab.value)}
             >
-              <View style={[
-                styles.iconBadge,
-                { backgroundColor: isActive ? tab.color : tab.color + '30' },
-              ]}>
+              <View
+                style={[
+                  styles.iconBadge,
+                  { backgroundColor: isActive ? tab.color : tab.color + '30' },
+                ]}
+              >
                 <Text style={styles.tabIcon}>{tab.icon}</Text>
               </View>
-              <Text style={[styles.tabLabel, { color: isActive ? tab.color : theme.textSecondary, fontWeight: isActive ? '700' : '400' }]}>
+              <Text
+                style={[
+                  styles.tabLabel,
+                  {
+                    color: isActive ? tab.color : theme.textSecondary,
+                    fontWeight: isActive ? '700' : '400',
+                  },
+                ]}
+              >
                 {label}
               </Text>
             </TouchableOpacity>

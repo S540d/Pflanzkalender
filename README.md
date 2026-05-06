@@ -81,6 +81,7 @@ npm run deploy
 ```
 
 Das Deploy-Script:
+
 - Erstellt einen Production-Build
 - Passt Pfade für GitHub Pages an
 - Deployed auf gh-pages Branch
@@ -99,6 +100,7 @@ Das Deploy-Script:
 ### Agenda-Ansicht (📋)
 
 Dreispaltige Übersicht mit horizontalem Scrolling:
+
 - **Links:** Aktivitäten vom vorherigen Zeitraum
 - **Mitte:** Aktuelle Aktivitäten (aktueller Halbmonat)
 - **Rechts:** Kommende Aktivitäten (nächster Zeitraum)
@@ -107,6 +109,7 @@ Dreispaltige Übersicht mit horizontalem Scrolling:
 ### Pflanzen-Verwaltung (🌱)
 
 Zentraler Screen zur Verwaltung aller Pflanzen:
+
 - **Neue Pflanze hinzufügen:** Großer Button am oberen Rand
 - **Pflanzenliste:** Übersicht mit Name, Notizen und Aktivitätsanzahl
 - **Löschen:** Jede Pflanze kann einzeln gelöscht werden

@@ -9,10 +9,12 @@ Dieser Guide erklärt die automatisierte Quality Assurance für dieses Projekt.
 ### 1. **GitHub Actions CI/CD** (`.github/workflows/ci-cd.yml`)
 
 Läuft automatisch bei jedem:
+
 - Push zu `main` oder `develop`
 - Pull Request
 
 **5 Jobs:**
+
 1. **Code Quality** - ESLint, TypeScript, Web API Checks
 2. **Build Web** - Web Build Test
 3. **Build Android** - Android Build Test
@@ -26,8 +28,9 @@ Läuft automatisch bei jedem:
 Läuft automatisch **vor jedem Git Commit**.
 
 **Prüft:**
+
 - ❌ console.log in staged files
-- ❌ window.* ohne Platform.OS Check
+- ❌ window.\* ohne Platform.OS Check
 - ❌ localStorage ohne Platform.OS Check
 - ❌ Version inconsistencies
 
@@ -38,6 +41,7 @@ Läuft automatisch **vor jedem Git Commit**.
 Läuft **manuell** vor jedem Release.
 
 **Prüft alles:**
+
 - Version Consistency (5 Dateien)
 - Code Quality
 - Build Tests (Web + Android)
@@ -118,12 +122,14 @@ git commit -m "Add pre-commit hooks"
 **Problem:** Commit wurde abgebrochen.
 
 **Lösung:**
+
 1. Lies Fehlermeldung
 2. Fixe Fehler (z.B. entferne console.log)
 3. `git add .` erneut
 4. `git commit` erneut
 
 **Bypass (NOT RECOMMENDED):**
+
 ```bash
 git commit --no-verify -m "message"
 ```
@@ -133,12 +139,14 @@ git commit --no-verify -m "message"
 **Problem:** PR Check ist rot ❌
 
 **Lösung:**
+
 1. Klicke auf "Details" bei GitHub
 2. Lies Job Logs
 3. Fixe Fehler lokal
 4. Push erneut
 
 **Häufige Fehler:**
+
 - `window.matchMedia` ohne Platform Check → Füge `Platform.OS === 'web'` hinzu
 - Version Mismatch → Update alle 5 Version-Dateien
 - Build Failed → Teste lokal `npm run build:web`
@@ -148,10 +156,12 @@ git commit --no-verify -m "message"
 **Problem:** `./scripts/validate-release.sh` zeigt Warnungen ⚠️
 
 **Lösung:**
+
 - **Warnings sind OK** (review needed)
 - **Errors sind NICHT OK** (must fix)
 
 Warnings z.B.:
+
 - Missing documentation file
 - Light theme found (consider System/Dark only)
 - npm audit findings
@@ -160,15 +170,15 @@ Warnings z.B.:
 
 ## 📊 Status Checks Übersicht
 
-| Check | Tool | Wann | Blockiert |
-|-------|------|------|-----------|
-| console.log | Pre-commit | Bei Commit | ✅ Ja |
-| Web APIs | Pre-commit + CI | Bei Commit + Push | ✅ Ja |
-| Version Consistency | CI + Script | Bei Push + Release | ✅ Ja |
-| Build Tests | CI | Bei Push | ✅ Ja |
-| UX Guidelines | CI + Script | Bei Push + Release | ⚠️ Warning |
-| Security Audit | CI + Script | Bei Push + Release | ⚠️ Warning |
-| Manual Tests | - | Vor Release | ❌ Nein |
+| Check               | Tool            | Wann               | Blockiert  |
+| ------------------- | --------------- | ------------------ | ---------- |
+| console.log         | Pre-commit      | Bei Commit         | ✅ Ja      |
+| Web APIs            | Pre-commit + CI | Bei Commit + Push  | ✅ Ja      |
+| Version Consistency | CI + Script     | Bei Push + Release | ✅ Ja      |
+| Build Tests         | CI              | Bei Push           | ✅ Ja      |
+| UX Guidelines       | CI + Script     | Bei Push + Release | ⚠️ Warning |
+| Security Audit      | CI + Script     | Bei Push + Release | ⚠️ Warning |
+| Manual Tests        | -               | Vor Release        | ❌ Nein    |
 
 ---
 

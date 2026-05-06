@@ -7,6 +7,7 @@
 Dieser Workflow deployed die App auf die Testing-Umgebung für Partner-Reviews.
 
 #### ⚙️ Features:
+
 - ✅ Manuell startbar über GitHub Actions UI
 - ✅ Wählbarer Branch für Deployment
 - ✅ Deployed auf `gh-pages-testing` Branch
@@ -22,6 +23,7 @@ Dieser Workflow deployed die App auf die Testing-Umgebung für Partner-Reviews.
 4. Klicke auf **Run workflow** (grüner Button)
 
 #### 📋 Was passiert:
+
 1. Code wird ausgecheckt
 2. Dependencies werden installiert
 3. App wird gebaut (`expo export --platform web`)
@@ -31,12 +33,15 @@ Dieser Workflow deployed die App auf die Testing-Umgebung für Partner-Reviews.
 7. Verfügbar unter Testing-URL
 
 #### 🎯 Wann verwenden:
+
 - Vor einem PR-Merge zum Testen
 - Nach größeren Features für Partner-Review
 - Zum Testen von Bugfixes
 
 #### 💡 Tipp:
+
 Nach dem Deploy kannst du die Testing-URL an deinen Partner senden:
+
 ```
 https://s540d.github.io/Pflanzkalender-testing/
 ```
@@ -46,6 +51,7 @@ https://s540d.github.io/Pflanzkalender-testing/
 ## Zukünftige Workflows
 
 Weitere Workflows können hier hinzugefügt werden:
+
 - `deploy-production.yml` - Automatischer Production Deploy nach Merge
 - `test.yml` - Automatische Tests
 - `lint.yml` - Code-Qualität Checks

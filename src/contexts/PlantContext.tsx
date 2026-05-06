@@ -53,7 +53,16 @@ export const PlantProvider: React.FC<PlantProviderProps> = ({ children }) => {
           setPlants(savedPlants);
         }
       } catch (error) {
-        console.error('Error initializing plants:', error);
+        if (error instanceof Error && error.message === 'STORAGE_CORRUPTED') {
+          // Daten vorhanden aber alle ungültig – nicht mit Defaults überschreiben,
+          // damit der Nutzer die Chance zur Re-Import behält.
+          console.error(
+            'Storage corrupted: all plant entries failed validation. Showing empty state without overwriting storage.'
+          );
+          setPlants([]);
+        } else {
+          console.error('Error initializing plants:', error);
+        }
       } finally {
         setLoading(false);
       }
@@ -83,16 +92,14 @@ export const PlantProvider: React.FC<PlantProviderProps> = ({ children }) => {
   };
 
   const updatePlant = (id: string, updates: Partial<Plant>) => {
-    const updatedPlants = plants.map(plant =>
-      plant.id === id
-        ? { ...plant, ...updates, updatedAt: Date.now() }
-        : plant
+    const updatedPlants = plants.map((plant) =>
+      plant.id === id ? { ...plant, ...updates, updatedAt: Date.now() } : plant
     );
     savePlants(updatedPlants);
   };
 
   const deletePlant = (id: string) => {
-    const filteredPlants = plants.filter(plant => plant.id !== id);
+    const filteredPlants = plants.filter((plant) => plant.id !== id);
     savePlants(filteredPlants);
   };
 
@@ -102,7 +109,7 @@ export const PlantProvider: React.FC<PlantProviderProps> = ({ children }) => {
       id: `activity-${Date.now()}`,
     };
 
-    const updatedPlants = plants.map(plant =>
+    const updatedPlants = plants.map((plant) =>
       plant.id === plantId
         ? {
             ...plant,
@@ -115,11 +122,11 @@ export const PlantProvider: React.FC<PlantProviderProps> = ({ children }) => {
   };
 
   const updateActivity = (plantId: string, activityId: string, updates: Partial<Activity>) => {
-    const updatedPlants = plants.map(plant =>
+    const updatedPlants = plants.map((plant) =>
       plant.id === plantId
         ? {
             ...plant,
-            activities: plant.activities.map(act =>
+            activities: plant.activities.map((act) =>
               act.id === activityId ? { ...act, ...updates } : act
             ),
             updatedAt: Date.now(),
@@ -130,11 +137,11 @@ export const PlantProvider: React.FC<PlantProviderProps> = ({ children }) => {
   };
 
   const deleteActivity = (plantId: string, activityId: string) => {
-    const updatedPlants = plants.map(plant =>
+    const updatedPlants = plants.map((plant) =>
       plant.id === plantId
         ? {
             ...plant,
-            activities: plant.activities.filter(act => act.id !== activityId),
+            activities: plant.activities.filter((act) => act.id !== activityId),
             updatedAt: Date.now(),
           }
         : plant

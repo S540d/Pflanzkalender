@@ -60,9 +60,10 @@ export const PlantRow: React.FC<PlantRowProps> = ({
   return (
     <View style={[styles.row, { minHeight }]}>
       <View style={styles.monthsContainer}>
-        {months.map(monthIndex => {
+        {months.map((monthIndex) => {
           const absoluteMonthIndex = monthIndex + monthOffset;
-          const isCurrentHalfMonth = currentHalfMonth !== undefined && absoluteMonthIndex === currentHalfMonth;
+          const isCurrentHalfMonth =
+            currentHalfMonth !== undefined && absoluteMonthIndex === currentHalfMonth;
 
           return (
             <TouchableOpacity
@@ -72,8 +73,8 @@ export const PlantRow: React.FC<PlantRowProps> = ({
                 {
                   width: cellWidth,
                   borderColor: theme.border,
-                  backgroundColor: isCurrentHalfMonth ? theme.border : 'transparent'
-                }
+                  backgroundColor: isCurrentHalfMonth ? theme.border : 'transparent',
+                },
               ]}
               onPress={() => onPressMonth?.(monthIndex)}
             />
@@ -82,10 +83,7 @@ export const PlantRow: React.FC<PlantRowProps> = ({
 
         <View style={styles.activitiesLayer}>
           {activitiesWithRows.map((activity) => (
-            <View
-              key={activity.id}
-              style={[styles.activityContainer, { top: activity.row * 28 }]}
-            >
+            <View key={activity.id} style={[styles.activityContainer, { top: activity.row * 28 }]}>
               <ActivityBar
                 activity={activity}
                 onPress={() => onPressActivity?.(activity.id)}

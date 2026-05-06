@@ -19,7 +19,7 @@ export const getContrastTextColor = (hex: string): string => {
   if (sanitized.length === 3) {
     sanitized = sanitized
       .split('')
-      .map(c => c + c)
+      .map((c) => c + c)
       .join('');
   }
 

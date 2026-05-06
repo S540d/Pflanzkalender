@@ -14,12 +14,12 @@ describe('ACTIVITY_TYPES', () => {
   });
 
   it('all type values are unique', () => {
-    const types = ACTIVITY_TYPES.map(a => a.type);
+    const types = ACTIVITY_TYPES.map((a) => a.type);
     expect(new Set(types).size).toBe(types.length);
   });
 
   it('contains all required domain types', () => {
-    const types = ACTIVITY_TYPES.map(a => a.type);
+    const types = ACTIVITY_TYPES.map((a) => a.type);
     expect(types).toContain('sow');
     expect(types).toContain('plant');
     expect(types).toContain('fertilize');

@@ -8,6 +8,7 @@ import { CategoryTabBar } from '../components/CategoryTabBar';
 import { TableHeader } from '../components/TableHeader';
 import { PlantRowsContainer } from '../components/PlantRowsContainer';
 import { CategoryFilter } from '../constants/categoryTabs';
+import { Activity } from '../types';
 
 export const CalendarScreen: React.FC = () => {
   const { theme } = useTheme();
@@ -29,10 +30,30 @@ export const CalendarScreen: React.FC = () => {
       return ['Jan-Feb', 'Mär-Apr', 'Mai-Jun', 'Jul-Aug', 'Sep-Okt', 'Nov-Dez'];
     }
     return [
-      'Jan', 'Jan', 'Feb', 'Feb', 'Mär', 'Mär',
-      'Apr', 'Apr', 'Mai', 'Mai', 'Jun', 'Jun',
-      'Jul', 'Jul', 'Aug', 'Aug', 'Sep', 'Sep',
-      'Okt', 'Okt', 'Nov', 'Nov', 'Dez', 'Dez'
+      'Jan',
+      'Jan',
+      'Feb',
+      'Feb',
+      'Mär',
+      'Mär',
+      'Apr',
+      'Apr',
+      'Mai',
+      'Mai',
+      'Jun',
+      'Jun',
+      'Jul',
+      'Jul',
+      'Aug',
+      'Aug',
+      'Sep',
+      'Sep',
+      'Okt',
+      'Okt',
+      'Nov',
+      'Nov',
+      'Dez',
+      'Dez',
     ];
   }, [isPortrait]);
 
@@ -41,16 +62,24 @@ export const CalendarScreen: React.FC = () => {
   const currentHalfMonth = currentMonth * 2 + (now.getDate() <= 15 ? 0 : 1);
 
   const sortedPlants = useMemo(() => {
-    const filtered = activeCategory === 'all'
-      ? plants
-      : plants.filter(p => (p.category ?? 'vegetable') === activeCategory);
+    const filtered =
+      activeCategory === 'all'
+        ? plants
+        : plants.filter((p) => (p.category ?? 'vegetable') === activeCategory);
     return filtered.sort((a, b) => a.name.localeCompare(b.name, 'de'));
   }, [plants, activeCategory]);
 
   const selectedPlant = sortedPlants.find((p) => p.id === selectedPlantId) || null;
-  const selectedActivity = selectedPlant?.activities.find((a) => a.id === selectedActivityId) || null;
+  const selectedActivity =
+    selectedPlant?.activities.find((a) => a.id === selectedActivityId) || null;
 
-  const handleAddActivity = (type: string, startMonth: number, endMonth: number, color: string, label: string) => {
+  const handleAddActivity = (
+    type: string,
+    startMonth: number,
+    endMonth: number,
+    color: string,
+    label: string
+  ) => {
     if (selectedPlantId) {
       addActivity(selectedPlantId, { type, startMonth, endMonth, color, label });
     }
@@ -68,7 +97,7 @@ export const CalendarScreen: React.FC = () => {
     setShowEditActivity(true);
   };
 
-  const handleUpdateActivity = (activityId: string, updates: Record<string, unknown>) => {
+  const handleUpdateActivity = (activityId: string, updates: Partial<Activity>) => {
     if (selectedPlantId) {
       updateActivity(selectedPlantId, activityId, updates);
     }

@@ -24,7 +24,12 @@ export const TableHeader: React.FC<TableHeaderProps> = ({
   return (
     <View style={styles.headerContainer}>
       {/* Fixed "Pflanze" Column */}
-      <View style={[styles.fixedHeaderColumn, { borderColor: theme.border, backgroundColor: theme.surface }]}>
+      <View
+        style={[
+          styles.fixedHeaderColumn,
+          { borderColor: theme.border, backgroundColor: theme.surface },
+        ]}
+      >
         <Text style={[styles.headerText, { color: theme.text }]}>Pflanze</Text>
       </View>
 
@@ -57,12 +62,12 @@ export const TableHeader: React.FC<TableHeaderProps> = ({
                   isPortrait ? styles.twoMonthCell : styles.monthCell,
                   {
                     borderColor: theme.border,
-                    backgroundColor: isCurrentPeriod ? theme.border : theme.surface
-                  }
+                    backgroundColor: isCurrentPeriod ? theme.border : theme.surface,
+                  },
                 ]}
               >
                 <Text style={[styles.monthText, { color: theme.textSecondary }]}>
-                  {isPortrait ? month : (index % 2 === 0 ? month : '')}
+                  {isPortrait ? month : index % 2 === 0 ? month : ''}
                 </Text>
                 {!isPortrait && (
                   <Text style={[styles.halfMonthText, { color: theme.textSecondary }]}>
@@ -72,7 +77,12 @@ export const TableHeader: React.FC<TableHeaderProps> = ({
               </View>
             );
           })}
-          <View style={[styles.notesCell, { borderColor: theme.border, backgroundColor: theme.surface }]}>
+          <View
+            style={[
+              styles.notesCell,
+              { borderColor: theme.border, backgroundColor: theme.surface },
+            ]}
+          >
             <Text style={[styles.headerText, { color: theme.text }]}>Notizen</Text>
           </View>
         </View>

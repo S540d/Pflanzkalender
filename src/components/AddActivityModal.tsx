@@ -33,18 +33,12 @@ export const AddActivityModal: React.FC<AddActivityModalProps> = ({
   const [endMonth, setEndMonth] = useState(initialMonth);
   const [customLabel, setCustomLabel] = useState('');
 
-  const selectedActivityType = ACTIVITY_TYPES.find(at => at.type === selectedType);
+  const selectedActivityType = ACTIVITY_TYPES.find((at) => at.type === selectedType);
   const label = customLabel || selectedActivityType?.label || '';
 
   const handleAdd = () => {
     if (selectedActivityType) {
-      onAdd(
-        selectedType,
-        startMonth,
-        endMonth,
-        selectedActivityType.color,
-        label
-      );
+      onAdd(selectedType, startMonth, endMonth, selectedActivityType.color, label);
       // Reset
       setSelectedType(ACTIVITY_TYPES[0].type);
       setStartMonth(initialMonth);
@@ -69,45 +63,28 @@ export const AddActivityModal: React.FC<AddActivityModalProps> = ({
   }));
 
   return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType="slide"
-      onRequestClose={onClose}
-    >
+    <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
       <View style={styles.overlay}>
-        <TouchableOpacity
-          style={styles.backdrop}
-          activeOpacity={1}
-          onPress={handleCancel}
-        />
+        <TouchableOpacity style={styles.backdrop} activeOpacity={1} onPress={handleCancel} />
         <View style={[styles.modal, { backgroundColor: theme.background }]}>
           <View style={[styles.header, { borderBottomColor: theme.border }]}>
-            <Text style={[styles.title, { color: theme.text }]}>
-              Aktivität hinzufügen
-            </Text>
-            <Text style={[styles.subtitle, { color: theme.textSecondary }]}>
-              für {plantName}
-            </Text>
+            <Text style={[styles.title, { color: theme.text }]}>Aktivität hinzufügen</Text>
+            <Text style={[styles.subtitle, { color: theme.textSecondary }]}>für {plantName}</Text>
           </View>
 
           <ScrollView style={styles.content}>
             {/* Aktivitätstyp */}
             <View style={styles.field}>
-              <Text style={[styles.label, { color: theme.text }]}>
-                Aktivitätstyp *
-              </Text>
+              <Text style={[styles.label, { color: theme.text }]}>Aktivitätstyp *</Text>
               <View style={styles.typeGrid}>
-                {ACTIVITY_TYPES.map(activityType => (
+                {ACTIVITY_TYPES.map((activityType) => (
                   <TouchableOpacity
                     key={activityType.type}
                     style={[
                       styles.typeButton,
                       {
                         backgroundColor:
-                          selectedType === activityType.type
-                            ? activityType.color
-                            : theme.surface,
+                          selectedType === activityType.type ? activityType.color : theme.surface,
                         borderColor: theme.border,
                       },
                     ]}
@@ -117,10 +94,7 @@ export const AddActivityModal: React.FC<AddActivityModalProps> = ({
                       style={[
                         styles.typeButtonText,
                         {
-                          color:
-                            selectedType === activityType.type
-                              ? '#FFFFFF'
-                              : theme.text,
+                          color: selectedType === activityType.type ? '#FFFFFF' : theme.text,
                         },
                       ]}
                     >
@@ -133,19 +107,18 @@ export const AddActivityModal: React.FC<AddActivityModalProps> = ({
 
             {/* Zeitraum */}
             <View style={styles.field}>
-              <Text style={[styles.label, { color: theme.text }]}>
-                Zeitraum *
-              </Text>
+              <Text style={[styles.label, { color: theme.text }]}>Zeitraum *</Text>
               <View style={styles.periodRow}>
                 <View style={styles.periodField}>
-                  <Text style={[styles.periodLabel, { color: theme.textSecondary }]}>
-                    Von
-                  </Text>
+                  <Text style={[styles.periodLabel, { color: theme.textSecondary }]}>Von</Text>
                   <ScrollView
-                    style={[styles.monthPicker, { backgroundColor: theme.surface, borderColor: theme.border }]}
+                    style={[
+                      styles.monthPicker,
+                      { backgroundColor: theme.surface, borderColor: theme.border },
+                    ]}
                     showsVerticalScrollIndicator={false}
                   >
-                    {months.map(month => (
+                    {months.map((month) => (
                       <TouchableOpacity
                         key={month.value}
                         style={[
@@ -165,10 +138,7 @@ export const AddActivityModal: React.FC<AddActivityModalProps> = ({
                           style={[
                             styles.monthOptionText,
                             {
-                              color:
-                                startMonth === month.value
-                                  ? '#FFFFFF'
-                                  : theme.text,
+                              color: startMonth === month.value ? '#FFFFFF' : theme.text,
                             },
                           ]}
                         >
@@ -180,14 +150,15 @@ export const AddActivityModal: React.FC<AddActivityModalProps> = ({
                 </View>
 
                 <View style={styles.periodField}>
-                  <Text style={[styles.periodLabel, { color: theme.textSecondary }]}>
-                    Bis
-                  </Text>
+                  <Text style={[styles.periodLabel, { color: theme.textSecondary }]}>Bis</Text>
                   <ScrollView
-                    style={[styles.monthPicker, { backgroundColor: theme.surface, borderColor: theme.border }]}
+                    style={[
+                      styles.monthPicker,
+                      { backgroundColor: theme.surface, borderColor: theme.border },
+                    ]}
                     showsVerticalScrollIndicator={false}
                   >
-                    {months.map(month => (
+                    {months.map((month) => (
                       <TouchableOpacity
                         key={month.value}
                         style={[
@@ -212,8 +183,8 @@ export const AddActivityModal: React.FC<AddActivityModalProps> = ({
                                 endMonth === month.value
                                   ? '#FFFFFF'
                                   : month.value < startMonth
-                                  ? theme.textSecondary
-                                  : theme.text,
+                                    ? theme.textSecondary
+                                    : theme.text,
                             },
                           ]}
                         >
@@ -249,13 +220,8 @@ export const AddActivityModal: React.FC<AddActivityModalProps> = ({
           </ScrollView>
 
           <View style={[styles.footer, { borderTopColor: theme.border }]}>
-            <TouchableOpacity
-              style={[styles.button, styles.cancelButton]}
-              onPress={handleCancel}
-            >
-              <Text style={[styles.buttonText, { color: theme.text }]}>
-                Abbrechen
-              </Text>
+            <TouchableOpacity style={[styles.button, styles.cancelButton]} onPress={handleCancel}>
+              <Text style={[styles.buttonText, { color: theme.text }]}>Abbrechen</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[

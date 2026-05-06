@@ -26,11 +26,7 @@ describe('AddPlantModal Component', () => {
 
   it('renders when visible is true', () => {
     const { getByText } = render(
-      <AddPlantModal
-        visible={true}
-        onAdd={mockOnAdd}
-        onClose={mockOnClose}
-      />
+      <AddPlantModal visible={true} onAdd={mockOnAdd} onClose={mockOnClose} />
     );
 
     expect(getByText('Neue Pflanze hinzufügen')).toBeTruthy();
@@ -38,11 +34,7 @@ describe('AddPlantModal Component', () => {
 
   it('does not render when visible is false', () => {
     const { queryByText } = render(
-      <AddPlantModal
-        visible={false}
-        onAdd={mockOnAdd}
-        onClose={mockOnClose}
-      />
+      <AddPlantModal visible={false} onAdd={mockOnAdd} onClose={mockOnClose} />
     );
 
     expect(queryByText('Neue Pflanze hinzufügen')).toBeNull();
@@ -50,11 +42,7 @@ describe('AddPlantModal Component', () => {
 
   it('renders form inputs for plant data', () => {
     const { getByText } = render(
-      <AddPlantModal
-        visible={true}
-        onAdd={mockOnAdd}
-        onClose={mockOnClose}
-      />
+      <AddPlantModal visible={true} onAdd={mockOnAdd} onClose={mockOnClose} />
     );
 
     // Verify form has inputs by checking for label
@@ -64,11 +52,7 @@ describe('AddPlantModal Component', () => {
 
   it('calls onClose when modal is dismissed', () => {
     const { getByTestId } = render(
-      <AddPlantModal
-        visible={true}
-        onAdd={mockOnAdd}
-        onClose={mockOnClose}
-      />
+      <AddPlantModal visible={true} onAdd={mockOnAdd} onClose={mockOnClose} />
     );
 
     // Modal dismissal is handled by the modal component itself
@@ -78,11 +62,7 @@ describe('AddPlantModal Component', () => {
 
   it('has a submit button to add plant', () => {
     const { getByText } = render(
-      <AddPlantModal
-        visible={true}
-        onAdd={mockOnAdd}
-        onClose={mockOnClose}
-      />
+      <AddPlantModal visible={true} onAdd={mockOnAdd} onClose={mockOnClose} />
     );
 
     // Verify submit/add button exists (exact match for button text)
@@ -92,11 +72,7 @@ describe('AddPlantModal Component', () => {
 
   it('calls onAdd when form is submitted', async () => {
     const { getByText, root } = render(
-      <AddPlantModal
-        visible={true}
-        onAdd={mockOnAdd}
-        onClose={mockOnClose}
-      />
+      <AddPlantModal visible={true} onAdd={mockOnAdd} onClose={mockOnClose} />
     );
 
     // Find the button and verify component renders

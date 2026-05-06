@@ -39,4 +39,3 @@ fs.writeFileSync(indexPath, html, 'utf8');
 
 console.log('✓ Added testing environment banner to index.html');
 console.log(`✓ Added cache-busting headers (${version}, timestamp: ${timestamp})`);
-

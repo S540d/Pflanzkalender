@@ -35,14 +35,23 @@ function AppContent() {
       <StatusBar style={isDark ? 'light' : 'dark'} />
       <View style={{ flex: 1, backgroundColor: '#f5f5f5' }}>
         {/* Header with Navigation */}
-        <View style={{ padding: 16, backgroundColor: '#4CAF50', flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center' }}>
+        <View
+          style={{
+            padding: 16,
+            backgroundColor: '#4CAF50',
+            flexDirection: 'row',
+            justifyContent: 'flex-end',
+            alignItems: 'center',
+          }}
+        >
           <View style={{ flexDirection: 'row', gap: 8 }}>
             <TouchableOpacity
               onPress={() => setCurrentScreen('Kalender')}
               style={{
                 paddingHorizontal: 16,
                 paddingVertical: 8,
-                backgroundColor: currentScreen === 'Kalender' ? 'rgba(255,255,255,0.3)' : 'transparent',
+                backgroundColor:
+                  currentScreen === 'Kalender' ? 'rgba(255,255,255,0.3)' : 'transparent',
                 borderRadius: 4,
                 minWidth: 44,
                 minHeight: 44,
@@ -58,7 +67,8 @@ function AppContent() {
               style={{
                 paddingHorizontal: 16,
                 paddingVertical: 8,
-                backgroundColor: currentScreen === 'Agenda' ? 'rgba(255,255,255,0.3)' : 'transparent',
+                backgroundColor:
+                  currentScreen === 'Agenda' ? 'rgba(255,255,255,0.3)' : 'transparent',
                 borderRadius: 4,
                 minWidth: 44,
                 minHeight: 44,
@@ -74,7 +84,8 @@ function AppContent() {
               style={{
                 paddingHorizontal: 16,
                 paddingVertical: 8,
-                backgroundColor: currentScreen === 'Pflanzen' ? 'rgba(255,255,255,0.3)' : 'transparent',
+                backgroundColor:
+                  currentScreen === 'Pflanzen' ? 'rgba(255,255,255,0.3)' : 'transparent',
                 borderRadius: 4,
                 minWidth: 44,
                 minHeight: 44,
@@ -90,7 +101,8 @@ function AppContent() {
               style={{
                 paddingHorizontal: 16,
                 paddingVertical: 8,
-                backgroundColor: currentScreen === 'Einstellungen' ? 'rgba(255,255,255,0.3)' : 'transparent',
+                backgroundColor:
+                  currentScreen === 'Einstellungen' ? 'rgba(255,255,255,0.3)' : 'transparent',
                 borderRadius: 4,
                 minWidth: 44,
                 minHeight: 44,
@@ -107,11 +119,9 @@ function AppContent() {
             </TouchableOpacity>
           </View>
         </View>
-        
+
         {/* Screen Content */}
-        <View style={{ flex: 1 }}>
-          {renderScreen()}
-        </View>
+        <View style={{ flex: 1 }}>{renderScreen()}</View>
       </View>
     </>
   );

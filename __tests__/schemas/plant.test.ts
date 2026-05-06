@@ -93,7 +93,9 @@ describe('ImportDataSchema', () => {
   });
 
   it('lehnt nicht-ISO timestamp ab', () => {
-    expect(ImportDataSchema.safeParse({ ...validImport, timestamp: 'yesterday' }).success).toBe(false);
+    expect(ImportDataSchema.safeParse({ ...validImport, timestamp: 'yesterday' }).success).toBe(
+      false
+    );
   });
 
   it('lehnt ungültige Pflanze im Array ab', () => {

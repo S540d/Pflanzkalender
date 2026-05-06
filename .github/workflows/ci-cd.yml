@@ -71,6 +71,32 @@ jobs:
         run: npx tsc --noEmit || true
 
   # ============================================================================
+  # JOB 1b: Lint & Format Check
+  # ============================================================================
+  lint-format:
+    name: Lint & Format Check
+    runs-on: ubuntu-latest
+    needs: code-quality
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: ESLint
+        run: npm run lint -- --max-warnings=50
+
+      - name: Prettier format check
+        run: npm run format:check
+
+  # ============================================================================
   # JOB 2: Unit Tests
   # ============================================================================
   unit-tests:
@@ -106,7 +132,7 @@ jobs:
   build-web:
     name: 🌐 Build Web
     runs-on: ubuntu-latest
-    needs: [code-quality, unit-tests]
+    needs: [code-quality, lint-format, unit-tests]
 
     steps:
       - uses: actions/checkout@v4
@@ -212,7 +238,6 @@ jobs:
             echo "⚠️  WARNING: Potential sensitive data found!"
           fi
 
-
   # ============================================================================
   # JOB 5: Docs Privacy Check (#45)
   # ============================================================================
@@ -288,7 +313,7 @@ jobs:
   release-checklist:
     name: 📋 Release Readiness Report
     runs-on: ubuntu-latest
-    needs: [code-quality, unit-tests, build-web, platform-checks]
+    needs: [code-quality, lint-format, unit-tests, build-web, platform-checks]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 
     steps:

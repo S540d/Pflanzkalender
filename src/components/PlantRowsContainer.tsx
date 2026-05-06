@@ -50,14 +50,22 @@ export const PlantRowsContainer: React.FC<PlantRowsContainerProps> = ({
               <Text style={[styles.emptyText, { color: theme.textSecondary }]}>-</Text>
             </View>
           ) : (
-            sortedPlants.map(plant => {
-              const visibleActivities = isPortrait ? convertActivitiesToPortraitSlots(plant.activities) : plant.activities;
+            sortedPlants.map((plant) => {
+              const visibleActivities = isPortrait
+                ? convertActivitiesToPortraitSlots(plant.activities)
+                : plant.activities;
               const activitiesWithRows = calculateActivityRows(visibleActivities);
               const maxRow = activitiesWithRows.reduce((max, a) => Math.max(max, a.row), 0);
               const minHeight = Math.max(60, (maxRow + 1) * 28 + 8);
 
               return (
-                <View key={plant.id} style={[styles.fixedPlantCell, { borderColor: theme.border, backgroundColor: theme.surface, minHeight }]}>
+                <View
+                  key={plant.id}
+                  style={[
+                    styles.fixedPlantCell,
+                    { borderColor: theme.border, backgroundColor: theme.surface, minHeight },
+                  ]}
+                >
                   <Text style={[styles.plantNameText, { color: theme.text }]} numberOfLines={2}>
                     {plant.name}
                   </Text>
@@ -77,7 +85,10 @@ export const PlantRowsContainer: React.FC<PlantRowsContainerProps> = ({
           contentContainerStyle={styles.horizontalContent}
           onScroll={(e) => {
             if (headerScrollRef?.current) {
-              headerScrollRef.current.scrollTo({ x: e.nativeEvent.contentOffset.x, animated: false });
+              headerScrollRef.current.scrollTo({
+                x: e.nativeEvent.contentOffset.x,
+                animated: false,
+              });
             }
           }}
           scrollEventThrottle={16}
@@ -88,7 +99,10 @@ export const PlantRowsContainer: React.FC<PlantRowsContainerProps> = ({
             nestedScrollEnabled={true}
             onScroll={(e) => {
               if (fixedScrollRef.current) {
-                fixedScrollRef.current.scrollTo({ y: e.nativeEvent.contentOffset.y, animated: false });
+                fixedScrollRef.current.scrollTo({
+                  y: e.nativeEvent.contentOffset.y,
+                  animated: false,
+                });
               }
               onFixedScrollOffset?.(e.nativeEvent.contentOffset.y);
             }}
@@ -106,8 +120,8 @@ export const PlantRowsContainer: React.FC<PlantRowsContainerProps> = ({
                   </Text>
                 </View>
               ) : (
-                sortedPlants.map(plant => {
-                  const visibleActivities = plant.activities.map(activity => {
+                sortedPlants.map((plant) => {
+                  const visibleActivities = plant.activities.map((activity) => {
                     if (isPortrait) {
                       const startSlot = Math.floor(activity.startMonth / 4);
                       const endSlot = Math.floor(activity.endMonth / 4);
@@ -133,7 +147,9 @@ export const PlantRowsContainer: React.FC<PlantRowsContainerProps> = ({
                       onPressMonth={(monthIndex) => onPressMonth(plant.id, monthIndex)}
                       onPressPlant={() => {}}
                       totalMonths={months.length}
-                      currentHalfMonth={isPortrait ? Math.floor(currentHalfMonth / 4) : currentHalfMonth}
+                      currentHalfMonth={
+                        isPortrait ? Math.floor(currentHalfMonth / 4) : currentHalfMonth
+                      }
                       monthOffset={0}
                       cellWidth={isPortrait ? 60 : 40}
                     />

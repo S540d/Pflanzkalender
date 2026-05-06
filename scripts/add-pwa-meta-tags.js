@@ -13,14 +13,46 @@ if (fs.existsSync(indexPath)) {
 
   // Add missing PWA meta tags idempotently
   const tagsToAdd = [
-    { tag: 'meta', attr: 'name="theme-color"', html: `<meta name="theme-color" content="#4CAF50">` },
-    { tag: 'meta', attr: 'name="description"', html: `<meta name="description" content="Plant Calendar – Gartenaktivitäten mit halber Monatsauflösung planen und verwalten">` },
-    { tag: 'meta', attr: 'name="apple-mobile-web-app-capable"', html: `<meta name="apple-mobile-web-app-capable" content="yes">` },
-    { tag: 'meta', attr: 'name="apple-mobile-web-app-status-bar-style"', html: `<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">` },
-    { tag: 'meta', attr: 'name="apple-mobile-web-app-title"', html: `<meta name="apple-mobile-web-app-title" content="Pflanzkalender">` },
-    { tag: 'link', attr: 'rel="apple-touch-icon"', html: `<link rel="apple-touch-icon" href="${baseUrl}/icon-192.png">` },
-    { tag: 'link', attr: 'rel="icon" type="image/png" sizes="192x192"', html: `<link rel="icon" type="image/png" sizes="192x192" href="${baseUrl}/icon-192.png">` },
-    { tag: 'link', attr: 'rel="icon" type="image/png" sizes="512x512"', html: `<link rel="icon" type="image/png" sizes="512x512" href="${baseUrl}/icon-512.png">` },
+    {
+      tag: 'meta',
+      attr: 'name="theme-color"',
+      html: `<meta name="theme-color" content="#4CAF50">`,
+    },
+    {
+      tag: 'meta',
+      attr: 'name="description"',
+      html: `<meta name="description" content="Plant Calendar – Gartenaktivitäten mit halber Monatsauflösung planen und verwalten">`,
+    },
+    {
+      tag: 'meta',
+      attr: 'name="apple-mobile-web-app-capable"',
+      html: `<meta name="apple-mobile-web-app-capable" content="yes">`,
+    },
+    {
+      tag: 'meta',
+      attr: 'name="apple-mobile-web-app-status-bar-style"',
+      html: `<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">`,
+    },
+    {
+      tag: 'meta',
+      attr: 'name="apple-mobile-web-app-title"',
+      html: `<meta name="apple-mobile-web-app-title" content="Pflanzkalender">`,
+    },
+    {
+      tag: 'link',
+      attr: 'rel="apple-touch-icon"',
+      html: `<link rel="apple-touch-icon" href="${baseUrl}/icon-192.png">`,
+    },
+    {
+      tag: 'link',
+      attr: 'rel="icon" type="image/png" sizes="192x192"',
+      html: `<link rel="icon" type="image/png" sizes="192x192" href="${baseUrl}/icon-192.png">`,
+    },
+    {
+      tag: 'link',
+      attr: 'rel="icon" type="image/png" sizes="512x512"',
+      html: `<link rel="icon" type="image/png" sizes="512x512" href="${baseUrl}/icon-512.png">`,
+    },
   ];
 
   let addedCount = 0;

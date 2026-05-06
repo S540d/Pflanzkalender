@@ -14,11 +14,7 @@ module.exports = {
       '@react-native-async-storage/async-storage/jest/async-storage-mock',
   },
   setupFiles: [],
-  collectCoverageFrom: [
-    'src/**/*.{ts,tsx}',
-    '!src/**/*.d.ts',
-    '!src/services/firebase.ts',
-  ],
+  collectCoverageFrom: ['src/**/*.{ts,tsx}', '!src/**/*.d.ts', '!src/services/firebase.ts'],
   coverageReporters: ['text', 'lcov', 'html'],
   coverageDirectory: 'coverage',
   testTimeout: 10000,

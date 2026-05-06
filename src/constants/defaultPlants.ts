@@ -1,7 +1,13 @@
 import { Plant } from '../types';
 
 // Hilfsfunktion zum Erstellen von Aktivitäten
-const createActivity = (type: string, startMonth: number, endMonth: number, color: string, label: string) => ({
+const createActivity = (
+  type: string,
+  startMonth: number,
+  endMonth: number,
+  color: string,
+  label: string
+) => ({
   id: `${type}-${startMonth}-${endMonth}`,
   type,
   startMonth,
@@ -280,7 +286,7 @@ export const DEFAULT_PLANTS: Omit<Plant, 'id' | 'createdAt' | 'updatedAt'>[] = [
     category: f,
     activities: [
       createActivity('plant', 17, 21, '#228B22', 'Zwiebeln pflanzen'), // Sep-Nov
-      createActivity('harvest', 5, 9, '#DC143C', 'Blüten'),            // März-Mai
+      createActivity('harvest', 5, 9, '#DC143C', 'Blüten'), // März-Mai
     ],
   },
   {
@@ -291,7 +297,7 @@ export const DEFAULT_PLANTS: Omit<Plant, 'id' | 'createdAt' | 'updatedAt'>[] = [
     location: 'sun',
     category: f,
     activities: [
-      createActivity('sow', 7, 9, '#8B4513', 'Aussäen'),             // Apr-Mai
+      createActivity('sow', 7, 9, '#8B4513', 'Aussäen'), // Apr-Mai
       createActivity('harvest', 13, 17, '#DC143C', 'Blüten / Samen'), // Jul-Sep
     ],
   },
@@ -304,7 +310,7 @@ export const DEFAULT_PLANTS: Omit<Plant, 'id' | 'createdAt' | 'updatedAt'>[] = [
     category: f,
     activities: [
       createActivity('plant', 9, 10, '#228B22', 'Knollen einpflanzen'), // Mai
-      createActivity('harvest', 13, 19, '#DC143C', 'Blüten'),           // Jul-Okt
+      createActivity('harvest', 13, 19, '#DC143C', 'Blüten'), // Jul-Okt
       createActivity('protect', 19, 21, '#9370DB', 'Knollen einlagern'), // Okt-Nov
     ],
   },
@@ -316,9 +322,9 @@ export const DEFAULT_PLANTS: Omit<Plant, 'id' | 'createdAt' | 'updatedAt'>[] = [
     location: 'sun',
     category: f,
     activities: [
-      createActivity('plant', 9, 10, '#228B22', 'Einpflanzen'),   // Mai
-      createActivity('harvest', 9, 19, '#DC143C', 'Blüten'),       // Mai-Okt
-      createActivity('protect', 19, 21, '#9370DB', 'Einwintern'),  // Okt-Nov
+      createActivity('plant', 9, 10, '#228B22', 'Einpflanzen'), // Mai
+      createActivity('harvest', 9, 19, '#DC143C', 'Blüten'), // Mai-Okt
+      createActivity('protect', 19, 21, '#9370DB', 'Einwintern'), // Okt-Nov
     ],
   },
   {
@@ -330,8 +336,8 @@ export const DEFAULT_PLANTS: Omit<Plant, 'id' | 'createdAt' | 'updatedAt'>[] = [
     category: f,
     activities: [
       createActivity('prune', 3, 5, '#FFEB3B', 'Zurückschneiden'), // Feb-März
-      createActivity('fertilize', 7, 11, '#FFD700', 'Düngen'),     // Apr-Jun
-      createActivity('harvest', 11, 17, '#DC143C', 'Blüten'),      // Jun-Sep
+      createActivity('fertilize', 7, 11, '#FFD700', 'Düngen'), // Apr-Jun
+      createActivity('harvest', 11, 17, '#DC143C', 'Blüten'), // Jun-Sep
     ],
   },
   {
@@ -342,9 +348,9 @@ export const DEFAULT_PLANTS: Omit<Plant, 'id' | 'createdAt' | 'updatedAt'>[] = [
     location: 'sun',
     category: f,
     activities: [
-      createActivity('plant', 17, 19, '#228B22', 'Pflanzen'),   // Sep-Okt (Herbst)
-      createActivity('fertilize', 5, 7, '#FFD700', 'Düngen'),  // März-Apr
-      createActivity('harvest', 9, 11, '#DC143C', 'Blüten'),   // Mai-Jun
+      createActivity('plant', 17, 19, '#228B22', 'Pflanzen'), // Sep-Okt (Herbst)
+      createActivity('fertilize', 5, 7, '#FFD700', 'Düngen'), // März-Apr
+      createActivity('harvest', 9, 11, '#DC143C', 'Blüten'), // Mai-Jun
     ],
   },
   {
@@ -355,8 +361,8 @@ export const DEFAULT_PLANTS: Omit<Plant, 'id' | 'createdAt' | 'updatedAt'>[] = [
     location: 'sun',
     category: f,
     activities: [
-      createActivity('plant', 9, 11, '#228B22', 'Pflanzen'),      // Mai-Jun
-      createActivity('harvest', 17, 21, '#DC143C', 'Blüten'),     // Sep-Nov
+      createActivity('plant', 9, 11, '#228B22', 'Pflanzen'), // Mai-Jun
+      createActivity('harvest', 17, 21, '#DC143C', 'Blüten'), // Sep-Nov
       createActivity('protect', 21, 23, '#9370DB', 'Winterschutz'), // Nov-Dez
     ],
   },
@@ -368,7 +374,7 @@ export const DEFAULT_PLANTS: Omit<Plant, 'id' | 'createdAt' | 'updatedAt'>[] = [
     location: 'sun',
     category: f,
     activities: [
-      createActivity('sow', 5, 7, '#8B4513', 'Aussäen'),         // März-Apr
+      createActivity('sow', 5, 7, '#8B4513', 'Aussäen'), // März-Apr
       createActivity('harvest', 11, 19, '#DC143C', 'Blüten ernten'), // Jun-Okt
     ],
   },
@@ -382,8 +388,8 @@ export const DEFAULT_PLANTS: Omit<Plant, 'id' | 'createdAt' | 'updatedAt'>[] = [
     category: t,
     activities: [
       createActivity('prune', 1, 5, '#FFEB3B', 'Zurückschneiden'), // Jan-März
-      createActivity('fertilize', 5, 7, '#FFD700', 'Düngen'),     // März-Apr
-      createActivity('harvest', 15, 19, '#DC143C', 'Ernten'),     // Aug-Okt
+      createActivity('fertilize', 5, 7, '#FFD700', 'Düngen'), // März-Apr
+      createActivity('harvest', 15, 19, '#DC143C', 'Ernten'), // Aug-Okt
     ],
   },
   {
@@ -395,8 +401,8 @@ export const DEFAULT_PLANTS: Omit<Plant, 'id' | 'createdAt' | 'updatedAt'>[] = [
     category: t,
     activities: [
       createActivity('prune', 11, 13, '#FFEB3B', 'Zurückschneiden'), // Jun-Jul (nach Ernte)
-      createActivity('harvest', 11, 13, '#DC143C', 'Ernten'),        // Jun-Jul
-      createActivity('protect', 3, 5, '#9370DB', 'Vogelnetz'),       // Feb-März
+      createActivity('harvest', 11, 13, '#DC143C', 'Ernten'), // Jun-Jul
+      createActivity('protect', 3, 5, '#9370DB', 'Vogelnetz'), // Feb-März
     ],
   },
   {
@@ -408,7 +414,7 @@ export const DEFAULT_PLANTS: Omit<Plant, 'id' | 'createdAt' | 'updatedAt'>[] = [
     category: t,
     activities: [
       createActivity('prune', 3, 5, '#FFEB3B', 'Zurückschneiden'), // Feb-März
-      createActivity('harvest', 15, 17, '#DC143C', 'Ernten'),      // Aug-Sep
+      createActivity('harvest', 15, 17, '#DC143C', 'Ernten'), // Aug-Sep
     ],
   },
   {
@@ -420,7 +426,7 @@ export const DEFAULT_PLANTS: Omit<Plant, 'id' | 'createdAt' | 'updatedAt'>[] = [
     category: t,
     activities: [
       createActivity('prune', 3, 5, '#FFEB3B', 'Zurückschneiden'), // Feb-März
-      createActivity('harvest', 17, 19, '#DC143C', 'Ernten'),      // Sep-Okt
+      createActivity('harvest', 17, 19, '#DC143C', 'Ernten'), // Sep-Okt
     ],
   },
 ];
