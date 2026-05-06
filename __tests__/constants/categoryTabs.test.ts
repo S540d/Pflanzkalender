@@ -1,4 +1,8 @@
-import { CATEGORY_TABS, CATEGORY_TABS_I18N, CategoryFilter } from '../../src/constants/categoryTabs';
+import {
+  CATEGORY_TABS,
+  CATEGORY_TABS_I18N,
+  CategoryFilter,
+} from '../../src/constants/categoryTabs';
 
 describe('categoryTabs Constants', () => {
   describe('CATEGORY_TABS', () => {
@@ -8,7 +12,7 @@ describe('categoryTabs Constants', () => {
     });
 
     it('has correct tab structure', () => {
-      CATEGORY_TABS.forEach(tab => {
+      CATEGORY_TABS.forEach((tab) => {
         expect(tab).toHaveProperty('value');
         expect(tab).toHaveProperty('label');
         expect(tab).toHaveProperty('icon');
@@ -17,7 +21,7 @@ describe('categoryTabs Constants', () => {
     });
 
     it('includes all required categories', () => {
-      const values = CATEGORY_TABS.map(tab => tab.value);
+      const values = CATEGORY_TABS.map((tab) => tab.value);
       expect(values).toContain('all');
       expect(values).toContain('vegetable');
       expect(values).toContain('flower');
@@ -25,13 +29,13 @@ describe('categoryTabs Constants', () => {
     });
 
     it('has distinct colors for each tab', () => {
-      const colors = CATEGORY_TABS.map(tab => tab.color);
+      const colors = CATEGORY_TABS.map((tab) => tab.color);
       const uniqueColors = new Set(colors);
       expect(uniqueColors.size).toBe(colors.length);
     });
 
     it('has valid emoji icons', () => {
-      CATEGORY_TABS.forEach(tab => {
+      CATEGORY_TABS.forEach((tab) => {
         expect(tab.icon.length).toBeGreaterThan(0);
         expect(typeof tab.icon).toBe('string');
       });
@@ -52,7 +56,7 @@ describe('categoryTabs Constants', () => {
     });
 
     it('has German and English labels', () => {
-      CATEGORY_TABS_I18N.forEach(tab => {
+      CATEGORY_TABS_I18N.forEach((tab) => {
         expect(tab).toHaveProperty('labelDe');
         expect(tab).toHaveProperty('labelEn');
         expect(typeof tab.labelDe).toBe('string');
@@ -61,7 +65,7 @@ describe('categoryTabs Constants', () => {
     });
 
     it('includes all required categories with i18n', () => {
-      const values = CATEGORY_TABS_I18N.map(tab => tab.value);
+      const values = CATEGORY_TABS_I18N.map((tab) => tab.value);
       expect(values).toContain('all');
       expect(values).toContain('vegetable');
       expect(values).toContain('flower');
@@ -90,7 +94,7 @@ describe('categoryTabs Constants', () => {
         tree: 'Trees',
       };
 
-      CATEGORY_TABS_I18N.forEach(tab => {
+      CATEGORY_TABS_I18N.forEach((tab) => {
         expect(tab.labelDe).toBe(deTranslations[tab.value]);
         expect(tab.labelEn).toBe(enTranslations[tab.value]);
       });
@@ -105,12 +109,12 @@ describe('categoryTabs Constants', () => {
     });
 
     it('CategoryFilter type covers all CATEGORY_TABS values', () => {
-      const tabValues = CATEGORY_TABS.map(tab => tab.value as CategoryFilter);
+      const tabValues = CATEGORY_TABS.map((tab) => tab.value as CategoryFilter);
       expect(tabValues.length).toBe(4);
 
       // Each tab value should be a valid CategoryFilter
       const validFilterValues: CategoryFilter[] = ['all', 'vegetable', 'flower', 'tree'];
-      tabValues.forEach(value => {
+      tabValues.forEach((value) => {
         expect(validFilterValues).toContain(value);
       });
     });

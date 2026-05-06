@@ -8,13 +8,13 @@ describe('PLANT_LOCATION_METADATA', () => {
   const EXPECTED_LOCATIONS: PlantLocation[] = ['sun', 'partial-shade', 'shade'];
 
   it('has entries for all three location types', () => {
-    EXPECTED_LOCATIONS.forEach(loc => {
+    EXPECTED_LOCATIONS.forEach((loc) => {
       expect(PLANT_LOCATION_METADATA[loc]).toBeDefined();
     });
   });
 
   it('every entry has non-empty de, en, and icon fields', () => {
-    EXPECTED_LOCATIONS.forEach(loc => {
+    EXPECTED_LOCATIONS.forEach((loc) => {
       const meta = PLANT_LOCATION_METADATA[loc];
       expect(meta.de).toBeTruthy();
       expect(meta.en).toBeTruthy();
@@ -35,13 +35,13 @@ describe('PLANT_CATEGORY_METADATA', () => {
   const EXPECTED_CATEGORIES: PlantCategory[] = ['vegetable', 'flower', 'tree'];
 
   it('has entries for all three category types', () => {
-    EXPECTED_CATEGORIES.forEach(cat => {
+    EXPECTED_CATEGORIES.forEach((cat) => {
       expect(PLANT_CATEGORY_METADATA[cat]).toBeDefined();
     });
   });
 
   it('every entry has non-empty de, en, and icon fields', () => {
-    EXPECTED_CATEGORIES.forEach(cat => {
+    EXPECTED_CATEGORIES.forEach((cat) => {
       const meta = PLANT_CATEGORY_METADATA[cat];
       expect(meta.de).toBeTruthy();
       expect(meta.en).toBeTruthy();

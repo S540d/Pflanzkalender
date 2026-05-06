@@ -18,23 +18,27 @@
 Falls Ja, prüfe folgende Punkte:
 
 ### Web APIs
+
 - [ ] Alle `window.*` Aufrufe haben `Platform.OS === 'web'` Check oder nutzen `utils/platform.ts`
 - [ ] Keine direkte Verwendung von `document`, `navigator`, `localStorage` ohne Platform-Check
 - [ ] `window.matchMedia` wird nur auf Web verwendet
 - [ ] DOM Manipulationen sind Web-only
 
 ### Storage
+
 - [ ] `AsyncStorage` für Mobile (iOS/Android)
 - [ ] `localStorage` nur für Web mit Platform-Check
 - [ ] Alternative: `Storage` Adapter aus `utils/platform.ts`
 
 ### Testing
+
 - [ ] Code wurde auf **Web** getestet (Browser)
 - [ ] Code wurde auf **Android** getestet (Emulator oder physisches Gerät)
 - [ ] Code wurde auf **iOS** getestet (falls verfügbar)
 - [ ] Keine console errors/warnings in Production
 
 ### Platform-Specific Features
+
 - [ ] React Native Komponenten funktionieren auf Mobile
 - [ ] Web-only Komponenten sind hinter Platform-Check
 - [ ] Polyfills für fehlende APIs auf Mobile vorhanden
@@ -53,9 +57,7 @@ Falls Ja, prüfe folgende Punkte:
 
 **Web:**
 
-
 **Mobile:**
-
 
 ## Zusätzliche Notizen
 

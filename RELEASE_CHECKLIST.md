@@ -5,6 +5,7 @@ Diese Checklist muss vor jedem Release durchlaufen werden.
 ## Pre-Release Testing
 
 ### Web Platform
+
 - [ ] Build erfolgreich: `npm run build:web`
 - [ ] App startet ohne Fehler
 - [ ] Alle Features funktionieren im Browser
@@ -15,6 +16,7 @@ Diese Checklist muss vor jedem Release durchlaufen werden.
 - [ ] Settings werden korrekt gespeichert
 
 ### Android Platform
+
 - [ ] Build erfolgreich: `./gradlew bundleRelease`
 - [ ] APK installiert auf physischem Gerät
 - [ ] App startet ohne Crash
@@ -25,6 +27,7 @@ Diese Checklist muss vor jedem Release durchlaufen werden.
 - [ ] Deep Links funktionieren (falls vorhanden)
 
 ### iOS Platform (falls relevant)
+
 - [ ] Build erfolgreich
 - [ ] App auf Simulator getestet
 - [ ] App auf physischem Gerät getestet
@@ -33,6 +36,7 @@ Diese Checklist muss vor jedem Release durchlaufen werden.
 ## Code Quality
 
 ### Cross-Platform Checks
+
 - [ ] Alle Web APIs haben `Platform.OS === 'web'` Check
 - [ ] `AsyncStorage` verwendet für Mobile Storage
 - [ ] `localStorage` nur für Web mit Platform-Check
@@ -40,6 +44,7 @@ Diese Checklist muss vor jedem Release durchlaufen werden.
 - [ ] Keine `document.*` Calls ohne Platform-Check
 
 ### Code Review
+
 - [ ] Keine console.log in Production Code
 - [ ] Keine TODO/FIXME Kommentare ohne Issue
 - [ ] Keine hardcoded Credentials oder API Keys
@@ -50,6 +55,7 @@ Diese Checklist muss vor jedem Release durchlaufen werden.
 ## Version & Metadata
 
 ### Version Numbers
+
 - [ ] `package.json` version aktualisiert
 - [ ] `app.json` version aktualisiert
 - [ ] `app.json` android.versionCode erhöht
@@ -58,6 +64,7 @@ Diese Checklist muss vor jedem Release durchlaufen werden.
 - [ ] `App.tsx` APP_VERSION Konstante aktualisiert
 
 ### Git
+
 - [ ] Alle Änderungen committed
 - [ ] Commit Messages sind aussagekräftig
 - [ ] Branch ist up-to-date mit main
@@ -74,12 +81,14 @@ Diese Checklist muss vor jedem Release durchlaufen werden.
 ## Build Artifacts
 
 ### Android
+
 - [ ] Signiertes AAB generiert
 - [ ] AAB nach `Android/release/` kopiert
 - [ ] Dateiname: `1x1-trainer-v{VERSION}-signed.aab`
 - [ ] Dateigröße überprüft (sollte ~5MB sein)
 
 ### Web
+
 - [ ] Build in `dist/` Verzeichnis
 - [ ] Assets korrekt kopiert
 - [ ] Deployment vorbereitet
@@ -87,11 +96,13 @@ Diese Checklist muss vor jedem Release durchlaufen werden.
 ## Deployment
 
 ### Git
+
 - [ ] Git Tag erstellt: `git tag v{VERSION}`
 - [ ] Tag gepusht: `git push origin v{VERSION}`
 - [ ] Commits gepusht: `git push origin main`
 
 ### Play Store (Android)
+
 - [ ] AAB auf Play Store Console hochgeladen
 - [ ] Release Notes (EN) ausgefüllt
 - [ ] Release Notes (DE) ausgefüllt
@@ -100,6 +111,7 @@ Diese Checklist muss vor jedem Release durchlaufen werden.
 - [ ] Release an Internal Testing Track
 
 ### Web (GitHub Pages)
+
 - [ ] `npm run deploy` ausgeführt
 - [ ] Website erreichbar unter `https://s540d.github.io/1x1_Trainer/`
 - [ ] Alle Features funktionieren online
@@ -107,11 +119,13 @@ Diese Checklist muss vor jedem Release durchlaufen werden.
 ## Post-Release
 
 ### Monitoring
+
 - [ ] App startet ohne Crashes (erste 24h beobachten)
 - [ ] Keine kritischen Fehler in Logs
 - [ ] User Feedback monitoren
 
 ### Communication
+
 - [ ] Release Notes veröffentlicht
 - [ ] GitHub Release erstellt
 - [ ] README Badge aktualisiert (falls vorhanden)
@@ -126,9 +140,9 @@ Falls kritische Probleme auftreten:
 
 ---
 
-**Release Version:** v______
-**Release Datum:** __________
-**Erstellt von:** __________
-**Überprüft von:** __________
+**Release Version:** v**\_\_**
+**Release Datum:** \***\*\_\_\*\***
+**Erstellt von:** \***\*\_\_\*\***
+**Überprüft von:** \***\*\_\_\*\***
 
-**Unterschrift:** ____________
+**Unterschrift:** \***\*\_\_\_\_\*\***

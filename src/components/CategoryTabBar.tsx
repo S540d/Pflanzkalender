@@ -8,11 +8,19 @@ interface CategoryTabBarProps {
   onCategoryChange: (category: CategoryFilter) => void;
 }
 
-export const CategoryTabBar: React.FC<CategoryTabBarProps> = ({ activeCategory, onCategoryChange }) => {
+export const CategoryTabBar: React.FC<CategoryTabBarProps> = ({
+  activeCategory,
+  onCategoryChange,
+}) => {
   const { theme } = useTheme();
 
   return (
-    <View style={[styles.tabBar, { borderBottomColor: theme.border, backgroundColor: theme.background }]}>
+    <View
+      style={[
+        styles.tabBar,
+        { borderBottomColor: theme.border, backgroundColor: theme.background },
+      ]}
+    >
       {CATEGORY_TABS.map((tab) => {
         const isActive = activeCategory === tab.value;
         return (
@@ -21,13 +29,23 @@ export const CategoryTabBar: React.FC<CategoryTabBarProps> = ({ activeCategory, 
             style={styles.tab}
             onPress={() => onCategoryChange(tab.value)}
           >
-            <View style={[
-              styles.iconBadge,
-              { backgroundColor: isActive ? tab.color : tab.color + '30' },
-            ]}>
+            <View
+              style={[
+                styles.iconBadge,
+                { backgroundColor: isActive ? tab.color : tab.color + '30' },
+              ]}
+            >
               <Text style={styles.tabIcon}>{tab.icon}</Text>
             </View>
-            <Text style={[styles.tabLabel, { color: isActive ? tab.color : theme.textSecondary, fontWeight: isActive ? '700' : '400' }]}>
+            <Text
+              style={[
+                styles.tabLabel,
+                {
+                  color: isActive ? tab.color : theme.textSecondary,
+                  fontWeight: isActive ? '700' : '400',
+                },
+              ]}
+            >
               {tab.label}
             </Text>
           </TouchableOpacity>

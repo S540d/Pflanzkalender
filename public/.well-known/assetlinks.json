@@ -11,9 +11,7 @@
     "target": {
       "namespace": "android_app",
       "package_name": "com.pflanzkalender",
-      "sha256_cert_fingerprints": [
-        "TODO: Generate via keytool or Gradle build output"
-      ]
+      "sha256_cert_fingerprints": ["TODO: Generate via keytool or Gradle build output"]
     }
   }
 ]

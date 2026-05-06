@@ -18,24 +18,30 @@ export const PlantManagementScreen: React.FC = () => {
     return [...plants].sort((a, b) => a.name.localeCompare(b.name, 'de'));
   }, [plants]);
 
-  const handleAddPlant = (name: string, notes: string, location?: PlantLocation, category?: PlantCategory) => {
+  const handleAddPlant = (
+    name: string,
+    notes: string,
+    location?: PlantLocation,
+    category?: PlantCategory
+  ) => {
     addPlant({ name, notes, location, category, isDefault: false, userId: null, activities: [] });
     setShowAddPlant(false);
   };
 
   const handleDeletePlant = (plantId: string, plantName: string) => {
-    const message = language === 'de'
-      ? `Möchtest du "${plantName}" wirklich löschen?`
-      : `Do you really want to delete "${plantName}"?`;
+    const message =
+      language === 'de'
+        ? `Möchtest du "${plantName}" wirklich löschen?`
+        : `Do you really want to delete "${plantName}"?`;
 
-    Alert.alert(
-      language === 'de' ? 'Pflanze löschen' : 'Delete Plant',
-      message,
-      [
-        { text: language === 'de' ? 'Abbrechen' : 'Cancel', style: 'cancel' },
-        { text: language === 'de' ? 'Löschen' : 'Delete', style: 'destructive', onPress: () => deletePlant(plantId) },
-      ]
-    );
+    Alert.alert(language === 'de' ? 'Pflanze löschen' : 'Delete Plant', message, [
+      { text: language === 'de' ? 'Abbrechen' : 'Cancel', style: 'cancel' },
+      {
+        text: language === 'de' ? 'Löschen' : 'Delete',
+        style: 'destructive',
+        onPress: () => deletePlant(plantId),
+      },
+    ]);
   };
 
   return (
@@ -64,19 +70,24 @@ export const PlantManagementScreen: React.FC = () => {
               sortedPlants.map((plant) => (
                 <View
                   key={plant.id}
-                  style={[styles.plantItem, { backgroundColor: theme.surface, borderColor: theme.border }]}
+                  style={[
+                    styles.plantItem,
+                    { backgroundColor: theme.surface, borderColor: theme.border },
+                  ]}
                 >
                   <View style={styles.plantInfo}>
                     <Text style={[styles.plantName, { color: theme.text }]}>{plant.name}</Text>
                     <View style={styles.plantMeta}>
                       {plant.category && (
                         <Text style={[styles.plantMetaText, { color: theme.textSecondary }]}>
-                          {PLANT_CATEGORY_METADATA[plant.category].icon} {PLANT_CATEGORY_METADATA[plant.category][language]}
+                          {PLANT_CATEGORY_METADATA[plant.category].icon}{' '}
+                          {PLANT_CATEGORY_METADATA[plant.category][language]}
                         </Text>
                       )}
                       {plant.location && (
                         <Text style={[styles.plantMetaText, { color: theme.textSecondary }]}>
-                          {PLANT_LOCATION_METADATA[plant.location].icon} {PLANT_LOCATION_METADATA[plant.location][language]}
+                          {PLANT_LOCATION_METADATA[plant.location].icon}{' '}
+                          {PLANT_LOCATION_METADATA[plant.location][language]}
                         </Text>
                       )}
                     </View>

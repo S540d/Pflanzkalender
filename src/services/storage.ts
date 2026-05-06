@@ -32,12 +32,17 @@ export const storageService = {
         if (result.success) {
           valid.push(result.data);
         } else {
-          console.error('Skipping corrupt plant entry:', result.error.issues.map(i => `${i.path.join('.')}: ${i.message}`).join(', '));
+          console.error(
+            'Skipping corrupt plant entry:',
+            result.error.issues.map((i) => `${i.path.join('.')}: ${i.message}`).join(', ')
+          );
         }
       }
       // Nur validated data zurückgeben – niemals ungültige Daten
       if (valid.length === 0 && parsed.length > 0) {
-        console.error('All stored plants failed validation – data appears corrupted. Returning empty array to prevent crashes. Please re-import your plant data.');
+        console.error(
+          'All stored plants failed validation – data appears corrupted. Returning empty array to prevent crashes. Please re-import your plant data.'
+        );
       }
       return valid;
     } catch (error) {
@@ -112,7 +117,9 @@ export const storageService = {
       const raw = JSON.parse(jsonString);
       const result = ImportDataSchema.safeParse(raw);
       if (!result.success) {
-        const details = result.error.issues.map(i => `${i.path.join('.') || 'root'}: ${i.message}`).join('; ');
+        const details = result.error.issues
+          .map((i) => `${i.path.join('.') || 'root'}: ${i.message}`)
+          .join('; ');
         throw new Error(`Invalid import format: ${details}`);
       }
       return result.data.plants as Plant[];

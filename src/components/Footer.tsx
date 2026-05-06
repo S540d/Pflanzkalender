@@ -10,9 +10,11 @@ export const Footer: React.FC = () => {
   };
 
   return (
-    <View style={[styles.footer, { backgroundColor: theme.background, borderTopColor: theme.border }]}>
-      <TouchableOpacity 
-        style={[styles.supportButton, { backgroundColor: '#FFD700' }]} 
+    <View
+      style={[styles.footer, { backgroundColor: theme.background, borderTopColor: theme.border }]}
+    >
+      <TouchableOpacity
+        style={[styles.supportButton, { backgroundColor: '#FFD700' }]}
         onPress={handleSupportPress}
       >
         <Text style={styles.coffeeIcon}>☕</Text>
@@ -33,7 +35,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  
+
   supportButton: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -47,12 +49,12 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
   },
-  
+
   coffeeIcon: {
     fontSize: 16,
     marginRight: 6,
   },
-  
+
   supportText: {
     fontSize: 14,
     fontWeight: '600',

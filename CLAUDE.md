@@ -14,16 +14,16 @@ Repo: https://github.com/s540d/Pflanzkalender
 
 ## Tech Stack (exakte Versionen)
 
-| Paket | Version |
-|---|---|
-| Expo | ~54.0.12 |
-| React | 19.1.0 |
-| React Native | 0.81.4 |
-| React Native Web | ^0.21.0 |
-| TypeScript | ~5.9.2 |
-| React Navigation (Bottom Tabs + Stack) | ^7.x |
-| AsyncStorage | ^2.2.0 |
-| Firebase | ^12.3.0 (initialisiert, Placeholder-Config) |
+| Paket                                  | Version                                     |
+| -------------------------------------- | ------------------------------------------- |
+| Expo                                   | ~54.0.12                                    |
+| React                                  | 19.1.0                                      |
+| React Native                           | 0.81.4                                      |
+| React Native Web                       | ^0.21.0                                     |
+| TypeScript                             | ~5.9.2                                      |
+| React Navigation (Bottom Tabs + Stack) | ^7.x                                        |
+| AsyncStorage                           | ^2.2.0                                      |
+| Firebase                               | ^12.3.0 (initialisiert, Placeholder-Config) |
 
 Build: `expo export --platform web` → Metro Bundler  
 Deploy: GitHub Pages via `gh-pages` unter `/Pflanzkalender/`
@@ -33,6 +33,7 @@ Deploy: GitHub Pages via `gh-pages` unter `/Pflanzkalender/`
 ## Aktuelle Version: 1.3.0 (in testing branch)
 
 **Stand 2026-05-03:** Phase 2 (PWA) + Phase 3 (Tests) ✅ Merged in testing
+
 - **testing branch:** v1.3.0 mit Phase 1 + Phase 2 + Phase 3
 - **main branch:** v1.2.0 mit Phase 1 nur
 
@@ -95,47 +96,52 @@ Activity {
 
 **GitHub Actions** (`ci-cd.yml`) läuft bei Push/PR auf `main` und `develop`:
 
-| Job | Was wird geprüft |
-|---|---|
-| Code Quality & Linting | `npm ci`, console.log in App.tsx, window.* ohne Platform-Check, `tsc --noEmit \|\| true` |
-| Build Web | `expo export --platform web` |
-| Platform Compatibility | Versions-Konsistenz (package.json/app.json/SettingsScreen), UX Guidelines |
-| Security Audit | `npm audit`, Secret-Scan |
-| Release Readiness Report | Nur bei Push auf main |
+| Job                      | Was wird geprüft                                                                          |
+| ------------------------ | ----------------------------------------------------------------------------------------- |
+| Code Quality & Linting   | `npm ci`, console.log in App.tsx, window.\* ohne Platform-Check, `tsc --noEmit \|\| true` |
+| Build Web                | `expo export --platform web`                                                              |
+| Platform Compatibility   | Versions-Konsistenz (package.json/app.json/SettingsScreen), UX Guidelines                 |
+| Security Audit           | `npm audit`, Secret-Scan                                                                  |
+| Release Readiness Report | Nur bei Push auf main                                                                     |
 
 **Wichtig:** `Build Web` und `Release Readiness Report` hängen von `Code Quality` ab (`needs: code-quality`). Schlägt Code Quality fehl → beide werden übersprungen (skipped).
 
-**Pre-Commit Hooks** (Husky): console.log, window.*, localStorage, Versions-Inkonsistenz.
+**Pre-Commit Hooks** (Husky): console.log, window.\*, localStorage, Versions-Inkonsistenz.
 
 ---
 
 ## Bekannte Stolperfallen
 
 ### package-lock.json
+
 `npm ci` in CI ist streng – der Lockfile muss exakt mit package.json übereinstimmen. **Nie manuell bearbeiten.** Nach Dependency-Änderungen immer `npm install --package-lock-only --ignore-scripts` laufen lassen und den resultierenden Lockfile committen.
 
 ### Versions-Konsistenz
+
 Drei Stellen müssen immer identisch sein:
+
 - `package.json` → `"version"`
 - `app.json` → `"expo.version"`
 - `src/screens/SettingsScreen.tsx` → `APP_VERSION = '...'`
 
 ### Platform Safety
+
 `window.*` und `localStorage` nur mit `Platform.OS === 'web'` Guard oder Kommentar `// platform-safe`. React Native hat ein `window`-Objekt, aber nicht alle Web-APIs.
 
 ### PlantLocation / PlantCategory Typen
+
 **Nie** `as PlantLocation` oder `as PlantCategory` casten. String-Literale werden direkt über den Array-Typ in `Omit<Plant, ...>[]` geprüft. Neue Werte nur in `src/constants/plantMetadata.ts` (PLANT_LOCATION_METADATA / PLANT_CATEGORY_METADATA) und `src/types/index.ts` ergänzen.
 
 ---
 
 ## Branch-Strategie
 
-| Branch | Zweck |
-|---|---|
-| `main` | Production |
-| `develop` | Integration (optional) |
-| `testing` | Löst Deploy auf `gh-pages-testing` aus → https://s540d.github.io/Pflanzkalender-testing/ |
-| `claude/<feature>-<hash>` | Feature-Branches (von Claude generiert) |
+| Branch                    | Zweck                                                                                    |
+| ------------------------- | ---------------------------------------------------------------------------------------- |
+| `main`                    | Production                                                                               |
+| `develop`                 | Integration (optional)                                                                   |
+| `testing`                 | Löst Deploy auf `gh-pages-testing` aus → https://s540d.github.io/Pflanzkalender-testing/ |
+| `claude/<feature>-<hash>` | Feature-Branches (von Claude generiert)                                                  |
 
 Workflow: Feature-Branch → PR auf main → CI grün → Merge (squash).
 
@@ -145,22 +151,22 @@ Workflow: Feature-Branch → PR auf main → CI grün → Merge (squash).
 
 Vollständige Roadmap: https://github.com/S540d/Pflanzkalender/issues/47
 
-| Phase | Inhalt | Status | Branch |
-|---|---|---|---|
-| 1 | Issue #39: Android 15 Edge-to-Edge, `viewport-fit=cover`, `expo-navigation-bar` | ✅ Done | testing |
-| 2 | PWA vervollständigen: `manifest.json`, Icons, Service Worker, assetlinks.json | ✅ Merged (PR #65) | testing |
-| 3 | Tests: jest + jest-expo + @testing-library/react-native (134 tests) | ✅ Merged (PR #65) | testing |
-| 4 | Framework: Expo Router statt manueller React Navigation, ESLint 9, Prettier | ⏳ Pending | — |
-| 5 | Play Store via TWA: Bubblewrap CLI, Digital Asset Links, APK/AAB | 📋 Planned | — |
+| Phase | Inhalt                                                                          | Status             | Branch  |
+| ----- | ------------------------------------------------------------------------------- | ------------------ | ------- |
+| 1     | Issue #39: Android 15 Edge-to-Edge, `viewport-fit=cover`, `expo-navigation-bar` | ✅ Done            | testing |
+| 2     | PWA vervollständigen: `manifest.json`, Icons, Service Worker, assetlinks.json   | ✅ Merged (PR #65) | testing |
+| 3     | Tests: jest + jest-expo + @testing-library/react-native (134 tests)             | ✅ Merged (PR #65) | testing |
+| 4     | Framework: Expo Router statt manueller React Navigation, ESLint 9, Prettier     | ⏳ Pending         | —       |
+| 5     | Play Store via TWA: Bubblewrap CLI, Digital Asset Links, APK/AAB                | 📋 Planned         | —       |
 
 ---
 
 ## CI/CD – Deploy-Trigger (Stand 2026-04-09)
 
-| Workflow | Trigger |
-|---|---|
+| Workflow                | Trigger                                                        |
+| ----------------------- | -------------------------------------------------------------- |
 | `deploy-production.yml` | Push auf `main` (automatisch nach Merge) + `workflow_dispatch` |
-| `deploy-testing.yml` | Push auf `testing` (automatisch) + `workflow_dispatch` |
+| `deploy-testing.yml`    | Push auf `testing` (automatisch) + `workflow_dispatch`         |
 
 **Service Worker:** `scripts/add-service-worker.js` wird im Production-Deploy ausgeführt und injiziert die SW-Registrierung in `index.html`. Nicht deaktivieren – ohne das Script sehen Nutzer mit altem SW immer die gecachte Version.
 
@@ -176,13 +182,13 @@ Vollständige Roadmap: https://github.com/S540d/Pflanzkalender/issues/47
 
 ## Letzte Merges / Fixes (2026-05-03)
 
-| Was | Wann | Details |
-|---|---|---|
+| Was                                         | Wann       | Details                                             |
+| ------------------------------------------- | ---------- | --------------------------------------------------- |
 | PR #64: Issue #39 – Android 15 Edge-to-Edge | 2026-05-03 | ✅ testing: expo-navigation-bar, viewport-fit:cover |
-| **PR #65:** Phase 2 PWA + Phase 3 Tests | 2026-05-03 | ✅ testing: 4 commits (PWA + 3 CI/Test fixes) |
-| CI Fix: Credential Scan | 2026-05-03 | Exclude *.png, *.yml files (false positive fix) |
-| Tests: API Compatibility Fix | 2026-05-03 | container→root, query method updates (134 tests ✅) |
-| PR #46: Issues #38, #40, #43 | 2026-04-08 | Standortempfehlungen, Ko-fi, 32 Default-Pflanzen |
-| fix: package-lock.json | 2026-04-08 | npm ci integrity restored |
-| ci: Deploy-Trigger | 2026-04-09 | push auf main/testing automated |
-| fix: SW-Injection | 2026-04-09 | Reload-Loop fixed |
+| **PR #65:** Phase 2 PWA + Phase 3 Tests     | 2026-05-03 | ✅ testing: 4 commits (PWA + 3 CI/Test fixes)       |
+| CI Fix: Credential Scan                     | 2026-05-03 | Exclude _.png, _.yml files (false positive fix)     |
+| Tests: API Compatibility Fix                | 2026-05-03 | container→root, query method updates (134 tests ✅) |
+| PR #46: Issues #38, #40, #43                | 2026-04-08 | Standortempfehlungen, Ko-fi, 32 Default-Pflanzen    |
+| fix: package-lock.json                      | 2026-04-08 | npm ci integrity restored                           |
+| ci: Deploy-Trigger                          | 2026-04-09 | push auf main/testing automated                     |
+| fix: SW-Injection                           | 2026-04-09 | Reload-Loop fixed                                   |

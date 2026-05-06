@@ -14,19 +14,21 @@ import { useTheme } from '../hooks/useTheme';
 import { PlantLocation, PlantCategory } from '../types';
 import { PLANT_LOCATION_METADATA, PLANT_CATEGORY_METADATA } from '../constants/plantMetadata';
 
-const LOCATION_OPTIONS: { value: PlantLocation; label: string; icon: string }[] =
-  (Object.keys(PLANT_LOCATION_METADATA) as PlantLocation[]).map((value) => ({
-    value,
-    label: PLANT_LOCATION_METADATA[value].de,
-    icon: PLANT_LOCATION_METADATA[value].icon,
-  }));
+const LOCATION_OPTIONS: { value: PlantLocation; label: string; icon: string }[] = (
+  Object.keys(PLANT_LOCATION_METADATA) as PlantLocation[]
+).map((value) => ({
+  value,
+  label: PLANT_LOCATION_METADATA[value].de,
+  icon: PLANT_LOCATION_METADATA[value].icon,
+}));
 
-const CATEGORY_OPTIONS: { value: PlantCategory; label: string; icon: string }[] =
-  (Object.keys(PLANT_CATEGORY_METADATA) as PlantCategory[]).map((value) => ({
-    value,
-    label: PLANT_CATEGORY_METADATA[value].de,
-    icon: PLANT_CATEGORY_METADATA[value].icon,
-  }));
+const CATEGORY_OPTIONS: { value: PlantCategory; label: string; icon: string }[] = (
+  Object.keys(PLANT_CATEGORY_METADATA) as PlantCategory[]
+).map((value) => ({
+  value,
+  label: PLANT_CATEGORY_METADATA[value].de,
+  icon: PLANT_CATEGORY_METADATA[value].icon,
+}));
 
 interface AddPlantModalProps {
   visible: boolean;
@@ -34,11 +36,7 @@ interface AddPlantModalProps {
   onAdd: (name: string, notes: string, location?: PlantLocation, category?: PlantCategory) => void;
 }
 
-export const AddPlantModal: React.FC<AddPlantModalProps> = ({
-  visible,
-  onClose,
-  onAdd,
-}) => {
+export const AddPlantModal: React.FC<AddPlantModalProps> = ({ visible, onClose, onAdd }) => {
   const { theme } = useTheme();
   const [name, setName] = useState('');
   const [notes, setNotes] = useState('');
@@ -65,33 +63,20 @@ export const AddPlantModal: React.FC<AddPlantModalProps> = ({
   };
 
   return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType="slide"
-      onRequestClose={onClose}
-    >
+    <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.overlay}
       >
-        <TouchableOpacity
-          style={styles.backdrop}
-          activeOpacity={1}
-          onPress={handleCancel}
-        />
+        <TouchableOpacity style={styles.backdrop} activeOpacity={1} onPress={handleCancel} />
         <View style={[styles.modal, { backgroundColor: theme.background }]}>
           <View style={[styles.header, { borderBottomColor: theme.border }]}>
-            <Text style={[styles.title, { color: theme.text }]}>
-              Neue Pflanze hinzufügen
-            </Text>
+            <Text style={[styles.title, { color: theme.text }]}>Neue Pflanze hinzufügen</Text>
           </View>
 
           <ScrollView style={styles.content}>
             <View style={styles.field}>
-              <Text style={[styles.label, { color: theme.text }]}>
-                Pflanzenname *
-              </Text>
+              <Text style={[styles.label, { color: theme.text }]}>Pflanzenname *</Text>
               <TextInput
                 style={[
                   styles.input,
@@ -146,7 +131,12 @@ export const AddPlantModal: React.FC<AddPlantModalProps> = ({
                     onPress={() => setLocation(location === opt.value ? undefined : opt.value)}
                   >
                     <Text style={styles.locationIcon}>{opt.icon}</Text>
-                    <Text style={[styles.locationLabel, { color: location === opt.value ? '#fff' : theme.text }]}>
+                    <Text
+                      style={[
+                        styles.locationLabel,
+                        { color: location === opt.value ? '#fff' : theme.text },
+                      ]}
+                    >
                       {opt.label}
                     </Text>
                   </TouchableOpacity>
@@ -170,7 +160,12 @@ export const AddPlantModal: React.FC<AddPlantModalProps> = ({
                     onPress={() => setCategory(category === opt.value ? undefined : opt.value)}
                   >
                     <Text style={styles.locationIcon}>{opt.icon}</Text>
-                    <Text style={[styles.locationLabel, { color: category === opt.value ? '#fff' : theme.text }]}>
+                    <Text
+                      style={[
+                        styles.locationLabel,
+                        { color: category === opt.value ? '#fff' : theme.text },
+                      ]}
+                    >
                       {opt.label}
                     </Text>
                   </TouchableOpacity>
@@ -180,20 +175,14 @@ export const AddPlantModal: React.FC<AddPlantModalProps> = ({
 
             <View style={styles.hint}>
               <Text style={[styles.hintText, { color: theme.textSecondary }]}>
-                Nach dem Hinzufügen kannst du Aktivitäten für die Pflanze
-                erstellen.
+                Nach dem Hinzufügen kannst du Aktivitäten für die Pflanze erstellen.
               </Text>
             </View>
           </ScrollView>
 
           <View style={[styles.footer, { borderTopColor: theme.border }]}>
-            <TouchableOpacity
-              style={[styles.button, styles.cancelButton]}
-              onPress={handleCancel}
-            >
-              <Text style={[styles.buttonText, { color: theme.text }]}>
-                Abbrechen
-              </Text>
+            <TouchableOpacity style={[styles.button, styles.cancelButton]} onPress={handleCancel}>
+              <Text style={[styles.buttonText, { color: theme.text }]}>Abbrechen</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[

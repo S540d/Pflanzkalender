@@ -43,10 +43,8 @@ jobs:
           NODE_ENV: production
           CI: true
 
-
       - name: Prepare testing deployment (fix paths, banner, cache-busting)
         run: node scripts/prepare-testing-deployment.js
-
 
       - name: Generate PWA icons
         run: node scripts/generate-icons.js

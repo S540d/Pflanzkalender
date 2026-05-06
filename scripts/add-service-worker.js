@@ -32,24 +32,26 @@ if (fs.existsSync(manifestSourcePath)) {
     manifest.start_url = '/Pflanzkalender-testing/';
     manifest.scope = '/Pflanzkalender-testing/';
     manifest.name = 'Pflanzkalender (Testing)';
-    manifest.icons = manifest.icons.map(icon => ({
+    manifest.icons = manifest.icons.map((icon) => ({
       ...icon,
       src: icon.src.replace('/Pflanzkalender/', '/Pflanzkalender-testing/'),
     }));
     if (manifest.screenshots) {
-      manifest.screenshots = manifest.screenshots.map(screenshot => ({
+      manifest.screenshots = manifest.screenshots.map((screenshot) => ({
         ...screenshot,
         src: screenshot.src.replace('/Pflanzkalender/', '/Pflanzkalender-testing/'),
       }));
     }
     if (manifest.shortcuts) {
-      manifest.shortcuts = manifest.shortcuts.map(shortcut => ({
+      manifest.shortcuts = manifest.shortcuts.map((shortcut) => ({
         ...shortcut,
         url: shortcut.url.replace('/Pflanzkalender/', '/Pflanzkalender-testing/'),
-        icons: shortcut.icons ? shortcut.icons.map(icon => ({
-          ...icon,
-          src: icon.src.replace('/Pflanzkalender/', '/Pflanzkalender-testing/'),
-        })) : undefined,
+        icons: shortcut.icons
+          ? shortcut.icons.map((icon) => ({
+              ...icon,
+              src: icon.src.replace('/Pflanzkalender/', '/Pflanzkalender-testing/'),
+            }))
+          : undefined,
       }));
     }
   }

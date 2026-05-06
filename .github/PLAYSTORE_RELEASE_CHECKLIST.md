@@ -16,6 +16,7 @@
 #### Woche 1: Code Quality & Cleanup
 
 **TypeScript & Linting:**
+
 - [ ] Keine TypeScript Errors (strict mode überprüfen)
 - [ ] ESLint Warnings: Alle behoben oder geright-justified
 - [ ] Prettier: Code formatiert
@@ -24,6 +25,7 @@
 - [ ] Keine console.log() in Production
 
 **Dependency Management:**
+
 - [ ] Alle Dependencies aktuell (keine Security Vulnerabilities)
   ```bash
   npm audit
@@ -32,6 +34,7 @@
 - [ ] Tree-shaking konfiguriert (Code splitting)
 
 **Build Process:**
+
 - [ ] Production Build erstellt erfolgreich
   ```bash
   eas build --platform android --auto-submit
@@ -43,11 +46,13 @@
 #### Woche 2: Feature Completeness & Error Handling
 
 **Features Implementation:**
+
 - [ ] Alle geplanten Features sind implementiert
 - [ ] Keine "TODO" Comments mit kritischen Items
 - [ ] Feature Flags (falls vorhanden): Alle configured für Production
 
 **Error Handling:**
+
 - [ ] Error Boundaries implementiert (catches crashes)
 - [ ] Try-catch um kritische Operationen
 - [ ] Network Errors: Benutzerfreundliche Messages
@@ -58,6 +63,7 @@
 - [ ] Permission Denied Handling (falls Kameras, etc.)
 
 **User Feedback:**
+
 - [ ] Success Messages (z.B. "Plant added!")
 - [ ] Error Messages (klar, actionable)
 - [ ] Warning Messages (z.B. "Are you sure?")
@@ -66,6 +72,7 @@
 #### Woche 3: Testing & Performance
 
 **Testing Setup:**
+
 - [ ] Jest/Vitest Setup konfiguriert
 - [ ] Tests für kritische Features (min. 60% coverage)
   - Plant CRUD operations
@@ -81,6 +88,7 @@ npm test -- --coverage
 ```
 
 **Performance:**
+
 - [ ] Lighthouse Score >= 80 (mindestens)
 - [ ] App startet schnell (< 3 Sekunden ideal)
 - [ ] Keine Memory Leaks
@@ -91,6 +99,7 @@ npm test -- --coverage
 - [ ] No janky Scrolls
 
 **Accessibility Testing:**
+
 - [ ] Lighthouse Accessibility Score >= 90
 - [ ] Manual axe Audit:
   ```bash
@@ -110,6 +119,7 @@ npm test -- --coverage
 #### Woche 4: Design & Assets
 
 **Screenshots (5-8 Stück):**
+
 - [ ] Format: 1080x1920px (21:9 ratio) oder 1440x2560px
 - [ ] Zeige Key Features:
   - [ ] Plant List/Overview
@@ -122,17 +132,20 @@ npm test -- --coverage
 - [ ] Consistent Styling/Branding
 
 **Feature Graphic (1024x500px):**
+
 - [ ] Design: App Name + Key Visual
 - [ ] Beispiel: "Pflanzkalender - Track Your Plants"
 - [ ] Professionelles Design
 - [ ] Readable bei kleine Größen
 
 **App Icon (512x512px PNG):**
+
 - [ ] Überprüfe: Kein transparenter Saum
 - [ ] Design: Plant-themed, Klar & Erkennbar
 - [ ] Works auf verschiedenen Backgrounds
 
 **Design Assets:**
+
 - [ ] Alle Icons im App sind designt
 - [ ] Dark Mode Icons funktionieren
 - [ ] Icons sind erkennbar auf verschiedenen Backgrounds
@@ -140,6 +153,7 @@ npm test -- --coverage
 #### Woche 5: Text & Legal
 
 **Store Listing Text:**
+
 - [ ] **App Name:** "Pflanzkalender" oder "Plant Calendar" (< 50 Zeichen)
 - [ ] **Short Description** (< 80 Zeichen)
   - Beispiel: "Track your plants - watering, care, and growth"
@@ -157,6 +171,7 @@ npm test -- --coverage
   - Tone: Professional, user-friendly
 
 **Legal Documents:**
+
 - [ ] **Privacy Policy**
   - [ ] Online unter HTTPS
   - [ ] Abdeckt:
@@ -171,6 +186,7 @@ npm test -- --coverage
 - [ ] **Terms of Service** (optional aber empfohlen)
 
 **Contact & Support:**
+
 - [ ] Support Email hinterlegen
 - [ ] Support Link vorbereiten (z.B. "Buy Me a Coffee")
 - [ ] Website/Portfolio Link (falls vorhanden)
@@ -178,6 +194,7 @@ npm test -- --coverage
 #### Woche 6: Compliance & Rating
 
 **Data Safety Form (wird später in Play Console ausgefüllt):**
+
 - [ ] Bestimme: Welche Daten werden gesammelt?
   - Personal Information: Wahrscheinlich NEIN
   - Location: NEIN (oder JA wenn Plant-Standort benötigt)
@@ -189,11 +206,13 @@ npm test -- --coverage
 - [ ] In-App Purchases: NEIN (außer optional)
 
 **Content Rating:**
+
 - [ ] Überprüfe: App hat keine:
   - Violence, Sexual Content, etc.
 - [ ] Rating wird wahrscheinlich: Everyone (3+)
 
 **Permissions Review:**
+
 - [ ] Überprüfe: AndroidManifest.xml
 - [ ] Nur notwendige Permissions:
   - INTERNET (falls APIs)
@@ -207,6 +226,7 @@ npm test -- --coverage
 ### Phase 3: Final Testing (Woche 7)
 
 **Hardware Testing:**
+
 - [ ] Test auf min. 3 echten Android Devices:
   - [ ] Android 8.0+ (API 26+)
   - [ ] Android 10+ (API 29+)
@@ -218,6 +238,7 @@ npm test -- --coverage
   - [ ] Tablet (wenn möglich)
 
 **Test Scenarios:**
+
 - [ ] **Happy Path**: Normale User Journey
   - Add plant → set reminders → check watering → mark done
 - [ ] **Edge Cases**:
@@ -233,10 +254,12 @@ npm test -- --coverage
   - App crash (shouldn't happen, aber test recovery)
 
 **Regression Testing:**
+
 - [ ] Überprüfe: Alte Features still funktionieren
 - [ ] Neue Features nicht brechen alte
 
 **Performance Testing (wiederholung):**
+
 - [ ] Lighthouse: >= 80
 - [ ] App Start Time: <= 3 Sekunden
 - [ ] Smooth Scrolling (60 FPS)
@@ -250,12 +273,14 @@ npm test -- --coverage
 #### Play Console Registration
 
 **Developer Account:**
+
 - [ ] Google Account (falls nicht vorhanden)
 - [ ] Play Developer Account aktivieren
 - [ ] Developer Agreement akzeptieren
 - [ ] $25 USD Zahlungsmethode hinterlegen
 
 **Create New App:**
+
 1. Go to Play Console → Create new app
 2. Eingabe:
    - App Name: Pflanzkalender
@@ -266,22 +291,26 @@ npm test -- --coverage
 #### Store Listing Ausfüllen
 
 **App Information:**
+
 - [ ] App Name (50 Zeichen max)
 - [ ] Short Description (80 Zeichen max)
 - [ ] Full Description (4000 Zeichen max)
 - [ ] Alle URLs (Privacy Policy, Support, Website)
 
 **Graphics:**
+
 - [ ] Upload Screenshots (5-8 Stück)
 - [ ] Upload Feature Graphic
 - [ ] Upload Icon
 - [ ] Überprüfe alle Previews
 
 **Content Rating:**
+
 - [ ] Füllen Sie Questionnaire aus
 - [ ] Überprüfe Auto-generated Rating
 
 **Additional Information:**
+
 - [ ] Support Email
 - [ ] Privacy Policy URL
 - [ ] Website (optional)
@@ -291,11 +320,13 @@ npm test -- --coverage
 ### Phase 5: Build & Upload (Woche 9)
 
 **Create Production Build:**
+
 ```bash
 eas build --platform android
 ```
 
 **Upload zu Play Console:**
+
 1. Go to Release → Production
 2. Click "Create new release"
 3. Upload APK/AAB
@@ -306,6 +337,7 @@ eas build --platform android
 5. Review & Roll Out
 
 **Pre-Launch Report:**
+
 - Warte auf Google Tests (24-48 Stunden)
 - Überprüfe für:
   - [ ] Crashes
@@ -314,6 +346,7 @@ eas build --platform android
   - [ ] Compatibility Issues
 
 **Falls Probleme:**
+
 - [ ] Download Error Logs
 - [ ] Bugfix erstellen
 - [ ] Neuer Build → Upload
@@ -323,6 +356,7 @@ eas build --platform android
 ### Phase 6: Launch (Woche 10)
 
 **Rollout Strategy:**
+
 - [ ] Start with 10% Rollout (small user segment)
 - [ ] Monitor für 24 Stunden:
   - Crash Reports
@@ -331,13 +365,16 @@ eas build --platform android
   - Uninstall Rate
 
 **If OK after 24h:**
+
 - [ ] Increase to 50%
 - [ ] Monitor weitere 24h
 
 **If still OK:**
+
 - [ ] Rollout auf 100%
 
 **If Issues Found:**
+
 - [ ] Pause Rollout
 - [ ] Bugfix
 - [ ] New Build
@@ -348,6 +385,7 @@ eas build --platform android
 ## 🧪 Complete Testing Checklist
 
 ### Unit Tests
+
 - [ ] Plant CRUD (Create, Read, Update, Delete)
 - [ ] Watering Schedule Logic
 - [ ] Notification Calculation
@@ -356,18 +394,21 @@ eas build --platform android
 - [ ] Edge Cases (null values, empty lists, etc.)
 
 ### Integration Tests
+
 - [ ] Plant + Schedule Integration
 - [ ] Data Persistence (localStorage/database)
 - [ ] API Calls (if any)
 - [ ] Navigation Flow
 
 ### E2E Tests (minimal)
+
 - [ ] Add Plant → Complete Setup → Mark Watered
 - [ ] Edit Plant Details
 - [ ] Delete Plant (with confirmation)
 - [ ] App Settings
 
 ### Manual Testing
+
 - [ ] Functional: Alles funktioniert
 - [ ] Visual: Design konsistent
 - [ ] Usability: Intuitiv bedienbar
@@ -399,18 +440,21 @@ Vor Launch muss Folgendes erfüllt sein:
 ## 📊 Post-Launch (First Month)
 
 ### Erste 24 Stunden:
+
 - [ ] Monitor Crash Reports (check hourly)
 - [ ] Überprüfe User Ratings
 - [ ] Watch Install Count
 - [ ] Respond zu Reviews
 
 ### Erste Woche:
+
 - [ ] Daily monitoring Crash Reports
 - [ ] Analytics überprüfen
 - [ ] User Feedback sammeln
 - [ ] Bug fixes vorbereiten (falls nötig)
 
 ### Monatlich:
+
 - [ ] Release Minor Updates mit Bugfixes
 - [ ] Implementiere User Feedback
 - [ ] Update Dependencies

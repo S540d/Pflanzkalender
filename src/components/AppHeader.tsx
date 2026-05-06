@@ -16,35 +16,50 @@ export const AppHeader: React.FC<AppHeaderProps> = ({ leftContent, rightContent 
   const currentRoute = route.name;
 
   return (
-    <View style={[styles.header, { backgroundColor: theme.background, borderBottomColor: theme.border }]}>
+    <View
+      style={[
+        styles.header,
+        { backgroundColor: theme.background, borderBottomColor: theme.border },
+      ]}
+    >
       <View style={styles.leftSection}>
         {leftContent}
         <View style={styles.tabButtons}>
           <TouchableOpacity
             style={[
               styles.tabButton,
-              currentRoute === 'Kalender' && { borderBottomWidth: 2, borderBottomColor: theme.primary }
+              currentRoute === 'Kalender' && {
+                borderBottomWidth: 2,
+                borderBottomColor: theme.primary,
+              },
             ]}
             onPress={() => navigation.navigate('Kalender' as never)}
           >
-            <Text style={[
-              styles.tabText,
-              { color: currentRoute === 'Kalender' ? theme.primary : theme.textSecondary }
-            ]}>
+            <Text
+              style={[
+                styles.tabText,
+                { color: currentRoute === 'Kalender' ? theme.primary : theme.textSecondary },
+              ]}
+            >
               Kalender
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[
               styles.tabButton,
-              currentRoute === 'Agenda' && { borderBottomWidth: 2, borderBottomColor: theme.primary }
+              currentRoute === 'Agenda' && {
+                borderBottomWidth: 2,
+                borderBottomColor: theme.primary,
+              },
             ]}
             onPress={() => navigation.navigate('Agenda' as never)}
           >
-            <Text style={[
-              styles.tabText,
-              { color: currentRoute === 'Agenda' ? theme.primary : theme.textSecondary }
-            ]}>
+            <Text
+              style={[
+                styles.tabText,
+                { color: currentRoute === 'Agenda' ? theme.primary : theme.textSecondary },
+              ]}
+            >
               Agenda
             </Text>
           </TouchableOpacity>

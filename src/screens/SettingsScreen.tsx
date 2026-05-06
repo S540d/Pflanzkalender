@@ -1,8 +1,16 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Linking, ScrollView, Platform, Alert } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Linking,
+  ScrollView,
+  Platform,
+  Alert,
+} from 'react-native';
 import { useTheme } from '../hooks/useTheme';
 import { storageService } from '../services/storage';
-
 
 const APP_VERSION = '1.3.0';
 

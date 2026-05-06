@@ -54,18 +54,22 @@ export class ErrorBoundary extends Component<Props, State> {
       const webUrl = Platform.OS === 'web' ? window.location.href : ''; // platform-safe
       return (
         <View style={{ flex: 1, backgroundColor: '#1a1a1a', padding: 20 }}>
-          <View style={{
-            backgroundColor: '#ff4444',
-            padding: 15,
-            borderRadius: 10,
-            marginBottom: 20
-          }}>
-            <Text style={{
-              color: 'white',
-              fontSize: 18,
-              fontWeight: 'bold',
-              marginBottom: 5
-            }}>
+          <View
+            style={{
+              backgroundColor: '#ff4444',
+              padding: 15,
+              borderRadius: 10,
+              marginBottom: 20,
+            }}
+          >
+            <Text
+              style={{
+                color: 'white',
+                fontSize: 18,
+                fontWeight: 'bold',
+                marginBottom: 5,
+              }}
+            >
               ⚠️ App Fehler
             </Text>
             <Text style={{ color: 'white', fontSize: 14 }}>
@@ -74,39 +78,47 @@ export class ErrorBoundary extends Component<Props, State> {
           </View>
 
           <ScrollView style={{ flex: 1 }}>
-            <View style={{
-              backgroundColor: '#2a2a2a',
-              padding: 15,
-              borderRadius: 8,
-              marginBottom: 15
-            }}>
-              <Text style={{
-                color: '#ff6666',
-                fontFamily: 'monospace',
-                fontSize: 12,
-                marginBottom: 10
-              }}>
+            <View
+              style={{
+                backgroundColor: '#2a2a2a',
+                padding: 15,
+                borderRadius: 8,
+                marginBottom: 15,
+              }}
+            >
+              <Text
+                style={{
+                  color: '#ff6666',
+                  fontFamily: 'monospace',
+                  fontSize: 12,
+                  marginBottom: 10,
+                }}
+              >
                 {this.state.error?.toString()}
               </Text>
 
               {this.state.errorInfo && (
-                <Text style={{
-                  color: '#aaa',
-                  fontFamily: 'monospace',
-                  fontSize: 10
-                }}>
+                <Text
+                  style={{
+                    color: '#aaa',
+                    fontFamily: 'monospace',
+                    fontSize: 10,
+                  }}
+                >
                   {this.state.errorInfo.componentStack}
                 </Text>
               )}
             </View>
 
             {Platform.OS === 'web' && (
-              <View style={{
-                backgroundColor: '#2a2a2a',
-                padding: 15,
-                borderRadius: 8,
-                marginBottom: 15
-              }}>
+              <View
+                style={{
+                  backgroundColor: '#2a2a2a',
+                  padding: 15,
+                  borderRadius: 8,
+                  marginBottom: 15,
+                }}
+              >
                 <Text style={{ color: '#00ff00', fontSize: 12, marginBottom: 10 }}>
                   Debug-Informationen:
                 </Text>

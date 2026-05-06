@@ -17,7 +17,7 @@ export const isMobile = isIOS || isAndroid;
  * Prüft ob window.matchMedia verfügbar ist (nur Web)
  */
 export function supportsMatchMedia(): boolean {
-  return isWeb && typeof window !== 'undefined' && typeof window.matchMedia === 'function';
+  return isWeb && typeof window !== 'undefined' && typeof window.matchMedia === 'function'; // platform-safe
 }
 
 /**
@@ -33,7 +33,7 @@ export function getSystemDarkModePreference(): boolean {
   }
 
   try {
-    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+    return window.matchMedia('(prefers-color-scheme: dark)').matches; // platform-safe
   } catch (error) {
     console.warn('Failed to get system dark mode preference:', error);
     return false;
@@ -45,16 +45,14 @@ export function getSystemDarkModePreference(): boolean {
  * @param callback - Wird aufgerufen wenn sich das Theme ändert
  * @returns Cleanup-Funktion
  */
-export function addSystemThemeChangeListener(
-  callback: (isDark: boolean) => void
-): () => void {
+export function addSystemThemeChangeListener(callback: (isDark: boolean) => void): () => void {
   if (!supportsMatchMedia()) {
     // Noop für Mobile - könnte Appearance.addChangeListener verwenden
     return () => {};
   }
 
   try {
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)'); // platform-safe
     const handler = (e: MediaQueryListEvent) => callback(e.matches);
 
     mediaQuery.addEventListener('change', handler);
@@ -72,7 +70,7 @@ export function addSystemThemeChangeListener(
 export const Storage = {
   async getItem(key: string): Promise<string | null> {
     if (isWeb && typeof localStorage !== 'undefined') {
-      return localStorage.getItem(key);
+      return localStorage.getItem(key); // platform-safe
     } else {
       const AsyncStorage = await import('@react-native-async-storage/async-storage');
       return AsyncStorage.default.getItem(key);
@@ -81,7 +79,7 @@ export const Storage = {
 
   async setItem(key: string, value: string): Promise<void> {
     if (isWeb && typeof localStorage !== 'undefined') {
-      localStorage.setItem(key, value);
+      localStorage.setItem(key, value); // platform-safe
     } else {
       const AsyncStorage = await import('@react-native-async-storage/async-storage');
       await AsyncStorage.default.setItem(key, value);
@@ -90,7 +88,7 @@ export const Storage = {
 
   async removeItem(key: string): Promise<void> {
     if (isWeb && typeof localStorage !== 'undefined') {
-      localStorage.removeItem(key);
+      localStorage.removeItem(key); // platform-safe
     } else {
       const AsyncStorage = await import('@react-native-async-storage/async-storage');
       await AsyncStorage.default.removeItem(key);
@@ -106,7 +104,7 @@ export function assertWebAPI(apiName: string): void {
   if (!isWeb) {
     throw new Error(
       `Web API "${apiName}" is not available on ${Platform.OS}. ` +
-      `Use Platform-specific code or polyfills.`
+        `Use Platform-specific code or polyfills.`
     );
   }
 }
@@ -114,11 +112,7 @@ export function assertWebAPI(apiName: string): void {
 /**
  * Sichere Web API Calls mit Fallback
  */
-export function safeWebAPI<T>(
-  callback: () => T,
-  fallback: T,
-  apiName?: string
-): T {
+export function safeWebAPI<T>(callback: () => T, fallback: T, apiName?: string): T {
   if (!isWeb) {
     if (apiName && __DEV__) {
       console.warn(`Web API "${apiName}" not available on ${Platform.OS}, using fallback`);

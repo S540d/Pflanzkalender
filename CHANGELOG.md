@@ -10,6 +10,7 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 ## [1.3.0] - 2026-05-10
 
 ### Hinzugefügt
+
 - **PWA-Features** (Phase 2):
   - Web App Manifest (`manifest.json`) mit vollständiger PWA-Konfiguration
   - Icons in mehreren Größen (192x192, 512x512) und maskable Varianten für modernes OS-Styling
@@ -31,6 +32,7 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
   - Service Worker und Storage-Tests mit 95%+ Coverage
 
 ### Geändert
+
 - Build-Prozess: Post-Build-Scripts für PWA Meta-Tags und Asset-Verarbeitung
 - Service Worker: Erweiterte Asset-Caching-Strategie (Manifest, Icons)
 - app.json: Web-Konfiguration mit PWA-Support (`viewportFit: cover`, `themeColor`)
@@ -39,6 +41,7 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 ## [1.2.0] - 2025-10-26
 
 ### Hinzugefügt
+
 - **Pflanzen-Verwaltungs-Screen**: Dedizierte Ansicht zum Verwalten aller Pflanzen
   - Neue Navigation über 🌱 Button im Header
   - Liste aller Pflanzen mit Name, Notizen und Aktivitätsanzahl
@@ -52,6 +55,7 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
   - Übersetzungen für Settings- und Agenda-Screen
 
 ### Geändert
+
 - **Agenda-Ansicht optimiert**:
   - Spaltenbreite von 250px auf 160px reduziert
   - Horizontales Scrolling aktiviert für bessere Übersicht
@@ -61,18 +65,21 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 - **Settings-Screen**: Übersetzt und übersichtlicher gestaltet
 
 ### Entfernt
+
 - **Footer**: Sticky Footer entfernt, um mehr Platz zu schaffen und Verdeckungsproblem zu lösen
 - **Metrik-Feature**: Aus Einstellungen entfernt für klarere UI
 - **"Neue Pflanze" Button**: Am Ende der Kalenderansicht entfernt (ersetzt durch Pflanzen-Screen)
 - Ungenutzte AddPlantModal Imports und State aus CalendarScreen
 
 ### Behoben
+
 - Translation-Funktion in LanguageContext korrigiert (flache Key-Struktur statt verschachtelt)
 - Sichtbarkeitsproblem der "Neue Pflanze" Taste durch Bounce-Back
 
 ## [1.1.0] - 2025-10-06
 
 ### Hinzugefügt
+
 - Fixierte Pflanzennamen-Spalte beim horizontalen Scrollen
 - Einheitliches Farbschema für Aktivitätstypen
 - Tooltips für Aktivitätsbalken (Web) mit Zeitraum-Info
@@ -81,6 +88,7 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 - Einstellungen als Modal-Popup
 
 ### Behoben
+
 - Aktivitätsbalken-Klicks funktionieren jetzt konsistent
 - Doppelte Pflanzennamen-Anzeige entfernt
 - Scrolling auf Mobile und Desktop optimiert
@@ -88,6 +96,7 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 ## [1.0.0] - 2025-10-06
 
 ### Hinzugefügt
+
 - Pflanzkalender-Grid mit 24 Halbmonaten
 - Responsive Layout (Desktop: 24 Halbmonate, Mobile: 6 Halbmonate mit Navigation)
 - 20 vordefinierte, recherchierte Pflanzen mit typischen Aktivitäten

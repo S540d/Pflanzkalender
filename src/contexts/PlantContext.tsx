@@ -83,16 +83,14 @@ export const PlantProvider: React.FC<PlantProviderProps> = ({ children }) => {
   };
 
   const updatePlant = (id: string, updates: Partial<Plant>) => {
-    const updatedPlants = plants.map(plant =>
-      plant.id === id
-        ? { ...plant, ...updates, updatedAt: Date.now() }
-        : plant
+    const updatedPlants = plants.map((plant) =>
+      plant.id === id ? { ...plant, ...updates, updatedAt: Date.now() } : plant
     );
     savePlants(updatedPlants);
   };
 
   const deletePlant = (id: string) => {
-    const filteredPlants = plants.filter(plant => plant.id !== id);
+    const filteredPlants = plants.filter((plant) => plant.id !== id);
     savePlants(filteredPlants);
   };
 
@@ -102,7 +100,7 @@ export const PlantProvider: React.FC<PlantProviderProps> = ({ children }) => {
       id: `activity-${Date.now()}`,
     };
 
-    const updatedPlants = plants.map(plant =>
+    const updatedPlants = plants.map((plant) =>
       plant.id === plantId
         ? {
             ...plant,
@@ -115,11 +113,11 @@ export const PlantProvider: React.FC<PlantProviderProps> = ({ children }) => {
   };
 
   const updateActivity = (plantId: string, activityId: string, updates: Partial<Activity>) => {
-    const updatedPlants = plants.map(plant =>
+    const updatedPlants = plants.map((plant) =>
       plant.id === plantId
         ? {
             ...plant,
-            activities: plant.activities.map(act =>
+            activities: plant.activities.map((act) =>
               act.id === activityId ? { ...act, ...updates } : act
             ),
             updatedAt: Date.now(),
@@ -130,11 +128,11 @@ export const PlantProvider: React.FC<PlantProviderProps> = ({ children }) => {
   };
 
   const deleteActivity = (plantId: string, activityId: string) => {
-    const updatedPlants = plants.map(plant =>
+    const updatedPlants = plants.map((plant) =>
       plant.id === plantId
         ? {
             ...plant,
-            activities: plant.activities.filter(act => act.id !== activityId),
+            activities: plant.activities.filter((act) => act.id !== activityId),
             updatedAt: Date.now(),
           }
         : plant

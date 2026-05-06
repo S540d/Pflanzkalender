@@ -38,14 +38,17 @@ export const EditActivityModal: React.FC<EditActivityModalProps> = ({
   };
 
   const handleDelete = () => {
-    Alert.alert(
-      'Aktivität löschen',
-      'Aktivität wirklich löschen?',
-      [
-        { text: 'Abbrechen', style: 'cancel' },
-        { text: 'Löschen', style: 'destructive', onPress: () => { onDelete(activity.id); onClose(); } },
-      ]
-    );
+    Alert.alert('Aktivität löschen', 'Aktivität wirklich löschen?', [
+      { text: 'Abbrechen', style: 'cancel' },
+      {
+        text: 'Löschen',
+        style: 'destructive',
+        onPress: () => {
+          onDelete(activity.id);
+          onClose();
+        },
+      },
+    ]);
   };
 
   return (
@@ -58,7 +61,10 @@ export const EditActivityModal: React.FC<EditActivityModalProps> = ({
           <View style={styles.section}>
             <Text style={[styles.label, { color: theme.text }]}>Bezeichnung</Text>
             <TextInput
-              style={[styles.input, { backgroundColor: theme.surface, color: theme.text, borderColor: theme.border }]}
+              style={[
+                styles.input,
+                { backgroundColor: theme.surface, color: theme.text, borderColor: theme.border },
+              ]}
               value={label}
               onChangeText={setLabel}
               placeholder="z.B. Aussäen"

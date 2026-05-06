@@ -14,7 +14,7 @@ const iconSizes = [
   { name: 'icon-192.png', targetSize: 192 },
   { name: 'icon-192-maskable.png', targetSize: 192, maskable: true },
   { name: 'icon-512.png', targetSize: 512 },
-  { name: 'icon-512-maskable.png', targetSize: 512, maskable: true }
+  { name: 'icon-512-maskable.png', targetSize: 512, maskable: true },
 ];
 
 // PLACEHOLDER IMPLEMENTATION:

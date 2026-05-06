@@ -27,9 +27,7 @@ describe('ActivityBar Component', () => {
   };
 
   it('renders without crashing', () => {
-    const { root } = render(
-      <ActivityBar activity={mockActivity} index={0} totalActivities={1} />
-    );
+    const { root } = render(<ActivityBar activity={mockActivity} index={0} totalActivities={1} />);
 
     expect(root).toBeTruthy();
   });
