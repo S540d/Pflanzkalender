@@ -53,7 +53,16 @@ export const PlantProvider: React.FC<PlantProviderProps> = ({ children }) => {
           setPlants(savedPlants);
         }
       } catch (error) {
-        console.error('Error initializing plants:', error);
+        if (error instanceof Error && error.message === 'STORAGE_CORRUPTED') {
+          // Daten vorhanden aber alle ungültig – nicht mit Defaults überschreiben,
+          // damit der Nutzer die Chance zur Re-Import behält.
+          console.error(
+            'Storage corrupted: all plant entries failed validation. Showing empty state without overwriting storage.'
+          );
+          setPlants([]);
+        } else {
+          console.error('Error initializing plants:', error);
+        }
       } finally {
         setLoading(false);
       }

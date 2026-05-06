@@ -6,7 +6,7 @@ Fixes #<!-- Issue Nummer -->
 
 ## 🔄 Änderungen
 
-## <!-- Liste die wichtigsten Änderungen auf -->
+<!-- Liste die wichtigsten Änderungen auf -->
 
 -
 

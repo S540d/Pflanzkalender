@@ -8,6 +8,7 @@ import { CategoryTabBar } from '../components/CategoryTabBar';
 import { TableHeader } from '../components/TableHeader';
 import { PlantRowsContainer } from '../components/PlantRowsContainer';
 import { CategoryFilter } from '../constants/categoryTabs';
+import { Activity } from '../types';
 
 export const CalendarScreen: React.FC = () => {
   const { theme } = useTheme();
@@ -96,7 +97,7 @@ export const CalendarScreen: React.FC = () => {
     setShowEditActivity(true);
   };
 
-  const handleUpdateActivity = (activityId: string, updates: Record<string, unknown>) => {
+  const handleUpdateActivity = (activityId: string, updates: Partial<Activity>) => {
     if (selectedPlantId) {
       updateActivity(selectedPlantId, activityId, updates);
     }

@@ -38,14 +38,15 @@ export const storageService = {
           );
         }
       }
-      // Nur validated data zurückgeben – niemals ungültige Daten
       if (valid.length === 0 && parsed.length > 0) {
-        console.error(
-          'All stored plants failed validation – data appears corrupted. Returning empty array to prevent crashes. Please re-import your plant data.'
-        );
+        // All entries failed validation – signal corruption so callers don't silently overwrite with defaults
+        throw new Error('STORAGE_CORRUPTED');
       }
       return valid;
     } catch (error) {
+      if (error instanceof Error && error.message === 'STORAGE_CORRUPTED') {
+        throw error;
+      }
       console.error('Error loading plants:', error);
       return [];
     }

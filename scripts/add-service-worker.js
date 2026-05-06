@@ -107,18 +107,12 @@ if (fs.existsSync(indexPath)) {
 
   html = html.replace('</body>', swRegistration + '</body>');
 
-  // Inject PWA meta tags if not already present
+  // Inject manifest link if not already present (full meta-tag injection is done by add-pwa-meta-tags.js)
   if (!html.includes('rel="manifest"')) {
     const manifestUrl = `${baseUrl}/manifest.json`;
-    const pwaMetaTags = `
-  <link rel="manifest" href="${manifestUrl}">
-  <meta name="theme-color" content="#4CAF50">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="Pflanzkalender">
-  <meta name="mobile-web-app-capable" content="yes">`;
-    html = html.replace('</head>', pwaMetaTags + '\n</head>');
-    console.log('✓ Injected PWA meta tags into index.html');
+    const manifestLink = `\n  <link rel="manifest" href="${manifestUrl}">`;
+    html = html.replace('</head>', manifestLink + '\n</head>');
+    console.log('✓ Injected manifest link into index.html');
   }
 
   fs.writeFileSync(indexPath, html, 'utf8');

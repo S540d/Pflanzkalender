@@ -7,9 +7,13 @@ STAGED_FORMATTABLE=$(git diff --cached --name-only --diff-filter=ACMR | grep -E 
 if [ -n "$STAGED_FORMATTABLE" ]; then
   PRETTIER_RESULT=$(echo "$STAGED_FORMATTABLE" | xargs npx prettier --check 2>&1)
   PRETTIER_EXIT=$?
-  if [ $PRETTIER_EXIT -ne 0 ] && echo "$PRETTIER_RESULT" | grep -q "\[warn\]"; then
+  if [ $PRETTIER_EXIT -ne 0 ]; then
     echo "$PRETTIER_RESULT"
-    echo "ERROR: Formatting issues found! Run 'npm run format' to fix."
+    if echo "$PRETTIER_RESULT" | grep -q "\[warn\]"; then
+      echo "ERROR: Formatting issues found! Run 'npm run format' to fix."
+    else
+      echo "ERROR: Prettier check failed (parse error or config issue)."
+    fi
     exit 1
   fi
 fi
