@@ -100,6 +100,7 @@ describe('PlantContext – addPlant', () => {
         activities: [],
         isDefault: false,
         userId: null,
+        notes: '',
       });
     });
 
@@ -118,6 +119,7 @@ describe('PlantContext – addPlant', () => {
         activities: [],
         isDefault: false,
         userId: null,
+        notes: '',
       });
     });
 
@@ -134,6 +136,7 @@ describe('PlantContext – addPlant', () => {
         activities: [],
         isDefault: false,
         userId: null,
+        notes: '',
       });
     });
 
@@ -157,7 +160,13 @@ describe('PlantContext – updatePlant', () => {
 
     let plantId: string;
     await act(async () => {
-      result.current.addPlant({ name: 'Original', activities: [], isDefault: false, userId: null });
+      result.current.addPlant({
+        name: 'Original',
+        activities: [],
+        isDefault: false,
+        userId: null,
+        notes: '',
+      });
     });
     plantId = result.current.plants.find((p) => p.name === 'Original')!.id;
 
@@ -182,7 +191,13 @@ describe('PlantContext – deletePlant', () => {
     await waitForLoaded(result);
 
     await act(async () => {
-      result.current.addPlant({ name: 'ToDelete', activities: [], isDefault: false, userId: null });
+      result.current.addPlant({
+        name: 'ToDelete',
+        activities: [],
+        isDefault: false,
+        userId: null,
+        notes: '',
+      });
     });
 
     const plant = result.current.plants.find((p) => p.name === 'ToDelete')!;
@@ -214,6 +229,7 @@ describe('PlantContext – addActivity', () => {
         activities: [],
         isDefault: false,
         userId: null,
+        notes: '',
       });
     });
 
@@ -252,6 +268,7 @@ describe('PlantContext – updateActivity', () => {
         activities: [],
         isDefault: false,
         userId: null,
+        notes: '',
       });
     });
 
@@ -296,6 +313,7 @@ describe('PlantContext – deleteActivity', () => {
         activities: [],
         isDefault: false,
         userId: null,
+        notes: '',
       });
     });
 
@@ -341,6 +359,7 @@ describe('PlantContext – resetToDefaults', () => {
         activities: [],
         isDefault: false,
         userId: null,
+        notes: '',
       });
     });
 

@@ -27,7 +27,7 @@ describe('ActivityBar Component', () => {
   };
 
   it('renders without crashing', () => {
-    const { root } = render(<ActivityBar activity={mockActivity} index={0} totalActivities={1} />);
+    const { root } = render(<ActivityBar activity={mockActivity} />);
 
     expect(root).toBeTruthy();
   });
@@ -37,9 +37,7 @@ describe('ActivityBar Component', () => {
   });
 
   it('renders activity bar with label', () => {
-    const { getByText } = render(
-      <ActivityBar activity={mockActivity} index={0} totalActivities={1} />
-    );
+    const { getByText } = render(<ActivityBar activity={mockActivity} />);
 
     expect(getByText('Aussaat')).toBeTruthy();
   });
@@ -55,8 +53,6 @@ describe('ActivityBar Component', () => {
           color: '#FF6B6B',
           label: 'Ernte',
         }}
-        index={0}
-        totalActivities={1}
       />
     );
 

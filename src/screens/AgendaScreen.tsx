@@ -149,9 +149,9 @@ export const AgendaScreen: React.FC = () => {
 
       <ScrollView horizontal style={styles.scrollView}>
         <View style={styles.columnsContainer}>
-          {renderColumn(t('agenda.previous'), previousActivities, previousMonth)}
-          {renderColumn(t('agenda.current'), currentActivities, currentMonth)}
-          {renderColumn(t('agenda.next'), nextActivities, nextMonth)}
+          {renderColumn(String(t('agenda.previous')), previousActivities, previousMonth)}
+          {renderColumn(String(t('agenda.current')), currentActivities, currentMonth)}
+          {renderColumn(String(t('agenda.next')), nextActivities, nextMonth)}
         </View>
       </ScrollView>
     </View>

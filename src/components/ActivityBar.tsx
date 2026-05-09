@@ -1,7 +1,24 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Platform } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Platform,
+  StyleProp,
+  ViewStyle,
+} from 'react-native';
 import { Activity } from '../types';
 import { getContrastTextColor } from '../utils/colorUtils';
+import { MONTH_SHORT } from '../utils/monthHelper';
+
+interface TouchableWebProps {
+  style: StyleProp<ViewStyle>;
+  onPress?: () => void;
+  activeOpacity: number;
+  onMouseEnter?: () => void;
+  onMouseLeave?: () => void;
+}
 
 interface ActivityBarProps {
   activity: Activity;
@@ -20,29 +37,15 @@ export const ActivityBar: React.FC<ActivityBarProps> = ({
   const startPosition = (activity.startMonth / totalMonths) * 100;
   const width = ((activity.endMonth - activity.startMonth + 1) / totalMonths) * 100;
 
-  const monthNames = [
-    'Jan',
-    'Feb',
-    'Mär',
-    'Apr',
-    'Mai',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Okt',
-    'Nov',
-    'Dez',
-  ];
   const getMonthLabel = (halfMonth: number) => {
     const monthIndex = Math.floor(halfMonth / 2);
     const half = halfMonth % 2 === 0 ? '1. H' : '2. H';
-    return `${monthNames[monthIndex]} ${half}`;
+    return `${MONTH_SHORT[monthIndex]} ${half}`;
   };
 
   const tooltipText = `${activity.label}\n${getMonthLabel(activity.startMonth)} - ${getMonthLabel(activity.endMonth)}`;
 
-  const touchableProps: any = {
+  const touchableProps: TouchableWebProps = {
     style: [
       styles.activityBar,
       {
