@@ -121,6 +121,7 @@ export const AgendaScreen: React.FC = () => {
               key={tab.value}
               style={styles.tab}
               onPress={() => setActiveCategory(tab.value)}
+              testID={`category-tab-${tab.value}`}
             >
               <View
                 style={[
