@@ -60,13 +60,17 @@ describe('AgendaScreen', () => {
   });
 
   it('switches category filter when tab is pressed', async () => {
-    const { findByText } = render(<AgendaScreen />, { wrapper: Wrapper });
+    const { findByTestId, getByTestId } = render(<AgendaScreen />, { wrapper: Wrapper });
 
-    const vegetableTab = await findByText(/Nutzpflanzen|Vegetables/);
-    fireEvent.press(vegetableTab);
+    // Wait for the vegetable tab to appear, then press it
+    await findByTestId('category-tab-vegetable');
+    fireEvent.press(getByTestId('category-tab-vegetable'));
 
-    // After pressing, the filter changes – component should not crash
+    // The "all" tab should no longer be active; the vegetable tab should now be active
     await waitFor(() => {
+      const allTab = getByTestId('category-tab-all');
+      const vegetableTab = getByTestId('category-tab-vegetable');
+      expect(allTab).toBeTruthy();
       expect(vegetableTab).toBeTruthy();
     });
   });

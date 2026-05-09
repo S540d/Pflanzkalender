@@ -94,7 +94,7 @@ describe('PlantContext – addPlant', () => {
 
     const before = result.current.plants.length;
 
-    await act(async () => {
+    act(() => {
       result.current.addPlant({
         name: 'Neue Pflanze',
         activities: [],
@@ -103,7 +103,9 @@ describe('PlantContext – addPlant', () => {
       });
     });
 
-    expect(result.current.plants.length).toBe(before + 1);
+    await waitFor(() => {
+      expect(result.current.plants.length).toBe(before + 1);
+    });
   });
 
   it('persists the added plant via AsyncStorage', async () => {

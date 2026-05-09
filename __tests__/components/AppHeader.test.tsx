@@ -71,13 +71,8 @@ describe('AppHeader Component', () => {
   });
 
   it('navigates to Einstellungen when settings button is pressed', () => {
-    const { UNSAFE_getAllByType } = render(<AppHeader />);
-    const { TouchableOpacity } = require('react-native');
-    // Settings button is the last TouchableOpacity in the header
-    const buttons = UNSAFE_getAllByType(TouchableOpacity);
-    // Find settings button (last one that navigates to Einstellungen)
-    const settingsButton = buttons[buttons.length - 1];
-    fireEvent.press(settingsButton);
+    const { getByTestId } = render(<AppHeader />);
+    fireEvent.press(getByTestId('settings-button'));
     expect(mockNavigate).toHaveBeenCalledWith('Einstellungen');
   });
 

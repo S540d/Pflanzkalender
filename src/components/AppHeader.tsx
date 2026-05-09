@@ -70,6 +70,7 @@ export const AppHeader: React.FC<AppHeaderProps> = ({ leftContent, rightContent 
         <TouchableOpacity
           style={styles.settingsButton}
           onPress={() => navigation.navigate('Einstellungen' as never)}
+          testID="settings-button"
         >
           <View style={styles.settingsIcon}>
             <View style={[styles.gear, { borderColor: theme.text }]} />

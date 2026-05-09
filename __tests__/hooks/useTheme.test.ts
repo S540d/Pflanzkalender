@@ -1,4 +1,4 @@
-import { renderHook, act } from '@testing-library/react-native';
+import { renderHook, act, waitFor } from '@testing-library/react-native';
 import { useTheme } from '../../src/hooks/useTheme';
 
 const mockGetItem = jest.fn().mockResolvedValue(null);
@@ -103,12 +103,9 @@ describe('useTheme Hook', () => {
 
     const { result } = renderHook(() => useTheme());
 
-    // Wait for async load
-    await act(async () => {
-      await new Promise((r) => setTimeout(r, 50));
+    await waitFor(() => {
+      expect(result.current.themeMode).toBe('dark');
     });
-
-    expect(result.current.themeMode).toBe('dark');
   });
 
   it('loads persisted theme preference from AsyncStorage (light)', async () => {
@@ -116,11 +113,9 @@ describe('useTheme Hook', () => {
 
     const { result } = renderHook(() => useTheme());
 
-    await act(async () => {
-      await new Promise((r) => setTimeout(r, 50));
+    await waitFor(() => {
+      expect(result.current.themeMode).toBe('light');
     });
-
-    expect(result.current.themeMode).toBe('light');
   });
 
   it('ignores invalid values from AsyncStorage', async () => {
@@ -128,12 +123,10 @@ describe('useTheme Hook', () => {
 
     const { result } = renderHook(() => useTheme());
 
-    await act(async () => {
-      await new Promise((r) => setTimeout(r, 50));
+    await waitFor(() => {
+      // Falls back to default 'system'
+      expect(result.current.themeMode).toBe('system');
     });
-
-    // Falls back to default 'system'
-    expect(result.current.themeMode).toBe('system');
   });
 
   it('isDark is true when themeMode is dark', async () => {
