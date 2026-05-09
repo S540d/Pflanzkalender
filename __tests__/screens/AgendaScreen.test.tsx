@@ -87,7 +87,14 @@ describe('AgendaScreen', () => {
         id: 'p1',
         name: 'Aktivpflanze',
         activities: [
-          { id: 'a1', type: 'sow', startMonth: 0, endMonth: 23, color: '#4CAF50', label: 'Aussaat' },
+          {
+            id: 'a1',
+            type: 'sow',
+            startMonth: 0,
+            endMonth: 23,
+            color: '#4CAF50',
+            label: 'Aussaat',
+          },
         ],
         isDefault: false,
         userId: null,

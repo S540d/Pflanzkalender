@@ -127,7 +127,12 @@ describe('PlantContext – addPlant', () => {
     await waitForLoaded(result);
 
     await act(async () => {
-      result.current.addPlant({ name: 'IdTestPlant', activities: [], isDefault: false, userId: null });
+      result.current.addPlant({
+        name: 'IdTestPlant',
+        activities: [],
+        isDefault: false,
+        userId: null,
+      });
     });
 
     const added = result.current.plants.find((p) => p.name === 'IdTestPlant');

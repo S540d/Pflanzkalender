@@ -45,16 +45,12 @@ describe('PlantManagementScreen', () => {
   it('renders the screen title', async () => {
     const { findByText } = render(<PlantManagementScreen />, { wrapper: Wrapper });
     // Title is either German or English depending on language
-    expect(
-      await findByText(/Pflanzen verwalten|Manage Plants/)
-    ).toBeTruthy();
+    expect(await findByText(/Pflanzen verwalten|Manage Plants/)).toBeTruthy();
   });
 
   it('renders the add plant button', async () => {
     const { findByText } = render(<PlantManagementScreen />, { wrapper: Wrapper });
-    expect(
-      await findByText(/Neue Pflanze hinzufügen|Add New Plant/)
-    ).toBeTruthy();
+    expect(await findByText(/Neue Pflanze hinzufügen|Add New Plant/)).toBeTruthy();
   });
 
   it('opens AddPlantModal when add button is pressed', async () => {

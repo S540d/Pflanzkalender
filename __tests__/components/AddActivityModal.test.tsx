@@ -26,24 +26,14 @@ describe('AddActivityModal Component', () => {
 
   it('renders when visible is true', () => {
     const { getByText } = render(
-      <AddActivityModal
-        visible={true}
-        plantName="Tomate"
-        onClose={mockOnClose}
-        onAdd={mockOnAdd}
-      />
+      <AddActivityModal visible={true} plantName="Tomate" onClose={mockOnClose} onAdd={mockOnAdd} />
     );
     expect(getByText('Aktivität hinzufügen')).toBeTruthy();
   });
 
   it('shows plant name in subtitle', () => {
     const { getByText } = render(
-      <AddActivityModal
-        visible={true}
-        plantName="Gurke"
-        onClose={mockOnClose}
-        onAdd={mockOnAdd}
-      />
+      <AddActivityModal visible={true} plantName="Gurke" onClose={mockOnClose} onAdd={mockOnAdd} />
     );
     expect(getByText('für Gurke')).toBeTruthy();
   });
@@ -62,24 +52,14 @@ describe('AddActivityModal Component', () => {
 
   it('renders activity type field label', () => {
     const { getByText } = render(
-      <AddActivityModal
-        visible={true}
-        plantName="Tomate"
-        onClose={mockOnClose}
-        onAdd={mockOnAdd}
-      />
+      <AddActivityModal visible={true} plantName="Tomate" onClose={mockOnClose} onAdd={mockOnAdd} />
     );
     expect(getByText('Aktivitätstyp *')).toBeTruthy();
   });
 
   it('renders time period field', () => {
     const { getByText } = render(
-      <AddActivityModal
-        visible={true}
-        plantName="Tomate"
-        onClose={mockOnClose}
-        onAdd={mockOnAdd}
-      />
+      <AddActivityModal visible={true} plantName="Tomate" onClose={mockOnClose} onAdd={mockOnAdd} />
     );
     expect(getByText('Zeitraum *')).toBeTruthy();
     expect(getByText('Von')).toBeTruthy();
@@ -88,24 +68,14 @@ describe('AddActivityModal Component', () => {
 
   it('renders custom label input field', () => {
     const { getByText } = render(
-      <AddActivityModal
-        visible={true}
-        plantName="Tomate"
-        onClose={mockOnClose}
-        onAdd={mockOnAdd}
-      />
+      <AddActivityModal visible={true} plantName="Tomate" onClose={mockOnClose} onAdd={mockOnAdd} />
     );
     expect(getByText('Eigene Bezeichnung (optional)')).toBeTruthy();
   });
 
   it('calls onAdd when Hinzufügen button is pressed', () => {
     const { getByText } = render(
-      <AddActivityModal
-        visible={true}
-        plantName="Tomate"
-        onClose={mockOnClose}
-        onAdd={mockOnAdd}
-      />
+      <AddActivityModal visible={true} plantName="Tomate" onClose={mockOnClose} onAdd={mockOnAdd} />
     );
     fireEvent.press(getByText('Hinzufügen'));
     expect(mockOnAdd).toHaveBeenCalledTimes(1);
@@ -113,12 +83,7 @@ describe('AddActivityModal Component', () => {
 
   it('calls onClose when Abbrechen button is pressed', () => {
     const { getByText } = render(
-      <AddActivityModal
-        visible={true}
-        plantName="Tomate"
-        onClose={mockOnClose}
-        onAdd={mockOnAdd}
-      />
+      <AddActivityModal visible={true} plantName="Tomate" onClose={mockOnClose} onAdd={mockOnAdd} />
     );
     fireEvent.press(getByText('Abbrechen'));
     expect(mockOnClose).toHaveBeenCalledTimes(1);
@@ -126,12 +91,7 @@ describe('AddActivityModal Component', () => {
 
   it('onAdd is called with correct arg shape', () => {
     const { getByText } = render(
-      <AddActivityModal
-        visible={true}
-        plantName="Tomate"
-        onClose={mockOnClose}
-        onAdd={mockOnAdd}
-      />
+      <AddActivityModal visible={true} plantName="Tomate" onClose={mockOnClose} onAdd={mockOnAdd} />
     );
     fireEvent.press(getByText('Hinzufügen'));
     expect(mockOnAdd).toHaveBeenCalledWith(
@@ -139,7 +99,7 @@ describe('AddActivityModal Component', () => {
       expect.any(Number), // startMonth
       expect.any(Number), // endMonth
       expect.any(String), // color
-      expect.any(String)  // label
+      expect.any(String) // label
     );
   });
 
@@ -158,12 +118,7 @@ describe('AddActivityModal Component', () => {
 
   it('allows selecting a different activity type', () => {
     const { getAllByText } = render(
-      <AddActivityModal
-        visible={true}
-        plantName="Tomate"
-        onClose={mockOnClose}
-        onAdd={mockOnAdd}
-      />
+      <AddActivityModal visible={true} plantName="Tomate" onClose={mockOnClose} onAdd={mockOnAdd} />
     );
     // ACTIVITY_TYPES has multiple entries; pressing any type button should not crash
     const typeButtons = getAllByText(/Aussaat|Pflanzung|Ernte|Pflege/);
