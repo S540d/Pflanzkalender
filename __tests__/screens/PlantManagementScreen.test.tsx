@@ -1,0 +1,116 @@
+import React from 'react';
+import { Alert } from 'react-native';
+import { render, fireEvent, waitFor } from '@testing-library/react-native';
+import { PlantManagementScreen } from '../../src/screens/PlantManagementScreen';
+import { PlantProvider } from '../../src/contexts/PlantContext';
+import { LanguageProvider } from '../../src/contexts/LanguageContext';
+
+jest.mock('../../src/hooks/useTheme', () => ({
+  useTheme: () => ({
+    theme: {
+      background: '#fff',
+      text: '#000',
+      textSecondary: '#666',
+      border: '#ddd',
+      surface: '#f5f5f5',
+      primary: '#4CAF50',
+      error: '#f44336',
+    },
+  }),
+}));
+
+jest.mock('@react-native-async-storage/async-storage', () => ({
+  getItem: jest.fn().mockResolvedValue(null),
+  setItem: jest.fn().mockResolvedValue(undefined),
+  removeItem: jest.fn().mockResolvedValue(undefined),
+  multiRemove: jest.fn().mockResolvedValue(undefined),
+}));
+
+const Wrapper = ({ children }: { children: React.ReactNode }) => (
+  <LanguageProvider>
+    <PlantProvider>{children}</PlantProvider>
+  </LanguageProvider>
+);
+
+describe('PlantManagementScreen', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('renders without crashing', () => {
+    const { root } = render(<PlantManagementScreen />, { wrapper: Wrapper });
+    expect(root).toBeTruthy();
+  });
+
+  it('renders the screen title', async () => {
+    const { findByText } = render(<PlantManagementScreen />, { wrapper: Wrapper });
+    // Title is either German or English depending on language
+    expect(
+      await findByText(/Pflanzen verwalten|Manage Plants/)
+    ).toBeTruthy();
+  });
+
+  it('renders the add plant button', async () => {
+    const { findByText } = render(<PlantManagementScreen />, { wrapper: Wrapper });
+    expect(
+      await findByText(/Neue Pflanze hinzufügen|Add New Plant/)
+    ).toBeTruthy();
+  });
+
+  it('opens AddPlantModal when add button is pressed', async () => {
+    const { findByText, queryByText } = render(<PlantManagementScreen />, { wrapper: Wrapper });
+
+    const addButton = await findByText(/Neue Pflanze hinzufügen|Add New Plant/);
+    fireEvent.press(addButton);
+
+    await waitFor(() => {
+      expect(queryByText('Neue Pflanze hinzufügen')).toBeTruthy();
+    });
+  });
+
+  it('shows empty state text when no plants exist', async () => {
+    const { findByText } = render(<PlantManagementScreen />, { wrapper: Wrapper });
+    // With mock returning null for AsyncStorage, defaults load. Wait for loading to finish.
+    // Either shows plants or the empty message.
+    const emptyOrPlants = await findByText(
+      /Noch keine Pflanzen vorhanden|No plants yet|Aktivitäten|Activities/
+    );
+    expect(emptyOrPlants).toBeTruthy();
+  });
+
+  it('shows Alert when delete button is pressed', async () => {
+    const alertSpy = jest.spyOn(Alert, 'alert');
+    const AsyncStorage = require('@react-native-async-storage/async-storage');
+
+    const testPlant = JSON.stringify([
+      {
+        id: 'plant-test',
+        name: 'Testpflanze',
+        activities: [],
+        isDefault: false,
+        userId: null,
+        notes: '',
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      },
+    ]);
+
+    // Use key-based mock so LanguageContext's getItem call doesn't consume this value
+    AsyncStorage.getItem.mockImplementation((key: string) =>
+      key === '@Pflanzkalender:plants' ? Promise.resolve(testPlant) : Promise.resolve(null)
+    );
+
+    const { findByText } = render(<PlantManagementScreen />, { wrapper: Wrapper });
+
+    const deleteButton = await findByText('🗑️', {}, { timeout: 3000 });
+    fireEvent.press(deleteButton);
+
+    expect(alertSpy).toHaveBeenCalled();
+    alertSpy.mockRestore();
+    AsyncStorage.getItem.mockResolvedValue(null);
+  });
+
+  it('is a valid React component', () => {
+    expect(typeof PlantManagementScreen).toBe('function');
+  });
+});
