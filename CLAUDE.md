@@ -30,12 +30,12 @@ Deploy: GitHub Pages via `gh-pages` unter `/Pflanzkalender/`
 
 ---
 
-## Aktuelle Version: 1.3.0 (in testing branch)
+## Aktuelle Version: 1.3.0 (main)
 
-**Stand 2026-05-03:** Phase 2 (PWA) + Phase 3 (Tests) ✅ Merged in testing
+**Stand 2026-05-10:** Phase 1–4a ✅ auf main gemergt
 
-- **testing branch:** v1.3.0 mit Phase 1 + Phase 2 + Phase 3
-- **main branch:** v1.2.0 mit Phase 1 nur
+- **main branch:** v1.3.0 mit Phase 1 + Phase 2 + Phase 3 (254 Tests, 86.83 % Coverage) + Phase 4a (ESLint 9, Prettier)
+- **testing branch:** v1.3.0 (identisch mit main)
 
 Versions-Stellen: `package.json`, `app.json`, `src/screens/SettingsScreen.tsx` – immer alle drei synchron halten, sonst schlägt CI fehl.
 
@@ -132,6 +132,35 @@ Drei Stellen müssen immer identisch sein:
 
 **Nie** `as PlantLocation` oder `as PlantCategory` casten. String-Literale werden direkt über den Array-Typ in `Omit<Plant, ...>[]` geprüft. Neue Werte nur in `src/constants/plantMetadata.ts` (PLANT_LOCATION_METADATA / PLANT_CATEGORY_METADATA) und `src/types/index.ts` ergänzen.
 
+### Tests – AsyncStorage-Mocking
+
+Mehrere Contexts (LanguageContext, PlantContext, useTheme) rufen `AsyncStorage.getItem` auf. Bei Tests, die beide Provider (`LanguageProvider` + `PlantProvider`) wrappen, **nie `mockResolvedValueOnce`** verwenden – der erste Aufruf gehört `LanguageContext`. Stattdessen key-basiertes `mockImplementation` nutzen:
+
+```typescript
+AsyncStorage.getItem.mockImplementation((key: string) =>
+  key === '@Pflanzkalender:plants'
+    ? Promise.resolve(JSON.stringify(testPlants))
+    : Promise.resolve(null)
+);
+```
+
+### Tests – PlantSchema Pflichtfelder
+
+Jedes Test-Pflanzenobjekt muss **alle** Pflichtfelder aus `PlantSchema` enthalten: `id`, `name`, `isDefault`, `userId` (null erlaubt), `activities`, `notes` (leerer String `''` reicht), `createdAt`, `updatedAt`. Fehlt `notes`, schlägt die Zod-Validierung in `storageService.loadPlants()` lautlos fehl und die Pflanze erscheint nicht.
+
+### Tests – Async State nach addPlant
+
+`addPlant()` ruft intern `savePlants()` auf (async, nicht awaited). Daher **kein** direktes `expect()` nach `await act(async () => { addPlant(...) })`. Stattdessen `waitFor` verwenden:
+
+```typescript
+act(() => { result.current.addPlant(...); });
+await waitFor(() => { expect(result.current.plants.length).toBe(before + 1); });
+```
+
+### AppHeader – Settings-Button testID
+
+Der Settings-Button in `src/components/AppHeader.tsx` hat `testID="settings-button"`. Tests verwenden `getByTestId('settings-button')` statt positionsabhängigem `UNSAFE_getAllByType`.
+
 ---
 
 ## Branch-Strategie
@@ -147,17 +176,18 @@ Workflow: Feature-Branch → PR auf main → CI grün → Merge (squash).
 
 ---
 
-## Roadmap (Issue #47) – Stand 2026-05-03
+## Roadmap (Issue #47) – Stand 2026-05-10
 
 Vollständige Roadmap: https://github.com/S540d/Pflanzkalender/issues/47
 
-| Phase | Inhalt                                                                          | Status             | Branch  |
-| ----- | ------------------------------------------------------------------------------- | ------------------ | ------- |
-| 1     | Issue #39: Android 15 Edge-to-Edge, `viewport-fit=cover`, `expo-navigation-bar` | ✅ Done            | testing |
-| 2     | PWA vervollständigen: `manifest.json`, Icons, Service Worker, assetlinks.json   | ✅ Merged (PR #65) | testing |
-| 3     | Tests: jest + jest-expo + @testing-library/react-native (134 tests)             | ✅ Merged (PR #65) | testing |
-| 4     | Framework: Expo Router statt manueller React Navigation, ESLint 9, Prettier     | ⏳ Pending         | —       |
-| 5     | Play Store via TWA: Bubblewrap CLI, Digital Asset Links, APK/AAB                | 📋 Planned         | —       |
+| Phase | Inhalt                                                                          | Status              | Branch |
+| ----- | ------------------------------------------------------------------------------- | ------------------- | ------ |
+| 1     | Issue #39: Android 15 Edge-to-Edge, `viewport-fit=cover`, `expo-navigation-bar` | ✅ Merged (PR #64)  | main   |
+| 2     | PWA vervollständigen: `manifest.json`, Icons, Service Worker, assetlinks.json   | ✅ Merged (PR #65)  | main   |
+| 3     | Tests: 254 Tests, 86.83 % Statement-Coverage (Issue #70)                        | ✅ Merged (PR #71)  | main   |
+| 4a    | ESLint 9 + Prettier (Issue #67)                                                 | ✅ Merged (PR #69)  | main   |
+| 4b    | Expo Router statt manueller React Navigation                                    | ⏳ Pending          | —      |
+| 5     | Play Store via TWA: Bubblewrap CLI, Digital Asset Links, APK/AAB                | 📋 Planned          | —      |
 
 ---
 
@@ -172,23 +202,19 @@ Vollständige Roadmap: https://github.com/S540d/Pflanzkalender/issues/47
 
 ---
 
-## Offene Issues (Stand 2026-04-09)
+## Offene Issues (Stand 2026-05-10)
 
-- **#39** Android 15 Edge-to-Edge + deprecated setStatusBarColor/setNavigationBarColor (Milestone: 1.2.1)
-- **#47** Roadmap: PWA-Modernisierung, Tests & Play Store Readiness
+- **#47** Roadmap: Phase 4b (Expo Router) + Phase 5 (Play Store)
 - **#48** Klimazonen-Unterstützung – unterschiedliche Aktivitätszeiträume je Region (Ziel: v2.0.0)
 
 ---
 
-## Letzte Merges / Fixes (2026-05-03)
+## Letzte Merges / Fixes (2026-05-10)
 
-| Was                                         | Wann       | Details                                             |
-| ------------------------------------------- | ---------- | --------------------------------------------------- |
-| PR #64: Issue #39 – Android 15 Edge-to-Edge | 2026-05-03 | ✅ testing: expo-navigation-bar, viewport-fit:cover |
-| **PR #65:** Phase 2 PWA + Phase 3 Tests     | 2026-05-03 | ✅ testing: 4 commits (PWA + 3 CI/Test fixes)       |
-| CI Fix: Credential Scan                     | 2026-05-03 | Exclude _.png, _.yml files (false positive fix)     |
-| Tests: API Compatibility Fix                | 2026-05-03 | container→root, query method updates (134 tests ✅) |
-| PR #46: Issues #38, #40, #43                | 2026-04-08 | Standortempfehlungen, Ko-fi, 32 Default-Pflanzen    |
-| fix: package-lock.json                      | 2026-04-08 | npm ci integrity restored                           |
-| ci: Deploy-Trigger                          | 2026-04-09 | push auf main/testing automated                     |
-| fix: SW-Injection                           | 2026-04-09 | Reload-Loop fixed                                   |
+| Was                                              | Wann       | Details                                                           |
+| ------------------------------------------------ | ---------- | ----------------------------------------------------------------- |
+| **PR #71:** Issue #70 – Coverage ≥85 %           | 2026-05-10 | ✅ main: 254 Tests, 86.83 % Statements (vorher 55.6 %)           |
+| **PR #69:** Phase 4a – ESLint 9 + Prettier       | 2026-05-09 | ✅ main: eslint.config.js, .prettierrc, erste Test-Erweiterungen |
+| fix: remove duplicate HALF_MONTH_NAMES export    | 2026-05-09 | ✅ main: monthHelper.ts bereinigt                                 |
+| PR #64: Issue #39 – Android 15 Edge-to-Edge      | 2026-05-03 | ✅ main: expo-navigation-bar, viewport-fit:cover                  |
+| **PR #65:** Phase 2 PWA + Phase 3 Tests          | 2026-05-03 | ✅ main: manifest.json, Icons, SW, 134 Tests (Basis)             |
