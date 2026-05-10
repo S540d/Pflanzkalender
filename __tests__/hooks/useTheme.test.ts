@@ -124,7 +124,6 @@ describe('useTheme Hook', () => {
     const { result } = renderHook(() => useTheme());
 
     await waitFor(() => {
-      // Falls back to default 'system'
       expect(result.current.themeMode).toBe('system');
     });
   });
