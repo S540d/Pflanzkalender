@@ -103,6 +103,8 @@ describe('PlantContext – addPlant', () => {
       });
     });
 
+    // addPlant calls the async savePlants internally; use waitFor so the
+    // assertion is tied to the actual state update, not an arbitrary flush.
     await waitFor(() => {
       expect(result.current.plants.length).toBe(before + 1);
     });
