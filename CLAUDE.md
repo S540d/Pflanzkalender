@@ -180,14 +180,14 @@ Workflow: Feature-Branch → PR auf main → CI grün → Merge (squash).
 
 Vollständige Roadmap: https://github.com/S540d/Pflanzkalender/issues/47
 
-| Phase | Inhalt                                                                          | Status              | Branch |
-| ----- | ------------------------------------------------------------------------------- | ------------------- | ------ |
-| 1     | Issue #39: Android 15 Edge-to-Edge, `viewport-fit=cover`, `expo-navigation-bar` | ✅ Merged (PR #64)  | main   |
-| 2     | PWA vervollständigen: `manifest.json`, Icons, Service Worker, assetlinks.json   | ✅ Merged (PR #65)  | main   |
-| 3     | Tests: 254 Tests, 86.83 % Statement-Coverage (Issue #70)                        | ✅ Merged (PR #71)  | main   |
-| 4a    | ESLint 9 + Prettier (Issue #67)                                                 | ✅ Merged (PR #69)  | main   |
-| 4b    | Expo Router statt manueller React Navigation                                    | ⏳ Pending          | —      |
-| 5     | Play Store via TWA: Bubblewrap CLI, Digital Asset Links, APK/AAB                | 📋 Planned          | —      |
+| Phase | Inhalt                                                                          | Status             | Branch |
+| ----- | ------------------------------------------------------------------------------- | ------------------ | ------ |
+| 1     | Issue #39: Android 15 Edge-to-Edge, `viewport-fit=cover`, `expo-navigation-bar` | ✅ Merged (PR #64) | main   |
+| 2     | PWA vervollständigen: `manifest.json`, Icons, Service Worker, assetlinks.json   | ✅ Merged (PR #65) | main   |
+| 3     | Tests: 254 Tests, 86.83 % Statement-Coverage (Issue #70)                        | ✅ Merged (PR #71) | main   |
+| 4a    | ESLint 9 + Prettier (Issue #67)                                                 | ✅ Merged (PR #69) | main   |
+| 4b    | Expo Router statt manueller React Navigation                                    | ⏳ Pending         | —      |
+| 5     | Play Store via TWA: Bubblewrap CLI, Digital Asset Links, APK/AAB                | 📋 Planned         | —      |
 
 ---
 
@@ -211,10 +211,10 @@ Vollständige Roadmap: https://github.com/S540d/Pflanzkalender/issues/47
 
 ## Letzte Merges / Fixes (2026-05-10)
 
-| Was                                              | Wann       | Details                                                           |
-| ------------------------------------------------ | ---------- | ----------------------------------------------------------------- |
-| **PR #71:** Issue #70 – Coverage ≥85 %           | 2026-05-10 | ✅ main: 254 Tests, 86.83 % Statements (vorher 55.6 %)           |
-| **PR #69:** Phase 4a – ESLint 9 + Prettier       | 2026-05-09 | ✅ main: eslint.config.js, .prettierrc, erste Test-Erweiterungen |
-| fix: remove duplicate HALF_MONTH_NAMES export    | 2026-05-09 | ✅ main: monthHelper.ts bereinigt                                 |
-| PR #64: Issue #39 – Android 15 Edge-to-Edge      | 2026-05-03 | ✅ main: expo-navigation-bar, viewport-fit:cover                  |
-| **PR #65:** Phase 2 PWA + Phase 3 Tests          | 2026-05-03 | ✅ main: manifest.json, Icons, SW, 134 Tests (Basis)             |
+| Was                                           | Wann       | Details                                                          |
+| --------------------------------------------- | ---------- | ---------------------------------------------------------------- |
+| **PR #71:** Issue #70 – Coverage ≥85 %        | 2026-05-10 | ✅ main: 254 Tests, 86.83 % Statements (vorher 55.6 %)           |
+| **PR #69:** Phase 4a – ESLint 9 + Prettier    | 2026-05-09 | ✅ main: eslint.config.js, .prettierrc, erste Test-Erweiterungen |
+| fix: remove duplicate HALF_MONTH_NAMES export | 2026-05-09 | ✅ main: monthHelper.ts bereinigt                                |
+| PR #64: Issue #39 – Android 15 Edge-to-Edge   | 2026-05-03 | ✅ main: expo-navigation-bar, viewport-fit:cover                 |
+| **PR #65:** Phase 2 PWA + Phase 3 Tests       | 2026-05-03 | ✅ main: manifest.json, Icons, SW, 134 Tests (Basis)             |
