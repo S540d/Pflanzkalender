@@ -32,10 +32,10 @@ Deploy: GitHub Pages via `gh-pages` unter `/Pflanzkalender/`
 
 ## Aktuelle Version: 1.3.0 (main)
 
-**Stand 2026-05-10:** Phase 1–4a ✅ auf main gemergt
+**Stand 2026-05-10:** Phase 1–4a ✅ auf main gemergt, Issue #56 Phase 3 (Type Safety) ✅
 
-- **main branch:** v1.3.0 mit Phase 1 + Phase 2 + Phase 3 (254 Tests, 86.83 % Coverage) + Phase 4a (ESLint 9, Prettier)
-- **testing branch:** v1.3.0 (identisch mit main)
+- **main branch:** v1.3.0 mit Phase 1 + Phase 2 + Phase 3 (254 Tests, 86.83 % Coverage) + Phase 4a (ESLint 9, Prettier) + Issue #56 Phase 3 (TypeScript-Cleanup, `TouchableWebProps`, Duplikat-Beseitigung)
+- **testing branch:** v1.3.0 (identisch mit main, neu aufgesetzt nach kurzfristigem Verlust)
 
 Versions-Stellen: `package.json`, `app.json`, `src/screens/SettingsScreen.tsx` – immer alle drei synchron halten, sonst schlägt CI fehl.
 
@@ -161,6 +161,20 @@ await waitFor(() => { expect(result.current.plants.length).toBe(before + 1); });
 
 Der Settings-Button in `src/components/AppHeader.tsx` hat `testID="settings-button"`. Tests verwenden `getByTestId('settings-button')` statt positionsabhängigem `UNSAFE_getAllByType`.
 
+### Tests – `waitFor` statt `act + setTimeout`
+
+Tests, die auf einen async Effekt warten (z. B. AsyncStorage-Load in `useTheme`), **nie** mit `act(async () => { await new Promise(r => setTimeout(r, 50)) })` einleiten. Stattdessen direkt auf den observable State wartet:
+
+```typescript
+await waitFor(() => expect(result.current.themeMode).toBe('light'));
+```
+
+Gleicher Pattern bei React Native Testing Library: `waitFor(() => queryAllByText(...))` ist robuster als `waitFor(async () => await findAllByText(...))` (doppeltes Polling).
+
+### Squash-Merge: Feature-Branches nach Merge löschen
+
+Bleiben Feature-Branches nach einem Squash-Merge im Remote stehen, schlägt jeder spätere Merge oder Rebase mit ihnen mit add/add-Konflikten in den ursprünglich gemergten Dateien fehl – Git erkennt die Inhaltsgleichheit der squash-erzeugten Commits nicht, weil sie neue Hashes haben. **Immer Branch nach Merge löschen.** Falls schon zu spät: nur den Diff `branch..main` als Patch ausschneiden, auf einen frischen Branch von main anwenden, alten Branch wegwerfen (siehe Vorgehen bei PR #75).
+
 ---
 
 ## Branch-Strategie
@@ -211,10 +225,13 @@ Vollständige Roadmap: https://github.com/S540d/Pflanzkalender/issues/47
 
 ## Letzte Merges / Fixes (2026-05-10)
 
-| Was                                           | Wann       | Details                                                          |
-| --------------------------------------------- | ---------- | ---------------------------------------------------------------- |
-| **PR #71:** Issue #70 – Coverage ≥85 %        | 2026-05-10 | ✅ main: 254 Tests, 86.83 % Statements (vorher 55.6 %)           |
-| **PR #69:** Phase 4a – ESLint 9 + Prettier    | 2026-05-09 | ✅ main: eslint.config.js, .prettierrc, erste Test-Erweiterungen |
-| fix: remove duplicate HALF_MONTH_NAMES export | 2026-05-09 | ✅ main: monthHelper.ts bereinigt                                |
-| PR #64: Issue #39 – Android 15 Edge-to-Edge   | 2026-05-03 | ✅ main: expo-navigation-bar, viewport-fit:cover                 |
-| **PR #65:** Phase 2 PWA + Phase 3 Tests       | 2026-05-03 | ✅ main: manifest.json, Icons, SW, 134 Tests (Basis)             |
+| Was                                           | Wann       | Details                                                                                                                                       |
+| --------------------------------------------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| **PR #75:** Rescue Copilot-Reviews PR #71     | 2026-05-10 | ✅ main `36e8902`: `waitFor`-Pattern in `useTheme.test`, `AgendaScreen.test`, CLAUDE.md prettier-formatiert; testing-Branch wiederhergestellt |
+| **PR #72:** Issue #56 Phase 3 – Type Safety   | 2026-05-10 | ✅ main `d7995bb`: `MONTH_SHORT` statt Duplikat-Array in ActivityBar, `TouchableWebProps`-Interface, AgendaScreen `t()`-Casts                 |
+| **PR #74/#73:** CLAUDE.md Stand 2026-05-10    | 2026-05-10 | ✅ main: docs-Update                                                                                                                          |
+| **PR #71:** Issue #70 – Coverage ≥85 %        | 2026-05-10 | ✅ main: 254 Tests, 86.83 % Statements (vorher 55.6 %)                                                                                        |
+| **PR #69:** Phase 4a – ESLint 9 + Prettier    | 2026-05-09 | ✅ main: eslint.config.js, .prettierrc, erste Test-Erweiterungen                                                                              |
+| fix: remove duplicate HALF_MONTH_NAMES export | 2026-05-09 | ✅ main: monthHelper.ts bereinigt                                                                                                             |
+| PR #64: Issue #39 – Android 15 Edge-to-Edge   | 2026-05-03 | ✅ main: expo-navigation-bar, viewport-fit:cover                                                                                              |
+| **PR #65:** Phase 2 PWA + Phase 3 Tests       | 2026-05-03 | ✅ main: manifest.json, Icons, SW, 134 Tests (Basis)                                                                                          |
