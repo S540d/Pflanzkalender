@@ -60,15 +60,15 @@ describe('AgendaScreen', () => {
   });
 
   it('switches category filter and still renders all column headers', async () => {
-    const { findByText, findAllByText } = render(<AgendaScreen />, { wrapper: Wrapper });
+    const { findByText, queryAllByText } = render(<AgendaScreen />, { wrapper: Wrapper });
 
     const vegetableTab = await findByText(/Nutzpflanzen|Vegetables/);
     fireEvent.press(vegetableTab);
 
     // After switching to Vegetables, the three time-period columns must still be present,
     // proving the component re-rendered correctly with the new filter applied.
-    await waitFor(async () => {
-      const headers = await findAllByText(/Vorher|Aktuell|Demnächst|Previous|Current|Next/);
+    await waitFor(() => {
+      const headers = queryAllByText(/Vorher|Aktuell|Demnächst|Previous|Current|Next/);
       expect(headers.length).toBeGreaterThanOrEqual(3);
     });
   });

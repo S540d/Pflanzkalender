@@ -113,11 +113,9 @@ describe('useTheme Hook', () => {
 
     const { result } = renderHook(() => useTheme());
 
-    await act(async () => {
-      await new Promise((r) => setTimeout(r, 50));
+    await waitFor(() => {
+      expect(result.current.themeMode).toBe('light');
     });
-
-    expect(result.current.themeMode).toBe('light');
   });
 
   it('ignores invalid values from AsyncStorage', async () => {
@@ -125,12 +123,9 @@ describe('useTheme Hook', () => {
 
     const { result } = renderHook(() => useTheme());
 
-    await act(async () => {
-      await new Promise((r) => setTimeout(r, 50));
+    await waitFor(() => {
+      expect(result.current.themeMode).toBe('system');
     });
-
-    // Falls back to default 'system'
-    expect(result.current.themeMode).toBe('system');
   });
 
   it('isDark is true when themeMode is dark', async () => {
