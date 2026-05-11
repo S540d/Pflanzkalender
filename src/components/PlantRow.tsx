@@ -33,6 +33,7 @@ export const PlantRow: React.FC<PlantRowProps> = ({
   const [notesText, setNotesText] = useState(plant.notes);
 
   const months = Array.from({ length: totalMonths }, (_, i) => i);
+  const gridWidth = totalMonths * cellWidth;
 
   const activitiesWithRows = useMemo(
     () => calculateActivityRows(plant.activities),
@@ -59,7 +60,7 @@ export const PlantRow: React.FC<PlantRowProps> = ({
 
   return (
     <View style={[styles.row, { minHeight }]}>
-      <View style={styles.monthsContainer}>
+      <View style={[styles.monthsContainer, { width: gridWidth }]}>
         {months.map((monthIndex) => {
           const absoluteMonthIndex = monthIndex + monthOffset;
           const isCurrentHalfMonth =
@@ -125,7 +126,6 @@ const styles = StyleSheet.create({
   },
   monthsContainer: {
     flexDirection: 'row',
-    flex: 1,
     position: 'relative',
   },
   monthCell: {
