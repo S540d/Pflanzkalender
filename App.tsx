@@ -5,14 +5,17 @@ import Svg, { Circle } from 'react-native-svg';
 import { CalendarScreen } from './src/screens/CalendarScreen';
 import { AgendaScreen } from './src/screens/AgendaScreen';
 import { PlantManagementScreen } from './src/screens/PlantManagementScreen';
+import { ClimateScreen } from './src/screens/ClimateScreen';
 import { SettingsScreen } from './src/screens/SettingsScreen';
 import { useTheme } from './src/hooks/useTheme';
+import { useLanguage } from './src/contexts/LanguageContext';
 import { PlantProvider } from './src/contexts/PlantContext';
 import { LanguageProvider } from './src/contexts/LanguageContext';
 import { ErrorBoundary } from './src/components/ErrorBoundary';
 
 function AppContent() {
   const { isDark } = useTheme();
+  const { language } = useLanguage();
   const [currentScreen, setCurrentScreen] = useState('Kalender');
 
   const renderScreen = () => {
@@ -23,6 +26,8 @@ function AppContent() {
         return <AgendaScreen />;
       case 'Pflanzen':
         return <PlantManagementScreen />;
+      case 'Klima':
+        return <ClimateScreen />;
       case 'Einstellungen':
         return <SettingsScreen />;
       default:
@@ -95,6 +100,25 @@ function AppContent() {
               accessibilityLabel="Pflanzen"
             >
               <Text style={{ color: 'white', fontSize: 12, fontWeight: '600' }}>Plants</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => setCurrentScreen('Klima')}
+              style={{
+                paddingHorizontal: 16,
+                paddingVertical: 8,
+                backgroundColor:
+                  currentScreen === 'Klima' ? 'rgba(255,255,255,0.3)' : 'transparent',
+                borderRadius: 4,
+                minWidth: 44,
+                minHeight: 44,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+              accessibilityLabel={language === 'de' ? 'Klima' : 'Climate'}
+            >
+              <Text style={{ color: 'white', fontSize: 12, fontWeight: '600' }}>
+                🌍 {language === 'de' ? 'Klima' : 'Climate'}
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => setCurrentScreen('Einstellungen')}
