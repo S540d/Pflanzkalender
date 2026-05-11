@@ -220,7 +220,6 @@ Vollständige Roadmap: https://github.com/S540d/Pflanzkalender/issues/47
 
 - **#47** Roadmap: Phase 4b (Expo Router) + Phase 5 (Play Store)
 - **#48** Klimazonen-Unterstützung – unterschiedliche Aktivitätszeiträume je Region (Ziel: v2.0.0)
-- **#77** Dependencies: 9 Vulnerabilities (5 low, 4 moderate) + Outdated Packages (Expo 55, React 19.2, TS 6)
 
 ---
 
