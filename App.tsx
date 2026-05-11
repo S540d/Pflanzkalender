@@ -8,12 +8,14 @@ import { PlantManagementScreen } from './src/screens/PlantManagementScreen';
 import { ClimateScreen } from './src/screens/ClimateScreen';
 import { SettingsScreen } from './src/screens/SettingsScreen';
 import { useTheme } from './src/hooks/useTheme';
+import { useLanguage } from './src/contexts/LanguageContext';
 import { PlantProvider } from './src/contexts/PlantContext';
 import { LanguageProvider } from './src/contexts/LanguageContext';
 import { ErrorBoundary } from './src/components/ErrorBoundary';
 
 function AppContent() {
   const { isDark } = useTheme();
+  const { language } = useLanguage();
   const [currentScreen, setCurrentScreen] = useState('Kalender');
 
   const renderScreen = () => {
@@ -112,9 +114,11 @@ function AppContent() {
                 justifyContent: 'center',
                 alignItems: 'center',
               }}
-              accessibilityLabel="Klima"
+              accessibilityLabel={language === 'de' ? 'Klima' : 'Climate'}
             >
-              <Text style={{ color: 'white', fontSize: 12, fontWeight: '600' }}>🌍 Klima</Text>
+              <Text style={{ color: 'white', fontSize: 12, fontWeight: '600' }}>
+                🌍 {language === 'de' ? 'Klima' : 'Climate'}
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => setCurrentScreen('Einstellungen')}

@@ -253,11 +253,22 @@ const FILTER_TABS: { key: FilterCategory; de: string; en: string; icon: string }
   { key: 'tree', de: 'Bäume', en: 'Trees', icon: '🌳' },
 ];
 
-function ResistanceDots({ level, color }: { level: 1 | 2 | 3; color: string }) {
+function ResistanceDots({
+  level,
+  color,
+  inactiveColor,
+}: {
+  level: 1 | 2 | 3;
+  color: string;
+  inactiveColor: string;
+}) {
   return (
     <View style={styles.dotsRow}>
       {[1, 2, 3].map((i) => (
-        <View key={i} style={[styles.dot, { backgroundColor: i <= level ? color : '#E0E0E0' }]} />
+        <View
+          key={i}
+          style={[styles.dot, { backgroundColor: i <= level ? color : inactiveColor }]}
+        />
       ))}
     </View>
   );
@@ -353,13 +364,21 @@ export const ClimateScreen: React.FC = () => {
                     <Text style={[styles.resistanceLabel, { color: theme.textSecondary }]}>
                       💧 {droughtLabel}
                     </Text>
-                    <ResistanceDots level={rec.droughtResistance} color="#2196F3" />
+                    <ResistanceDots
+                      level={rec.droughtResistance}
+                      color="#2196F3"
+                      inactiveColor={theme.border}
+                    />
                   </View>
                   <View style={styles.resistanceItem}>
                     <Text style={[styles.resistanceLabel, { color: theme.textSecondary }]}>
                       🌡️ {heatLabel}
                     </Text>
-                    <ResistanceDots level={rec.heatTolerance} color="#FF5722" />
+                    <ResistanceDots
+                      level={rec.heatTolerance}
+                      color="#FF5722"
+                      inactiveColor={theme.border}
+                    />
                   </View>
                 </View>
               </View>
