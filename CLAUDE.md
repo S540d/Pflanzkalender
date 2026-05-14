@@ -32,9 +32,9 @@ Deploy: GitHub Pages via `gh-pages` unter `/Pflanzkalender/`
 
 ## Aktuelle Version: 1.3.0 (main)
 
-**Stand 2026-05-11:** Phase 1–4a ✅ auf main gemergt, Issue #56 Phase 3 (Type Safety) ✅, Klima-Tab ✅ (Issue #55)
+**Stand 2026-05-14:** Phase 1–4a ✅ auf main gemergt, Issue #56 Phase 3 (Type Safety) ✅, Klima-Tab ✅ (Issue #55), Phase 2 vollständig abgeschlossen (Icon-Resizing fix)
 
-- **main branch:** v1.3.0 mit Phase 1 + Phase 2 + Phase 3 (254 Tests, 86.83 % Coverage) + Phase 4a (ESLint 9, Prettier) + Issue #56 Phase 3 (TypeScript-Cleanup, `TouchableWebProps`, Duplikat-Beseitigung) + Klima-Reiter (Issue #55, PR #80)
+- **main branch:** v1.3.0 mit Phase 1 + Phase 2 (vollständig, inkl. Icon-Resizing) + Phase 3 (254 Tests, 86.83 % Coverage) + Phase 4a (ESLint 9, Prettier) + Issue #56 Phase 3 (TypeScript-Cleanup, `TouchableWebProps`, Duplikat-Beseitigung) + Klima-Reiter (Issue #55, PR #80)
 - **testing branch:** v1.3.0 (identisch mit main)
 
 Versions-Stellen: `package.json`, `app.json`, `src/screens/SettingsScreen.tsx` – immer alle drei synchron halten, sonst schlägt CI fehl.
@@ -190,18 +190,18 @@ Workflow: Feature-Branch → PR auf main → CI grün → Merge (squash).
 
 ---
 
-## Roadmap (Issue #47) – Stand 2026-05-10
+## Roadmap (Issue #47) – Stand 2026-05-14
 
 Vollständige Roadmap: https://github.com/S540d/Pflanzkalender/issues/47
 
-| Phase | Inhalt                                                                          | Status             | Branch |
-| ----- | ------------------------------------------------------------------------------- | ------------------ | ------ |
-| 1     | Issue #39: Android 15 Edge-to-Edge, `viewport-fit=cover`, `expo-navigation-bar` | ✅ Merged (PR #64) | main   |
-| 2     | PWA vervollständigen: `manifest.json`, Icons, Service Worker, assetlinks.json   | ✅ Merged (PR #65) | main   |
-| 3     | Tests: 254 Tests, 86.83 % Statement-Coverage (Issue #70)                        | ✅ Merged (PR #71) | main   |
-| 4a    | ESLint 9 + Prettier (Issue #67)                                                 | ✅ Merged (PR #69) | main   |
-| 4b    | Expo Router statt manueller React Navigation                                    | ⏳ Pending         | —      |
-| 5     | Play Store via TWA: Bubblewrap CLI, Digital Asset Links, APK/AAB                | 📋 Planned         | —      |
+| Phase | Inhalt                                                                          | Status                                   | Branch |
+| ----- | ------------------------------------------------------------------------------- | ---------------------------------------- | ------ |
+| 1     | Issue #39: Android 15 Edge-to-Edge, `viewport-fit=cover`, `expo-navigation-bar` | ✅ Merged (PR #64)                       | main   |
+| 2     | PWA vervollständigen: `manifest.json`, Icons, Service Worker, assetlinks.json   | ✅ Vollständig (`4e66719` Icon-Resizing) | main   |
+| 3     | Tests: 254 Tests, 86.83 % Statement-Coverage (Issue #70)                        | ✅ Merged (PR #71)                       | main   |
+| 4a    | ESLint 9 + Prettier (Issue #67)                                                 | ✅ Merged (PR #69)                       | main   |
+| 4b    | Expo Router statt manueller React Navigation                                    | ⏳ Pending                               | —      |
+| 5     | Play Store via TWA: Bubblewrap CLI, Digital Asset Links, APK/AAB                | 📋 Planned (Voraussetzungen erfüllt)     | —      |
 
 ---
 
@@ -216,23 +216,21 @@ Vollständige Roadmap: https://github.com/S540d/Pflanzkalender/issues/47
 
 ---
 
-## Offene Issues (Stand 2026-05-11)
+## Offene Issues (Stand 2026-05-14)
 
 - **#47** Roadmap: Phase 4b (Expo Router) + Phase 5 (Play Store)
 - **#48** Klimazonen-Unterstützung – unterschiedliche Aktivitätszeiträume je Region (Ziel: v2.0.0)
 
 ---
 
-## Letzte Merges / Fixes (2026-05-11)
+## Letzte Merges / Fixes (2026-05-14)
 
-| Was                                           | Wann       | Details                                                                                                               |
-| --------------------------------------------- | ---------- | --------------------------------------------------------------------------------------------------------------------- |
-| **PR #80:** Issue #55 – Klima-Reiter          | 2026-05-11 | ✅ main `f7c59af`: `ClimateScreen.tsx` mit 15 Empfehlungen, 4 Filter-Tabs, Trocken-/Hitze-Bewertung, DE/EN, Dark-Mode |
-| **PR #81:** Dependency-Fix                    | 2026-05-11 | ✅ main `ded9532`: Tilde-Ranges für expo-status-bar und @types/react                                                  |
-| **PR #79:** Fix Activity-Bar Alignment        | 2026-05-11 | ✅ main `52f6f46`: Activity-Bars auf breiten Screens korrekt ausgerichtet                                             |
-| **PR #78:** Issue #77 – Dependency Updates    | 2026-05-11 | ✅ main `a778157`: 19 Security Fixes + 20 Outdated Packages                                                           |
-| **PR #75:** Rescue Copilot-Reviews PR #71     | 2026-05-10 | ✅ main `36e8902`: `waitFor`-Pattern in `useTheme.test`, `AgendaScreen.test`                                          |
-| **PR #72:** Issue #56 Phase 3 – Type Safety   | 2026-05-10 | ✅ main `d7995bb`: `MONTH_SHORT` statt Duplikat-Array in ActivityBar, `TouchableWebProps`-Interface                   |
-| fix: remove duplicate HALF_MONTH_NAMES export | 2026-05-09 | ✅ main: monthHelper.ts bereinigt                                                                                     |
-| PR #64: Issue #39 – Android 15 Edge-to-Edge   | 2026-05-03 | ✅ main: expo-navigation-bar, viewport-fit:cover                                                                      |
-| **PR #65:** Phase 2 PWA + Phase 3 Tests       | 2026-05-03 | ✅ main: manifest.json, Icons, SW, 134 Tests (Basis)                                                                  |
+| Was                                         | Wann       | Details                                                                                                                  |
+| ------------------------------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------ |
+| **fix:** PWA Icon-Resizing                  | 2026-05-14 | ✅ main `4e66719`: Icons auf 192×192 / 512×512 resized (waren 1024×1024); generate-icons.js prüft jetzt Pixeldimensionen |
+| **PR #80:** Issue #55 – Klima-Reiter        | 2026-05-11 | ✅ main `f7c59af`: `ClimateScreen.tsx` mit 15 Empfehlungen, 4 Filter-Tabs, Trocken-/Hitze-Bewertung, DE/EN, Dark-Mode    |
+| **PR #81:** Dependency-Fix                  | 2026-05-11 | ✅ main `ded9532`: Tilde-Ranges für expo-status-bar und @types/react                                                     |
+| **PR #79:** Fix Activity-Bar Alignment      | 2026-05-11 | ✅ main `52f6f46`: Activity-Bars auf breiten Screens korrekt ausgerichtet                                                |
+| **PR #78:** Issue #77 – Dependency Updates  | 2026-05-11 | ✅ main `a778157`: 19 Security Fixes + 20 Outdated Packages                                                              |
+| **PR #75:** Rescue Copilot-Reviews PR #71   | 2026-05-10 | ✅ main `36e8902`: `waitFor`-Pattern in `useTheme.test`, `AgendaScreen.test`                                             |
+| **PR #72:** Issue #56 Phase 3 – Type Safety | 2026-05-10 | ✅ main `d7995bb`: `MONTH_SHORT` statt Duplikat-Array in ActivityBar, `TouchableWebProps`-Interface                      |
