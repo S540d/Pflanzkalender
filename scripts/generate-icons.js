@@ -9,35 +9,42 @@ if (!fs.existsSync(iconPath)) {
   process.exit(1);
 }
 
-// Expected PWA icon files (must be provided as properly sized assets)
 const requiredIcons = [
-  { name: 'icon-192.png', size: '192x192' },
-  { name: 'icon-192-maskable.png', size: '192x192 (maskable)' },
-  { name: 'icon-512.png', size: '512x512' },
-  { name: 'icon-512-maskable.png', size: '512x512 (maskable)' },
+  { name: 'icon-192.png', px: 192 },
+  { name: 'icon-192-maskable.png', px: 192 },
+  { name: 'icon-512.png', px: 512 },
+  { name: 'icon-512-maskable.png', px: 512 },
 ];
 
-let allPresent = true;
-for (const { name, size } of requiredIcons) {
+// Read PNG dimensions from IHDR chunk (bytes 16-23)
+function getPngSize(filePath) {
+  const buf = Buffer.alloc(24);
+  const fd = fs.openSync(filePath, 'r');
+  fs.readSync(fd, buf, 0, 24, 0);
+  fs.closeSync(fd);
+  return { width: buf.readUInt32BE(16), height: buf.readUInt32BE(20) };
+}
+
+let allOk = true;
+for (const { name, px } of requiredIcons) {
   const filePath = path.join(assetsDir, name);
-  if (fs.existsSync(filePath)) {
-    console.log(`✓ ${name} (${size}) exists`);
+  if (!fs.existsSync(filePath)) {
+    console.error(`✗ ${name} missing`);
+    allOk = false;
+    continue;
+  }
+  const { width, height } = getPngSize(filePath);
+  if (width === px && height === px) {
+    console.log(`✓ ${name} (${px}x${px})`);
   } else {
-    console.warn(`⚠ ${name} (${size}) missing – using icon.png as fallback for deploy`);
-    fs.copyFileSync(iconPath, filePath);
-    allPresent = false;
+    console.error(`✗ ${name} has wrong size ${width}x${height}, expected ${px}x${px}`);
+    allOk = false;
   }
 }
 
-if (!allPresent) {
-  console.warn(
-    '\n⚠ Some PWA icons were missing and were filled with unresized copies of icon.png.'
-  );
-  console.warn('For a correct PWA install experience, provide properly sized icons:');
-  console.warn('  - icon-192*.png: exactly 192x192 px');
-  console.warn('  - icon-512*.png: exactly 512x512 px');
-  console.warn('  - Maskable variants: apply 10% safe-zone padding');
-  console.warn('See Phase 5 (Play Store) in Issue #47 for the sharp-based implementation.');
-} else {
-  console.log('✓ All PWA icon files present');
+if (!allOk) {
+  console.error('\n✗ PWA icon check failed. Resize icons with: sips -z <size> <size> assets/icon.png --out assets/<icon-name>.png');
+  process.exit(1);
 }
+
+console.log('✓ All PWA icon files present and correctly sized');
