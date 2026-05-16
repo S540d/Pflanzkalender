@@ -1,11 +1,5 @@
 const { getDefaultConfig } = require('expo/metro-config');
 
-const config = getDefaultConfig(__dirname);
-
-// Configure public path for GitHub Pages
-config.transformer = {
-  ...config.transformer,
-  publicPath: '/Pflanzkalender/',
-};
-
-module.exports = config;
+// The GitHub Pages base path is handled by experiments.baseUrl in app.config.js,
+// which Expo Router uses for both asset URLs and client-side route resolution.
+module.exports = getDefaultConfig(__dirname);

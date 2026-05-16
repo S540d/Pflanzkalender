@@ -33,7 +33,7 @@ jobs:
       - name: Check for console.log in production code
         run: |
           echo "Checking for console.log statements..."
-          if grep -r "console\.log\|console\.debug" App.tsx --exclude-dir=node_modules --exclude-dir=.git; then
+          if grep -r "console\.log\|console\.debug" app/ --exclude-dir=node_modules --exclude-dir=.git; then
             echo "❌ ERROR: Found console.log/debug in production code!"
             exit 1
           else
@@ -44,14 +44,14 @@ jobs:
         run: |
           echo "Checking for unsafe Web API usage..."
           # Check for window.* without Platform.OS check
-          if grep -r "window\." App.tsx --exclude-dir=node_modules | grep -v "Platform.OS === 'web'" | grep -v "// platform-safe"; then
+          if grep -r "window\." app/ --exclude-dir=node_modules | grep -v "Platform.OS === 'web'" | grep -v "// platform-safe"; then
             echo "❌ ERROR: Found window.* without Platform.OS check!"
             echo "Add 'Platform.OS === web' check or // platform-safe comment"
             exit 1
           fi
 
           # Check for localStorage without Platform.OS check
-          if grep -r "localStorage\." App.tsx --exclude-dir=node_modules | grep -v "Platform.OS === 'web'" | grep -v "// platform-safe"; then
+          if grep -r "localStorage\." app/ --exclude-dir=node_modules | grep -v "Platform.OS === 'web'" | grep -v "// platform-safe"; then
             echo "❌ ERROR: Found localStorage without Platform.OS check!"
             echo "Use AsyncStorage for mobile or add Platform.OS check"
             exit 1
@@ -63,7 +63,7 @@ jobs:
         run: |
           echo "Checking AsyncStorage usage..."
           # Ensure AsyncStorage is used for mobile, not localStorage
-          if grep -r "@react-native-async-storage/async-storage" App.tsx --exclude-dir=node_modules; then
+          if grep -r "@react-native-async-storage/async-storage" app/ src/ --exclude-dir=node_modules; then
             echo "✅ AsyncStorage is properly used"
           fi
 
@@ -199,13 +199,13 @@ jobs:
           echo "Checking UX Guidelines compliance..."
 
           # Check for three-dot settings icon (not gear emoji)
-          if grep -q "⚙" App.tsx; then
+          if grep -rq "⚙" app/; then
             echo "❌ ERROR: Found gear emoji! Use three vertical dots (⋮) instead"
             exit 1
           fi
 
           # Check for Theme toggle (System/Dark, not Light/Dark/System)
-          if grep -q "'light'" App.tsx; then
+          if grep -rq "'light'" app/; then
             echo "⚠️  WARNING: Light theme found. Consider System/Dark toggle only"
           fi
 
