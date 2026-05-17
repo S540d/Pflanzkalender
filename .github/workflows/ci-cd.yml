@@ -199,13 +199,13 @@ jobs:
           echo "Checking UX Guidelines compliance..."
 
           # Check for three-dot settings icon (not gear emoji)
-          if grep -rq "⚙" app/; then
+          if grep -rq "⚙" app/ src/; then
             echo "❌ ERROR: Found gear emoji! Use three vertical dots (⋮) instead"
             exit 1
           fi
 
           # Check for Theme toggle (System/Dark, not Light/Dark/System)
-          if grep -rq "'light'" app/; then
+          if grep -rq "'light'" app/ src/; then
             echo "⚠️  WARNING: Light theme found. Consider System/Dark toggle only"
           fi
 
