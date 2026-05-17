@@ -47,3 +47,23 @@ docs/private/
 # Keystore & signing files – lokal ablegen unter:
 # ~/Documents/Programmierung/Projects/Keystore/Keystore_Pflanzkalender/
 *.keystore
+
+# Bubblewrap / TWA build artifacts
+app-release-*.apk
+app-release-*.aab
+app-release-*.idsig
+app-release-unsigned-aligned.apk
+manifest-checksum.txt
+store_icon.png
+twa-manifest.json
+app/build.gradle
+app/build/
+app/src/
+build.gradle
+build/
+gradle.properties
+gradle/
+gradlew
+gradlew.bat
+settings.gradle
+.gradle/

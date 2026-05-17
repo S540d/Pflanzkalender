@@ -5,5 +5,15 @@
       "namespace": "web",
       "site": "https://s540d.github.io/Pflanzkalender/"
     }
+  },
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "io.github.s540d.pflanzkalender",
+      "sha256_cert_fingerprints": [
+        "AC:D5:E5:47:59:A7:7E:5D:FC:1C:14:52:73:A8:2F:82:49:A1:54:3C:57:15:4A:5F:26:C8:A0:9C:E1:53:08:06"
+      ]
+    }
   }
 ]
