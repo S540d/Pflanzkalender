@@ -49,6 +49,9 @@ jobs:
       - name: Add PWA meta tags and .well-known
         run: node scripts/add-pwa-meta-tags.js
 
+      - name: Create SPA 404 fallback for client-side routing
+        run: cp dist/index.html dist/404.html
+
       - name: Create .nojekyll
         run: touch dist/.nojekyll
 

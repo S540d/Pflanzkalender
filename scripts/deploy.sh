@@ -40,6 +40,10 @@ node scripts/add-mobile-debug.js
 echo "Adding loading diagnostics..."
 node scripts/add-loading-diagnostics.js
 
+# SPA 404 fallback so GitHub Pages serves the app for deep links (Expo Router)
+echo "Creating SPA 404 fallback..."
+cp dist/index.html dist/404.html
+
 # Create .nojekyll
 cd dist
 touch .nojekyll

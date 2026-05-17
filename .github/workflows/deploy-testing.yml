@@ -42,6 +42,7 @@ jobs:
         env:
           NODE_ENV: production
           CI: true
+          TESTING: true
 
       - name: Prepare testing deployment (fix paths, banner, cache-busting)
         run: node scripts/prepare-testing-deployment.js
@@ -87,6 +88,9 @@ jobs:
         run: |
           echo "<!-- TESTING ENVIRONMENT -->" >> dist/index.html
           echo "⚠️ Testing Environment - $(date)" > dist/TESTING.txt
+
+      - name: Create SPA 404 fallback for client-side routing
+        run: cp dist/index.html dist/404.html
 
       - name: Deploy to gh-pages-testing
         uses: peaceiris/actions-gh-pages@v4

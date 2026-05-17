@@ -44,8 +44,14 @@ Versions-Stellen: `package.json`, `app.json`, `src/screens/SettingsScreen.tsx` �
 ## Projektstruktur
 
 ```
-App.tsx                        # Haupt-App, manuelle React Navigation Konfiguration
-index.ts                       # Expo Entry Point
+app/                           # Expo Router (file-based routing, Phase 4b)
+  _layout.tsx                  # Root: ErrorBoundary/Language/Plant Provider + Bottom-Tabs
+  index.tsx                    # /         → CalendarScreen
+  agenda.tsx                   # /agenda   → AgendaScreen
+  plants.tsx                   # /plants   → PlantManagementScreen
+  climate.tsx                  # /climate  → ClimateScreen
+  settings.tsx                 # /settings → SettingsScreen
+app.config.js                  # Dynamische Expo-Config: expo-router plugin, web.output=single, experiments.baseUrl (Prod/Testing)
 src/
   screens/                     # CalendarScreen, AgendaScreen, PlantManagementScreen, ClimateScreen, SettingsScreen
   components/                  # ActivityBar, PlantRow, AddActivityModal, EditActivityModal, AddPlantModal, AppHeader, Footer, ErrorBoundary
@@ -171,6 +177,15 @@ await waitFor(() => expect(result.current.themeMode).toBe('light'));
 
 Gleicher Pattern bei React Native Testing Library: `waitFor(() => queryAllByText(...))` ist robuster als `waitFor(async () => await findAllByText(...))` (doppeltes Polling).
 
+### Expo Router + GitHub Pages
+
+- Entry-Point ist `expo-router/entry` (in `package.json` → `main`). **Kein** `App.tsx`/`index.ts` mehr; Routen sind Dateien in `app/`.
+- Der GitHub-Pages-Subpfad wird **nicht** mehr von `scripts/fix-paths.js` gesetzt, sondern von `experiments.baseUrl` in `app.config.js` (Prod: `/Pflanzkalender`, Testing via `TESTING=true`: `/Pflanzkalender-testing`). Expo emittiert dadurch bereits korrekte Asset-/Script-Pfade – die Regex-Rewrites in `fix-paths.js`/`prepare-testing-deployment.js` laufen leer (no-op), die Cache-Busting-Injektion bleibt aktiv. Nicht „reparieren“.
+- `metro.config.js` setzt **kein** `transformer.publicPath` mehr (würde mit `baseUrl` doppeln).
+- `web.output: 'single'` (SPA). Deep-Links (`/Pflanzkalender/agenda`) funktionieren auf GitHub Pages nur, weil im Deploy `dist/index.html` nach `dist/404.html` kopiert wird. **Diesen Copy-Schritt nie entfernen** (in `deploy.sh`, `deploy-production.yml`, `deploy-testing.yml`).
+- `app.json` behält `expo.version` (CI liest `require('./app.json').expo.version`). `app.config.js` ergänzt nur dynamisch – Version weiter dreifach synchron halten.
+- Settings-Tab-Icon ist `⋮` (U+22EE), **nicht** das Zahnrad-Emoji – CI (`grep -rq "⚙" app/`) bricht sonst ab (UX-Guideline).
+
 ### Squash-Merge: Feature-Branches nach Merge löschen
 
 Bleiben Feature-Branches nach einem Squash-Merge im Remote stehen, schlägt jeder spätere Merge oder Rebase mit ihnen mit add/add-Konflikten in den ursprünglich gemergten Dateien fehl – Git erkennt die Inhaltsgleichheit der squash-erzeugten Commits nicht, weil sie neue Hashes haben. **Immer Branch nach Merge löschen.** Falls schon zu spät: nur den Diff `branch..main` als Patch ausschneiden, auf einen frischen Branch von main anwenden, alten Branch wegwerfen (siehe Vorgehen bei PR #75).
@@ -200,7 +215,7 @@ Vollständige Roadmap: https://github.com/S540d/Pflanzkalender/issues/47
 | 2     | PWA vervollständigen: `manifest.json`, Icons, Service Worker, assetlinks.json   | ✅ Vollständig (`4e66719` Icon-Resizing) | main   |
 | 3     | Tests: 254 Tests, 86.83 % Statement-Coverage (Issue #70)                        | ✅ Merged (PR #71)                       | main   |
 | 4a    | ESLint 9 + Prettier (Issue #67)                                                 | ✅ Merged (PR #69)                       | main   |
-| 4b    | Expo Router statt manueller React Navigation                                    | ⏳ Pending                               | —      |
+| 4b    | Expo Router (file-based, Bottom-Tabs, baseUrl, SPA-404)                         | 🔄 PR (claude/pwa-refactoring-planning)  | —      |
 | 5     | Play Store via TWA: Bubblewrap CLI, Digital Asset Links, APK/AAB                | 📋 Planned (Voraussetzungen erfüllt)     | —      |
 
 ---

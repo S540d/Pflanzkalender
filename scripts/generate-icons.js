@@ -43,7 +43,9 @@ for (const { name, px } of requiredIcons) {
 }
 
 if (!allOk) {
-  console.error('\n✗ PWA icon check failed. Resize icons with: sips -z <size> <size> assets/icon.png --out assets/<icon-name>.png');
+  console.error(
+    '\n✗ PWA icon check failed. Resize icons with: sips -z <size> <size> assets/icon.png --out assets/<icon-name>.png'
+  );
   process.exit(1);
 }
 
