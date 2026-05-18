@@ -15,12 +15,13 @@ export const SUPPORTED_LANGUAGES: { code: Language; nativeLabel: string }[] = [
   { code: 'pt', nativeLabel: 'Português' },
 ];
 
-// Subset shown in the language picker: only languages where all screens
-// (including ClimateScreen) have full translations. Expand once ClimateScreen
-// is localized for FR/ES/IT/PL/NL/PT (tracked in Issue #83 follow-up).
-export const PICKER_LANGUAGES = SUPPORTED_LANGUAGES.filter((l) =>
-  (['de', 'en'] as Language[]).includes(l.code)
-);
+// Languages with full translations across ALL screens (including ClimateScreen).
+// Used for the picker AND for initial language resolution so users never end up
+// in a language where some screens are not yet localized.
+// Expand once ClimateScreen is localized for FR/ES/IT/PL/NL/PT (Issue #83 follow-up).
+const FULLY_LOCALIZED: Language[] = ['de', 'en'];
+
+export const PICKER_LANGUAGES = SUPPORTED_LANGUAGES.filter((l) => FULLY_LOCALIZED.includes(l.code));
 
 type TranslationValue = string | string[];
 
@@ -649,8 +650,7 @@ function detectSystemLanguage(): Language {
     }
     if (!locale) return 'de';
     const code = locale.split('-')[0].toLowerCase() as Language;
-    const supported = SUPPORTED_LANGUAGES.map((l) => l.code);
-    return supported.includes(code) ? code : 'de';
+    return FULLY_LOCALIZED.includes(code) ? code : 'de';
   } catch {
     return 'de';
   }
@@ -682,8 +682,7 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }
   React.useEffect(() => {
     AsyncStorage.getItem(STORAGE_KEY).then((storedLang) => {
       if (isUserSetRef.current) return;
-      const supported = SUPPORTED_LANGUAGES.map((l) => l.code);
-      if (storedLang && supported.includes(storedLang as Language)) {
+      if (storedLang && FULLY_LOCALIZED.includes(storedLang as Language)) {
         setLanguageState(storedLang as Language);
       } else {
         setLanguageState(detectSystemLanguage());

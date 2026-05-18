@@ -4,7 +4,7 @@ import {
   LanguageProvider,
   useLanguage,
   SUPPORTED_LANGUAGES,
-  Language,
+  PICKER_LANGUAGES,
 } from '../../src/contexts/LanguageContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -141,7 +141,7 @@ describe('LanguageContext – All SUPPORTED_LANGUAGES', () => {
       await waitFor(() => expect(result.current.language).toBe('de'));
 
       await act(async () => {
-        await result.current.setLanguage(code as Language);
+        await result.current.setLanguage(code);
       });
 
       expect(result.current.language).toBe(code);
@@ -153,14 +153,18 @@ describe('LanguageContext – All SUPPORTED_LANGUAGES', () => {
 
       const { result } = renderHook(() => useLanguage(), { wrapper });
 
-      await waitFor(() => expect(result.current.language).toBe(code));
+      // Only fully-localized languages (PICKER_LANGUAGES) are accepted from storage;
+      // others fall back to 'de' to avoid partially-translated UI.
+      const isFullyLocalized = PICKER_LANGUAGES.some((l) => l.code === code);
+      const expected = isFullyLocalized ? code : 'de';
+      await waitFor(() => expect(result.current.language).toBe(expected));
     });
 
     it(`resolves all required UI keys for ${nativeLabel} (${code})`, async () => {
       const { result } = renderHook(() => useLanguage(), { wrapper });
 
       await act(async () => {
-        await result.current.setLanguage(code as Language);
+        await result.current.setLanguage(code);
       });
 
       REQUIRED_KEYS.forEach((key) => {
