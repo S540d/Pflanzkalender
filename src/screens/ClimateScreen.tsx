@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useTheme } from '../hooks/useTheme';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -281,6 +281,14 @@ export const ClimateScreen: React.FC = () => {
   const { plants, addPlant } = usePlants();
   const [activeFilter, setActiveFilter] = useState<FilterCategory>('all');
   const [addedKeys, setAddedKeys] = useState<Set<string>>(new Set());
+  const timerRefs = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
+
+  useEffect(() => {
+    const timers = timerRefs.current;
+    return () => {
+      timers.forEach((id) => clearTimeout(id));
+    };
+  }, []);
 
   const isInGarden = useCallback(
     (rec: ClimateRecommendation) => {
@@ -291,6 +299,8 @@ export const ClimateScreen: React.FC = () => {
 
   const handleAddToGarden = useCallback(
     (rec: ClimateRecommendation) => {
+      const cardKey = `${rec.category}-${rec.name.de}`;
+      if (isInGarden(rec) || timerRefs.current.has(cardKey)) return;
       const name = language === 'de' ? rec.name.de : rec.name.en;
       addPlant({
         name,
@@ -301,17 +311,18 @@ export const ClimateScreen: React.FC = () => {
         activities: [],
         notes: '',
       });
-      const cardKey = `${rec.category}-${rec.name.de}`;
       setAddedKeys((prev) => new Set(prev).add(cardKey));
-      setTimeout(() => {
+      const id = setTimeout(() => {
         setAddedKeys((prev) => {
           const next = new Set(prev);
           next.delete(cardKey);
           return next;
         });
+        timerRefs.current.delete(cardKey);
       }, 2000);
+      timerRefs.current.set(cardKey, id);
     },
-    [language, addPlant]
+    [language, addPlant, isInGarden]
   );
 
   const filtered =
