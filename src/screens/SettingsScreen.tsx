@@ -1,65 +1,19 @@
-import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  Linking,
-  ScrollView,
-  Platform,
-  Alert,
-} from 'react-native';
+import React from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Linking, ScrollView, Alert } from 'react-native';
 import { useTheme } from '../hooks/useTheme';
 import { storageService } from '../services/storage';
+import { useLanguage, SUPPORTED_LANGUAGES } from '../contexts/LanguageContext';
 
 const APP_VERSION = '1.3.0';
 
-type Language = 'en' | 'de';
-
-const translations = {
-  en: {
-    settings: 'Settings',
-    appearance: 'APPEARANCE',
-    dark: 'Dark',
-    system: 'System',
-    language: 'LANGUAGE',
-    english: 'English',
-    german: 'German',
-    feedback: 'Send Feedback',
-    support: 'Ko-fi',
-    export: 'EXPORT',
-    exportData: 'Export as JSON',
-    about: 'ABOUT',
-    version: 'Version',
-    exportSuccess: 'Export successful!',
-  },
-  de: {
-    settings: 'Einstellungen',
-    appearance: 'ERSCHEINUNGSBILD',
-    dark: 'Dunkel',
-    system: 'System',
-    language: 'SPRACHE',
-    english: 'English',
-    german: 'Deutsch',
-    feedback: 'Feedback senden',
-    support: 'Ko-fi',
-    export: 'EXPORTIEREN',
-    exportData: 'Als JSON exportieren',
-    about: 'ÜBER',
-    version: 'Version',
-    exportSuccess: 'Export erfolgreich!',
-  },
-};
-
 export const SettingsScreen: React.FC = () => {
   const { theme, themeMode, setThemeMode } = useTheme();
-  const [language, setLanguage] = useState<Language>('en');
-  const t = translations[language];
+  const { language, setLanguage, t } = useLanguage();
 
   const handleExport = async () => {
     try {
       await storageService.exportPlants();
-      Alert.alert('Success', t.exportSuccess);
+      Alert.alert('Success', t('settings.exportSuccess') as string);
     } catch (error) {
       Alert.alert('Error', 'Failed to export data. Please try again.');
       console.error('Export error:', error);
@@ -69,11 +23,15 @@ export const SettingsScreen: React.FC = () => {
   return (
     <ScrollView style={[styles.container, { backgroundColor: theme.background }]}>
       <View style={styles.content}>
-        <Text style={[styles.settingsTitle, { color: theme.text }]}>{t.settings}</Text>
+        <Text style={[styles.settingsTitle, { color: theme.text }]}>
+          {t('settings.settings') as string}
+        </Text>
 
         {/* Appearance Settings - Dark/System Only */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: theme.textSecondary }]}>{t.appearance}</Text>
+          <Text style={[styles.sectionTitle, { color: theme.textSecondary }]}>
+            {t('settings.appearance') as string}
+          </Text>
           <View style={styles.themeToggleContainer}>
             <TouchableOpacity
               style={[
@@ -93,7 +51,7 @@ export const SettingsScreen: React.FC = () => {
                   },
                 ]}
               >
-                {t.dark}
+                {t('settings.dark') as string}
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -114,7 +72,7 @@ export const SettingsScreen: React.FC = () => {
                   },
                 ]}
               >
-                {t.system}
+                {t('settings.system') as string}
               </Text>
             </TouchableOpacity>
           </View>
@@ -124,50 +82,33 @@ export const SettingsScreen: React.FC = () => {
 
         {/* Language Settings */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: theme.textSecondary }]}>{t.language}</Text>
-          <View style={styles.themeToggleContainer}>
-            <TouchableOpacity
-              style={[
-                styles.themeButton,
-                {
-                  backgroundColor: language === 'en' ? '#6200EE' : theme.border,
-                  flex: 1,
-                },
-              ]}
-              onPress={() => setLanguage('en')}
-            >
-              <Text
+          <Text style={[styles.sectionTitle, { color: theme.textSecondary }]}>
+            {t('settings.languageSection') as string}
+          </Text>
+          <View style={styles.languageGrid}>
+            {SUPPORTED_LANGUAGES.map((lang) => (
+              <TouchableOpacity
+                key={lang.code}
                 style={[
-                  styles.themeButtonText,
+                  styles.langButton,
                   {
-                    color: language === 'en' ? '#fff' : theme.text,
+                    backgroundColor: language === lang.code ? '#6200EE' : theme.border,
                   },
                 ]}
+                onPress={() => setLanguage(lang.code)}
               >
-                {t.english}
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                styles.themeButton,
-                {
-                  backgroundColor: language === 'de' ? '#6200EE' : theme.border,
-                  flex: 1,
-                },
-              ]}
-              onPress={() => setLanguage('de')}
-            >
-              <Text
-                style={[
-                  styles.themeButtonText,
-                  {
-                    color: language === 'de' ? '#fff' : theme.text,
-                  },
-                ]}
-              >
-                {t.german}
-              </Text>
-            </TouchableOpacity>
+                <Text
+                  style={[
+                    styles.themeButtonText,
+                    {
+                      color: language === lang.code ? '#fff' : theme.text,
+                    },
+                  ]}
+                >
+                  {lang.nativeLabel}
+                </Text>
+              </TouchableOpacity>
+            ))}
           </View>
         </View>
 
@@ -175,7 +116,9 @@ export const SettingsScreen: React.FC = () => {
 
         {/* Export Section */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: theme.textSecondary }]}>{t.export}</Text>
+          <Text style={[styles.sectionTitle, { color: theme.textSecondary }]}>
+            {t('settings.exportSection') as string}
+          </Text>
           <TouchableOpacity
             style={[
               styles.exportButton,
@@ -193,7 +136,7 @@ export const SettingsScreen: React.FC = () => {
                 },
               ]}
             >
-              {t.exportData}
+              {t('settings.exportData') as string}
             </Text>
           </TouchableOpacity>
         </View>
@@ -208,13 +151,17 @@ export const SettingsScreen: React.FC = () => {
               Linking.openURL('mailto:feedback@example.com');
             }}
           >
-            <Text style={[styles.linkText, { color: '#6200EE' }]}>{t.feedback}</Text>
+            <Text style={[styles.linkText, { color: '#6200EE' }]}>
+              {t('settings.feedbackLink') as string}
+            </Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.linkItemFlex}
             onPress={() => Linking.openURL('https://ko-fi.com/devsven')}
           >
-            <Text style={[styles.linkText, { color: '#6200EE' }]}>{t.support}</Text>
+            <Text style={[styles.linkText, { color: '#6200EE' }]}>
+              {t('settings.supportLink') as string}
+            </Text>
           </TouchableOpacity>
         </View>
 
@@ -222,9 +169,11 @@ export const SettingsScreen: React.FC = () => {
 
         {/* About */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: theme.textSecondary }]}>{t.about}</Text>
+          <Text style={[styles.sectionTitle, { color: theme.textSecondary }]}>
+            {t('settings.about2') as string}
+          </Text>
           <Text style={[styles.infoText, { color: theme.textSecondary }]}>
-            {t.version} {APP_VERSION}
+            {t('settings.versionLabel') as string} {APP_VERSION}
           </Text>
         </View>
       </View>
@@ -277,6 +226,21 @@ const styles = StyleSheet.create({
   themeButtonText: {
     fontSize: 13,
     fontWeight: '600',
+  },
+
+  languageGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+
+  langButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderRadius: 6,
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 40,
   },
 
   separator: {

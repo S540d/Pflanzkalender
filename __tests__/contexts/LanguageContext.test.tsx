@@ -43,6 +43,9 @@ describe('LanguageContext – Language Management', () => {
   it('changes language', async () => {
     const { result } = renderHook(() => useLanguage(), { wrapper });
 
+    // wait for mount effect to finish before calling setLanguage
+    await waitFor(() => expect(result.current.language).toBe('de'));
+
     await act(async () => {
       await result.current.setLanguage('en');
     });
@@ -69,6 +72,8 @@ describe('LanguageContext – Language Management', () => {
 
   it('translates keys correctly in English', async () => {
     const { result } = renderHook(() => useLanguage(), { wrapper });
+
+    await waitFor(() => expect(result.current.language).toBe('de'));
 
     await act(async () => {
       await result.current.setLanguage('en');
