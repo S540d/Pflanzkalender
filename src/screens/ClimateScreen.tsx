@@ -284,10 +284,9 @@ export const ClimateScreen: React.FC = () => {
 
   const isInGarden = useCallback(
     (rec: ClimateRecommendation) => {
-      const name = language === 'de' ? rec.name.de : rec.name.en;
-      return plants.some((p) => p.name === name);
+      return plants.some((p) => p.name === rec.name.de || p.name === rec.name.en);
     },
-    [plants, language]
+    [plants]
   );
 
   const handleAddToGarden = useCallback(
@@ -429,8 +428,8 @@ export const ClimateScreen: React.FC = () => {
                   </View>
 
                   <TouchableOpacity
-                    onPress={() => !inGarden && handleAddToGarden(rec)}
-                    disabled={inGarden}
+                    onPress={() => !inGarden && !justAdded && handleAddToGarden(rec)}
+                    disabled={inGarden || justAdded}
                     style={[
                       styles.addButton,
                       {
