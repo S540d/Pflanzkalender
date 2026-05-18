@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useTheme } from '../hooks/useTheme';
 import { useLanguage } from '../contexts/LanguageContext';
+import { usePlants } from '../contexts/PlantContext';
 
 type FilterCategory = 'all' | 'vegetable' | 'flower' | 'tree';
 
@@ -277,7 +278,42 @@ function ResistanceDots({
 export const ClimateScreen: React.FC = () => {
   const { theme } = useTheme();
   const { language } = useLanguage();
+  const { plants, addPlant } = usePlants();
   const [activeFilter, setActiveFilter] = useState<FilterCategory>('all');
+  const [addedKeys, setAddedKeys] = useState<Set<string>>(new Set());
+
+  const isInGarden = useCallback(
+    (rec: ClimateRecommendation) => {
+      const name = language === 'de' ? rec.name.de : rec.name.en;
+      return plants.some((p) => p.name === name);
+    },
+    [plants, language]
+  );
+
+  const handleAddToGarden = useCallback(
+    (rec: ClimateRecommendation) => {
+      const name = language === 'de' ? rec.name.de : rec.name.en;
+      addPlant({
+        name,
+        isDefault: false,
+        userId: null,
+        category: rec.category,
+        location: undefined,
+        activities: [],
+        notes: '',
+      });
+      const cardKey = `${rec.category}-${rec.name.de}`;
+      setAddedKeys((prev) => new Set(prev).add(cardKey));
+      setTimeout(() => {
+        setAddedKeys((prev) => {
+          const next = new Set(prev);
+          next.delete(cardKey);
+          return next;
+        });
+      }, 2000);
+    },
+    [language, addPlant]
+  );
 
   const filtered =
     activeFilter === 'all'
@@ -291,6 +327,9 @@ export const ClimateScreen: React.FC = () => {
       : 'Recommended plants for hot, dry summers';
   const droughtLabel = language === 'de' ? 'Trockenresistenz' : 'Drought resistance';
   const heatLabel = language === 'de' ? 'Hitzetoleranz' : 'Heat tolerance';
+  const addLabel = language === 'de' ? 'Zum Garten hinzufügen' : 'Add to garden';
+  const addedLabel = language === 'de' ? 'Hinzugefügt ✓' : 'Added ✓';
+  const alreadyLabel = language === 'de' ? 'Bereits im Garten' : 'Already in garden';
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
@@ -332,57 +371,90 @@ export const ClimateScreen: React.FC = () => {
 
           {/* Cards */}
           <View style={styles.cards}>
-            {filtered.map((rec) => (
-              <View
-                key={`${rec.category}-${rec.name.de}`}
-                style={[styles.card, { backgroundColor: theme.surface, borderColor: theme.border }]}
-              >
-                <View style={styles.cardHeader}>
-                  <Text style={styles.cardIcon}>{rec.icon}</Text>
-                  <Text style={[styles.cardName, { color: theme.text }]}>
-                    {language === 'de' ? rec.name.de : rec.name.en}
+            {filtered.map((rec) => {
+              const cardKey = `${rec.category}-${rec.name.de}`;
+              const inGarden = isInGarden(rec);
+              const justAdded = addedKeys.has(cardKey);
+              return (
+                <View
+                  key={cardKey}
+                  style={[
+                    styles.card,
+                    { backgroundColor: theme.surface, borderColor: theme.border },
+                  ]}
+                >
+                  <View style={styles.cardHeader}>
+                    <Text style={styles.cardIcon}>{rec.icon}</Text>
+                    <Text style={[styles.cardName, { color: theme.text }]}>
+                      {language === 'de' ? rec.name.de : rec.name.en}
+                    </Text>
+                  </View>
+
+                  <View style={styles.traits}>
+                    {(language === 'de' ? rec.traits.de : rec.traits.en).map((trait) => (
+                      <View
+                        key={trait}
+                        style={[styles.traitBadge, { backgroundColor: theme.background }]}
+                      >
+                        <Text style={[styles.traitText, { color: theme.primary }]}>{trait}</Text>
+                      </View>
+                    ))}
+                  </View>
+
+                  <Text style={[styles.tip, { color: theme.textSecondary }]}>
+                    {language === 'de' ? rec.tip.de : rec.tip.en}
                   </Text>
-                </View>
 
-                <View style={styles.traits}>
-                  {(language === 'de' ? rec.traits.de : rec.traits.en).map((trait) => (
-                    <View
-                      key={trait}
-                      style={[styles.traitBadge, { backgroundColor: theme.background }]}
-                    >
-                      <Text style={[styles.traitText, { color: theme.primary }]}>{trait}</Text>
+                  <View style={styles.resistanceRow}>
+                    <View style={styles.resistanceItem}>
+                      <Text style={[styles.resistanceLabel, { color: theme.textSecondary }]}>
+                        💧 {droughtLabel}
+                      </Text>
+                      <ResistanceDots
+                        level={rec.droughtResistance}
+                        color="#2196F3"
+                        inactiveColor={theme.border}
+                      />
                     </View>
-                  ))}
-                </View>
-
-                <Text style={[styles.tip, { color: theme.textSecondary }]}>
-                  {language === 'de' ? rec.tip.de : rec.tip.en}
-                </Text>
-
-                <View style={styles.resistanceRow}>
-                  <View style={styles.resistanceItem}>
-                    <Text style={[styles.resistanceLabel, { color: theme.textSecondary }]}>
-                      💧 {droughtLabel}
-                    </Text>
-                    <ResistanceDots
-                      level={rec.droughtResistance}
-                      color="#2196F3"
-                      inactiveColor={theme.border}
-                    />
+                    <View style={styles.resistanceItem}>
+                      <Text style={[styles.resistanceLabel, { color: theme.textSecondary }]}>
+                        🌡️ {heatLabel}
+                      </Text>
+                      <ResistanceDots
+                        level={rec.heatTolerance}
+                        color="#FF5722"
+                        inactiveColor={theme.border}
+                      />
+                    </View>
                   </View>
-                  <View style={styles.resistanceItem}>
-                    <Text style={[styles.resistanceLabel, { color: theme.textSecondary }]}>
-                      🌡️ {heatLabel}
+
+                  <TouchableOpacity
+                    onPress={() => !inGarden && handleAddToGarden(rec)}
+                    disabled={inGarden}
+                    style={[
+                      styles.addButton,
+                      {
+                        backgroundColor: justAdded
+                          ? '#4CAF50'
+                          : inGarden
+                            ? theme.border
+                            : theme.primary,
+                      },
+                    ]}
+                    accessibilityLabel={inGarden ? alreadyLabel : addLabel}
+                  >
+                    <Text
+                      style={[
+                        styles.addButtonText,
+                        { color: inGarden ? theme.textSecondary : '#fff' },
+                      ]}
+                    >
+                      {justAdded ? addedLabel : inGarden ? alreadyLabel : addLabel}
                     </Text>
-                    <ResistanceDots
-                      level={rec.heatTolerance}
-                      color="#FF5722"
-                      inactiveColor={theme.border}
-                    />
-                  </View>
+                  </TouchableOpacity>
                 </View>
-              </View>
-            ))}
+              );
+            })}
           </View>
         </View>
       </ScrollView>
@@ -496,5 +568,15 @@ const styles = StyleSheet.create({
     width: 10,
     height: 10,
     borderRadius: 5,
+  },
+  addButton: {
+    marginTop: 14,
+    paddingVertical: 10,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  addButtonText: {
+    fontSize: 14,
+    fontWeight: '600',
   },
 });
