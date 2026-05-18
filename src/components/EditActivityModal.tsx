@@ -102,7 +102,7 @@ export const EditActivityModal: React.FC<EditActivityModalProps> = ({
               ]}
               value={label}
               onChangeText={setLabel}
-              placeholder="z.B. Aussäen"
+              placeholder={t('activity.edit.namePlaceholder') as string}
               placeholderTextColor={theme.textSecondary}
             />
           </View>

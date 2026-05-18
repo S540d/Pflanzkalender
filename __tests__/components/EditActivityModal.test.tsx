@@ -29,6 +29,7 @@ jest.mock('../../src/contexts/LanguageContext', () => ({
         'activity.edit.deleteTitle': 'Aktivität löschen',
         'activity.edit.deleteMessage': 'Aktivität wirklich löschen?',
         'activity.edit.rangeError': 'Startmonat darf nicht nach dem Endmonat liegen.',
+        'activity.edit.namePlaceholder': 'z.B. Aussäen',
         'activity.add.from': 'Von',
         'activity.add.to': 'Bis',
         'plants.deleteConfirm': 'Löschen',

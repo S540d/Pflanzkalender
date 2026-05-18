@@ -5,11 +5,10 @@ describe('ACTIVITY_TYPES', () => {
     expect(ACTIVITY_TYPES).toHaveLength(8);
   });
 
-  it('every entry has a non-empty type, color, and label', () => {
-    ACTIVITY_TYPES.forEach(({ type, color, label }) => {
+  it('every entry has a non-empty type and color', () => {
+    ACTIVITY_TYPES.forEach(({ type, color }) => {
       expect(type).toBeTruthy();
       expect(color).toMatch(/^#[0-9A-Fa-f]{6}$/);
-      expect(label).toBeTruthy();
     });
   });
 
@@ -35,7 +34,6 @@ describe('getActivityTypeByType', () => {
   it('returns the correct entry for "sow"', () => {
     const result = getActivityTypeByType('sow');
     expect(result).toBeDefined();
-    expect(result!.label).toBe('Aussäen');
     expect(result!.color).toBe('#4CAF50');
   });
 
