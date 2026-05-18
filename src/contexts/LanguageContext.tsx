@@ -105,6 +105,7 @@ const translations: Record<Language, Translations> = {
     'settings.about2': 'ÜBER',
     'settings.versionLabel': 'Version',
     'settings.exportSuccess': 'Export erfolgreich!',
+    'settings.successTitle': 'Erfolg',
     'settings.feedbackLink': 'Feedback senden',
     'settings.supportLink': 'Ko-fi',
     'plants.title': 'Pflanzen verwalten',
@@ -192,6 +193,7 @@ const translations: Record<Language, Translations> = {
     'settings.about2': 'ABOUT',
     'settings.versionLabel': 'Version',
     'settings.exportSuccess': 'Export successful!',
+    'settings.successTitle': 'Success',
     'settings.feedbackLink': 'Send Feedback',
     'settings.supportLink': 'Ko-fi',
     'plants.title': 'Manage Plants',
@@ -262,6 +264,7 @@ const translations: Record<Language, Translations> = {
     'settings.about2': 'À PROPOS',
     'settings.versionLabel': 'Version',
     'settings.exportSuccess': 'Exportation réussie !',
+    'settings.successTitle': 'Succès',
     'settings.feedbackLink': 'Envoyer des commentaires',
     'settings.supportLink': 'Ko-fi',
     'plants.title': 'Gérer les plantes',
@@ -332,6 +335,7 @@ const translations: Record<Language, Translations> = {
     'settings.about2': 'ACERCA DE',
     'settings.versionLabel': 'Versión',
     'settings.exportSuccess': '¡Exportación exitosa!',
+    'settings.successTitle': 'Éxito',
     'settings.feedbackLink': 'Enviar comentarios',
     'settings.supportLink': 'Ko-fi',
     'plants.title': 'Gestionar plantas',
@@ -402,6 +406,7 @@ const translations: Record<Language, Translations> = {
     'settings.about2': 'INFORMAZIONI',
     'settings.versionLabel': 'Versione',
     'settings.exportSuccess': 'Esportazione riuscita!',
+    'settings.successTitle': 'Successo',
     'settings.feedbackLink': 'Invia feedback',
     'settings.supportLink': 'Ko-fi',
     'plants.title': 'Gestisci le piante',
@@ -472,6 +477,7 @@ const translations: Record<Language, Translations> = {
     'settings.about2': 'O APLIKACJI',
     'settings.versionLabel': 'Wersja',
     'settings.exportSuccess': 'Eksport zakończony sukcesem!',
+    'settings.successTitle': 'Sukces',
     'settings.feedbackLink': 'Wyślij opinię',
     'settings.supportLink': 'Ko-fi',
     'plants.title': 'Zarządzaj roślinami',
@@ -542,6 +548,7 @@ const translations: Record<Language, Translations> = {
     'settings.about2': 'OVER',
     'settings.versionLabel': 'Versie',
     'settings.exportSuccess': 'Export geslaagd!',
+    'settings.successTitle': 'Gelukt',
     'settings.feedbackLink': 'Feedback sturen',
     'settings.supportLink': 'Ko-fi',
     'plants.title': 'Planten beheren',
@@ -612,6 +619,7 @@ const translations: Record<Language, Translations> = {
     'settings.about2': 'SOBRE',
     'settings.versionLabel': 'Versão',
     'settings.exportSuccess': 'Exportação bem-sucedida!',
+    'settings.successTitle': 'Sucesso',
     'settings.feedbackLink': 'Enviar feedback',
     'settings.supportLink': 'Ko-fi',
     'plants.title': 'Gerir plantas',
@@ -647,8 +655,10 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 
 export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [language, setLanguageState] = useState<Language>('de');
+  const isUserSetRef = React.useRef(false);
 
   const setLanguage = async (lang: Language) => {
+    isUserSetRef.current = true;
     setLanguageState(lang);
     try {
       await AsyncStorage.setItem(STORAGE_KEY, lang);
@@ -661,9 +671,10 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }
     return translations[language][key] || key;
   };
 
-  // Load language from storage on mount
+  // Load language from storage on mount; skip if user already chose a language
   React.useEffect(() => {
     AsyncStorage.getItem(STORAGE_KEY).then((storedLang) => {
+      if (isUserSetRef.current) return;
       const supported = SUPPORTED_LANGUAGES.map((l) => l.code);
       if (storedLang && supported.includes(storedLang as Language)) {
         setLanguageState(storedLang as Language);

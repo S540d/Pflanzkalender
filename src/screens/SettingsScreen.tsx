@@ -13,7 +13,7 @@ export const SettingsScreen: React.FC = () => {
   const handleExport = async () => {
     try {
       await storageService.exportPlants();
-      Alert.alert('Success', t('settings.exportSuccess') as string);
+      Alert.alert(t('settings.successTitle') as string, t('settings.exportSuccess') as string);
     } catch (error) {
       Alert.alert('Error', 'Failed to export data. Please try again.');
       console.error('Export error:', error);
