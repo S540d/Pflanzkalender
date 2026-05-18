@@ -4,14 +4,16 @@ import { useTheme } from '../hooks/useTheme';
 import { usePlants } from '../contexts/PlantContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { AddPlantModal } from '../components/AddPlantModal';
-import { PlantLocation, PlantCategory } from '../types';
+import { EditPlantModal } from '../components/EditPlantModal';
+import { Plant, PlantLocation, PlantCategory } from '../types';
 import { PLANT_LOCATION_METADATA, PLANT_CATEGORY_METADATA } from '../constants/plantMetadata';
 
 export const PlantManagementScreen: React.FC = () => {
   const { theme } = useTheme();
-  const { plants, addPlant, deletePlant } = usePlants();
+  const { plants, addPlant, updatePlant, deletePlant } = usePlants();
   const { t, language } = useLanguage();
   const [showAddPlant, setShowAddPlant] = useState(false);
+  const [editingPlant, setEditingPlant] = useState<Plant | null>(null);
   // Metadata objects only have 'de' and 'en' — all other languages fall back to 'en'
   const metaLang: 'de' | 'en' = language === 'de' ? 'de' : 'en';
 
@@ -28,6 +30,14 @@ export const PlantManagementScreen: React.FC = () => {
   ) => {
     addPlant({ name, notes, location, category, isDefault: false, userId: null, activities: [] });
     setShowAddPlant(false);
+  };
+
+  const handleEditPlant = (
+    id: string,
+    updates: Pick<Plant, 'name' | 'notes' | 'location' | 'category'>
+  ) => {
+    updatePlant(id, updates);
+    setEditingPlant(null);
   };
 
   const handleDeletePlant = (plantId: string, plantName: string) => {
@@ -94,12 +104,26 @@ export const PlantManagementScreen: React.FC = () => {
                       {plant.activities.length} {t('plants.activities') as string}
                     </Text>
                   </View>
-                  <TouchableOpacity
-                    style={[styles.deleteButton, { backgroundColor: '#ff4444' }]}
-                    onPress={() => handleDeletePlant(plant.id, plant.name)}
-                  >
-                    <Text style={styles.deleteButtonText}>🗑️</Text>
-                  </TouchableOpacity>
+                  <View style={styles.plantActions}>
+                    <TouchableOpacity
+                      style={[
+                        styles.actionButton,
+                        { backgroundColor: theme.surface, borderColor: theme.border },
+                      ]}
+                      onPress={() => setEditingPlant(plant)}
+                    >
+                      <Text style={styles.actionButtonText}>✏️</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={[
+                        styles.actionButton,
+                        { backgroundColor: '#ff4444', borderColor: '#ff4444' },
+                      ]}
+                      onPress={() => handleDeletePlant(plant.id, plant.name)}
+                    >
+                      <Text style={styles.actionButtonText}>🗑️</Text>
+                    </TouchableOpacity>
+                  </View>
                 </View>
               ))
             )}
@@ -112,6 +136,14 @@ export const PlantManagementScreen: React.FC = () => {
           visible={showAddPlant}
           onClose={() => setShowAddPlant(false)}
           onAdd={handleAddPlant}
+        />
+      )}
+      {editingPlant && (
+        <EditPlantModal
+          visible={true}
+          plant={editingPlant}
+          onClose={() => setEditingPlant(null)}
+          onSave={handleEditPlant}
         />
       )}
     </View>
@@ -191,12 +223,18 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontStyle: 'italic',
   },
-  deleteButton: {
-    padding: 12,
-    borderRadius: 8,
+  plantActions: {
+    flexDirection: 'column',
+    gap: 8,
     marginLeft: 12,
   },
-  deleteButtonText: {
-    fontSize: 20,
+  actionButton: {
+    padding: 10,
+    borderRadius: 8,
+    borderWidth: 1,
+    alignItems: 'center',
+  },
+  actionButtonText: {
+    fontSize: 18,
   },
 });
