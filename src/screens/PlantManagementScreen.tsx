@@ -12,6 +12,8 @@ export const PlantManagementScreen: React.FC = () => {
   const { plants, addPlant, deletePlant } = usePlants();
   const { t, language } = useLanguage();
   const [showAddPlant, setShowAddPlant] = useState(false);
+  // Metadata objects only have 'de' and 'en' — all other languages fall back to 'en'
+  const metaLang: 'de' | 'en' = language === 'de' ? 'de' : 'en';
 
   // Sortiere Pflanzen alphabetisch
   const sortedPlants = useMemo(() => {
@@ -29,15 +31,11 @@ export const PlantManagementScreen: React.FC = () => {
   };
 
   const handleDeletePlant = (plantId: string, plantName: string) => {
-    const message =
-      language === 'de'
-        ? `Möchtest du "${plantName}" wirklich löschen?`
-        : `Do you really want to delete "${plantName}"?`;
-
-    Alert.alert(language === 'de' ? 'Pflanze löschen' : 'Delete Plant', message, [
-      { text: language === 'de' ? 'Abbrechen' : 'Cancel', style: 'cancel' },
+    const message = `"${plantName}" ${t('plants.deleteMessage') as string}`;
+    Alert.alert(t('plants.deleteTitle') as string, message, [
+      { text: t('plants.deleteCancel') as string, style: 'cancel' },
       {
-        text: language === 'de' ? 'Löschen' : 'Delete',
+        text: t('plants.deleteConfirm') as string,
         style: 'destructive',
         onPress: () => deletePlant(plantId),
       },
@@ -48,23 +46,19 @@ export const PlantManagementScreen: React.FC = () => {
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       <ScrollView style={styles.scrollView}>
         <View style={styles.content}>
-          <Text style={[styles.title, { color: theme.text }]}>
-            {language === 'de' ? 'Pflanzen verwalten' : 'Manage Plants'}
-          </Text>
+          <Text style={[styles.title, { color: theme.text }]}>{t('plants.title') as string}</Text>
 
           <TouchableOpacity
             style={[styles.addButton, { backgroundColor: theme.primary }]}
             onPress={() => setShowAddPlant(true)}
           >
-            <Text style={styles.addButtonText}>
-              {language === 'de' ? '➕ Neue Pflanze hinzufügen' : '➕ Add New Plant'}
-            </Text>
+            <Text style={styles.addButtonText}>{t('plants.add') as string}</Text>
           </TouchableOpacity>
 
           <View style={styles.plantList}>
             {sortedPlants.length === 0 ? (
               <Text style={[styles.emptyText, { color: theme.textSecondary }]}>
-                {language === 'de' ? 'Noch keine Pflanzen vorhanden' : 'No plants yet'}
+                {t('plants.empty') as string}
               </Text>
             ) : (
               sortedPlants.map((plant) => (
@@ -81,13 +75,13 @@ export const PlantManagementScreen: React.FC = () => {
                       {plant.category && (
                         <Text style={[styles.plantMetaText, { color: theme.textSecondary }]}>
                           {PLANT_CATEGORY_METADATA[plant.category].icon}{' '}
-                          {PLANT_CATEGORY_METADATA[plant.category][language]}
+                          {PLANT_CATEGORY_METADATA[plant.category][metaLang]}
                         </Text>
                       )}
                       {plant.location && (
                         <Text style={[styles.plantMetaText, { color: theme.textSecondary }]}>
                           {PLANT_LOCATION_METADATA[plant.location].icon}{' '}
-                          {PLANT_LOCATION_METADATA[plant.location][language]}
+                          {PLANT_LOCATION_METADATA[plant.location][metaLang]}
                         </Text>
                       )}
                     </View>
@@ -97,7 +91,7 @@ export const PlantManagementScreen: React.FC = () => {
                       </Text>
                     )}
                     <Text style={[styles.activityCount, { color: theme.textSecondary }]}>
-                      {plant.activities.length} {language === 'de' ? 'Aktivitäten' : 'Activities'}
+                      {plant.activities.length} {t('plants.activities') as string}
                     </Text>
                   </View>
                   <TouchableOpacity
