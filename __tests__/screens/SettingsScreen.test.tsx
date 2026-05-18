@@ -53,7 +53,6 @@ describe('SettingsScreen', () => {
 
   it('renders the Settings title', () => {
     const { getByText } = renderWithProviders(<SettingsScreen />);
-    // Default language is 'en' in SettingsScreen (internal state)
     expect(getByText(/Settings|Einstellungen/)).toBeTruthy();
   });
 
