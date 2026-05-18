@@ -16,6 +16,27 @@ jest.mock('../../src/hooks/useTheme', () => ({
   }),
 }));
 
+jest.mock('../../src/contexts/LanguageContext', () => ({
+  useLanguage: () => ({
+    language: 'de',
+    t: (key: string) => {
+      const map: Record<string, string> = {
+        'plants.addTitle': 'Neue Pflanze hinzufügen',
+        'plants.fieldName': 'Pflanzenname',
+        'plants.fieldNotes': 'Notizen',
+        'plants.fieldLocation': 'Standort',
+        'plants.fieldCategory': 'Kategorie',
+        'plants.fieldNamePlaceholder': 'z.B. Tomaten',
+        'plants.fieldNotesPlaceholder': 'z.B. Beliebtes Gemüse für Balkon',
+        'plants.addHint': 'Nach dem Hinzufügen kannst du Aktivitäten für die Pflanze erstellen.',
+        'common.cancel': 'Abbrechen',
+        'common.add': 'Hinzufügen',
+      };
+      return map[key] ?? key;
+    },
+  }),
+}));
+
 describe('AddPlantModal Component', () => {
   const mockOnAdd = jest.fn();
   const mockOnClose = jest.fn();

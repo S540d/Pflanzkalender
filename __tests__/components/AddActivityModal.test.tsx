@@ -16,6 +16,35 @@ jest.mock('../../src/hooks/useTheme', () => ({
   }),
 }));
 
+jest.mock('../../src/contexts/LanguageContext', () => ({
+  useLanguage: () => ({
+    language: 'de',
+    t: (key: string) => {
+      const map: Record<string, string> = {
+        'activity.add.title': 'Aktivität hinzufügen',
+        'activity.add.subtitle': 'für',
+        'activity.add.typeLabel': 'Aktivitätstyp *',
+        'activity.add.periodLabel': 'Zeitraum *',
+        'activity.add.from': 'Von',
+        'activity.add.to': 'Bis',
+        'activity.add.customLabel': 'Eigene Bezeichnung (optional)',
+        'activity.edit.rangeError': 'Startmonat darf nicht nach dem Endmonat liegen.',
+        'activity.type.sow': 'Aussäen',
+        'activity.type.plant': 'Pflanzen',
+        'activity.type.fertilize': 'Düngen',
+        'activity.type.water': 'Gießen',
+        'activity.type.prune': 'Zurückschneiden',
+        'activity.type.harvest': 'Ernten',
+        'activity.type.protect': 'Winterschutz',
+        'activity.type.mulch': 'Mulchen',
+        'common.cancel': 'Abbrechen',
+        'common.add': 'Hinzufügen',
+      };
+      return map[key] ?? key;
+    },
+  }),
+}));
+
 describe('AddActivityModal Component', () => {
   const mockOnAdd = jest.fn();
   const mockOnClose = jest.fn();
@@ -145,5 +174,12 @@ describe('AddActivityModal Component', () => {
       fireEvent.press(monthButtons[1]);
     }
     expect(mockOnAdd).not.toHaveBeenCalled();
+  });
+
+  it('does not show a range error initially', () => {
+    const { queryByText } = render(
+      <AddActivityModal visible={true} plantName="Tomate" onClose={mockOnClose} onAdd={mockOnAdd} />
+    );
+    expect(queryByText(/Startmonat/)).toBeNull();
   });
 });

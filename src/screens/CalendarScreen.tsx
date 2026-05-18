@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useRef } from 'react';
 import { View, StyleSheet, Dimensions, ScrollView } from 'react-native';
 import { useTheme } from '../hooks/useTheme';
+import { useLanguage } from '../contexts/LanguageContext';
 import { usePlants } from '../contexts/PlantContext';
 import { AddActivityModal } from '../components/AddActivityModal';
 import { EditActivityModal } from '../components/EditActivityModal';
@@ -12,6 +13,7 @@ import { Activity } from '../types';
 
 export const CalendarScreen: React.FC = () => {
   const { theme } = useTheme();
+  const { t } = useLanguage();
   const { plants, loading, addActivity, updateActivity, deleteActivity } = usePlants();
   const [showAddActivity, setShowAddActivity] = useState(false);
   const [showEditActivity, setShowEditActivity] = useState(false);
@@ -26,36 +28,19 @@ export const CalendarScreen: React.FC = () => {
   const isPortrait = height > width;
 
   const months = useMemo(() => {
+    const shortNames = t('calendar.months.short') as string[];
     if (isPortrait) {
-      return ['Jan-Feb', 'Mär-Apr', 'Mai-Jun', 'Jul-Aug', 'Sep-Okt', 'Nov-Dez'];
+      return [
+        `${shortNames[0]}-${shortNames[1]}`,
+        `${shortNames[2]}-${shortNames[3]}`,
+        `${shortNames[4]}-${shortNames[5]}`,
+        `${shortNames[6]}-${shortNames[7]}`,
+        `${shortNames[8]}-${shortNames[9]}`,
+        `${shortNames[10]}-${shortNames[11]}`,
+      ];
     }
-    return [
-      'Jan',
-      'Jan',
-      'Feb',
-      'Feb',
-      'Mär',
-      'Mär',
-      'Apr',
-      'Apr',
-      'Mai',
-      'Mai',
-      'Jun',
-      'Jun',
-      'Jul',
-      'Jul',
-      'Aug',
-      'Aug',
-      'Sep',
-      'Sep',
-      'Okt',
-      'Okt',
-      'Nov',
-      'Nov',
-      'Dez',
-      'Dez',
-    ];
-  }, [isPortrait]);
+    return shortNames.flatMap((m) => [m, m]);
+  }, [isPortrait, t]);
 
   const now = new Date();
   const currentMonth = now.getMonth();

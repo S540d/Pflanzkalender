@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import { useTheme } from '../hooks/useTheme';
 import { useLanguage } from '../contexts/LanguageContext';
-import { PlantLocation, PlantCategory } from '../types';
+import { Plant, PlantLocation, PlantCategory } from '../types';
 import { PLANT_LOCATION_METADATA, PLANT_CATEGORY_METADATA } from '../constants/plantMetadata';
 
 const LOCATION_OPTIONS: { value: PlantLocation; icon: string }[] = (
@@ -29,37 +29,44 @@ const CATEGORY_OPTIONS: { value: PlantCategory; icon: string }[] = (
   icon: PLANT_CATEGORY_METADATA[value].icon,
 }));
 
-interface AddPlantModalProps {
+interface EditPlantModalProps {
   visible: boolean;
+  plant: Plant;
   onClose: () => void;
-  onAdd: (name: string, notes: string, location?: PlantLocation, category?: PlantCategory) => void;
+  onSave: (id: string, updates: Pick<Plant, 'name' | 'notes' | 'location' | 'category'>) => void;
 }
 
-export const AddPlantModal: React.FC<AddPlantModalProps> = ({ visible, onClose, onAdd }) => {
+export const EditPlantModal: React.FC<EditPlantModalProps> = ({
+  visible,
+  plant,
+  onClose,
+  onSave,
+}) => {
   const { theme } = useTheme();
   const { t, language } = useLanguage();
   const metaLang: 'de' | 'en' = language === 'de' ? 'de' : 'en';
-  const [name, setName] = useState('');
-  const [notes, setNotes] = useState('');
-  const [location, setLocation] = useState<PlantLocation | undefined>(undefined);
-  const [category, setCategory] = useState<PlantCategory | undefined>(undefined);
+  const [name, setName] = useState(plant.name);
+  const [notes, setNotes] = useState(plant.notes ?? '');
+  const [location, setLocation] = useState<PlantLocation | undefined>(plant.location);
+  const [category, setCategory] = useState<PlantCategory | undefined>(plant.category);
 
-  const handleAdd = () => {
+  useEffect(() => {
+    if (visible) {
+      setName(plant.name);
+      setNotes(plant.notes ?? '');
+      setLocation(plant.location);
+      setCategory(plant.category);
+    }
+  }, [visible, plant]);
+
+  const handleSave = () => {
     if (name.trim()) {
-      onAdd(name.trim(), notes.trim(), location, category);
-      setName('');
-      setNotes('');
-      setLocation(undefined);
-      setCategory(undefined);
+      onSave(plant.id, { name: name.trim(), notes: notes.trim(), location, category });
       onClose();
     }
   };
 
   const handleCancel = () => {
-    setName('');
-    setNotes('');
-    setLocation(undefined);
-    setCategory(undefined);
     onClose();
   };
 
@@ -73,7 +80,7 @@ export const AddPlantModal: React.FC<AddPlantModalProps> = ({ visible, onClose, 
         <View style={[styles.modal, { backgroundColor: theme.background }]}>
           <View style={[styles.header, { borderBottomColor: theme.border }]}>
             <Text style={[styles.title, { color: theme.text }]}>
-              {t('plants.addTitle') as string}
+              {t('plants.editTitle') as string}
             </Text>
           </View>
 
@@ -91,7 +98,6 @@ export const AddPlantModal: React.FC<AddPlantModalProps> = ({ visible, onClose, 
                     borderColor: theme.border,
                   },
                 ]}
-                placeholder={t('plants.fieldNamePlaceholder') as string}
                 placeholderTextColor={theme.textSecondary}
                 value={name}
                 onChangeText={setName}
@@ -113,7 +119,6 @@ export const AddPlantModal: React.FC<AddPlantModalProps> = ({ visible, onClose, 
                     borderColor: theme.border,
                   },
                 ]}
-                placeholder={t('plants.fieldNotesPlaceholder') as string}
                 placeholderTextColor={theme.textSecondary}
                 value={notes}
                 onChangeText={setNotes}
@@ -126,12 +131,12 @@ export const AddPlantModal: React.FC<AddPlantModalProps> = ({ visible, onClose, 
               <Text style={[styles.label, { color: theme.text }]}>
                 {t('plants.fieldLocation') as string}
               </Text>
-              <View style={styles.locationRow}>
+              <View style={styles.optionRow}>
                 {LOCATION_OPTIONS.map((opt) => (
                   <TouchableOpacity
                     key={opt.value}
                     style={[
-                      styles.locationButton,
+                      styles.optionButton,
                       {
                         backgroundColor: location === opt.value ? theme.primary : theme.surface,
                         borderColor: location === opt.value ? theme.primary : theme.border,
@@ -139,10 +144,10 @@ export const AddPlantModal: React.FC<AddPlantModalProps> = ({ visible, onClose, 
                     ]}
                     onPress={() => setLocation(location === opt.value ? undefined : opt.value)}
                   >
-                    <Text style={styles.locationIcon}>{opt.icon}</Text>
+                    <Text style={styles.optionIcon}>{opt.icon}</Text>
                     <Text
                       style={[
-                        styles.locationLabel,
+                        styles.optionLabel,
                         { color: location === opt.value ? '#fff' : theme.text },
                       ]}
                     >
@@ -157,12 +162,12 @@ export const AddPlantModal: React.FC<AddPlantModalProps> = ({ visible, onClose, 
               <Text style={[styles.label, { color: theme.text }]}>
                 {t('plants.fieldCategory') as string}
               </Text>
-              <View style={styles.locationRow}>
+              <View style={styles.optionRow}>
                 {CATEGORY_OPTIONS.map((opt) => (
                   <TouchableOpacity
                     key={opt.value}
                     style={[
-                      styles.locationButton,
+                      styles.optionButton,
                       {
                         backgroundColor: category === opt.value ? theme.primary : theme.surface,
                         borderColor: category === opt.value ? theme.primary : theme.border,
@@ -170,10 +175,10 @@ export const AddPlantModal: React.FC<AddPlantModalProps> = ({ visible, onClose, 
                     ]}
                     onPress={() => setCategory(category === opt.value ? undefined : opt.value)}
                   >
-                    <Text style={styles.locationIcon}>{opt.icon}</Text>
+                    <Text style={styles.optionIcon}>{opt.icon}</Text>
                     <Text
                       style={[
-                        styles.locationLabel,
+                        styles.optionLabel,
                         { color: category === opt.value ? '#fff' : theme.text },
                       ]}
                     >
@@ -183,31 +188,25 @@ export const AddPlantModal: React.FC<AddPlantModalProps> = ({ visible, onClose, 
                 ))}
               </View>
             </View>
-
-            <View style={styles.hint}>
-              <Text style={[styles.hintText, { color: theme.textSecondary }]}>
-                {t('plants.addHint') as string}
-              </Text>
-            </View>
           </ScrollView>
 
           <View style={[styles.footer, { borderTopColor: theme.border }]}>
             <TouchableOpacity style={[styles.button, styles.cancelButton]} onPress={handleCancel}>
               <Text style={[styles.buttonText, { color: theme.text }]}>
-                {t('common.cancel') as string}
+                {t('plants.deleteCancel') as string}
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[
                 styles.button,
-                styles.addButton,
+                styles.saveButton,
                 { backgroundColor: theme.primary },
                 !name.trim() && styles.buttonDisabled,
               ]}
-              onPress={handleAdd}
+              onPress={handleSave}
               disabled={!name.trim()}
             >
-              <Text style={styles.addButtonText}>{t('common.add') as string}</Text>
+              <Text style={styles.saveButtonText}>{t('plants.editSave') as string}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -259,31 +258,24 @@ const styles = StyleSheet.create({
     minHeight: 80,
     textAlignVertical: 'top',
   },
-  locationRow: {
+  optionRow: {
     flexDirection: 'row',
     gap: 8,
   },
-  locationButton: {
+  optionButton: {
     flex: 1,
     alignItems: 'center',
     paddingVertical: 10,
     borderRadius: 8,
     borderWidth: 1,
   },
-  locationIcon: {
+  optionIcon: {
     fontSize: 18,
     marginBottom: 2,
   },
-  locationLabel: {
+  optionLabel: {
     fontSize: 11,
     fontWeight: '600',
-  },
-  hint: {
-    marginTop: 8,
-  },
-  hintText: {
-    fontSize: 12,
-    lineHeight: 18,
   },
   footer: {
     flexDirection: 'row',
@@ -300,9 +292,7 @@ const styles = StyleSheet.create({
   cancelButton: {
     backgroundColor: 'transparent',
   },
-  addButton: {
-    // backgroundColor wird dynamisch gesetzt
-  },
+  saveButton: {},
   buttonDisabled: {
     opacity: 0.5,
   },
@@ -310,7 +300,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
-  addButtonText: {
+  saveButtonText: {
     color: '#FFFFFF',
     fontSize: 16,
     fontWeight: '600',
