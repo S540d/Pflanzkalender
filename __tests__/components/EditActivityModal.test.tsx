@@ -92,7 +92,22 @@ describe('EditActivityModal Component', () => {
     expect(getByDisplayValue('Aussaat')).toBeTruthy();
   });
 
-  it('calls onUpdate with new label when Speichern is pressed', () => {
+  it('shows Von and Bis pickers for editing the time range', () => {
+    const { getByText } = render(
+      <EditActivityModal
+        visible={true}
+        activity={mockActivity}
+        plantName="Tomate"
+        onClose={mockOnClose}
+        onUpdate={mockOnUpdate}
+        onDelete={mockOnDelete}
+      />
+    );
+    expect(getByText('Von')).toBeTruthy();
+    expect(getByText('Bis')).toBeTruthy();
+  });
+
+  it('calls onUpdate with updated label and months when Speichern is pressed', () => {
     const { getByText, getByDisplayValue } = render(
       <EditActivityModal
         visible={true}
@@ -107,7 +122,11 @@ describe('EditActivityModal Component', () => {
     fireEvent.changeText(getByDisplayValue('Aussaat'), 'Geänderte Bezeichnung');
     fireEvent.press(getByText('Speichern'));
 
-    expect(mockOnUpdate).toHaveBeenCalledWith('act-1', { label: 'Geänderte Bezeichnung' });
+    expect(mockOnUpdate).toHaveBeenCalledWith('act-1', {
+      label: 'Geänderte Bezeichnung',
+      startMonth: 2,
+      endMonth: 4,
+    });
     expect(mockOnClose).toHaveBeenCalledTimes(1);
   });
 
@@ -175,22 +194,46 @@ describe('EditActivityModal Component', () => {
     alertSpy.mockRestore();
   });
 
-  it('displays the time range of the activity', () => {
+  it('does not call onUpdate when startMonth > endMonth', () => {
+    const invalidActivity: Activity = { ...mockActivity, startMonth: 10, endMonth: 3 };
+
     const { getByText } = render(
       <EditActivityModal
         visible={true}
-        activity={mockActivity}
+        activity={invalidActivity}
         plantName="Tomate"
         onClose={mockOnClose}
         onUpdate={mockOnUpdate}
         onDelete={mockOnDelete}
       />
     );
-    // Should display month names for startMonth=2 and endMonth=4
-    expect(getByText(/Feb|Mär|Apr/)).toBeTruthy();
+
+    fireEvent.press(getByText('Speichern'));
+
+    expect(mockOnUpdate).not.toHaveBeenCalled();
+    expect(mockOnClose).not.toHaveBeenCalled();
   });
 
-  it('syncs label state when activity prop changes', () => {
+  it('shows error message when startMonth > endMonth on save', () => {
+    const invalidActivity: Activity = { ...mockActivity, startMonth: 10, endMonth: 3 };
+
+    const { getByText, queryByText } = render(
+      <EditActivityModal
+        visible={true}
+        activity={invalidActivity}
+        plantName="Tomate"
+        onClose={mockOnClose}
+        onUpdate={mockOnUpdate}
+        onDelete={mockOnDelete}
+      />
+    );
+
+    expect(queryByText(/Startmonat/)).toBeNull();
+    fireEvent.press(getByText('Speichern'));
+    expect(getByText(/Startmonat/)).toBeTruthy();
+  });
+
+  it('syncs state when activity prop changes', () => {
     const { rerender, getByDisplayValue } = render(
       <EditActivityModal
         visible={true}
@@ -215,5 +258,21 @@ describe('EditActivityModal Component', () => {
     );
 
     expect(getByDisplayValue('Geändert')).toBeTruthy();
+  });
+
+  it('renders the month picker with month options', () => {
+    const { getAllByText } = render(
+      <EditActivityModal
+        visible={true}
+        activity={mockActivity}
+        plantName="Tomate"
+        onClose={mockOnClose}
+        onUpdate={mockOnUpdate}
+        onDelete={mockOnDelete}
+      />
+    );
+    // Month picker should contain month labels
+    const monthItems = getAllByText(/Jan|Feb|Mär|Apr|Mai/);
+    expect(monthItems.length).toBeGreaterThan(0);
   });
 });

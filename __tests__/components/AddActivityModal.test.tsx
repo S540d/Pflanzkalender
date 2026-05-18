@@ -146,4 +146,11 @@ describe('AddActivityModal Component', () => {
     }
     expect(mockOnAdd).not.toHaveBeenCalled();
   });
+
+  it('does not show a range error initially', () => {
+    const { queryByText } = render(
+      <AddActivityModal visible={true} plantName="Tomate" onClose={mockOnClose} onAdd={mockOnAdd} />
+    );
+    expect(queryByText(/Startmonat/)).toBeNull();
+  });
 });

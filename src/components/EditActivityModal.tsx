@@ -1,8 +1,17 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Modal, TouchableOpacity, TextInput, Alert } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Modal,
+  TouchableOpacity,
+  TextInput,
+  Alert,
+  ScrollView,
+} from 'react-native';
 import { useTheme } from '../hooks/useTheme';
 import { Activity } from '../types';
-import { HALF_MONTH_NAMES } from '../utils/monthHelper';
+import { halfMonthToString } from '../utils/monthHelper';
 
 interface EditActivityModalProps {
   visible: boolean;
@@ -23,17 +32,33 @@ export const EditActivityModal: React.FC<EditActivityModalProps> = ({
 }) => {
   const { theme } = useTheme();
   const [label, setLabel] = useState(activity?.label || '');
+  const [startMonth, setStartMonth] = useState(activity?.startMonth ?? 0);
+  const [endMonth, setEndMonth] = useState(activity?.endMonth ?? 0);
+  const [rangeError, setRangeError] = useState('');
 
   React.useEffect(() => {
     if (activity) {
       setLabel(activity.label);
+      setStartMonth(activity.startMonth);
+      setEndMonth(activity.endMonth);
+      setRangeError('');
     }
   }, [activity]);
 
   if (!activity) return null;
 
+  const months = Array.from({ length: 24 }, (_, i) => ({
+    value: i,
+    label: halfMonthToString(i),
+  }));
+
   const handleUpdate = () => {
-    onUpdate(activity.id, { label });
+    if (startMonth > endMonth) {
+      setRangeError('Startmonat darf nicht nach dem Endmonat liegen.');
+      return;
+    }
+    setRangeError('');
+    onUpdate(activity.id, { label, startMonth, endMonth });
     onClose();
   };
 
@@ -73,10 +98,95 @@ export const EditActivityModal: React.FC<EditActivityModalProps> = ({
           </View>
 
           <View style={styles.section}>
-            <Text style={[styles.label, { color: theme.text }]}>Zeitraum</Text>
-            <Text style={[styles.value, { color: theme.textSecondary }]}>
-              {getMonthName(activity.startMonth)} - {getMonthName(activity.endMonth)}
-            </Text>
+            <Text style={[styles.label, { color: theme.text }]}>Zeitraum *</Text>
+            <View style={styles.periodRow}>
+              <View style={styles.periodField}>
+                <Text style={[styles.periodLabel, { color: theme.textSecondary }]}>Von</Text>
+                <ScrollView
+                  style={[
+                    styles.monthPicker,
+                    { backgroundColor: theme.surface, borderColor: theme.border },
+                  ]}
+                  showsVerticalScrollIndicator={false}
+                >
+                  {months.map((month) => (
+                    <TouchableOpacity
+                      key={month.value}
+                      style={[
+                        styles.monthOption,
+                        startMonth === month.value && { backgroundColor: theme.primary },
+                      ]}
+                      onPress={() => {
+                        setStartMonth(month.value);
+                        if (month.value > endMonth) {
+                          setEndMonth(month.value);
+                        }
+                        setRangeError('');
+                      }}
+                    >
+                      <Text
+                        style={[
+                          styles.monthOptionText,
+                          { color: startMonth === month.value ? '#FFFFFF' : theme.text },
+                        ]}
+                      >
+                        {month.label}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </ScrollView>
+              </View>
+
+              <View style={styles.periodField}>
+                <Text style={[styles.periodLabel, { color: theme.textSecondary }]}>Bis</Text>
+                <ScrollView
+                  style={[
+                    styles.monthPicker,
+                    { backgroundColor: theme.surface, borderColor: theme.border },
+                  ]}
+                  showsVerticalScrollIndicator={false}
+                >
+                  {months.map((month) => (
+                    <TouchableOpacity
+                      key={month.value}
+                      style={[
+                        styles.monthOption,
+                        endMonth === month.value && { backgroundColor: theme.primary },
+                        month.value < startMonth && styles.monthDisabled,
+                      ]}
+                      onPress={() => {
+                        if (month.value >= startMonth) {
+                          setEndMonth(month.value);
+                          setRangeError('');
+                        }
+                      }}
+                      disabled={month.value < startMonth}
+                    >
+                      <Text
+                        style={[
+                          styles.monthOptionText,
+                          {
+                            color:
+                              endMonth === month.value
+                                ? '#FFFFFF'
+                                : month.value < startMonth
+                                  ? theme.textSecondary
+                                  : theme.text,
+                          },
+                        ]}
+                      >
+                        {month.label}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </ScrollView>
+              </View>
+            </View>
+            {rangeError ? (
+              <Text style={[styles.errorText, { color: theme.error ?? '#DC143C' }]}>
+                {rangeError}
+              </Text>
+            ) : null}
           </View>
 
           <View style={styles.section}>
@@ -114,10 +224,6 @@ export const EditActivityModal: React.FC<EditActivityModalProps> = ({
   );
 };
 
-const getMonthName = (monthIndex: number): string => {
-  return HALF_MONTH_NAMES[monthIndex] || '';
-};
-
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
@@ -130,6 +236,7 @@ const styles = StyleSheet.create({
     maxWidth: 400,
     padding: 24,
     borderRadius: 12,
+    maxHeight: '90%',
   },
   title: {
     fontSize: 20,
@@ -162,6 +269,38 @@ const styles = StyleSheet.create({
     height: 24,
     borderRadius: 4,
     marginBottom: 8,
+  },
+  periodRow: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  periodField: {
+    flex: 1,
+  },
+  periodLabel: {
+    fontSize: 12,
+    marginBottom: 6,
+  },
+  monthPicker: {
+    borderWidth: 1,
+    borderRadius: 8,
+    maxHeight: 150,
+  },
+  monthOption: {
+    padding: 10,
+    borderBottomWidth: 0.5,
+    borderBottomColor: 'rgba(0,0,0,0.1)',
+  },
+  monthOptionText: {
+    fontSize: 13,
+    textAlign: 'center',
+  },
+  monthDisabled: {
+    opacity: 0.3,
+  },
+  errorText: {
+    fontSize: 12,
+    marginTop: 6,
   },
   buttons: {
     flexDirection: 'row',

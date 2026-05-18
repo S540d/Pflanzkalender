@@ -32,11 +32,16 @@ export const AddActivityModal: React.FC<AddActivityModalProps> = ({
   const [startMonth, setStartMonth] = useState(initialMonth);
   const [endMonth, setEndMonth] = useState(initialMonth);
   const [customLabel, setCustomLabel] = useState('');
+  const [rangeError, setRangeError] = useState('');
 
   const selectedActivityType = ACTIVITY_TYPES.find((at) => at.type === selectedType);
   const label = customLabel || selectedActivityType?.label || '';
 
   const handleAdd = () => {
+    if (startMonth > endMonth) {
+      setRangeError('Startmonat darf nicht nach dem Endmonat liegen.');
+      return;
+    }
     if (selectedActivityType) {
       onAdd(selectedType, startMonth, endMonth, selectedActivityType.color, label);
       // Reset
@@ -44,6 +49,7 @@ export const AddActivityModal: React.FC<AddActivityModalProps> = ({
       setStartMonth(initialMonth);
       setEndMonth(initialMonth);
       setCustomLabel('');
+      setRangeError('');
       onClose();
     }
   };
@@ -53,6 +59,7 @@ export const AddActivityModal: React.FC<AddActivityModalProps> = ({
     setStartMonth(initialMonth);
     setEndMonth(initialMonth);
     setCustomLabel('');
+    setRangeError('');
     onClose();
   };
 
@@ -132,6 +139,7 @@ export const AddActivityModal: React.FC<AddActivityModalProps> = ({
                           if (month.value > endMonth) {
                             setEndMonth(month.value);
                           }
+                          setRangeError('');
                         }}
                       >
                         <Text
@@ -195,6 +203,9 @@ export const AddActivityModal: React.FC<AddActivityModalProps> = ({
                   </ScrollView>
                 </View>
               </View>
+              {rangeError ? (
+                <Text style={[styles.errorText, { color: '#DC143C' }]}>{rangeError}</Text>
+              ) : null}
             </View>
 
             {/* Custom Label */}
@@ -319,6 +330,10 @@ const styles = StyleSheet.create({
   },
   monthDisabled: {
     opacity: 0.3,
+  },
+  errorText: {
+    fontSize: 12,
+    marginTop: 6,
   },
   input: {
     borderWidth: 1,
