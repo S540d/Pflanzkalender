@@ -15,19 +15,17 @@ import { useLanguage } from '../contexts/LanguageContext';
 import { Plant, PlantLocation, PlantCategory } from '../types';
 import { PLANT_LOCATION_METADATA, PLANT_CATEGORY_METADATA } from '../constants/plantMetadata';
 
-const LOCATION_OPTIONS: { value: PlantLocation; label: string; icon: string }[] = (
+const LOCATION_OPTIONS: { value: PlantLocation; icon: string }[] = (
   Object.keys(PLANT_LOCATION_METADATA) as PlantLocation[]
 ).map((value) => ({
   value,
-  label: PLANT_LOCATION_METADATA[value].de,
   icon: PLANT_LOCATION_METADATA[value].icon,
 }));
 
-const CATEGORY_OPTIONS: { value: PlantCategory; label: string; icon: string }[] = (
+const CATEGORY_OPTIONS: { value: PlantCategory; icon: string }[] = (
   Object.keys(PLANT_CATEGORY_METADATA) as PlantCategory[]
 ).map((value) => ({
   value,
-  label: PLANT_CATEGORY_METADATA[value].de,
   icon: PLANT_CATEGORY_METADATA[value].icon,
 }));
 
@@ -45,7 +43,8 @@ export const EditPlantModal: React.FC<EditPlantModalProps> = ({
   onSave,
 }) => {
   const { theme } = useTheme();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  const metaLang: 'de' | 'en' = language === 'de' ? 'de' : 'en';
   const [name, setName] = useState(plant.name);
   const [notes, setNotes] = useState(plant.notes ?? '');
   const [location, setLocation] = useState<PlantLocation | undefined>(plant.location);
@@ -152,7 +151,7 @@ export const EditPlantModal: React.FC<EditPlantModalProps> = ({
                         { color: location === opt.value ? '#fff' : theme.text },
                       ]}
                     >
-                      {opt.label}
+                      {PLANT_LOCATION_METADATA[opt.value][metaLang]}
                     </Text>
                   </TouchableOpacity>
                 ))}
@@ -183,7 +182,7 @@ export const EditPlantModal: React.FC<EditPlantModalProps> = ({
                         { color: category === opt.value ? '#fff' : theme.text },
                       ]}
                     >
-                      {opt.label}
+                      {PLANT_CATEGORY_METADATA[opt.value][metaLang]}
                     </Text>
                   </TouchableOpacity>
                 ))}

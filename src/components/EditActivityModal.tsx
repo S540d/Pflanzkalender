@@ -10,8 +10,9 @@ import {
   ScrollView,
 } from 'react-native';
 import { useTheme } from '../hooks/useTheme';
+import { useLanguage } from '../contexts/LanguageContext';
 import { Activity } from '../types';
-import { halfMonthToString } from '../utils/monthHelper';
+import { HALF_MONTH_NAMES } from '../utils/monthHelper';
 
 interface EditActivityModalProps {
   visible: boolean;
@@ -31,6 +32,7 @@ export const EditActivityModal: React.FC<EditActivityModalProps> = ({
   onDelete,
 }) => {
   const { theme } = useTheme();
+  const { t } = useLanguage();
   const [label, setLabel] = useState(activity?.label || '');
   const [startMonth, setStartMonth] = useState(activity?.startMonth ?? 0);
   const [endMonth, setEndMonth] = useState(activity?.endMonth ?? 0);
@@ -49,12 +51,12 @@ export const EditActivityModal: React.FC<EditActivityModalProps> = ({
 
   const months = Array.from({ length: 24 }, (_, i) => ({
     value: i,
-    label: halfMonthToString(i),
+    label: HALF_MONTH_NAMES[i],
   }));
 
   const handleUpdate = () => {
     if (startMonth > endMonth) {
-      setRangeError('Startmonat darf nicht nach dem Endmonat liegen.');
+      setRangeError(t('activity.edit.rangeError') as string);
       return;
     }
     setRangeError('');
@@ -63,28 +65,36 @@ export const EditActivityModal: React.FC<EditActivityModalProps> = ({
   };
 
   const handleDelete = () => {
-    Alert.alert('Aktivität löschen', 'Aktivität wirklich löschen?', [
-      { text: 'Abbrechen', style: 'cancel' },
-      {
-        text: 'Löschen',
-        style: 'destructive',
-        onPress: () => {
-          onDelete(activity.id);
-          onClose();
+    Alert.alert(
+      t('activity.edit.deleteTitle') as string,
+      t('activity.edit.deleteMessage') as string,
+      [
+        { text: t('common.cancel') as string, style: 'cancel' },
+        {
+          text: t('plants.deleteConfirm') as string,
+          style: 'destructive',
+          onPress: () => {
+            onDelete(activity.id);
+            onClose();
+          },
         },
-      },
-    ]);
+      ]
+    );
   };
 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <View style={styles.overlay}>
         <View style={[styles.modal, { backgroundColor: theme.background }]}>
-          <Text style={[styles.title, { color: theme.text }]}>Aktivität bearbeiten</Text>
+          <Text style={[styles.title, { color: theme.text }]}>
+            {t('activity.edit.title') as string}
+          </Text>
           <Text style={[styles.subtitle, { color: theme.textSecondary }]}>{plantName}</Text>
 
           <View style={styles.section}>
-            <Text style={[styles.label, { color: theme.text }]}>Bezeichnung</Text>
+            <Text style={[styles.label, { color: theme.text }]}>
+              {t('activity.edit.nameLabel') as string}
+            </Text>
             <TextInput
               style={[
                 styles.input,
@@ -98,10 +108,14 @@ export const EditActivityModal: React.FC<EditActivityModalProps> = ({
           </View>
 
           <View style={styles.section}>
-            <Text style={[styles.label, { color: theme.text }]}>Zeitraum *</Text>
+            <Text style={[styles.label, { color: theme.text }]}>
+              {t('activity.edit.periodLabel') as string}
+            </Text>
             <View style={styles.periodRow}>
               <View style={styles.periodField}>
-                <Text style={[styles.periodLabel, { color: theme.textSecondary }]}>Von</Text>
+                <Text style={[styles.periodLabel, { color: theme.textSecondary }]}>
+                  {t('activity.add.from') as string}
+                </Text>
                 <ScrollView
                   style={[
                     styles.monthPicker,
@@ -138,7 +152,9 @@ export const EditActivityModal: React.FC<EditActivityModalProps> = ({
               </View>
 
               <View style={styles.periodField}>
-                <Text style={[styles.periodLabel, { color: theme.textSecondary }]}>Bis</Text>
+                <Text style={[styles.periodLabel, { color: theme.textSecondary }]}>
+                  {t('activity.add.to') as string}
+                </Text>
                 <ScrollView
                   style={[
                     styles.monthPicker,
@@ -199,7 +215,7 @@ export const EditActivityModal: React.FC<EditActivityModalProps> = ({
               style={[styles.button, styles.deleteButton, { backgroundColor: '#DC143C' }]}
               onPress={handleDelete}
             >
-              <Text style={styles.buttonText}>Löschen</Text>
+              <Text style={styles.buttonText}>{t('plants.deleteConfirm') as string}</Text>
             </TouchableOpacity>
 
             <View style={styles.rightButtons}>
@@ -207,14 +223,16 @@ export const EditActivityModal: React.FC<EditActivityModalProps> = ({
                 style={[styles.button, { backgroundColor: theme.border }]}
                 onPress={onClose}
               >
-                <Text style={[styles.buttonText, { color: theme.text }]}>Abbrechen</Text>
+                <Text style={[styles.buttonText, { color: theme.text }]}>
+                  {t('common.cancel') as string}
+                </Text>
               </TouchableOpacity>
 
               <TouchableOpacity
                 style={[styles.button, { backgroundColor: theme.primary }]}
                 onPress={handleUpdate}
               >
-                <Text style={styles.buttonText}>Speichern</Text>
+                <Text style={styles.buttonText}>{t('common.save') as string}</Text>
               </TouchableOpacity>
             </View>
           </View>

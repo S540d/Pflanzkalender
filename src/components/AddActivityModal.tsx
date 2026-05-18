@@ -9,8 +9,9 @@ import {
   ScrollView,
 } from 'react-native';
 import { useTheme } from '../hooks/useTheme';
+import { useLanguage } from '../contexts/LanguageContext';
 import { ACTIVITY_TYPES } from '../constants/activityTypes';
-import { halfMonthToString } from '../utils/monthHelper';
+import { HALF_MONTH_NAMES } from '../utils/monthHelper';
 
 interface AddActivityModalProps {
   visible: boolean;
@@ -28,6 +29,7 @@ export const AddActivityModal: React.FC<AddActivityModalProps> = ({
   onAdd,
 }) => {
   const { theme } = useTheme();
+  const { t } = useLanguage();
   const [selectedType, setSelectedType] = useState(ACTIVITY_TYPES[0].type);
   const [startMonth, setStartMonth] = useState(initialMonth);
   const [endMonth, setEndMonth] = useState(initialMonth);
@@ -35,11 +37,12 @@ export const AddActivityModal: React.FC<AddActivityModalProps> = ({
   const [rangeError, setRangeError] = useState('');
 
   const selectedActivityType = ACTIVITY_TYPES.find((at) => at.type === selectedType);
-  const label = customLabel || selectedActivityType?.label || '';
+  const typeLabel = (type: string) => t(`activity.type.${type}`) as string;
+  const label = customLabel || typeLabel(selectedType) || '';
 
   const handleAdd = () => {
     if (startMonth > endMonth) {
-      setRangeError('Startmonat darf nicht nach dem Endmonat liegen.');
+      setRangeError(t('activity.edit.rangeError') as string);
       return;
     }
     if (selectedActivityType) {
@@ -66,7 +69,7 @@ export const AddActivityModal: React.FC<AddActivityModalProps> = ({
   // Generiere Monatsliste (0-23 für halbe Monate)
   const months = Array.from({ length: 24 }, (_, i) => ({
     value: i,
-    label: halfMonthToString(i),
+    label: HALF_MONTH_NAMES[i],
   }));
 
   return (
@@ -75,14 +78,20 @@ export const AddActivityModal: React.FC<AddActivityModalProps> = ({
         <TouchableOpacity style={styles.backdrop} activeOpacity={1} onPress={handleCancel} />
         <View style={[styles.modal, { backgroundColor: theme.background }]}>
           <View style={[styles.header, { borderBottomColor: theme.border }]}>
-            <Text style={[styles.title, { color: theme.text }]}>Aktivität hinzufügen</Text>
-            <Text style={[styles.subtitle, { color: theme.textSecondary }]}>für {plantName}</Text>
+            <Text style={[styles.title, { color: theme.text }]}>
+              {t('activity.add.title') as string}
+            </Text>
+            <Text style={[styles.subtitle, { color: theme.textSecondary }]}>
+              {t('activity.add.subtitle') as string} {plantName}
+            </Text>
           </View>
 
           <ScrollView style={styles.content}>
             {/* Aktivitätstyp */}
             <View style={styles.field}>
-              <Text style={[styles.label, { color: theme.text }]}>Aktivitätstyp *</Text>
+              <Text style={[styles.label, { color: theme.text }]}>
+                {t('activity.add.typeLabel') as string}
+              </Text>
               <View style={styles.typeGrid}>
                 {ACTIVITY_TYPES.map((activityType) => (
                   <TouchableOpacity
@@ -105,7 +114,7 @@ export const AddActivityModal: React.FC<AddActivityModalProps> = ({
                         },
                       ]}
                     >
-                      {activityType.label}
+                      {typeLabel(activityType.type)}
                     </Text>
                   </TouchableOpacity>
                 ))}
@@ -114,10 +123,14 @@ export const AddActivityModal: React.FC<AddActivityModalProps> = ({
 
             {/* Zeitraum */}
             <View style={styles.field}>
-              <Text style={[styles.label, { color: theme.text }]}>Zeitraum *</Text>
+              <Text style={[styles.label, { color: theme.text }]}>
+                {t('activity.add.periodLabel') as string}
+              </Text>
               <View style={styles.periodRow}>
                 <View style={styles.periodField}>
-                  <Text style={[styles.periodLabel, { color: theme.textSecondary }]}>Von</Text>
+                  <Text style={[styles.periodLabel, { color: theme.textSecondary }]}>
+                    {t('activity.add.from') as string}
+                  </Text>
                   <ScrollView
                     style={[
                       styles.monthPicker,
@@ -158,7 +171,9 @@ export const AddActivityModal: React.FC<AddActivityModalProps> = ({
                 </View>
 
                 <View style={styles.periodField}>
-                  <Text style={[styles.periodLabel, { color: theme.textSecondary }]}>Bis</Text>
+                  <Text style={[styles.periodLabel, { color: theme.textSecondary }]}>
+                    {t('activity.add.to') as string}
+                  </Text>
                   <ScrollView
                     style={[
                       styles.monthPicker,
@@ -204,14 +219,16 @@ export const AddActivityModal: React.FC<AddActivityModalProps> = ({
                 </View>
               </View>
               {rangeError ? (
-                <Text style={[styles.errorText, { color: '#DC143C' }]}>{rangeError}</Text>
+                <Text style={[styles.errorText, { color: theme.error ?? '#DC143C' }]}>
+                  {rangeError}
+                </Text>
               ) : null}
             </View>
 
             {/* Custom Label */}
             <View style={styles.field}>
               <Text style={[styles.label, { color: theme.text }]}>
-                Eigene Bezeichnung (optional)
+                {t('activity.add.customLabel') as string}
               </Text>
               <TextInput
                 style={[
@@ -222,7 +239,9 @@ export const AddActivityModal: React.FC<AddActivityModalProps> = ({
                     borderColor: theme.border,
                   },
                 ]}
-                placeholder={selectedActivityType?.label}
+                placeholder={
+                  selectedActivityType ? typeLabel(selectedActivityType.type) : undefined
+                }
                 placeholderTextColor={theme.textSecondary}
                 value={customLabel}
                 onChangeText={setCustomLabel}
@@ -232,7 +251,9 @@ export const AddActivityModal: React.FC<AddActivityModalProps> = ({
 
           <View style={[styles.footer, { borderTopColor: theme.border }]}>
             <TouchableOpacity style={[styles.button, styles.cancelButton]} onPress={handleCancel}>
-              <Text style={[styles.buttonText, { color: theme.text }]}>Abbrechen</Text>
+              <Text style={[styles.buttonText, { color: theme.text }]}>
+                {t('common.cancel') as string}
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[
@@ -242,7 +263,7 @@ export const AddActivityModal: React.FC<AddActivityModalProps> = ({
               ]}
               onPress={handleAdd}
             >
-              <Text style={styles.addButtonText}>Hinzufügen</Text>
+              <Text style={styles.addButtonText}>{t('common.add') as string}</Text>
             </TouchableOpacity>
           </View>
         </View>

@@ -11,22 +11,21 @@ import {
   Platform,
 } from 'react-native';
 import { useTheme } from '../hooks/useTheme';
+import { useLanguage } from '../contexts/LanguageContext';
 import { PlantLocation, PlantCategory } from '../types';
 import { PLANT_LOCATION_METADATA, PLANT_CATEGORY_METADATA } from '../constants/plantMetadata';
 
-const LOCATION_OPTIONS: { value: PlantLocation; label: string; icon: string }[] = (
+const LOCATION_OPTIONS: { value: PlantLocation; icon: string }[] = (
   Object.keys(PLANT_LOCATION_METADATA) as PlantLocation[]
 ).map((value) => ({
   value,
-  label: PLANT_LOCATION_METADATA[value].de,
   icon: PLANT_LOCATION_METADATA[value].icon,
 }));
 
-const CATEGORY_OPTIONS: { value: PlantCategory; label: string; icon: string }[] = (
+const CATEGORY_OPTIONS: { value: PlantCategory; icon: string }[] = (
   Object.keys(PLANT_CATEGORY_METADATA) as PlantCategory[]
 ).map((value) => ({
   value,
-  label: PLANT_CATEGORY_METADATA[value].de,
   icon: PLANT_CATEGORY_METADATA[value].icon,
 }));
 
@@ -38,6 +37,8 @@ interface AddPlantModalProps {
 
 export const AddPlantModal: React.FC<AddPlantModalProps> = ({ visible, onClose, onAdd }) => {
   const { theme } = useTheme();
+  const { t, language } = useLanguage();
+  const metaLang: 'de' | 'en' = language === 'de' ? 'de' : 'en';
   const [name, setName] = useState('');
   const [notes, setNotes] = useState('');
   const [location, setLocation] = useState<PlantLocation | undefined>(undefined);
@@ -71,12 +72,16 @@ export const AddPlantModal: React.FC<AddPlantModalProps> = ({ visible, onClose, 
         <TouchableOpacity style={styles.backdrop} activeOpacity={1} onPress={handleCancel} />
         <View style={[styles.modal, { backgroundColor: theme.background }]}>
           <View style={[styles.header, { borderBottomColor: theme.border }]}>
-            <Text style={[styles.title, { color: theme.text }]}>Neue Pflanze hinzufügen</Text>
+            <Text style={[styles.title, { color: theme.text }]}>
+              {t('plants.addTitle') as string}
+            </Text>
           </View>
 
           <ScrollView style={styles.content}>
             <View style={styles.field}>
-              <Text style={[styles.label, { color: theme.text }]}>Pflanzenname *</Text>
+              <Text style={[styles.label, { color: theme.text }]}>
+                {t('plants.fieldName') as string} *
+              </Text>
               <TextInput
                 style={[
                   styles.input,
@@ -86,7 +91,7 @@ export const AddPlantModal: React.FC<AddPlantModalProps> = ({ visible, onClose, 
                     borderColor: theme.border,
                   },
                 ]}
-                placeholder="z.B. Tomaten"
+                placeholder={t('plants.fieldNamePlaceholder') as string}
                 placeholderTextColor={theme.textSecondary}
                 value={name}
                 onChangeText={setName}
@@ -95,7 +100,9 @@ export const AddPlantModal: React.FC<AddPlantModalProps> = ({ visible, onClose, 
             </View>
 
             <View style={styles.field}>
-              <Text style={[styles.label, { color: theme.text }]}>Notizen</Text>
+              <Text style={[styles.label, { color: theme.text }]}>
+                {t('plants.fieldNotes') as string}
+              </Text>
               <TextInput
                 style={[
                   styles.input,
@@ -106,7 +113,7 @@ export const AddPlantModal: React.FC<AddPlantModalProps> = ({ visible, onClose, 
                     borderColor: theme.border,
                   },
                 ]}
-                placeholder="z.B. Beliebtes Gemüse für Balkon"
+                placeholder={t('plants.fieldNotesPlaceholder') as string}
                 placeholderTextColor={theme.textSecondary}
                 value={notes}
                 onChangeText={setNotes}
@@ -116,7 +123,9 @@ export const AddPlantModal: React.FC<AddPlantModalProps> = ({ visible, onClose, 
             </View>
 
             <View style={styles.field}>
-              <Text style={[styles.label, { color: theme.text }]}>Standort</Text>
+              <Text style={[styles.label, { color: theme.text }]}>
+                {t('plants.fieldLocation') as string}
+              </Text>
               <View style={styles.locationRow}>
                 {LOCATION_OPTIONS.map((opt) => (
                   <TouchableOpacity
@@ -137,7 +146,7 @@ export const AddPlantModal: React.FC<AddPlantModalProps> = ({ visible, onClose, 
                         { color: location === opt.value ? '#fff' : theme.text },
                       ]}
                     >
-                      {opt.label}
+                      {PLANT_LOCATION_METADATA[opt.value][metaLang]}
                     </Text>
                   </TouchableOpacity>
                 ))}
@@ -145,7 +154,9 @@ export const AddPlantModal: React.FC<AddPlantModalProps> = ({ visible, onClose, 
             </View>
 
             <View style={styles.field}>
-              <Text style={[styles.label, { color: theme.text }]}>Kategorie</Text>
+              <Text style={[styles.label, { color: theme.text }]}>
+                {t('plants.fieldCategory') as string}
+              </Text>
               <View style={styles.locationRow}>
                 {CATEGORY_OPTIONS.map((opt) => (
                   <TouchableOpacity
@@ -166,7 +177,7 @@ export const AddPlantModal: React.FC<AddPlantModalProps> = ({ visible, onClose, 
                         { color: category === opt.value ? '#fff' : theme.text },
                       ]}
                     >
-                      {opt.label}
+                      {PLANT_CATEGORY_METADATA[opt.value][metaLang]}
                     </Text>
                   </TouchableOpacity>
                 ))}
@@ -175,14 +186,16 @@ export const AddPlantModal: React.FC<AddPlantModalProps> = ({ visible, onClose, 
 
             <View style={styles.hint}>
               <Text style={[styles.hintText, { color: theme.textSecondary }]}>
-                Nach dem Hinzufügen kannst du Aktivitäten für die Pflanze erstellen.
+                {t('plants.addHint') as string}
               </Text>
             </View>
           </ScrollView>
 
           <View style={[styles.footer, { borderTopColor: theme.border }]}>
             <TouchableOpacity style={[styles.button, styles.cancelButton]} onPress={handleCancel}>
-              <Text style={[styles.buttonText, { color: theme.text }]}>Abbrechen</Text>
+              <Text style={[styles.buttonText, { color: theme.text }]}>
+                {t('common.cancel') as string}
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[
@@ -194,7 +207,7 @@ export const AddPlantModal: React.FC<AddPlantModalProps> = ({ visible, onClose, 
               onPress={handleAdd}
               disabled={!name.trim()}
             >
-              <Text style={styles.addButtonText}>Hinzufügen</Text>
+              <Text style={styles.addButtonText}>{t('common.add') as string}</Text>
             </TouchableOpacity>
           </View>
         </View>

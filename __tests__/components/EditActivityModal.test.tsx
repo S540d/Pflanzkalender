@@ -18,6 +18,28 @@ jest.mock('../../src/hooks/useTheme', () => ({
   }),
 }));
 
+jest.mock('../../src/contexts/LanguageContext', () => ({
+  useLanguage: () => ({
+    language: 'de',
+    t: (key: string) => {
+      const map: Record<string, string> = {
+        'activity.edit.title': 'Aktivität bearbeiten',
+        'activity.edit.nameLabel': 'Bezeichnung',
+        'activity.edit.periodLabel': 'Zeitraum *',
+        'activity.edit.deleteTitle': 'Aktivität löschen',
+        'activity.edit.deleteMessage': 'Aktivität wirklich löschen?',
+        'activity.edit.rangeError': 'Startmonat darf nicht nach dem Endmonat liegen.',
+        'activity.add.from': 'Von',
+        'activity.add.to': 'Bis',
+        'plants.deleteConfirm': 'Löschen',
+        'common.cancel': 'Abbrechen',
+        'common.save': 'Speichern',
+      };
+      return map[key] ?? key;
+    },
+  }),
+}));
+
 const mockActivity: Activity = {
   id: 'act-1',
   type: 'sow',
