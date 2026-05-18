@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-nati
 import { useTheme } from '../hooks/useTheme';
 import { usePlants } from '../contexts/PlantContext';
 import { useLanguage } from '../contexts/LanguageContext';
-import { CATEGORY_TABS_I18N, CategoryFilter } from '../constants/categoryTabs';
+import { CATEGORY_TABS, CategoryFilter } from '../constants/categoryTabs';
 
 interface ActivityInfo {
   plantName: string;
@@ -113,7 +113,7 @@ export const AgendaScreen: React.FC = () => {
           { borderBottomColor: theme.border, backgroundColor: theme.background },
         ]}
       >
-        {CATEGORY_TABS_I18N.map((tab) => {
+        {CATEGORY_TABS.map((tab) => {
           const isActive = activeCategory === tab.value;
           const label = language === 'de' ? tab.labelDe : tab.labelEn;
           return (

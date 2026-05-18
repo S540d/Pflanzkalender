@@ -48,7 +48,7 @@ describe('AgendaScreen', () => {
 
   it('renders Alle/All category tab', async () => {
     const { findByText } = render(<AgendaScreen />, { wrapper: Wrapper });
-    // CATEGORY_TABS_I18N has Alle/All as first tab
+    // CATEGORY_TABS has Alle/All as first tab
     expect(await findByText(/Alle|All/)).toBeTruthy();
   });
 
