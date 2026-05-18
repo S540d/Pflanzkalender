@@ -1,8 +1,4 @@
-import {
-  CATEGORY_TABS,
-  CATEGORY_TABS_I18N,
-  CategoryFilter,
-} from '../../src/constants/categoryTabs';
+import { CATEGORY_TABS, CategoryFilter } from '../../src/constants/categoryTabs';
 
 describe('categoryTabs Constants', () => {
   describe('CATEGORY_TABS', () => {
@@ -11,10 +7,11 @@ describe('categoryTabs Constants', () => {
       expect(CATEGORY_TABS.length).toBe(4);
     });
 
-    it('has correct tab structure', () => {
+    it('has correct tab structure with i18n labels', () => {
       CATEGORY_TABS.forEach((tab) => {
         expect(tab).toHaveProperty('value');
-        expect(tab).toHaveProperty('label');
+        expect(tab).toHaveProperty('labelDe');
+        expect(tab).toHaveProperty('labelEn');
         expect(tab).toHaveProperty('icon');
         expect(tab).toHaveProperty('color');
       });
@@ -41,60 +38,36 @@ describe('categoryTabs Constants', () => {
       });
     });
 
-    it('has German labels', () => {
-      expect(CATEGORY_TABS[0].label).toBe('Alle');
-      expect(CATEGORY_TABS[1].label).toBe('Nutzpflanzen');
-      expect(CATEGORY_TABS[2].label).toBe('Blumen');
-      expect(CATEGORY_TABS[3].label).toBe('Bäume');
-    });
-  });
-
-  describe('CATEGORY_TABS_I18N', () => {
-    it('exports an array of i18n category tabs', () => {
-      expect(Array.isArray(CATEGORY_TABS_I18N)).toBe(true);
-      expect(CATEGORY_TABS_I18N.length).toBe(4);
+    it('has correct German labels', () => {
+      expect(CATEGORY_TABS[0].labelDe).toBe('Alle');
+      expect(CATEGORY_TABS[1].labelDe).toBe('Nutzpflanzen');
+      expect(CATEGORY_TABS[2].labelDe).toBe('Blumen');
+      expect(CATEGORY_TABS[3].labelDe).toBe('Bäume');
     });
 
-    it('has German and English labels', () => {
-      CATEGORY_TABS_I18N.forEach((tab) => {
-        expect(tab).toHaveProperty('labelDe');
-        expect(tab).toHaveProperty('labelEn');
-        expect(typeof tab.labelDe).toBe('string');
-        expect(typeof tab.labelEn).toBe('string');
-      });
-    });
-
-    it('includes all required categories with i18n', () => {
-      const values = CATEGORY_TABS_I18N.map((tab) => tab.value);
-      expect(values).toContain('all');
-      expect(values).toContain('vegetable');
-      expect(values).toContain('flower');
-      expect(values).toContain('tree');
-    });
-
-    it('has matching icons and colors with CATEGORY_TABS', () => {
-      CATEGORY_TABS_I18N.forEach((tab, index) => {
-        expect(tab.icon).toBe(CATEGORY_TABS[index].icon);
-        expect(tab.color).toBe(CATEGORY_TABS[index].color);
-      });
+    it('has correct English labels', () => {
+      expect(CATEGORY_TABS[0].labelEn).toBe('All');
+      expect(CATEGORY_TABS[1].labelEn).toBe('Vegetables');
+      expect(CATEGORY_TABS[2].labelEn).toBe('Flowers');
+      expect(CATEGORY_TABS[3].labelEn).toBe('Trees');
     });
 
     it('translates all labels correctly', () => {
-      const deTranslations = {
+      const deTranslations: Record<string, string> = {
         all: 'Alle',
         vegetable: 'Nutzpflanzen',
         flower: 'Blumen',
         tree: 'Bäume',
       };
 
-      const enTranslations = {
+      const enTranslations: Record<string, string> = {
         all: 'All',
         vegetable: 'Vegetables',
         flower: 'Flowers',
         tree: 'Trees',
       };
 
-      CATEGORY_TABS_I18N.forEach((tab) => {
+      CATEGORY_TABS.forEach((tab) => {
         expect(tab.labelDe).toBe(deTranslations[tab.value]);
         expect(tab.labelEn).toBe(enTranslations[tab.value]);
       });
@@ -103,7 +76,6 @@ describe('categoryTabs Constants', () => {
 
   describe('CategoryFilter Type', () => {
     it('has 4 valid category filter values', () => {
-      // Runtime check: TypeScript compilation ensures type safety
       const validValues: CategoryFilter[] = ['all', 'vegetable', 'flower', 'tree'];
       expect(validValues.length).toBe(4);
     });
@@ -112,7 +84,6 @@ describe('categoryTabs Constants', () => {
       const tabValues = CATEGORY_TABS.map((tab) => tab.value as CategoryFilter);
       expect(tabValues.length).toBe(4);
 
-      // Each tab value should be a valid CategoryFilter
       const validFilterValues: CategoryFilter[] = ['all', 'vegetable', 'flower', 'tree'];
       tabValues.forEach((value) => {
         expect(validFilterValues).toContain(value);

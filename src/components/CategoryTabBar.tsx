@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useTheme } from '../hooks/useTheme';
+import { useLanguage } from '../contexts/LanguageContext';
 import { CATEGORY_TABS, CategoryFilter } from '../constants/categoryTabs';
 
 interface CategoryTabBarProps {
@@ -13,6 +14,7 @@ export const CategoryTabBar: React.FC<CategoryTabBarProps> = ({
   onCategoryChange,
 }) => {
   const { theme } = useTheme();
+  const { language } = useLanguage();
 
   return (
     <View
@@ -23,6 +25,7 @@ export const CategoryTabBar: React.FC<CategoryTabBarProps> = ({
     >
       {CATEGORY_TABS.map((tab) => {
         const isActive = activeCategory === tab.value;
+        const label = language === 'de' ? tab.labelDe : tab.labelEn;
         return (
           <TouchableOpacity
             key={tab.value}
@@ -46,7 +49,7 @@ export const CategoryTabBar: React.FC<CategoryTabBarProps> = ({
                 },
               ]}
             >
-              {tab.label}
+              {label}
             </Text>
           </TouchableOpacity>
         );
