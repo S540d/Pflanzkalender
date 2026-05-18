@@ -15,6 +15,13 @@ export const SUPPORTED_LANGUAGES: { code: Language; nativeLabel: string }[] = [
   { code: 'pt', nativeLabel: 'Português' },
 ];
 
+// Subset shown in the language picker: only languages where all screens
+// (including ClimateScreen) have full translations. Expand once ClimateScreen
+// is localized for FR/ES/IT/PL/NL/PT (tracked in Issue #83 follow-up).
+export const PICKER_LANGUAGES = SUPPORTED_LANGUAGES.filter((l) =>
+  (['de', 'en'] as Language[]).includes(l.code)
+);
+
 type TranslationValue = string | string[];
 
 interface Translations {

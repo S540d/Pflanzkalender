@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Linking, ScrollView, Alert } from 'react-native';
 import { useTheme } from '../hooks/useTheme';
 import { storageService } from '../services/storage';
-import { useLanguage, SUPPORTED_LANGUAGES } from '../contexts/LanguageContext';
+import { useLanguage, PICKER_LANGUAGES } from '../contexts/LanguageContext';
 
 const APP_VERSION = '1.3.0';
 
@@ -86,7 +86,7 @@ export const SettingsScreen: React.FC = () => {
             {t('settings.languageSection') as string}
           </Text>
           <View style={styles.languageGrid}>
-            {SUPPORTED_LANGUAGES.map((lang) => (
+            {PICKER_LANGUAGES.map((lang) => (
               <TouchableOpacity
                 key={lang.code}
                 style={[
