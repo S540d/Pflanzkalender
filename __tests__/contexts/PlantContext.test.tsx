@@ -6,8 +6,8 @@ const mockGetItem = jest.fn().mockResolvedValue(null);
 const mockSetItem = jest.fn().mockResolvedValue(undefined);
 
 jest.mock('@react-native-async-storage/async-storage', () => ({
-  getItem: (...args: any[]) => mockGetItem(...args),
-  setItem: (...args: any[]) => mockSetItem(...args),
+  getItem: (key: string) => mockGetItem(key),
+  setItem: (key: string, value: string) => mockSetItem(key, value),
   removeItem: jest.fn().mockResolvedValue(undefined),
   multiRemove: jest.fn().mockResolvedValue(undefined),
 }));
@@ -16,7 +16,7 @@ const wrapper = ({ children }: { children: React.ReactNode }) => (
   <PlantProvider>{children}</PlantProvider>
 );
 
-const waitForLoaded = async (result: any) => {
+const waitForLoaded = async (result: { current: { loading: boolean } }) => {
   await waitFor(() => expect(result.current.loading).toBe(false), { timeout: 3000 });
 };
 

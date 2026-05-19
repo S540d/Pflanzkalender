@@ -21,7 +21,7 @@ export const PlantRow: React.FC<PlantRowProps> = ({
   plant,
   onPressActivity,
   onPressMonth,
-  onPressPlant,
+  onPressPlant: _onPressPlant,
   totalMonths = 24,
   currentHalfMonth,
   monthOffset = 0,

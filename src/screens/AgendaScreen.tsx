@@ -56,6 +56,9 @@ export const AgendaScreen: React.FC = () => {
     return activities.sort((a, b) => a.plantName.localeCompare(b.plantName, 'de'));
   };
 
+  // getActivitiesForMonth closes over filteredPlants which is already listed as a dep;
+  // adding the function itself would cause an infinite re-render cycle.
+  /* eslint-disable react-hooks/exhaustive-deps */
   const previousActivities = useMemo(
     () => getActivitiesForMonth(previousMonth),
     [filteredPlants, previousMonth]
@@ -68,8 +71,9 @@ export const AgendaScreen: React.FC = () => {
     () => getActivitiesForMonth(nextMonth),
     [filteredPlants, nextMonth]
   );
+  /* eslint-enable react-hooks/exhaustive-deps */
 
-  const monthNames = t('agenda.months') as any;
+  const monthNames = t('agenda.months') as string[];
 
   const renderColumn = (title: string, activities: ActivityInfo[], monthIndex: number) => (
     <View style={styles.column}>
