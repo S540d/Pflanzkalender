@@ -29,9 +29,7 @@ export const PlantManagementScreen: React.FC = () => {
 
   const sortedPlants = useMemo(() => {
     return [...plants].sort((a, b) =>
-      getPlantDisplayName(a.name, language).localeCompare(
-        getPlantDisplayName(b.name, language)
-      )
+      getPlantDisplayName(a.name, language).localeCompare(getPlantDisplayName(b.name, language))
     );
   }, [plants, language]);
 
