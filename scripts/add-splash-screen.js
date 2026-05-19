@@ -55,20 +55,28 @@ const splashHtml = `
         splash.classList.add('fade-out');
         setTimeout(function () { splash.style.display = 'none'; }, 350);
       }
-      // Hide once React has mounted content into the root
-      var root = document.getElementById('root') || document.body;
-      var observer = new MutationObserver(function () {
-        if (root.children.length > 1 || (root.id === 'root' && root.children.length > 0)) {
-          observer.disconnect();
-          hideSplash();
-        }
-      });
-      observer.observe(root, { childList: true });
+      // Hide once React has mounted content into the root.
+      // Only observe #root — using document.body as fallback would fire
+      // immediately because the body already contains the splash div.
+      var root = document.getElementById('root');
+      if (root) {
+        var observer = new MutationObserver(function () {
+          if (root.children.length > 0) {
+            observer.disconnect();
+            hideSplash();
+          }
+        });
+        observer.observe(root, { childList: true });
+      }
       // Fallback: hide after 4 s regardless
       setTimeout(hideSplash, 4000);
     })();
   </script>`;
 
-html = html.replace('<body>', '<body>' + splashHtml);
-fs.writeFileSync(indexPath, html, 'utf8');
+const updatedHtml = html.replace('<body>', '<body>' + splashHtml);
+if (updatedHtml === html) {
+  console.error('✗ Could not inject splash screen: <body> tag not found in index.html');
+  process.exit(1);
+}
+fs.writeFileSync(indexPath, updatedHtml, 'utf8');
 console.log('✓ PWA splash screen injected into index.html');
