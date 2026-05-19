@@ -237,6 +237,7 @@ Vollständige Roadmap: https://github.com/S540d/Pflanzkalender/issues/47
 - **#47** Roadmap: Phase 4b (Expo Router) + Phase 5 (Play Store)
 - **#48** Klimazonen-Unterstützung – unterschiedliche Aktivitätszeiträume je Region (Ziel: v2.0.0)
 - **#108** CI `Lint & Format Check` schlägt fehl (lokal 45/50 Warnings + Prettier OK, aber CI failed) – betrifft mehrere PRs; auf main einmalig lösen
+- **PR #110** 🔄 Release-Preparation für v1.3.1: Version-Bump + CLAUDE.md Update (pending CI)
 
 ---
 
