@@ -7,7 +7,7 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "build": "expo export --platform web && node scripts/add-pwa-meta-tags.js",
+    "build": "expo export --platform web && node scripts/add-pwa-meta-tags.js && node scripts/add-splash-screen.js",
     "deploy": "bash scripts/deploy.sh",
     "validate": "./scripts/validate-release.sh",
     "prepare": "husky install",
