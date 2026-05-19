@@ -57,60 +57,35 @@ describe('EditPlantModal Component', () => {
 
   it('renders when visible is true', () => {
     const { getByText } = render(
-      <EditPlantModal
-        visible={true}
-        plant={mockPlant}
-        onClose={mockOnClose}
-        onSave={mockOnSave}
-      />
+      <EditPlantModal visible={true} plant={mockPlant} onClose={mockOnClose} onSave={mockOnSave} />
     );
     expect(getByText('Pflanze bearbeiten')).toBeTruthy();
   });
 
   it('does not render content when visible is false', () => {
     const { queryByText } = render(
-      <EditPlantModal
-        visible={false}
-        plant={mockPlant}
-        onClose={mockOnClose}
-        onSave={mockOnSave}
-      />
+      <EditPlantModal visible={false} plant={mockPlant} onClose={mockOnClose} onSave={mockOnSave} />
     );
     expect(queryByText('Pflanze bearbeiten')).toBeNull();
   });
 
   it('pre-fills the name input with plant name', () => {
     const { getByDisplayValue } = render(
-      <EditPlantModal
-        visible={true}
-        plant={mockPlant}
-        onClose={mockOnClose}
-        onSave={mockOnSave}
-      />
+      <EditPlantModal visible={true} plant={mockPlant} onClose={mockOnClose} onSave={mockOnSave} />
     );
     expect(getByDisplayValue('Tomate')).toBeTruthy();
   });
 
   it('pre-fills the notes input with plant notes', () => {
     const { getByDisplayValue } = render(
-      <EditPlantModal
-        visible={true}
-        plant={mockPlant}
-        onClose={mockOnClose}
-        onSave={mockOnSave}
-      />
+      <EditPlantModal visible={true} plant={mockPlant} onClose={mockOnClose} onSave={mockOnSave} />
     );
     expect(getByDisplayValue('Sommergemüse')).toBeTruthy();
   });
 
   it('renders location and category fields', () => {
     const { getByText } = render(
-      <EditPlantModal
-        visible={true}
-        plant={mockPlant}
-        onClose={mockOnClose}
-        onSave={mockOnSave}
-      />
+      <EditPlantModal visible={true} plant={mockPlant} onClose={mockOnClose} onSave={mockOnSave} />
     );
     expect(getByText('Standort')).toBeTruthy();
     expect(getByText('Kategorie')).toBeTruthy();
@@ -118,12 +93,7 @@ describe('EditPlantModal Component', () => {
 
   it('renders Speichern and Abbrechen buttons', () => {
     const { getByText } = render(
-      <EditPlantModal
-        visible={true}
-        plant={mockPlant}
-        onClose={mockOnClose}
-        onSave={mockOnSave}
-      />
+      <EditPlantModal visible={true} plant={mockPlant} onClose={mockOnClose} onSave={mockOnSave} />
     );
     expect(getByText('Speichern')).toBeTruthy();
     expect(getByText('Abbrechen')).toBeTruthy();
@@ -131,12 +101,7 @@ describe('EditPlantModal Component', () => {
 
   it('calls onClose when Abbrechen is pressed', () => {
     const { getByText } = render(
-      <EditPlantModal
-        visible={true}
-        plant={mockPlant}
-        onClose={mockOnClose}
-        onSave={mockOnSave}
-      />
+      <EditPlantModal visible={true} plant={mockPlant} onClose={mockOnClose} onSave={mockOnSave} />
     );
     fireEvent.press(getByText('Abbrechen'));
     expect(mockOnClose).toHaveBeenCalledTimes(1);
@@ -144,30 +109,17 @@ describe('EditPlantModal Component', () => {
 
   it('calls onSave with updated name when Speichern is pressed', () => {
     const { getByDisplayValue, getByText } = render(
-      <EditPlantModal
-        visible={true}
-        plant={mockPlant}
-        onClose={mockOnClose}
-        onSave={mockOnSave}
-      />
+      <EditPlantModal visible={true} plant={mockPlant} onClose={mockOnClose} onSave={mockOnSave} />
     );
     fireEvent.changeText(getByDisplayValue('Tomate'), 'Gurke');
     fireEvent.press(getByText('Speichern'));
-    expect(mockOnSave).toHaveBeenCalledWith(
-      'plant-1',
-      expect.objectContaining({ name: 'Gurke' })
-    );
+    expect(mockOnSave).toHaveBeenCalledWith('plant-1', expect.objectContaining({ name: 'Gurke' }));
     expect(mockOnClose).toHaveBeenCalledTimes(1);
   });
 
   it('does not call onSave when name is empty', () => {
     const { getByDisplayValue, getByText } = render(
-      <EditPlantModal
-        visible={true}
-        plant={mockPlant}
-        onClose={mockOnClose}
-        onSave={mockOnSave}
-      />
+      <EditPlantModal visible={true} plant={mockPlant} onClose={mockOnClose} onSave={mockOnSave} />
     );
     fireEvent.changeText(getByDisplayValue('Tomate'), '');
     fireEvent.press(getByText('Speichern'));
@@ -176,12 +128,7 @@ describe('EditPlantModal Component', () => {
 
   it('calls onSave with trimmed name and notes', () => {
     const { getByDisplayValue, getByText } = render(
-      <EditPlantModal
-        visible={true}
-        plant={mockPlant}
-        onClose={mockOnClose}
-        onSave={mockOnSave}
-      />
+      <EditPlantModal visible={true} plant={mockPlant} onClose={mockOnClose} onSave={mockOnSave} />
     );
     fireEvent.changeText(getByDisplayValue('Tomate'), '  Basilikum  ');
     fireEvent.changeText(getByDisplayValue('Sommergemüse'), '  Kräuter  ');
@@ -196,12 +143,7 @@ describe('EditPlantModal Component', () => {
 
   it('syncs state when plant prop changes on visibility toggle', () => {
     const { rerender, getByDisplayValue } = render(
-      <EditPlantModal
-        visible={true}
-        plant={mockPlant}
-        onClose={mockOnClose}
-        onSave={mockOnSave}
-      />
+      <EditPlantModal visible={true} plant={mockPlant} onClose={mockOnClose} onSave={mockOnSave} />
     );
     const updatedPlant: Plant = { ...mockPlant, name: 'Paprika', notes: '' };
     rerender(
