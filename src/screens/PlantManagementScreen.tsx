@@ -81,7 +81,10 @@ export const PlantManagementScreen: React.FC = () => {
           <Text style={[styles.title, { color: theme.text }]}>{t('plants.title') as string}</Text>
 
           <TextInput
-            style={[styles.searchInput, { color: theme.text, borderColor: theme.border, backgroundColor: theme.surface }]}
+            style={[
+              styles.searchInput,
+              { color: theme.text, borderColor: theme.border, backgroundColor: theme.surface },
+            ]}
             placeholder={t('plants.search') as string}
             placeholderTextColor={theme.textSecondary}
             value={searchQuery}
@@ -112,7 +115,9 @@ export const PlantManagementScreen: React.FC = () => {
                   ]}
                 >
                   <View style={styles.plantInfo}>
-                    <Text style={[styles.plantName, { color: theme.text }]}>{getPlantDisplayName(plant.name, language)}</Text>
+                    <Text style={[styles.plantName, { color: theme.text }]}>
+                      {getPlantDisplayName(plant.name, language)}
+                    </Text>
                     <View style={styles.plantMeta}>
                       {plant.category && (
                         <Text style={[styles.plantMetaText, { color: theme.textSecondary }]}>

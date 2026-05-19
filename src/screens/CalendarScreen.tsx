@@ -102,7 +102,12 @@ export const CalendarScreen: React.FC = () => {
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       <CategoryTabBar activeCategory={activeCategory} onCategoryChange={setActiveCategory} />
 
-      <View style={[styles.zoomBar, { backgroundColor: theme.background, borderBottomColor: theme.border }]}>
+      <View
+        style={[
+          styles.zoomBar,
+          { backgroundColor: theme.background, borderBottomColor: theme.border },
+        ]}
+      >
         <TouchableOpacity
           testID="zoom-out"
           accessibilityRole="button"
@@ -115,7 +120,9 @@ export const CalendarScreen: React.FC = () => {
         >
           <Text style={[styles.zoomButtonText, { color: theme.text }]}>−</Text>
         </TouchableOpacity>
-        <Text testID="zoom-label" style={[styles.zoomLabel, { color: theme.textSecondary }]}>{zoomLevel === 1 ? '75%' : zoomLevel === 2 ? '100%' : '133%'}</Text>
+        <Text testID="zoom-label" style={[styles.zoomLabel, { color: theme.textSecondary }]}>
+          {zoomLevel === 1 ? '75%' : zoomLevel === 2 ? '100%' : '133%'}
+        </Text>
         <TouchableOpacity
           testID="zoom-in"
           accessibilityRole="button"
