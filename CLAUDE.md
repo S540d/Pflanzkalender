@@ -30,12 +30,12 @@ Deploy: GitHub Pages via `gh-pages` unter `/Pflanzkalender/`
 
 ---
 
-## Aktuelle Version: 1.3.0 (main)
+## Aktuelle Version: 1.3.1 (main)
 
-**Stand 2026-05-19:** Splash Screen (Issue #99, PR #106) gemergt. Bekanntes CI-Problem: `Lint & Format Check` schlägt fehl (Issue #108).
+**Stand 2026-05-19:** User-Feedback-Features (Issue #104, PR #107) gemergt: Kalender-Zoom, Pflanzen-Übersetzungen, Suchleiste, Tab-Overflow-Fix.
 
-- **main branch:** v1.3.0 mit Phase 1 + Phase 2 (vollständig, inkl. Icon-Resizing) + Phase 3 (254 Tests, 86.83 % Coverage) + Phase 4a (ESLint 9, Prettier) + Issue #56 Phase 3 (TypeScript-Cleanup, `TouchableWebProps`, Duplikat-Beseitigung) + Klima-Reiter (Issue #55, PR #80) + Splash Screen (Issue #99, PR #106)
-- **testing branch:** v1.3.0 (identisch mit main)
+- **main branch:** v1.3.1 mit Phase 1 + Phase 2 (vollständig, inkl. Icon-Resizing) + Phase 3 (254 Tests, 86.83 % Coverage) + Phase 4a (ESLint 9, Prettier) + Issue #56 Phase 3 (TypeScript-Cleanup, `TouchableWebProps`, Duplikat-Beseitigung) + Klima-Reiter (Issue #55, PR #80) + Splash Screen (Issue #99, PR #106) + User-Feedback (Issue #104, PR #107)
+- **testing branch:** v1.3.1 (identisch mit main)
 
 Versions-Stellen: `package.json`, `app.json`, `src/screens/SettingsScreen.tsx` – immer alle drei synchron halten, sonst schlägt CI fehl.
 
@@ -61,6 +61,7 @@ src/
     defaultPlants.ts           # 32 vordefinierte Pflanzen mit Aktivitäten, Standort, Kategorie
     activityTypes.ts           # Aktivitätstypen mit Farben
     plantMetadata.ts           # PLANT_LOCATION_METADATA + PLANT_CATEGORY_METADATA (Single Source of Truth)
+    plantNames.ts              # PLANT_NAME_EN + getPlantDisplayName() – DE↔EN Übersetzung für Pflanzennamen
     theme.ts                   # Farbpalette
   services/
     storage.ts                 # AsyncStorage Wrapper
@@ -243,6 +244,7 @@ Vollständige Roadmap: https://github.com/S540d/Pflanzkalender/issues/47
 
 | Was                                         | Wann       | Details                                                                                                                                                |
 | ------------------------------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **PR #107:** Issue #104 – User-Feedback     | 2026-05-19 | ✅ main `f8a65f5`: Kalender-Zoom (3 Stufen), Pflanzen-Übersetzungen (`plantNames.ts`), Suchleiste in Pflanzenverwaltung, Tab-Overflow-Fix               |
 | **PR #106:** Issue #99 – Splash Screen      | 2026-05-19 | ✅ main `4b9be2e`: `app.json` splash+adaptive-icon `#1a7a4a`, `manifest.json` background, `scripts/add-splash-screen.js`, `twa-manifest.template.json` |
 | **fix:** PWA Icon-Resizing                  | 2026-05-14 | ✅ main `4e66719`: Icons auf 192×192 / 512×512 resized (waren 1024×1024); generate-icons.js prüft jetzt Pixeldimensionen                               |
 | **PR #80:** Issue #55 – Klima-Reiter        | 2026-05-11 | ✅ main `f7c59af`: `ClimateScreen.tsx` mit 15 Empfehlungen, 4 Filter-Tabs, Trocken-/Hitze-Bewertung, DE/EN, Dark-Mode                                  |
