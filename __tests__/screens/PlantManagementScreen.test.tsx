@@ -109,4 +109,136 @@ describe('PlantManagementScreen', () => {
   it('is a valid React component', () => {
     expect(typeof PlantManagementScreen).toBe('function');
   });
+
+  it('filters plants by German name when search query matches', async () => {
+    const AsyncStorage = require('@react-native-async-storage/async-storage');
+    const testPlants = JSON.stringify([
+      {
+        id: 'plant-tom',
+        name: 'Tomaten',
+        activities: [],
+        isDefault: false,
+        userId: null,
+        notes: '',
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      },
+      {
+        id: 'plant-erd',
+        name: 'Erdbeeren',
+        activities: [],
+        isDefault: false,
+        userId: null,
+        notes: '',
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      },
+    ]);
+
+    AsyncStorage.getItem.mockImplementation((key: string) =>
+      key === '@Pflanzkalender:plants' ? Promise.resolve(testPlants) : Promise.resolve(null)
+    );
+
+    const { findByText, queryByText, getByPlaceholderText } = render(
+      <PlantManagementScreen />,
+      { wrapper: Wrapper }
+    );
+
+    await findByText('Tomaten');
+
+    const searchInput = getByPlaceholderText(/suchen|Search/i);
+    fireEvent.changeText(searchInput, 'tom');
+
+    await waitFor(() => {
+      expect(queryByText('Tomaten')).toBeTruthy();
+      expect(queryByText('Erdbeeren')).toBeNull();
+    });
+
+    AsyncStorage.getItem.mockResolvedValue(null);
+  });
+
+  it('shows no-results message when search yields no matches', async () => {
+    const AsyncStorage = require('@react-native-async-storage/async-storage');
+    const testPlants = JSON.stringify([
+      {
+        id: 'plant-tom',
+        name: 'Tomaten',
+        activities: [],
+        isDefault: false,
+        userId: null,
+        notes: '',
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      },
+    ]);
+
+    AsyncStorage.getItem.mockImplementation((key: string) =>
+      key === '@Pflanzkalender:plants' ? Promise.resolve(testPlants) : Promise.resolve(null)
+    );
+
+    const { findByText, getByPlaceholderText } = render(
+      <PlantManagementScreen />,
+      { wrapper: Wrapper }
+    );
+
+    await findByText('Tomaten');
+
+    const searchInput = getByPlaceholderText(/suchen|Search/i);
+    fireEvent.changeText(searchInput, 'xyzxyz');
+
+    await waitFor(() => {
+      expect(findByText(/Keine Pflanzen gefunden|No plants found/)).toBeTruthy();
+    });
+
+    AsyncStorage.getItem.mockResolvedValue(null);
+  });
+
+  it('filter matches English display name when language is EN', async () => {
+    const AsyncStorage = require('@react-native-async-storage/async-storage');
+    const testPlants = JSON.stringify([
+      {
+        id: 'plant-tom',
+        name: 'Tomaten',
+        activities: [],
+        isDefault: true,
+        userId: null,
+        notes: '',
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      },
+      {
+        id: 'plant-erd',
+        name: 'Erdbeeren',
+        activities: [],
+        isDefault: true,
+        userId: null,
+        notes: '',
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      },
+    ]);
+
+    AsyncStorage.getItem.mockImplementation((key: string) => {
+      if (key === '@Pflanzkalender:plants') return Promise.resolve(testPlants);
+      if (key === 'language') return Promise.resolve('en');
+      return Promise.resolve(null);
+    });
+
+    const { findByText, queryByText, getByPlaceholderText } = render(
+      <PlantManagementScreen />,
+      { wrapper: Wrapper }
+    );
+
+    await findByText('Tomatoes');
+
+    const searchInput = getByPlaceholderText(/Search/i);
+    fireEvent.changeText(searchInput, 'tom');
+
+    await waitFor(() => {
+      expect(queryByText('Tomatoes')).toBeTruthy();
+      expect(queryByText('Strawberries')).toBeNull();
+    });
+
+    AsyncStorage.getItem.mockResolvedValue(null);
+  });
 });

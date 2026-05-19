@@ -104,14 +104,24 @@ export const CalendarScreen: React.FC = () => {
 
       <View style={[styles.zoomBar, { backgroundColor: theme.background, borderBottomColor: theme.border }]}>
         <TouchableOpacity
+          testID="zoom-out"
+          accessibilityRole="button"
+          accessibilityLabel="Zoom out"
+          accessibilityHint="Reduces calendar cell size to show more months"
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           style={[styles.zoomButton, { opacity: zoomLevel <= 1 ? 0.3 : 1 }]}
           onPress={() => setZoomLevel((l) => Math.max(1, l - 1))}
           disabled={zoomLevel <= 1}
         >
           <Text style={[styles.zoomButtonText, { color: theme.text }]}>−</Text>
         </TouchableOpacity>
-        <Text style={[styles.zoomLabel, { color: theme.textSecondary }]}>{zoomLevel === 1 ? '75%' : zoomLevel === 2 ? '100%' : '133%'}</Text>
+        <Text testID="zoom-label" style={[styles.zoomLabel, { color: theme.textSecondary }]}>{zoomLevel === 1 ? '75%' : zoomLevel === 2 ? '100%' : '133%'}</Text>
         <TouchableOpacity
+          testID="zoom-in"
+          accessibilityRole="button"
+          accessibilityLabel="Zoom in"
+          accessibilityHint="Increases calendar cell size for easier tapping"
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           style={[styles.zoomButton, { opacity: zoomLevel >= 3 ? 0.3 : 1 }]}
           onPress={() => setZoomLevel((l) => Math.min(3, l + 1))}
           disabled={zoomLevel >= 3}

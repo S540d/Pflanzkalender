@@ -1,3 +1,5 @@
+import { Language } from '../contexts/LanguageContext';
+
 export const PLANT_NAME_EN: Record<string, string> = {
   'Tomaten': 'Tomatoes',
   'Erdbeeren': 'Strawberries',
@@ -33,7 +35,7 @@ export const PLANT_NAME_EN: Record<string, string> = {
   'Haselnuss': 'Hazelnut',
 };
 
-export function getPlantDisplayName(name: string, language: string): string {
+export function getPlantDisplayName(name: string, language: Language): string {
   if (language === 'de') return name;
   return PLANT_NAME_EN[name] ?? name;
 }

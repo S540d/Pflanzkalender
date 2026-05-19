@@ -28,8 +28,12 @@ export const PlantManagementScreen: React.FC = () => {
   const metaLang: 'de' | 'en' = language === 'de' ? 'de' : 'en';
 
   const sortedPlants = useMemo(() => {
-    return [...plants].sort((a, b) => a.name.localeCompare(b.name, 'de'));
-  }, [plants]);
+    return [...plants].sort((a, b) =>
+      getPlantDisplayName(a.name, language).localeCompare(
+        getPlantDisplayName(b.name, language)
+      )
+    );
+  }, [plants, language]);
 
   const filteredPlants = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
@@ -94,7 +98,9 @@ export const PlantManagementScreen: React.FC = () => {
           <View style={styles.plantList}>
             {filteredPlants.length === 0 ? (
               <Text style={[styles.emptyText, { color: theme.textSecondary }]}>
-                {t('plants.empty') as string}
+                {sortedPlants.length === 0
+                  ? (t('plants.empty') as string)
+                  : (t('plants.noResults') as string)}
               </Text>
             ) : (
               filteredPlants.map((plant) => (
