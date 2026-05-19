@@ -14,6 +14,7 @@ import { useTheme } from '../hooks/useTheme';
 import { useLanguage } from '../contexts/LanguageContext';
 import { Plant, PlantLocation, PlantCategory } from '../types';
 import { PLANT_LOCATION_METADATA, PLANT_CATEGORY_METADATA } from '../constants/plantMetadata';
+import { getPlantDisplayName } from '../constants/plantNames';
 
 const LOCATION_OPTIONS: { value: PlantLocation; icon: string }[] = (
   Object.keys(PLANT_LOCATION_METADATA) as PlantLocation[]
@@ -45,23 +46,28 @@ export const EditPlantModal: React.FC<EditPlantModalProps> = ({
   const { theme } = useTheme();
   const { t, language } = useLanguage();
   const metaLang: 'de' | 'en' = language === 'de' ? 'de' : 'en';
-  const [name, setName] = useState(plant.name);
+  const [name, setName] = useState(getPlantDisplayName(plant.name, language));
   const [notes, setNotes] = useState(plant.notes ?? '');
   const [location, setLocation] = useState<PlantLocation | undefined>(plant.location);
   const [category, setCategory] = useState<PlantCategory | undefined>(plant.category);
 
   useEffect(() => {
     if (visible) {
-      setName(plant.name);
+      setName(getPlantDisplayName(plant.name, language));
       setNotes(plant.notes ?? '');
       setLocation(plant.location);
       setCategory(plant.category);
     }
-  }, [visible, plant]);
+  }, [visible, plant, language]);
 
   const handleSave = () => {
     if (name.trim()) {
-      onSave(plant.id, { name: name.trim(), notes: notes.trim(), location, category });
+      onSave(plant.id, {
+        name: plant.isDefault ? plant.name : name.trim(),
+        notes: notes.trim(),
+        location,
+        category,
+      });
       onClose();
     }
   };
@@ -94,14 +100,15 @@ export const EditPlantModal: React.FC<EditPlantModalProps> = ({
                   styles.input,
                   {
                     backgroundColor: theme.surface,
-                    color: theme.text,
+                    color: plant.isDefault ? theme.textSecondary : theme.text,
                     borderColor: theme.border,
                   },
                 ]}
                 placeholderTextColor={theme.textSecondary}
                 value={name}
-                onChangeText={setName}
-                autoFocus
+                onChangeText={plant.isDefault ? undefined : setName}
+                editable={!plant.isDefault}
+                autoFocus={!plant.isDefault}
               />
             </View>
 

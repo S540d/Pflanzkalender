@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useRef } from 'react';
-import { View, StyleSheet, Dimensions, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Dimensions, ScrollView } from 'react-native';
 import { useTheme } from '../hooks/useTheme';
 import { useLanguage } from '../contexts/LanguageContext';
 import { usePlants } from '../contexts/PlantContext';
@@ -21,11 +21,15 @@ export const CalendarScreen: React.FC = () => {
   const [selectedActivityId, setSelectedActivityId] = useState<string | null>(null);
   const [selectedMonth, setSelectedMonth] = useState(0);
   const [activeCategory, setActiveCategory] = useState<CategoryFilter>('all');
+  const [zoomLevel, setZoomLevel] = useState(2);
   const fixedScrollRef = useRef<ScrollView>(null);
   const headerScrollRef = useRef<ScrollView>(null);
 
   const { width, height } = Dimensions.get('window');
   const isPortrait = height > width;
+
+  const ZOOM_LEVELS = isPortrait ? [40, 60, 80] : [28, 40, 56];
+  const cellWidth = ZOOM_LEVELS[zoomLevel - 1] ?? ZOOM_LEVELS[1];
 
   const months = useMemo(() => {
     const shortNames = t('calendar.months.short') as string[];
@@ -98,10 +102,46 @@ export const CalendarScreen: React.FC = () => {
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       <CategoryTabBar activeCategory={activeCategory} onCategoryChange={setActiveCategory} />
 
+      <View
+        style={[
+          styles.zoomBar,
+          { backgroundColor: theme.background, borderBottomColor: theme.border },
+        ]}
+      >
+        <TouchableOpacity
+          testID="zoom-out"
+          accessibilityRole="button"
+          accessibilityLabel="Zoom out"
+          accessibilityHint="Reduces calendar cell size to show more months"
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          style={[styles.zoomButton, { opacity: zoomLevel <= 1 ? 0.3 : 1 }]}
+          onPress={() => setZoomLevel((l) => Math.max(1, l - 1))}
+          disabled={zoomLevel <= 1}
+        >
+          <Text style={[styles.zoomButtonText, { color: theme.text }]}>−</Text>
+        </TouchableOpacity>
+        <Text testID="zoom-label" style={[styles.zoomLabel, { color: theme.textSecondary }]}>
+          {zoomLevel === 1 ? '75%' : zoomLevel === 2 ? '100%' : '133%'}
+        </Text>
+        <TouchableOpacity
+          testID="zoom-in"
+          accessibilityRole="button"
+          accessibilityLabel="Zoom in"
+          accessibilityHint="Increases calendar cell size for easier tapping"
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          style={[styles.zoomButton, { opacity: zoomLevel >= 3 ? 0.3 : 1 }]}
+          onPress={() => setZoomLevel((l) => Math.min(3, l + 1))}
+          disabled={zoomLevel >= 3}
+        >
+          <Text style={[styles.zoomButtonText, { color: theme.text }]}>+</Text>
+        </TouchableOpacity>
+      </View>
+
       <TableHeader
         months={months}
         isPortrait={isPortrait}
         currentHalfMonth={currentHalfMonth}
+        cellWidth={cellWidth}
         headerScrollRef={headerScrollRef}
       />
 
@@ -110,6 +150,7 @@ export const CalendarScreen: React.FC = () => {
         isPortrait={isPortrait}
         currentHalfMonth={currentHalfMonth}
         months={months}
+        cellWidth={cellWidth}
         onPressActivity={handlePressActivity}
         onPressMonth={handlePressMonth}
         fixedScrollRef={fixedScrollRef}
@@ -144,5 +185,30 @@ export const CalendarScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  zoomBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderBottomWidth: 1,
+    gap: 8,
+  },
+  zoomButton: {
+    width: 28,
+    height: 28,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  zoomButtonText: {
+    fontSize: 18,
+    fontWeight: '600',
+    lineHeight: 22,
+  },
+  zoomLabel: {
+    fontSize: 11,
+    minWidth: 36,
+    textAlign: 'center',
   },
 });

@@ -1,5 +1,13 @@
 import React, { useState, useMemo } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  Alert,
+  TextInput,
+} from 'react-native';
 import { useTheme } from '../hooks/useTheme';
 import { usePlants } from '../contexts/PlantContext';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -7,6 +15,7 @@ import { AddPlantModal } from '../components/AddPlantModal';
 import { EditPlantModal } from '../components/EditPlantModal';
 import { Plant, PlantLocation, PlantCategory } from '../types';
 import { PLANT_LOCATION_METADATA, PLANT_CATEGORY_METADATA } from '../constants/plantMetadata';
+import { getPlantDisplayName } from '../constants/plantNames';
 
 export const PlantManagementScreen: React.FC = () => {
   const { theme } = useTheme();
@@ -14,13 +23,26 @@ export const PlantManagementScreen: React.FC = () => {
   const { t, language } = useLanguage();
   const [showAddPlant, setShowAddPlant] = useState(false);
   const [editingPlant, setEditingPlant] = useState<Plant | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
   // Metadata objects only have 'de' and 'en' — all other languages fall back to 'en'
   const metaLang: 'de' | 'en' = language === 'de' ? 'de' : 'en';
 
-  // Sortiere Pflanzen alphabetisch
   const sortedPlants = useMemo(() => {
-    return [...plants].sort((a, b) => a.name.localeCompare(b.name, 'de'));
-  }, [plants]);
+    return [...plants].sort((a, b) =>
+      getPlantDisplayName(a.name, language).localeCompare(
+        getPlantDisplayName(b.name, language)
+      )
+    );
+  }, [plants, language]);
+
+  const filteredPlants = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return sortedPlants;
+    return sortedPlants.filter((plant) => {
+      const display = getPlantDisplayName(plant.name, language).toLowerCase();
+      return display.includes(q) || plant.name.toLowerCase().includes(q);
+    });
+  }, [sortedPlants, searchQuery, language]);
 
   const handleAddPlant = (
     name: string,
@@ -58,6 +80,17 @@ export const PlantManagementScreen: React.FC = () => {
         <View style={styles.content}>
           <Text style={[styles.title, { color: theme.text }]}>{t('plants.title') as string}</Text>
 
+          <TextInput
+            style={[
+              styles.searchInput,
+              { color: theme.text, borderColor: theme.border, backgroundColor: theme.surface },
+            ]}
+            placeholder={t('plants.search') as string}
+            placeholderTextColor={theme.textSecondary}
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+          />
+
           <TouchableOpacity
             style={[styles.addButton, { backgroundColor: theme.primary }]}
             onPress={() => setShowAddPlant(true)}
@@ -66,12 +99,14 @@ export const PlantManagementScreen: React.FC = () => {
           </TouchableOpacity>
 
           <View style={styles.plantList}>
-            {sortedPlants.length === 0 ? (
+            {filteredPlants.length === 0 ? (
               <Text style={[styles.emptyText, { color: theme.textSecondary }]}>
-                {t('plants.empty') as string}
+                {sortedPlants.length === 0
+                  ? (t('plants.empty') as string)
+                  : (t('plants.noResults') as string)}
               </Text>
             ) : (
-              sortedPlants.map((plant) => (
+              filteredPlants.map((plant) => (
                 <View
                   key={plant.id}
                   style={[
@@ -80,7 +115,9 @@ export const PlantManagementScreen: React.FC = () => {
                   ]}
                 >
                   <View style={styles.plantInfo}>
-                    <Text style={[styles.plantName, { color: theme.text }]}>{plant.name}</Text>
+                    <Text style={[styles.plantName, { color: theme.text }]}>
+                      {getPlantDisplayName(plant.name, language)}
+                    </Text>
                     <View style={styles.plantMeta}>
                       {plant.category && (
                         <Text style={[styles.plantMetaText, { color: theme.textSecondary }]}>
@@ -169,6 +206,13 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     marginBottom: 20,
     textAlign: 'center',
+  },
+  searchInput: {
+    padding: 12,
+    borderRadius: 10,
+    borderWidth: 1,
+    fontSize: 15,
+    marginBottom: 16,
   },
   addButton: {
     padding: 16,
