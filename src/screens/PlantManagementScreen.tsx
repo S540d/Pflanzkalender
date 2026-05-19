@@ -111,6 +111,8 @@ export const PlantManagementScreen: React.FC = () => {
                         { backgroundColor: theme.surface, borderColor: theme.border },
                       ]}
                       onPress={() => setEditingPlant(plant)}
+                      accessibilityLabel={`${t('plants.editTitle') as string}: ${plant.name}`}
+                      accessibilityRole="button"
                     >
                       <Text style={styles.actionButtonText}>✏️</Text>
                     </TouchableOpacity>
@@ -120,6 +122,8 @@ export const PlantManagementScreen: React.FC = () => {
                         { backgroundColor: '#ff4444', borderColor: '#ff4444' },
                       ]}
                       onPress={() => handleDeletePlant(plant.id, plant.name)}
+                      accessibilityLabel={`${t('plants.deleteTitle') as string}: ${plant.name}`}
+                      accessibilityRole="button"
                     >
                       <Text style={styles.actionButtonText}>🗑️</Text>
                     </TouchableOpacity>

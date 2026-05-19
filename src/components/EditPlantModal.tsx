@@ -193,7 +193,7 @@ export const EditPlantModal: React.FC<EditPlantModalProps> = ({
           <View style={[styles.footer, { borderTopColor: theme.border }]}>
             <TouchableOpacity style={[styles.button, styles.cancelButton]} onPress={handleCancel}>
               <Text style={[styles.buttonText, { color: theme.text }]}>
-                {t('plants.deleteCancel') as string}
+                {t('common.cancel') as string}
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
