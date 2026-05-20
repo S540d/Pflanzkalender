@@ -234,8 +234,11 @@ Vollständige Roadmap: https://github.com/S540d/Pflanzkalender/issues/47
 
 ## Offene Issues (Stand 2026-05-20)
 
-- **#47** Roadmap: ✅ Alle Phasen 1–5 abgeschlossen
 - **#48** Klimazonen-Unterstützung – unterschiedliche Aktivitätszeiträume je Region (Ziel: v2.0.0)
+
+## Abgeschlossene Roadmap-Issues
+
+- **#47** Roadmap: ✅ Alle Phasen 1–5 abgeschlossen (Phase 4b PR #82, Phase 5 TWA-Manifest PR #106)
 
 ---
 
