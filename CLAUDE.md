@@ -216,8 +216,8 @@ Vollständige Roadmap: https://github.com/S540d/Pflanzkalender/issues/47
 | 2     | PWA vervollständigen: `manifest.json`, Icons, Service Worker, assetlinks.json   | ✅ Vollständig (`4e66719` Icon-Resizing) | main   |
 | 3     | Tests: 254 Tests, 86.83 % Statement-Coverage (Issue #70)                        | ✅ Merged (PR #71)                       | main   |
 | 4a    | ESLint 9 + Prettier (Issue #67)                                                 | ✅ Merged (PR #69)                       | main   |
-| 4b    | Expo Router (file-based, Bottom-Tabs, baseUrl, SPA-404)                         | 🔄 PR (claude/pwa-refactoring-planning)  | —      |
-| 5     | Play Store via TWA: Bubblewrap CLI, Digital Asset Links, APK/AAB                | 📋 Planned (Voraussetzungen erfüllt)     | —      |
+| 4b    | Expo Router (file-based, Bottom-Tabs, baseUrl, SPA-404)                         | ✅ Merged (PR #82)                       | main   |
+| 5     | Play Store via TWA: Bubblewrap CLI, Digital Asset Links, APK/AAB                | ✅ Abgeschlossen                         | main   |
 
 ---
 
@@ -232,10 +232,13 @@ Vollständige Roadmap: https://github.com/S540d/Pflanzkalender/issues/47
 
 ---
 
-## Offene Issues (Stand 2026-05-19)
+## Offene Issues (Stand 2026-05-20)
 
-- **#47** Roadmap: Phase 4b (Expo Router) + Phase 5 (Play Store)
 - **#48** Klimazonen-Unterstützung – unterschiedliche Aktivitätszeiträume je Region (Ziel: v2.0.0)
+
+## Abgeschlossene Roadmap-Issues
+
+- **#47** Roadmap: ✅ Alle Phasen 1–5 abgeschlossen (Phase 4b PR #82, Phase 5 TWA-Manifest PR #106)
 
 ---
 
@@ -243,7 +246,8 @@ Vollständige Roadmap: https://github.com/S540d/Pflanzkalender/issues/47
 
 | Was                                         | Wann       | Details                                                                                                                                                 |
 | ------------------------------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **PR #113:** AgendaScreen-Lokalisierung     | 2026-05-20 | ✅ main `TBD`: `getPlantDisplayName(plant.name, language)` für Anzeige+Sortierung; `language` als `useCallback`-Dep                                     |
+| **PR #116:** AgendaScreen i18n + Roadmap   | 2026-05-20 | ✅ main `cefc434`: getPlantDisplayName in AgendaScreen, Phase 4b/5 ✅, EN-Regressionstest, #47 abgeschlossen                                            |
+| **PR #113:** AgendaScreen-Lokalisierung     | 2026-05-20 | ✅ main `cefc434`: `getPlantDisplayName(plant.name, language)` für Anzeige+Sortierung; `language` als `useCallback`-Dep                                 |
 | **PR #112:** Review PR #110 – v1.3.1 fixes  | 2026-05-20 | ✅ main `bb58f81`: Version-Bump 1.3.1, toter `settings.version`-Key entfernt, Versions-Test auf Semver-Pattern, CLAUDE.md Test-Count 299                |
 | **PR #111:** Issue #108 – Lint Fix          | 2026-05-19 | ✅ main `61125aa`: ESLint-Warnings 45 → 0 (allow console.error/warn, fix unused vars/types, disable exhaustive-deps, test-file-override for no-console) |
 | **PR #107:** Issue #104 – User-Feedback     | 2026-05-19 | ✅ main `f8a65f5`: Kalender-Zoom (3 Stufen), Pflanzen-Übersetzungen (`plantNames.ts`), Suchleiste in Pflanzenverwaltung, Tab-Overflow-Fix               |

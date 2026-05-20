@@ -117,4 +117,35 @@ describe('AgendaScreen', () => {
     const labels = await findAllByText('Aussaat', {}, { timeout: 3000 });
     expect(labels.length).toBeGreaterThanOrEqual(1);
   });
+
+  it('renders default plant name in English when language is EN', async () => {
+    const AsyncStorage = require('@react-native-async-storage/async-storage');
+
+    const testPlants = JSON.stringify([
+      {
+        id: 'p2',
+        name: 'Tomaten',
+        activities: [
+          { id: 'a2', type: 'sow', startMonth: 0, endMonth: 23, color: '#f00', label: 'Sow' },
+        ],
+        isDefault: true,
+        userId: null,
+        notes: '',
+        createdAt: 1000000,
+        updatedAt: 1000000,
+      },
+    ]);
+
+    AsyncStorage.getItem.mockImplementation((key: string) => {
+      if (key === '@Pflanzkalender:plants') return Promise.resolve(testPlants);
+      if (key === 'language') return Promise.resolve('en');
+      return Promise.resolve(null);
+    });
+
+    const { findAllByText, queryAllByText } = render(<AgendaScreen />, { wrapper: Wrapper });
+
+    // English name must appear; German name must not
+    await findAllByText('Tomatoes', {}, { timeout: 3000 });
+    expect(queryAllByText('Tomaten')).toHaveLength(0);
+  });
 });
