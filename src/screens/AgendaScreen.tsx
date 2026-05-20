@@ -4,6 +4,7 @@ import { useTheme } from '../hooks/useTheme';
 import { usePlants } from '../contexts/PlantContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { CATEGORY_TABS, CategoryFilter } from '../constants/categoryTabs';
+import { getPlantDisplayName } from '../constants/plantNames';
 
 interface ActivityInfo {
   plantName: string;
@@ -45,7 +46,7 @@ export const AgendaScreen: React.FC = () => {
         plant.activities.forEach((activity) => {
           if (activity.startMonth <= monthIndex && activity.endMonth >= monthIndex) {
             activities.push({
-              plantName: plant.name,
+              plantName: getPlantDisplayName(plant.name, language),
               activityLabel: activity.label,
               activityColor: activity.color,
               notes: plant.notes,
@@ -54,9 +55,9 @@ export const AgendaScreen: React.FC = () => {
         });
       });
 
-      return activities.sort((a, b) => a.plantName.localeCompare(b.plantName, 'de'));
+      return activities.sort((a, b) => a.plantName.localeCompare(b.plantName, language));
     },
-    [filteredPlants]
+    [filteredPlants, language]
   );
 
   const previousActivities = useMemo(
