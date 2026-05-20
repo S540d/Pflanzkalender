@@ -117,4 +117,81 @@ describe('AgendaScreen', () => {
     const labels = await findAllByText('Aussaat', {}, { timeout: 3000 });
     expect(labels.length).toBeGreaterThanOrEqual(1);
   });
+
+  it('displays default plant names in English when language is en', async () => {
+    const AsyncStorage = require('@react-native-async-storage/async-storage');
+
+    const testPlants = JSON.stringify([
+      {
+        id: 'p-tomaten',
+        name: 'Tomaten',
+        activities: [
+          { id: 'a1', type: 'sow', startMonth: 0, endMonth: 23, color: '#f44336', label: 'Sow' },
+        ],
+        isDefault: true,
+        userId: null,
+        notes: '',
+        createdAt: 1000000,
+        updatedAt: 1000000,
+      },
+    ]);
+
+    AsyncStorage.getItem.mockImplementation((key: string) => {
+      if (key === '@Pflanzkalender:plants') return Promise.resolve(testPlants);
+      if (key === 'language') return Promise.resolve('en');
+      return Promise.resolve(null);
+    });
+
+    const { findAllByText, queryAllByText } = render(<AgendaScreen />, { wrapper: Wrapper });
+
+    const englishNames = await findAllByText('Tomatoes', {}, { timeout: 3000 });
+    expect(englishNames.length).toBeGreaterThanOrEqual(1);
+    expect(queryAllByText('Tomaten').length).toBe(0);
+  });
+
+  it('sorts agenda activities alphabetically by English name when language is en', async () => {
+    const AsyncStorage = require('@react-native-async-storage/async-storage');
+
+    // Karotten → Carrots (C), Tomaten → Tomatoes (T): Carrots < Tomatoes alphabetically
+    const testPlants = JSON.stringify([
+      {
+        id: 'p-tomaten',
+        name: 'Tomaten',
+        activities: [
+          { id: 'a1', type: 'sow', startMonth: 0, endMonth: 23, color: '#f44336', label: 'Sow' },
+        ],
+        isDefault: true,
+        userId: null,
+        notes: '',
+        createdAt: 1000000,
+        updatedAt: 1000001,
+      },
+      {
+        id: 'p-karotten',
+        name: 'Karotten',
+        activities: [
+          { id: 'a2', type: 'sow', startMonth: 0, endMonth: 23, color: '#FF9800', label: 'Sow' },
+        ],
+        isDefault: true,
+        userId: null,
+        notes: '',
+        createdAt: 1000000,
+        updatedAt: 1000000,
+      },
+    ]);
+
+    AsyncStorage.getItem.mockImplementation((key: string) => {
+      if (key === '@Pflanzkalender:plants') return Promise.resolve(testPlants);
+      if (key === 'language') return Promise.resolve('en');
+      return Promise.resolve(null);
+    });
+
+    const { findAllByText, queryAllByText } = render(<AgendaScreen />, { wrapper: Wrapper });
+
+    // Both English names must appear; no German names
+    await findAllByText('Carrots', {}, { timeout: 3000 });
+    await findAllByText('Tomatoes', {}, { timeout: 3000 });
+    expect(queryAllByText('Karotten').length).toBe(0);
+    expect(queryAllByText('Tomaten').length).toBe(0);
+  });
 });
