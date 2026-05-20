@@ -239,24 +239,29 @@ Vollständige Roadmap: https://github.com/S540d/Pflanzkalender/issues/47
 
 ---
 
-## Letzte Merges / Fixes (2026-05-19)
+## Letzte Merges / Fixes (2026-05-20)
 
-| Was                                         | Wann       | Details                                                                                                                                                           |
-| ------------------------------------------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **PR #111:** Issue #108 – Lint Fix          | 2026-05-19 | ✅ main `61125aa`: ESLint-Warnings 45 → 0 (allow console.error/warn, fix unused vars/types, disable exhaustive-deps, test-file-override for no-console)           |
-| **PR #107:** Issue #104 – User-Feedback     | 2026-05-19 | ✅ main `f8a65f5`: Kalender-Zoom (3 Stufen), Pflanzen-Übersetzungen (`plantNames.ts`), Suchleiste in Pflanzenverwaltung, Tab-Overflow-Fix                          |
-| **PR #106:** Issue #99 – Splash Screen      | 2026-05-19 | ✅ main `4b9be2e`: `app.json` splash+adaptive-icon `#1a7a4a`, `manifest.json` background, `scripts/add-splash-screen.js`, `twa-manifest.template.json`            |
-| **fix:** PWA Icon-Resizing                  | 2026-05-14 | ✅ main `4e66719`: Icons auf 192×192 / 512×512 resized (waren 1024×1024); generate-icons.js prüft jetzt Pixeldimensionen                                          |
-| **PR #80:** Issue #55 – Klima-Reiter        | 2026-05-11 | ✅ main `f7c59af`: `ClimateScreen.tsx` mit 15 Empfehlungen, 4 Filter-Tabs, Trocken-/Hitze-Bewertung, DE/EN, Dark-Mode                                             |
-| **PR #81:** Dependency-Fix                  | 2026-05-11 | ✅ main `ded9532`: Tilde-Ranges für expo-status-bar und @types/react                                                                                              |
-| **PR #79:** Fix Activity-Bar Alignment      | 2026-05-11 | ✅ main `52f6f46`: Activity-Bars auf breiten Screens korrekt ausgerichtet                                                                                         |
-| **PR #78:** Issue #77 – Dependency Updates  | 2026-05-11 | ✅ main `a778157`: 19 Security Fixes + 20 Outdated Packages                                                                                                       |
-| **PR #75:** Rescue Copilot-Reviews PR #71   | 2026-05-10 | ✅ main `36e8902`: `waitFor`-Pattern in `useTheme.test`, `AgendaScreen.test`                                                                                      |
-| **PR #72:** Issue #56 Phase 3 – Type Safety | 2026-05-10 | ✅ main `d7995bb`: `MONTH_SHORT` statt Duplikat-Array in ActivityBar, `TouchableWebProps`-Interface                                                               |
+| Was                                         | Wann       | Details                                                                                                                                                 |
+| ------------------------------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **PR #112:** Review PR #110 – v1.3.1 fixes  | 2026-05-20 | ✅ main `bb58f81`: Version-Bump 1.3.1, toter `settings.version`-Key entfernt, Versions-Test auf Semver-Pattern, CLAUDE.md Test-Count 299                |
+| **PR #111:** Issue #108 – Lint Fix          | 2026-05-19 | ✅ main `61125aa`: ESLint-Warnings 45 → 0 (allow console.error/warn, fix unused vars/types, disable exhaustive-deps, test-file-override for no-console) |
+| **PR #107:** Issue #104 – User-Feedback     | 2026-05-19 | ✅ main `f8a65f5`: Kalender-Zoom (3 Stufen), Pflanzen-Übersetzungen (`plantNames.ts`), Suchleiste in Pflanzenverwaltung, Tab-Overflow-Fix               |
+| **PR #106:** Issue #99 – Splash Screen      | 2026-05-19 | ✅ main `4b9be2e`: `app.json` splash+adaptive-icon `#1a7a4a`, `manifest.json` background, `scripts/add-splash-screen.js`, `twa-manifest.template.json`  |
+| **fix:** PWA Icon-Resizing                  | 2026-05-14 | ✅ main `4e66719`: Icons auf 192×192 / 512×512 resized (waren 1024×1024); generate-icons.js prüft jetzt Pixeldimensionen                                |
+| **PR #80:** Issue #55 – Klima-Reiter        | 2026-05-11 | ✅ main `f7c59af`: `ClimateScreen.tsx` mit 15 Empfehlungen, 4 Filter-Tabs, Trocken-/Hitze-Bewertung, DE/EN, Dark-Mode                                   |
+| **PR #81:** Dependency-Fix                  | 2026-05-11 | ✅ main `ded9532`: Tilde-Ranges für expo-status-bar und @types/react                                                                                    |
+| **PR #79:** Fix Activity-Bar Alignment      | 2026-05-11 | ✅ main `52f6f46`: Activity-Bars auf breiten Screens korrekt ausgerichtet                                                                               |
+| **PR #78:** Issue #77 – Dependency Updates  | 2026-05-11 | ✅ main `a778157`: 19 Security Fixes + 20 Outdated Packages                                                                                             |
+| **PR #75:** Rescue Copilot-Reviews PR #71   | 2026-05-10 | ✅ main `36e8902`: `waitFor`-Pattern in `useTheme.test`, `AgendaScreen.test`                                                                            |
+| **PR #72:** Issue #56 Phase 3 – Type Safety | 2026-05-10 | ✅ main `d7995bb`: `MONTH_SHORT` statt Duplikat-Array in ActivityBar, `TouchableWebProps`-Interface                                                     |
 
 ---
 
 ## Bekannte CI-Probleme (Stand 2026-05-19)
+
+### ✅ Unit Tests – `settings.version`-Key (GELÖST in PR #112)
+
+`LanguageContext.tsx` hatte früher einen `settings.version`-Key (z. B. `'Version 1.3.1'`), der bei jedem Version-Bump manuell aktualisiert werden musste. Dieser Key war **toter Code** – die Version wird in `SettingsScreen.tsx` über `settings.versionLabel + APP_VERSION` gerendert, nicht via `t('settings.version')`. Key in PR #112 entfernt. Versions-Test nutzt jetzt `/\d+\.\d+\.\d+/` statt hardcodierter Version.
 
 ### ✅ Lint & Format Check (Issue #108) – GELÖST in PR #111
 
