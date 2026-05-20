@@ -32,9 +32,9 @@ Deploy: GitHub Pages via `gh-pages` unter `/Pflanzkalender/`
 
 ## Aktuelle Version: 1.3.1 (main)
 
-**Stand 2026-05-20:** User-Feedback (Issue #104, PR #107) + Lint Fix (Issue #108, PR #111) + AgendaScreen-Lokalisierung (PR #113) gemergt.
+**Stand 2026-05-20:** User-Feedback (Issue #104, PR #107) + Lint Fix (Issue #108, PR #111) + AgendaScreen-Lokalisierung (PR #115) + i18n-Regressionstest + Roadmap Phase 4b/5 ✅ (PR #116) gemergt.
 
-- **main branch:** v1.3.1 mit Phase 1 + Phase 2 (vollständig, inkl. Icon-Resizing) + Phase 3 (299 Tests) + Phase 4a (ESLint 9, Prettier) + Issue #56 Phase 3 (TypeScript-Cleanup, `TouchableWebProps`, Duplikat-Beseitigung) + Klima-Reiter (Issue #55, PR #80) + Splash Screen (Issue #99, PR #106) + User-Feedback (Issue #104, PR #107) + AgendaScreen-Lokalisierung (PR #113)
+- **main branch:** v1.3.1 mit Phase 1 + Phase 2 (vollständig, inkl. Icon-Resizing) + Phase 3 (299 Tests) + Phase 4a (ESLint 9, Prettier) + Phase 4b (Expo Router, PR #82) + Phase 5 (TWA-Manifest, PR #106) + Issue #56 Phase 3 (TypeScript-Cleanup, `TouchableWebProps`, Duplikat-Beseitigung) + Klima-Reiter (Issue #55, PR #80) + Splash Screen (Issue #99, PR #106) + User-Feedback (Issue #104, PR #107) + AgendaScreen-Lokalisierung (PR #115)
 - **testing branch:** v1.3.1 (identisch mit main)
 
 Versions-Stellen: `package.json`, `app.json`, `src/screens/SettingsScreen.tsx` – immer alle drei synchron halten, sonst schlägt CI fehl.
@@ -246,8 +246,8 @@ Vollständige Roadmap: https://github.com/S540d/Pflanzkalender/issues/47
 
 | Was                                         | Wann       | Details                                                                                                                                                 |
 | ------------------------------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **PR #116:** AgendaScreen i18n + Roadmap   | 2026-05-20 | ✅ main `cefc434`: getPlantDisplayName in AgendaScreen, Phase 4b/5 ✅, EN-Regressionstest, #47 abgeschlossen                                            |
-| **PR #113:** AgendaScreen-Lokalisierung     | 2026-05-20 | ✅ main `cefc434`: `getPlantDisplayName(plant.name, language)` für Anzeige+Sortierung; `language` als `useCallback`-Dep                                 |
+| **PR #116:** AgendaScreen i18n + Roadmap    | 2026-05-20 | ✅ main `438abdf`: EN-Regressionstest in AgendaScreen.test, Phase 4b/5 ✅ in Roadmap, #47 abgeschlossen                                                 |
+| **PR #115:** AgendaScreen-Lokalisierung     | 2026-05-20 | ✅ main `cefc434`: `getPlantDisplayName(plant.name, language)` für Anzeige+Sortierung; `language` als `useCallback`-Dep                                 |
 | **PR #112:** Review PR #110 – v1.3.1 fixes  | 2026-05-20 | ✅ main `bb58f81`: Version-Bump 1.3.1, toter `settings.version`-Key entfernt, Versions-Test auf Semver-Pattern, CLAUDE.md Test-Count 299                |
 | **PR #111:** Issue #108 – Lint Fix          | 2026-05-19 | ✅ main `61125aa`: ESLint-Warnings 45 → 0 (allow console.error/warn, fix unused vars/types, disable exhaustive-deps, test-file-override for no-console) |
 | **PR #107:** Issue #104 – User-Feedback     | 2026-05-19 | ✅ main `f8a65f5`: Kalender-Zoom (3 Stufen), Pflanzen-Übersetzungen (`plantNames.ts`), Suchleiste in Pflanzenverwaltung, Tab-Overflow-Fix               |
