@@ -58,7 +58,7 @@ describe('ErrorBoundary', () => {
   });
 
   it('resets error state on native when reload button pressed', () => {
-    const { getByText, queryByText } = render(
+    const { getByText } = render(
       <ErrorBoundary>
         <ThrowingChild shouldThrow={true} />
       </ErrorBoundary>

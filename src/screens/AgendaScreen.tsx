@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useTheme } from '../hooks/useTheme';
 import { usePlants } from '../contexts/PlantContext';
@@ -37,39 +37,42 @@ export const AgendaScreen: React.FC = () => {
   const previousMonth = currentMonth > 0 ? currentMonth - 1 : 23;
   const nextMonth = currentMonth < 23 ? currentMonth + 1 : 0;
 
-  const getActivitiesForMonth = (monthIndex: number): ActivityInfo[] => {
-    const activities: ActivityInfo[] = [];
+  const getActivitiesForMonth = useCallback(
+    (monthIndex: number): ActivityInfo[] => {
+      const activities: ActivityInfo[] = [];
 
-    filteredPlants.forEach((plant) => {
-      plant.activities.forEach((activity) => {
-        if (activity.startMonth <= monthIndex && activity.endMonth >= monthIndex) {
-          activities.push({
-            plantName: plant.name,
-            activityLabel: activity.label,
-            activityColor: activity.color,
-            notes: plant.notes,
-          });
-        }
+      filteredPlants.forEach((plant) => {
+        plant.activities.forEach((activity) => {
+          if (activity.startMonth <= monthIndex && activity.endMonth >= monthIndex) {
+            activities.push({
+              plantName: plant.name,
+              activityLabel: activity.label,
+              activityColor: activity.color,
+              notes: plant.notes,
+            });
+          }
+        });
       });
-    });
 
-    return activities.sort((a, b) => a.plantName.localeCompare(b.plantName, 'de'));
-  };
+      return activities.sort((a, b) => a.plantName.localeCompare(b.plantName, 'de'));
+    },
+    [filteredPlants]
+  );
 
   const previousActivities = useMemo(
     () => getActivitiesForMonth(previousMonth),
-    [filteredPlants, previousMonth]
+    [getActivitiesForMonth, previousMonth]
   );
   const currentActivities = useMemo(
     () => getActivitiesForMonth(currentMonth),
-    [filteredPlants, currentMonth]
+    [getActivitiesForMonth, currentMonth]
   );
   const nextActivities = useMemo(
     () => getActivitiesForMonth(nextMonth),
-    [filteredPlants, nextMonth]
+    [getActivitiesForMonth, nextMonth]
   );
 
-  const monthNames = t('agenda.months') as any;
+  const monthNames = t('agenda.months') as string[];
 
   const renderColumn = (title: string, activities: ActivityInfo[], monthIndex: number) => (
     <View style={styles.column}>

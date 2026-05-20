@@ -35,12 +35,30 @@ jest.mock('../../src/contexts/LanguageContext', () => ({
         'common.cancel': 'Abbrechen',
         'common.save': 'Speichern',
         'agenda.months': [
-          'Jan 1-15', 'Jan 16-31', 'Feb 1-15', 'Feb 16-28',
-          'Mär 1-15', 'Mär 16-31', 'Apr 1-15', 'Apr 16-30',
-          'Mai 1-15', 'Mai 16-31', 'Jun 1-15', 'Jun 16-30',
-          'Jul 1-15', 'Jul 16-31', 'Aug 1-15', 'Aug 16-31',
-          'Sep 1-15', 'Sep 16-30', 'Okt 1-15', 'Okt 16-31',
-          'Nov 1-15', 'Nov 16-30', 'Dez 1-15', 'Dez 16-31',
+          'Jan 1-15',
+          'Jan 16-31',
+          'Feb 1-15',
+          'Feb 16-28',
+          'Mär 1-15',
+          'Mär 16-31',
+          'Apr 1-15',
+          'Apr 16-30',
+          'Mai 1-15',
+          'Mai 16-31',
+          'Jun 1-15',
+          'Jun 16-30',
+          'Jul 1-15',
+          'Jul 16-31',
+          'Aug 1-15',
+          'Aug 16-31',
+          'Sep 1-15',
+          'Sep 16-30',
+          'Okt 1-15',
+          'Okt 16-31',
+          'Nov 1-15',
+          'Nov 16-30',
+          'Dez 1-15',
+          'Dez 16-31',
         ],
       };
       return map[key] ?? key;
@@ -201,7 +219,9 @@ describe('EditActivityModal Component', () => {
 
   it('calls onDelete and onClose when delete is confirmed', () => {
     const alertSpy = jest.spyOn(Alert, 'alert').mockImplementation((_title, _msg, buttons) => {
-      const deleteButton = buttons?.find((b: any) => b.style === 'destructive');
+      const deleteButton = buttons?.find(
+        (b: { style?: string; onPress?: () => void }) => b.style === 'destructive'
+      );
       deleteButton?.onPress?.();
     });
 

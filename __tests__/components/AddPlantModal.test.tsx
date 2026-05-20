@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, fireEvent, waitFor } from '@testing-library/react-native';
+import { render } from '@testing-library/react-native';
 import { AddPlantModal } from '../../src/components/AddPlantModal';
 
 jest.mock('../../src/hooks/useTheme', () => ({
@@ -72,9 +72,7 @@ describe('AddPlantModal Component', () => {
   });
 
   it('calls onClose when modal is dismissed', () => {
-    const { getByTestId } = render(
-      <AddPlantModal visible={true} onAdd={mockOnAdd} onClose={mockOnClose} />
-    );
+    render(<AddPlantModal visible={true} onAdd={mockOnAdd} onClose={mockOnClose} />);
 
     // Modal dismissal is handled by the modal component itself
     // Verify the component accepts onClose prop

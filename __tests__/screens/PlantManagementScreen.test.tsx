@@ -139,10 +139,9 @@ describe('PlantManagementScreen', () => {
       key === '@Pflanzkalender:plants' ? Promise.resolve(testPlants) : Promise.resolve(null)
     );
 
-    const { findByText, queryByText, getByPlaceholderText } = render(
-      <PlantManagementScreen />,
-      { wrapper: Wrapper }
-    );
+    const { findByText, queryByText, getByPlaceholderText } = render(<PlantManagementScreen />, {
+      wrapper: Wrapper,
+    });
 
     await findByText('Tomaten');
 
@@ -176,10 +175,9 @@ describe('PlantManagementScreen', () => {
       key === '@Pflanzkalender:plants' ? Promise.resolve(testPlants) : Promise.resolve(null)
     );
 
-    const { findByText, getByPlaceholderText } = render(
-      <PlantManagementScreen />,
-      { wrapper: Wrapper }
-    );
+    const { findByText, getByPlaceholderText } = render(<PlantManagementScreen />, {
+      wrapper: Wrapper,
+    });
 
     await findByText('Tomaten');
 
@@ -224,10 +222,9 @@ describe('PlantManagementScreen', () => {
       return Promise.resolve(null);
     });
 
-    const { findByText, queryByText, getByPlaceholderText } = render(
-      <PlantManagementScreen />,
-      { wrapper: Wrapper }
-    );
+    const { findByText, queryByText, getByPlaceholderText } = render(<PlantManagementScreen />, {
+      wrapper: Wrapper,
+    });
 
     await findByText('Tomatoes');
 
