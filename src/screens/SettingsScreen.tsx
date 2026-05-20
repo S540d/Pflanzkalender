@@ -4,7 +4,7 @@ import { useTheme } from '../hooks/useTheme';
 import { storageService } from '../services/storage';
 import { useLanguage, PICKER_LANGUAGES } from '../contexts/LanguageContext';
 
-const APP_VERSION = '1.3.0';
+const APP_VERSION = '1.3.1';
 
 export const SettingsScreen: React.FC = () => {
   const { theme, themeMode, setThemeMode } = useTheme();

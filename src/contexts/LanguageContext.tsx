@@ -99,7 +99,6 @@ const translations: Record<Language, Translations> = {
     'settings.support': '☕ Support me',
     'settings.feedback': '📧 Feedback',
     'settings.about': 'Über',
-    'settings.version': 'Version 1.3.0',
     'settings.license': 'Lizenz',
     'settings.licenseDetails':
       'Open Source • MIT Lizenz\nKeine kommerzielle Nutzung ohne Genehmigung',
@@ -225,7 +224,6 @@ const translations: Record<Language, Translations> = {
     'settings.support': '☕ Support me',
     'settings.feedback': '📧 Feedback',
     'settings.about': 'About',
-    'settings.version': 'Version 1.3.0',
     'settings.license': 'License',
     'settings.licenseDetails': 'Open Source • MIT License\nNo commercial use without permission',
     'settings.settings': 'Settings',
