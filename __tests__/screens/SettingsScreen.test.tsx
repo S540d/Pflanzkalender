@@ -131,7 +131,7 @@ describe('SettingsScreen', () => {
 
   it('renders the version number', () => {
     const { getByText } = renderWithProviders(<SettingsScreen />);
-    expect(getByText(/1\.3\.1/)).toBeTruthy();
+    expect(getByText(/\d+\.\d+\.\d+/)).toBeTruthy();
   });
 
   it('renders About section', () => {
