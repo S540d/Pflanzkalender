@@ -59,6 +59,22 @@ describe('AgendaScreen', () => {
     expect(vorher.length).toBeGreaterThanOrEqual(1);
   });
 
+  it('renders at least 6 columns forward from current half-month', async () => {
+    const { queryAllByText } = render(<AgendaScreen />, { wrapper: Wrapper });
+    // All 7 column titles are rendered: Vorher, Aktuell, Demnächst + 4 month names
+    await waitFor(() => {
+      const current = queryAllByText(/Aktuell|Current/);
+      expect(current.length).toBeGreaterThanOrEqual(1);
+    });
+    await waitFor(() => {
+      // Previous + current + next + 4 future = 7 columns
+      const allHeaders = queryAllByText(
+        /Vorher|Aktuell|Demnächst|Previous|Current|Next|Jan|Feb|Mär|Mar|Apr|Mai|May|Jun|Jul|Aug|Sep|Okt|Oct|Nov|Dez|Dec/
+      );
+      expect(allHeaders.length).toBeGreaterThanOrEqual(7);
+    });
+  });
+
   it('switches category filter and still renders all column headers', async () => {
     const { findByText, queryAllByText } = render(<AgendaScreen />, { wrapper: Wrapper });
 
