@@ -81,6 +81,11 @@ jobs:
         env:
           TESTING: true
 
+      - name: Add PWA splash screen
+        run: node scripts/add-splash-screen.js
+        env:
+          TESTING: true
+
       - name: Create .nojekyll file
         run: touch dist/.nojekyll
 

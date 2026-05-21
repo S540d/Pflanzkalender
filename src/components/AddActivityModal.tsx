@@ -11,7 +11,6 @@ import {
 import { useTheme } from '../hooks/useTheme';
 import { useLanguage } from '../contexts/LanguageContext';
 import { ACTIVITY_TYPES } from '../constants/activityTypes';
-import { HALF_MONTH_NAMES } from '../utils/monthHelper';
 
 interface AddActivityModalProps {
   visible: boolean;
@@ -66,10 +65,10 @@ export const AddActivityModal: React.FC<AddActivityModalProps> = ({
     onClose();
   };
 
-  // Generiere Monatsliste (0-23 für halbe Monate)
+  const monthLabels = t('agenda.months') as string[];
   const months = Array.from({ length: 24 }, (_, i) => ({
     value: i,
-    label: HALF_MONTH_NAMES[i],
+    label: monthLabels[i],
   }));
 
   return (

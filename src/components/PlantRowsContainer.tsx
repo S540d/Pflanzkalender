@@ -1,15 +1,18 @@
 import React, { useRef } from 'react';
 import { View, Text, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
 import { useTheme } from '../hooks/useTheme';
+import { useLanguage } from '../contexts/LanguageContext';
 import { Plant } from '../types';
 import { PlantRow } from './PlantRow';
 import { calculateActivityRows, convertActivitiesToPortraitSlots } from '../utils/activityLayout';
+import { getPlantDisplayName } from '../constants/plantNames';
 
 interface PlantRowsContainerProps {
   sortedPlants: Plant[];
   isPortrait: boolean;
   currentHalfMonth: number;
   months: string[];
+  cellWidth?: number;
   onPressActivity: (plantId: string, activityId: string) => void;
   onPressMonth: (plantId: string, monthIndex: number) => void;
   onFixedScrollOffset?: (offset: number) => void;
@@ -23,6 +26,7 @@ export const PlantRowsContainer: React.FC<PlantRowsContainerProps> = ({
   isPortrait,
   currentHalfMonth,
   months,
+  cellWidth: cellWidthProp,
   onPressActivity,
   onPressMonth,
   onFixedScrollOffset,
@@ -31,7 +35,9 @@ export const PlantRowsContainer: React.FC<PlantRowsContainerProps> = ({
   loading = false,
 }) => {
   const { theme } = useTheme();
+  const { language } = useLanguage();
   const localFixedScrollRef = useRef<ScrollView>(null);
+  const cellWidth = cellWidthProp ?? (isPortrait ? 60 : 40);
   const fixedScrollRef = externalFixedScrollRef || localFixedScrollRef;
 
   return (
@@ -67,7 +73,7 @@ export const PlantRowsContainer: React.FC<PlantRowsContainerProps> = ({
                   ]}
                 >
                   <Text style={[styles.plantNameText, { color: theme.text }]} numberOfLines={2}>
-                    {plant.name}
+                    {getPlantDisplayName(plant.name, language)}
                   </Text>
                 </View>
               );
@@ -151,7 +157,7 @@ export const PlantRowsContainer: React.FC<PlantRowsContainerProps> = ({
                         isPortrait ? Math.floor(currentHalfMonth / 4) : currentHalfMonth
                       }
                       monthOffset={0}
-                      cellWidth={isPortrait ? 60 : 40}
+                      cellWidth={cellWidth}
                     />
                   );
                 })

@@ -1,5 +1,14 @@
-import React, { useState, useMemo } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import React, { useState, useMemo, useCallback } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  Alert,
+  TextInput,
+} from 'react-native';
+import { useFocusEffect } from 'expo-router';
 import { useTheme } from '../hooks/useTheme';
 import { usePlants } from '../contexts/PlantContext';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -7,6 +16,8 @@ import { AddPlantModal } from '../components/AddPlantModal';
 import { EditPlantModal } from '../components/EditPlantModal';
 import { Plant, PlantLocation, PlantCategory } from '../types';
 import { PLANT_LOCATION_METADATA, PLANT_CATEGORY_METADATA } from '../constants/plantMetadata';
+import { getPlantDisplayName } from '../constants/plantNames';
+import { CATEGORY_TABS, CategoryFilter } from '../constants/categoryTabs';
 
 export const PlantManagementScreen: React.FC = () => {
   const { theme } = useTheme();
@@ -14,13 +25,41 @@ export const PlantManagementScreen: React.FC = () => {
   const { t, language } = useLanguage();
   const [showAddPlant, setShowAddPlant] = useState(false);
   const [editingPlant, setEditingPlant] = useState<Plant | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [activeCategory, setActiveCategory] = useState<CategoryFilter>('all');
   // Metadata objects only have 'de' and 'en' — all other languages fall back to 'en'
   const metaLang: 'de' | 'en' = language === 'de' ? 'de' : 'en';
 
-  // Sortiere Pflanzen alphabetisch
+  // Reset filters when navigating away from this screen
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        setSearchQuery('');
+        setActiveCategory('all');
+      };
+    }, [])
+  );
+
   const sortedPlants = useMemo(() => {
-    return [...plants].sort((a, b) => a.name.localeCompare(b.name, 'de'));
-  }, [plants]);
+    return [...plants].sort((a, b) =>
+      getPlantDisplayName(a.name, language).localeCompare(getPlantDisplayName(b.name, language))
+    );
+  }, [plants, language]);
+
+  const filteredPlants = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q && activeCategory === 'all') return sortedPlants;
+    return sortedPlants.filter((plant) => {
+      if (activeCategory !== 'all' && (plant.category ?? 'vegetable') !== activeCategory) {
+        return false;
+      }
+      if (q) {
+        const display = getPlantDisplayName(plant.name, language).toLowerCase();
+        if (!display.includes(q) && !plant.name.toLowerCase().includes(q)) return false;
+      }
+      return true;
+    });
+  }, [sortedPlants, searchQuery, activeCategory, language]);
 
   const handleAddPlant = (
     name: string,
@@ -52,11 +91,64 @@ export const PlantManagementScreen: React.FC = () => {
     ]);
   };
 
+  const isFiltered = searchQuery.trim().length > 0 || activeCategory !== 'all';
+
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       <ScrollView style={styles.scrollView}>
         <View style={styles.content}>
           <Text style={[styles.title, { color: theme.text }]}>{t('plants.title') as string}</Text>
+
+          <TextInput
+            style={[
+              styles.searchInput,
+              { color: theme.text, borderColor: theme.border, backgroundColor: theme.surface },
+            ]}
+            placeholder={t('plants.search') as string}
+            placeholderTextColor={theme.textSecondary}
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+          />
+
+          {/* Kategorie-Filter */}
+          <View
+            style={[
+              styles.categoryBar,
+              { borderColor: theme.border, backgroundColor: theme.surface },
+            ]}
+          >
+            {CATEGORY_TABS.map((tab) => {
+              const isActive = activeCategory === tab.value;
+              const label = language === 'de' ? tab.labelDe : tab.labelEn;
+              return (
+                <TouchableOpacity
+                  key={tab.value}
+                  style={styles.categoryTab}
+                  onPress={() => setActiveCategory(tab.value)}
+                >
+                  <View
+                    style={[
+                      styles.categoryIconBadge,
+                      { backgroundColor: isActive ? tab.color : tab.color + '30' },
+                    ]}
+                  >
+                    <Text style={styles.categoryTabIcon}>{tab.icon}</Text>
+                  </View>
+                  <Text
+                    style={[
+                      styles.categoryTabLabel,
+                      {
+                        color: isActive ? tab.color : theme.textSecondary,
+                        fontWeight: isActive ? '700' : '400',
+                      },
+                    ]}
+                  >
+                    {label}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
 
           <TouchableOpacity
             style={[styles.addButton, { backgroundColor: theme.primary }]}
@@ -66,12 +158,14 @@ export const PlantManagementScreen: React.FC = () => {
           </TouchableOpacity>
 
           <View style={styles.plantList}>
-            {sortedPlants.length === 0 ? (
+            {filteredPlants.length === 0 ? (
               <Text style={[styles.emptyText, { color: theme.textSecondary }]}>
-                {t('plants.empty') as string}
+                {!isFiltered && sortedPlants.length === 0
+                  ? (t('plants.empty') as string)
+                  : (t('plants.noResults') as string)}
               </Text>
             ) : (
-              sortedPlants.map((plant) => (
+              filteredPlants.map((plant) => (
                 <View
                   key={plant.id}
                   style={[
@@ -80,7 +174,9 @@ export const PlantManagementScreen: React.FC = () => {
                   ]}
                 >
                   <View style={styles.plantInfo}>
-                    <Text style={[styles.plantName, { color: theme.text }]}>{plant.name}</Text>
+                    <Text style={[styles.plantName, { color: theme.text }]}>
+                      {getPlantDisplayName(plant.name, language)}
+                    </Text>
                     <View style={styles.plantMeta}>
                       {plant.category && (
                         <Text style={[styles.plantMetaText, { color: theme.textSecondary }]}>
@@ -111,6 +207,8 @@ export const PlantManagementScreen: React.FC = () => {
                         { backgroundColor: theme.surface, borderColor: theme.border },
                       ]}
                       onPress={() => setEditingPlant(plant)}
+                      accessibilityLabel={`${t('plants.editTitle') as string}: ${getPlantDisplayName(plant.name, language)}`}
+                      accessibilityRole="button"
                     >
                       <Text style={styles.actionButtonText}>✏️</Text>
                     </TouchableOpacity>
@@ -120,6 +218,8 @@ export const PlantManagementScreen: React.FC = () => {
                         { backgroundColor: '#ff4444', borderColor: '#ff4444' },
                       ]}
                       onPress={() => handleDeletePlant(plant.id, plant.name)}
+                      accessibilityLabel={`${t('plants.deleteTitle') as string}: ${getPlantDisplayName(plant.name, language)}`}
+                      accessibilityRole="button"
                     >
                       <Text style={styles.actionButtonText}>🗑️</Text>
                     </TouchableOpacity>
@@ -165,6 +265,39 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     marginBottom: 20,
     textAlign: 'center',
+  },
+  searchInput: {
+    padding: 12,
+    borderRadius: 10,
+    borderWidth: 1,
+    fontSize: 15,
+    marginBottom: 12,
+  },
+  categoryBar: {
+    flexDirection: 'row',
+    borderRadius: 12,
+    borderWidth: 1,
+    paddingVertical: 8,
+    paddingHorizontal: 4,
+    marginBottom: 16,
+  },
+  categoryTab: {
+    flex: 1,
+    alignItems: 'center',
+    gap: 4,
+  },
+  categoryIconBadge: {
+    width: 32,
+    height: 32,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  categoryTabIcon: {
+    fontSize: 16,
+  },
+  categoryTabLabel: {
+    fontSize: 9,
   },
   addButton: {
     padding: 16,

@@ -12,7 +12,6 @@ import {
 import { useTheme } from '../hooks/useTheme';
 import { useLanguage } from '../contexts/LanguageContext';
 import { Activity } from '../types';
-import { HALF_MONTH_NAMES } from '../utils/monthHelper';
 
 interface EditActivityModalProps {
   visible: boolean;
@@ -49,9 +48,10 @@ export const EditActivityModal: React.FC<EditActivityModalProps> = ({
 
   if (!activity) return null;
 
+  const monthLabels = t('agenda.months') as string[];
   const months = Array.from({ length: 24 }, (_, i) => ({
     value: i,
-    label: HALF_MONTH_NAMES[i],
+    label: monthLabels[i],
   }));
 
   const handleUpdate = () => {
@@ -71,7 +71,7 @@ export const EditActivityModal: React.FC<EditActivityModalProps> = ({
       [
         { text: t('common.cancel') as string, style: 'cancel' },
         {
-          text: t('plants.deleteConfirm') as string,
+          text: t('activity.edit.deleteConfirm') as string,
           style: 'destructive',
           onPress: () => {
             onDelete(activity.id);
@@ -215,7 +215,7 @@ export const EditActivityModal: React.FC<EditActivityModalProps> = ({
               style={[styles.button, styles.deleteButton, { backgroundColor: '#DC143C' }]}
               onPress={handleDelete}
             >
-              <Text style={styles.buttonText}>{t('plants.deleteConfirm') as string}</Text>
+              <Text style={styles.buttonText}>{t('activity.edit.deleteConfirm') as string}</Text>
             </TouchableOpacity>
 
             <View style={styles.rightButtons}>

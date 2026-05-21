@@ -59,6 +59,22 @@ describe('AgendaScreen', () => {
     expect(vorher.length).toBeGreaterThanOrEqual(1);
   });
 
+  it('renders at least 6 columns forward from current half-month', async () => {
+    const { queryAllByText } = render(<AgendaScreen />, { wrapper: Wrapper });
+    // All 7 column titles are rendered: Vorher, Aktuell, Demnächst + 4 month names
+    await waitFor(() => {
+      const current = queryAllByText(/Aktuell|Current/);
+      expect(current.length).toBeGreaterThanOrEqual(1);
+    });
+    await waitFor(() => {
+      // Previous + current + next + 4 future = 7 columns
+      const allHeaders = queryAllByText(
+        /Vorher|Aktuell|Demnächst|Previous|Current|Next|Jan|Feb|Mär|Mar|Apr|Mai|May|Jun|Jul|Aug|Sep|Okt|Oct|Nov|Dez|Dec/
+      );
+      expect(allHeaders.length).toBeGreaterThanOrEqual(7);
+    });
+  });
+
   it('switches category filter and still renders all column headers', async () => {
     const { findByText, queryAllByText } = render(<AgendaScreen />, { wrapper: Wrapper });
 
@@ -116,5 +132,36 @@ describe('AgendaScreen', () => {
     // The activity label 'Aussaat' should appear in at least one column
     const labels = await findAllByText('Aussaat', {}, { timeout: 3000 });
     expect(labels.length).toBeGreaterThanOrEqual(1);
+  });
+
+  it('renders default plant name in English when language is EN', async () => {
+    const AsyncStorage = require('@react-native-async-storage/async-storage');
+
+    const testPlants = JSON.stringify([
+      {
+        id: 'p2',
+        name: 'Tomaten',
+        activities: [
+          { id: 'a2', type: 'sow', startMonth: 0, endMonth: 23, color: '#f00', label: 'Sow' },
+        ],
+        isDefault: true,
+        userId: null,
+        notes: '',
+        createdAt: 1000000,
+        updatedAt: 1000000,
+      },
+    ]);
+
+    AsyncStorage.getItem.mockImplementation((key: string) => {
+      if (key === '@Pflanzkalender:plants') return Promise.resolve(testPlants);
+      if (key === 'language') return Promise.resolve('en');
+      return Promise.resolve(null);
+    });
+
+    const { findAllByText, queryAllByText } = render(<AgendaScreen />, { wrapper: Wrapper });
+
+    // English name must appear; German name must not
+    await findAllByText('Tomatoes', {}, { timeout: 3000 });
+    expect(queryAllByText('Tomaten')).toHaveLength(0);
   });
 });

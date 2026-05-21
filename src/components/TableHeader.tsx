@@ -6,6 +6,7 @@ interface TableHeaderProps {
   months: string[];
   isPortrait: boolean;
   currentHalfMonth: number;
+  cellWidth?: number;
   onHeaderScroll?: (offset: number) => void;
   headerScrollRef?: React.RefObject<ScrollView | null>;
 }
@@ -14,6 +15,7 @@ export const TableHeader: React.FC<TableHeaderProps> = ({
   months,
   isPortrait,
   currentHalfMonth,
+  cellWidth,
   onHeaderScroll,
   headerScrollRef,
 }) => {
@@ -63,6 +65,7 @@ export const TableHeader: React.FC<TableHeaderProps> = ({
                   {
                     borderColor: theme.border,
                     backgroundColor: isCurrentPeriod ? theme.border : theme.surface,
+                    ...(cellWidth !== undefined ? { width: cellWidth } : {}),
                   },
                 ]}
               >

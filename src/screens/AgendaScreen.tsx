@@ -1,9 +1,10 @@
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useTheme } from '../hooks/useTheme';
 import { usePlants } from '../contexts/PlantContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { CATEGORY_TABS, CategoryFilter } from '../constants/categoryTabs';
+import { getPlantDisplayName } from '../constants/plantNames';
 
 interface ActivityInfo {
   plantName: string;
@@ -12,97 +13,114 @@ interface ActivityInfo {
   notes?: string;
 }
 
+// Offsets relative to current half-month: 1 previous + current + 5 forward = 7 columns
+const COLUMN_OFFSETS = [-1, 0, 1, 2, 3, 4, 5] as const;
+
 export const AgendaScreen: React.FC = () => {
   const { theme } = useTheme();
   const { plants } = usePlants();
   const { t, language } = useLanguage();
   const [activeCategory, setActiveCategory] = useState<CategoryFilter>('all');
 
-  // Aktuellen Monat bestimmen (0-23 Halbmonate)
+  // Current half-month index (0-23)
   const currentMonth = useMemo(() => {
     const now = new Date();
-    const month = now.getMonth(); // 0-11
-    const day = now.getDate();
-    const halfMonth = day <= 15 ? 0 : 1;
+    const month = now.getMonth();
+    const halfMonth = now.getDate() <= 15 ? 0 : 1;
     return month * 2 + halfMonth;
   }, []);
 
-  // Gefilterte Pflanzen nach Kategorie
   const filteredPlants = useMemo(() => {
     if (activeCategory === 'all') return plants;
     return plants.filter((p) => (p.category ?? 'vegetable') === activeCategory);
   }, [plants, activeCategory]);
 
-  // Aktivitäten für drei Zeiträume sammeln (vorher, aktuell, danach)
-  const previousMonth = currentMonth > 0 ? currentMonth - 1 : 23;
-  const nextMonth = currentMonth < 23 ? currentMonth + 1 : 0;
-
-  const getActivitiesForMonth = (monthIndex: number): ActivityInfo[] => {
-    const activities: ActivityInfo[] = [];
-
-    filteredPlants.forEach((plant) => {
-      plant.activities.forEach((activity) => {
-        if (activity.startMonth <= monthIndex && activity.endMonth >= monthIndex) {
-          activities.push({
-            plantName: plant.name,
-            activityLabel: activity.label,
-            activityColor: activity.color,
-            notes: plant.notes,
-          });
-        }
+  const getActivitiesForMonth = useCallback(
+    (monthIndex: number): ActivityInfo[] => {
+      const activities: ActivityInfo[] = [];
+      filteredPlants.forEach((plant) => {
+        plant.activities.forEach((activity) => {
+          if (activity.startMonth <= monthIndex && activity.endMonth >= monthIndex) {
+            activities.push({
+              plantName: getPlantDisplayName(plant.name, language),
+              activityLabel: activity.label,
+              activityColor: activity.color,
+              notes: plant.notes,
+            });
+          }
+        });
       });
-    });
+      return activities.sort((a, b) => a.plantName.localeCompare(b.plantName, language));
+    },
+    [filteredPlants, language]
+  );
 
-    return activities.sort((a, b) => a.plantName.localeCompare(b.plantName, 'de'));
+  const monthNames = t('agenda.months') as string[];
+
+  // Pre-compute activities for all 7 columns
+  const columnData = useMemo(
+    () =>
+      COLUMN_OFFSETS.map((offset) => {
+        const monthIndex = (currentMonth + offset + 24) % 24;
+        return { offset, monthIndex, activities: getActivitiesForMonth(monthIndex) };
+      }),
+    [currentMonth, getActivitiesForMonth]
+  );
+
+  const getColumnTitle = (offset: number, monthIndex: number): string => {
+    if (offset === -1) return String(t('agenda.previous'));
+    if (offset === 0) return String(t('agenda.current'));
+    if (offset === 1) return String(t('agenda.next'));
+    return monthNames[monthIndex];
   };
 
-  const previousActivities = useMemo(
-    () => getActivitiesForMonth(previousMonth),
-    [filteredPlants, previousMonth]
-  );
-  const currentActivities = useMemo(
-    () => getActivitiesForMonth(currentMonth),
-    [filteredPlants, currentMonth]
-  );
-  const nextActivities = useMemo(
-    () => getActivitiesForMonth(nextMonth),
-    [filteredPlants, nextMonth]
-  );
+  const renderColumn = (monthIndex: number, offset: number, activities: ActivityInfo[]) => {
+    const isCurrent = offset === 0;
+    const title = getColumnTitle(offset, monthIndex);
+    // For offset -1/0/1 show the role label as title and date range as subtitle;
+    // for offset 2-5 the month name IS the title, no subtitle needed
+    const showSubtitle = offset >= -1 && offset <= 1;
 
-  const monthNames = t('agenda.months') as any;
-
-  const renderColumn = (title: string, activities: ActivityInfo[], monthIndex: number) => (
-    <View style={styles.column}>
-      <Text style={[styles.columnTitle, { color: theme.text }]}>{title}</Text>
-      <Text style={[styles.columnSubtitle, { color: theme.textSecondary }]}>
-        {monthNames[monthIndex]}
-      </Text>
-
-      {activities.length === 0 ? (
-        <Text style={[styles.emptyText, { color: theme.textSecondary }]}>
-          {t('agenda.noActivities')}
+    return (
+      <View
+        key={`col-${monthIndex}-${offset}`}
+        style={[styles.column, isCurrent && { borderTopWidth: 3, borderTopColor: theme.primary }]}
+      >
+        <Text style={[styles.columnTitle, { color: isCurrent ? theme.primary : theme.text }]}>
+          {title}
         </Text>
-      ) : (
-        activities.map((activity, index) => (
-          <View
-            key={index}
-            style={[styles.card, { backgroundColor: theme.surface, borderColor: theme.border }]}
-          >
-            <View style={styles.cardHeader}>
-              <View style={[styles.colorDot, { backgroundColor: activity.activityColor }]} />
-              <Text style={[styles.activityLabel, { color: theme.text }]}>
-                {activity.activityLabel}
-              </Text>
+        {showSubtitle && (
+          <Text style={[styles.columnSubtitle, { color: theme.textSecondary }]}>
+            {monthNames[monthIndex]}
+          </Text>
+        )}
+
+        {activities.length === 0 ? (
+          <Text style={[styles.emptyText, { color: theme.textSecondary }]}>
+            {t('agenda.noActivities')}
+          </Text>
+        ) : (
+          activities.map((activity, index) => (
+            <View
+              key={index}
+              style={[styles.card, { backgroundColor: theme.surface, borderColor: theme.border }]}
+            >
+              <View style={styles.cardHeader}>
+                <View style={[styles.colorDot, { backgroundColor: activity.activityColor }]} />
+                <Text style={[styles.activityLabel, { color: theme.text }]}>
+                  {activity.activityLabel}
+                </Text>
+              </View>
+              <Text style={[styles.plantName, { color: theme.text }]}>{activity.plantName}</Text>
+              {activity.notes && (
+                <Text style={[styles.notes, { color: theme.textSecondary }]}>{activity.notes}</Text>
+              )}
             </View>
-            <Text style={[styles.plantName, { color: theme.text }]}>{activity.plantName}</Text>
-            {activity.notes && (
-              <Text style={[styles.notes, { color: theme.textSecondary }]}>{activity.notes}</Text>
-            )}
-          </View>
-        ))
-      )}
-    </View>
-  );
+          ))
+        )}
+      </View>
+    );
+  };
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
@@ -148,9 +166,9 @@ export const AgendaScreen: React.FC = () => {
 
       <ScrollView horizontal style={styles.scrollView}>
         <View style={styles.columnsContainer}>
-          {renderColumn(String(t('agenda.previous')), previousActivities, previousMonth)}
-          {renderColumn(String(t('agenda.current')), currentActivities, currentMonth)}
-          {renderColumn(String(t('agenda.next')), nextActivities, nextMonth)}
+          {columnData.map(({ offset, monthIndex, activities }) =>
+            renderColumn(monthIndex, offset, activities)
+          )}
         </View>
       </ScrollView>
     </View>
@@ -195,6 +213,7 @@ const styles = StyleSheet.create({
   },
   column: {
     width: 160,
+    paddingTop: 4,
   },
   columnTitle: {
     fontSize: 18,

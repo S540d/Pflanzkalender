@@ -29,6 +29,9 @@ function TabsNavigator() {
             backgroundColor: theme.background,
             borderTopColor: theme.border,
           },
+          tabBarLabelStyle: {
+            fontSize: 10,
+          },
         }}
       >
         <Tabs.Screen

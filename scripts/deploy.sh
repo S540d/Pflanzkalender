@@ -28,6 +28,10 @@ node scripts/force-cache-clear.js
 echo "Adding PWA meta tags and .well-known..."
 node scripts/add-pwa-meta-tags.js
 
+# Add PWA splash screen
+echo "Adding PWA splash screen..."
+node scripts/add-splash-screen.js
+
 # Add failsafe debug banner
 echo "Adding failsafe debug banner..."
 node scripts/add-failsafe-banner.js

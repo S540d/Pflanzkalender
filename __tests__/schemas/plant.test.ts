@@ -36,7 +36,7 @@ describe('ActivitySchema', () => {
   });
 
   it('lehnt fehlende Pflichtfelder ab', () => {
-    const { id, ...noId } = validActivity;
+    const { id: _id, ...noId } = validActivity;
     expect(ActivitySchema.safeParse(noId).success).toBe(false);
   });
 });
@@ -47,7 +47,7 @@ describe('PlantSchema', () => {
   });
 
   it('akzeptiert Pflanze ohne optionale Felder', () => {
-    const { location, category, ...minimal } = validPlant;
+    const { location: _location, category: _category, ...minimal } = validPlant;
     expect(PlantSchema.safeParse(minimal).success).toBe(true);
   });
 
@@ -84,7 +84,7 @@ describe('ImportDataSchema', () => {
   });
 
   it('lehnt fehlende version ab', () => {
-    const { version, ...noVersion } = validImport;
+    const { version: _version, ...noVersion } = validImport;
     expect(ImportDataSchema.safeParse(noVersion).success).toBe(false);
   });
 
