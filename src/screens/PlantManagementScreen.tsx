@@ -48,6 +48,7 @@ export const PlantManagementScreen: React.FC = () => {
 
   const filteredPlants = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
+    if (!q && activeCategory === 'all') return sortedPlants;
     return sortedPlants.filter((plant) => {
       if (activeCategory !== 'all' && (plant.category ?? 'vegetable') !== activeCategory) {
         return false;
