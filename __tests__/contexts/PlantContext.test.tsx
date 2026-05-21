@@ -79,6 +79,66 @@ describe('PlantContext – initial load', () => {
 
     expect(result.current.plants).toEqual([]);
   });
+
+  it('backfills category and location for saved default plants missing those fields', async () => {
+    // Simulates a plant saved before category/location were introduced (v1.3.0)
+    const legacyPlants = [
+      {
+        id: 'default-4', // index 4 = Rosen (category: 'flower', location: 'sun')
+        name: 'Rosen',
+        activities: [],
+        isDefault: true,
+        userId: null,
+        notes: '',
+        createdAt: 1000,
+        updatedAt: 1000,
+        // category and location intentionally absent
+      },
+    ];
+    mockGetItem.mockImplementation((key: string) =>
+      key === '@Pflanzkalender:plants'
+        ? Promise.resolve(JSON.stringify(legacyPlants))
+        : Promise.resolve(null)
+    );
+
+    const { result } = renderHook(() => usePlants(), { wrapper });
+    await waitForLoaded(result);
+
+    const rosen = result.current.plants.find((p) => p.id === 'default-4');
+    expect(rosen).toBeTruthy();
+    expect(rosen!.category).toBe('flower');
+    expect(rosen!.location).toBe('sun');
+    // Migration must persist the enriched data
+    expect(mockSetItem).toHaveBeenCalled();
+  });
+
+  it('does not re-save if no default plants need migration', async () => {
+    // Plant already has category and location – no save should happen
+    const upToDatePlants = [
+      {
+        id: 'default-4',
+        name: 'Rosen',
+        activities: [],
+        isDefault: true,
+        userId: null,
+        notes: '',
+        createdAt: 1000,
+        updatedAt: 1000,
+        category: 'flower',
+        location: 'sun',
+      },
+    ];
+    mockGetItem.mockImplementation((key: string) =>
+      key === '@Pflanzkalender:plants'
+        ? Promise.resolve(JSON.stringify(upToDatePlants))
+        : Promise.resolve(null)
+    );
+
+    const { result } = renderHook(() => usePlants(), { wrapper });
+    await waitForLoaded(result);
+
+    expect(mockSetItem).not.toHaveBeenCalled();
+  });
 });
 
 describe('PlantContext – addPlant', () => {

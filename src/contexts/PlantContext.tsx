@@ -53,8 +53,9 @@ export const PlantProvider: React.FC<PlantProviderProps> = ({ children }) => {
           // Migration: Default-Pflanzen ohne category/location mit aktuellen Metadaten anreichern
           const migrated = savedPlants.map((plant) => {
             if (!plant.isDefault) return plant;
-            const index = parseInt(plant.id.replace('default-', ''), 10);
-            const source = DEFAULT_PLANTS[index];
+            const match = /^default-(\d+)$/.exec(plant.id);
+            if (!match) return plant;
+            const source = DEFAULT_PLANTS[parseInt(match[1], 10)];
             if (!source) return plant;
             let changed = false;
             const updates: Partial<Plant> = {};

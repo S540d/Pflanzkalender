@@ -40,7 +40,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ visible, onClose }
     <Modal
       visible={visible}
       animationType="slide"
-      presentationStyle={Platform.OS === 'ios' ? 'pageSheet' : 'none'}
+      presentationStyle={Platform.OS === 'ios' ? 'pageSheet' : undefined}
+      onRequestClose={onClose}
     >
       <View style={[styles.container, { backgroundColor: theme.background }]}>
         {/* Header */}
@@ -55,7 +56,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ visible, onClose }
           </Text>
           <TouchableOpacity onPress={onClose} style={styles.closeButton}>
             <Text style={{ color: '#6200EE', fontSize: 16, fontWeight: '600' }}>
-              {t('common.close') || 'Close'}
+              {t('settings.close') as string}
             </Text>
           </TouchableOpacity>
         </View>
