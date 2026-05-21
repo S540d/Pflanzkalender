@@ -50,7 +50,27 @@ export const PlantProvider: React.FC<PlantProviderProps> = ({ children }) => {
           setPlants(defaultPlants);
           await storageService.savePlants(defaultPlants);
         } else {
-          setPlants(savedPlants);
+          // Migration: Default-Pflanzen ohne category/location mit aktuellen Metadaten anreichern
+          const migrated = savedPlants.map((plant) => {
+            if (!plant.isDefault) return plant;
+            const index = parseInt(plant.id.replace('default-', ''), 10);
+            const source = DEFAULT_PLANTS[index];
+            if (!source) return plant;
+            let changed = false;
+            const updates: Partial<Plant> = {};
+            if (plant.category === undefined && source.category !== undefined) {
+              updates.category = source.category;
+              changed = true;
+            }
+            if (plant.location === undefined && source.location !== undefined) {
+              updates.location = source.location;
+              changed = true;
+            }
+            return changed ? { ...plant, ...updates } : plant;
+          });
+          const needsSave = migrated.some((p, i) => p !== savedPlants[i]);
+          setPlants(migrated);
+          if (needsSave) await storageService.savePlants(migrated);
         }
       } catch (error) {
         if (error instanceof Error && error.message === 'STORAGE_CORRUPTED') {
