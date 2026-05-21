@@ -108,8 +108,15 @@ describe('PlantContext – initial load', () => {
     expect(rosen).toBeTruthy();
     expect(rosen!.category).toBe('flower');
     expect(rosen!.location).toBe('sun');
-    // Migration must persist the enriched data
-    expect(mockSetItem).toHaveBeenCalled();
+    // Migration must persist the enriched data to the correct key with correct values
+    expect(mockSetItem).toHaveBeenCalledWith(
+      '@Pflanzkalender:plants',
+      expect.stringContaining('"category":"flower"')
+    );
+    expect(mockSetItem).toHaveBeenCalledWith(
+      '@Pflanzkalender:plants',
+      expect.stringContaining('"location":"sun"')
+    );
   });
 
   it('does not re-save if no default plants need migration', async () => {
