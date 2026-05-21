@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import {
   View,
   Text,
@@ -8,6 +8,7 @@ import {
   Alert,
   TextInput,
 } from 'react-native';
+import { useFocusEffect } from 'expo-router';
 import { useTheme } from '../hooks/useTheme';
 import { usePlants } from '../contexts/PlantContext';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -16,6 +17,7 @@ import { EditPlantModal } from '../components/EditPlantModal';
 import { Plant, PlantLocation, PlantCategory } from '../types';
 import { PLANT_LOCATION_METADATA, PLANT_CATEGORY_METADATA } from '../constants/plantMetadata';
 import { getPlantDisplayName } from '../constants/plantNames';
+import { CATEGORY_TABS, CategoryFilter } from '../constants/categoryTabs';
 
 export const PlantManagementScreen: React.FC = () => {
   const { theme } = useTheme();
@@ -24,8 +26,19 @@ export const PlantManagementScreen: React.FC = () => {
   const [showAddPlant, setShowAddPlant] = useState(false);
   const [editingPlant, setEditingPlant] = useState<Plant | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [activeCategory, setActiveCategory] = useState<CategoryFilter>('all');
   // Metadata objects only have 'de' and 'en' — all other languages fall back to 'en'
   const metaLang: 'de' | 'en' = language === 'de' ? 'de' : 'en';
+
+  // Reset filters when navigating away from this screen
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        setSearchQuery('');
+        setActiveCategory('all');
+      };
+    }, [])
+  );
 
   const sortedPlants = useMemo(() => {
     return [...plants].sort((a, b) =>
@@ -35,12 +48,18 @@ export const PlantManagementScreen: React.FC = () => {
 
   const filteredPlants = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
-    if (!q) return sortedPlants;
+    if (!q && activeCategory === 'all') return sortedPlants;
     return sortedPlants.filter((plant) => {
-      const display = getPlantDisplayName(plant.name, language).toLowerCase();
-      return display.includes(q) || plant.name.toLowerCase().includes(q);
+      if (activeCategory !== 'all' && (plant.category ?? 'vegetable') !== activeCategory) {
+        return false;
+      }
+      if (q) {
+        const display = getPlantDisplayName(plant.name, language).toLowerCase();
+        if (!display.includes(q) && !plant.name.toLowerCase().includes(q)) return false;
+      }
+      return true;
     });
-  }, [sortedPlants, searchQuery, language]);
+  }, [sortedPlants, searchQuery, activeCategory, language]);
 
   const handleAddPlant = (
     name: string,
@@ -72,6 +91,8 @@ export const PlantManagementScreen: React.FC = () => {
     ]);
   };
 
+  const isFiltered = searchQuery.trim().length > 0 || activeCategory !== 'all';
+
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       <ScrollView style={styles.scrollView}>
@@ -89,6 +110,46 @@ export const PlantManagementScreen: React.FC = () => {
             onChangeText={setSearchQuery}
           />
 
+          {/* Kategorie-Filter */}
+          <View
+            style={[
+              styles.categoryBar,
+              { borderColor: theme.border, backgroundColor: theme.surface },
+            ]}
+          >
+            {CATEGORY_TABS.map((tab) => {
+              const isActive = activeCategory === tab.value;
+              const label = language === 'de' ? tab.labelDe : tab.labelEn;
+              return (
+                <TouchableOpacity
+                  key={tab.value}
+                  style={styles.categoryTab}
+                  onPress={() => setActiveCategory(tab.value)}
+                >
+                  <View
+                    style={[
+                      styles.categoryIconBadge,
+                      { backgroundColor: isActive ? tab.color : tab.color + '30' },
+                    ]}
+                  >
+                    <Text style={styles.categoryTabIcon}>{tab.icon}</Text>
+                  </View>
+                  <Text
+                    style={[
+                      styles.categoryTabLabel,
+                      {
+                        color: isActive ? tab.color : theme.textSecondary,
+                        fontWeight: isActive ? '700' : '400',
+                      },
+                    ]}
+                  >
+                    {label}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+
           <TouchableOpacity
             style={[styles.addButton, { backgroundColor: theme.primary }]}
             onPress={() => setShowAddPlant(true)}
@@ -99,7 +160,7 @@ export const PlantManagementScreen: React.FC = () => {
           <View style={styles.plantList}>
             {filteredPlants.length === 0 ? (
               <Text style={[styles.emptyText, { color: theme.textSecondary }]}>
-                {sortedPlants.length === 0
+                {!isFiltered && sortedPlants.length === 0
                   ? (t('plants.empty') as string)
                   : (t('plants.noResults') as string)}
               </Text>
@@ -210,7 +271,33 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderWidth: 1,
     fontSize: 15,
+    marginBottom: 12,
+  },
+  categoryBar: {
+    flexDirection: 'row',
+    borderRadius: 12,
+    borderWidth: 1,
+    paddingVertical: 8,
+    paddingHorizontal: 4,
     marginBottom: 16,
+  },
+  categoryTab: {
+    flex: 1,
+    alignItems: 'center',
+    gap: 4,
+  },
+  categoryIconBadge: {
+    width: 32,
+    height: 32,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  categoryTabIcon: {
+    fontSize: 16,
+  },
+  categoryTabLabel: {
+    fontSize: 9,
   },
   addButton: {
     padding: 16,
