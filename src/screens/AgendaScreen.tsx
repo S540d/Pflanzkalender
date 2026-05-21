@@ -74,11 +74,7 @@ export const AgendaScreen: React.FC = () => {
     return monthNames[monthIndex];
   };
 
-  const renderColumn = (
-    monthIndex: number,
-    offset: number,
-    activities: ActivityInfo[]
-  ) => {
+  const renderColumn = (monthIndex: number, offset: number, activities: ActivityInfo[]) => {
     const isCurrent = offset === 0;
     const title = getColumnTitle(offset, monthIndex);
     // For offset -1/0/1 show the role label as title and date range as subtitle;
@@ -90,12 +86,7 @@ export const AgendaScreen: React.FC = () => {
         key={`col-${monthIndex}-${offset}`}
         style={[styles.column, isCurrent && { borderTopWidth: 3, borderTopColor: theme.primary }]}
       >
-        <Text
-          style={[
-            styles.columnTitle,
-            { color: isCurrent ? theme.primary : theme.text },
-          ]}
-        >
+        <Text style={[styles.columnTitle, { color: isCurrent ? theme.primary : theme.text }]}>
           {title}
         </Text>
         {showSubtitle && (
@@ -122,9 +113,7 @@ export const AgendaScreen: React.FC = () => {
               </View>
               <Text style={[styles.plantName, { color: theme.text }]}>{activity.plantName}</Text>
               {activity.notes && (
-                <Text style={[styles.notes, { color: theme.textSecondary }]}>
-                  {activity.notes}
-                </Text>
+                <Text style={[styles.notes, { color: theme.textSecondary }]}>{activity.notes}</Text>
               )}
             </View>
           ))
