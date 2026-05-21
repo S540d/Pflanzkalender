@@ -180,13 +180,13 @@ jobs:
 
           PACKAGE_VERSION=$(node -p "require('./package.json').version")
           APP_JSON_VERSION=$(node -p "require('./app.json').expo.version")
-          APP_VERSION=$(grep "APP_VERSION = " src/screens/SettingsScreen.tsx | sed -E "s/.*'(.*)'.*/\1/")
+          TWA_MANIFEST_VERSION=$(grep '"appVersionName":' twa-manifest.template.json | sed -E 's/.*"([^"]+)".*/\1/')
 
           echo "package.json: $PACKAGE_VERSION"
           echo "app.json: $APP_JSON_VERSION"
-          echo "SettingsScreen.tsx: $APP_VERSION"
+          echo "twa-manifest.template.json: $TWA_MANIFEST_VERSION"
 
-          if [ "$PACKAGE_VERSION" != "$APP_JSON_VERSION" ] || [ "$PACKAGE_VERSION" != "$APP_VERSION" ]; then
+          if [ "$PACKAGE_VERSION" != "$APP_JSON_VERSION" ] || [ "$PACKAGE_VERSION" != "$TWA_MANIFEST_VERSION" ]; then
             echo "❌ ERROR: Version mismatch!"
             echo "All versions must be identical."
             exit 1
