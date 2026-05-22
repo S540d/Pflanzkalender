@@ -166,8 +166,8 @@ describe('CalendarScreen – Drag-to-create range selection', () => {
       expect(capturedOnPressMonth).not.toBeNull();
     });
     // Flush all pending microtasks / state updates from the async AsyncStorage load
-    await new Promise((r) => setImmediate(r));
-    await new Promise((r) => setImmediate(r));
+    await Promise.resolve();
+    await Promise.resolve();
   }
 
   it('opens AddActivityModal when onPressMonthRange is triggered', async () => {
