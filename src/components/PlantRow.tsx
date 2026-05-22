@@ -54,9 +54,9 @@ export const PlantRow: React.FC<PlantRowProps> = ({
     onPressMonthRangeRef.current = onPressMonthRange;
   }, [onPressMonthRange]);
 
-  // Global mouseup listener to finalize drag (web only)
+  // Global mouseup listener to finalize drag (web only, registered only during active drag)
   useEffect(() => {
-    if (Platform.OS !== 'web') return;
+    if (Platform.OS !== 'web' || !dragStateRef.current) return;
     const handleMouseUp = () => {
       const ds = dragStateRef.current;
       if (!ds) return;
@@ -72,7 +72,7 @@ export const PlantRow: React.FC<PlantRowProps> = ({
     };
     window.addEventListener('mouseup', handleMouseUp); // platform-safe
     return () => window.removeEventListener('mouseup', handleMouseUp); // platform-safe
-  }, []);
+  }, [dragPreview]);
 
   const handleCellMouseDown = useCallback((e: React.MouseEvent, monthIndex: number) => {
     e.preventDefault();

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -37,6 +37,16 @@ export const AddActivityModal: React.FC<AddActivityModalProps> = ({
   const [customLabel, setCustomLabel] = useState('');
   const [rangeError, setRangeError] = useState('');
 
+  useEffect(() => {
+    if (visible) {
+      setStartMonth(initialMonth);
+      setEndMonth(initialEndMonth ?? initialMonth);
+      setSelectedType(ACTIVITY_TYPES[0].type);
+      setCustomLabel('');
+      setRangeError('');
+    }
+  }, [visible, initialMonth, initialEndMonth]);
+
   const selectedActivityType = ACTIVITY_TYPES.find((at) => at.type === selectedType);
   const typeLabel = (type: string) => t(`activity.type.${type}`) as string;
   const label = customLabel || typeLabel(selectedType) || '';
@@ -48,22 +58,11 @@ export const AddActivityModal: React.FC<AddActivityModalProps> = ({
     }
     if (selectedActivityType) {
       onAdd(selectedType, startMonth, endMonth, selectedActivityType.color, label);
-      // Reset
-      setSelectedType(ACTIVITY_TYPES[0].type);
-      setStartMonth(initialMonth);
-      setEndMonth(initialEndMonth ?? initialMonth);
-      setCustomLabel('');
-      setRangeError('');
       onClose();
     }
   };
 
   const handleCancel = () => {
-    setSelectedType(ACTIVITY_TYPES[0].type);
-    setStartMonth(initialMonth);
-    setEndMonth(initialEndMonth ?? initialMonth);
-    setCustomLabel('');
-    setRangeError('');
     onClose();
   };
 
