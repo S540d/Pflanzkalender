@@ -171,6 +171,37 @@ describe('AddActivityModal Component', () => {
     expect(root).toBeTruthy();
   });
 
+  it('accepts initialEndMonth prop without crashing', () => {
+    const { root } = render(
+      <AddActivityModal
+        visible={true}
+        plantName="Tomate"
+        initialMonth={2}
+        initialEndMonth={8}
+        onClose={mockOnClose}
+        onAdd={mockOnAdd}
+      />
+    );
+    expect(root).toBeTruthy();
+  });
+
+  it('uses initialEndMonth as endMonth when provided', () => {
+    const { getByText } = render(
+      <AddActivityModal
+        visible={true}
+        plantName="Tomate"
+        initialMonth={2}
+        initialEndMonth={8}
+        onClose={mockOnClose}
+        onAdd={mockOnAdd}
+      />
+    );
+    fireEvent.press(getByText('Hinzufügen'));
+    const [, startMonth, endMonth] = mockOnAdd.mock.calls[0];
+    expect(startMonth).toBe(2);
+    expect(endMonth).toBe(8);
+  });
+
   it('allows selecting a different activity type', () => {
     const { getAllByText } = render(
       <AddActivityModal visible={true} plantName="Tomate" onClose={mockOnClose} onAdd={mockOnAdd} />

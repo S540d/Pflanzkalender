@@ -15,6 +15,7 @@ interface PlantRowsContainerProps {
   cellWidth?: number;
   onPressActivity: (plantId: string, activityId: string) => void;
   onPressMonth: (plantId: string, monthIndex: number) => void;
+  onPressMonthRange: (plantId: string, startMonth: number, endMonth: number) => void;
   onFixedScrollOffset?: (offset: number) => void;
   fixedScrollRef?: React.RefObject<ScrollView | null>;
   headerScrollRef?: React.RefObject<ScrollView | null>;
@@ -29,6 +30,7 @@ export const PlantRowsContainer: React.FC<PlantRowsContainerProps> = ({
   cellWidth: cellWidthProp,
   onPressActivity,
   onPressMonth,
+  onPressMonthRange,
   onFixedScrollOffset,
   fixedScrollRef: externalFixedScrollRef,
   headerScrollRef,
@@ -151,6 +153,9 @@ export const PlantRowsContainer: React.FC<PlantRowsContainerProps> = ({
                       plant={visiblePlant}
                       onPressActivity={(activityId) => onPressActivity(plant.id, activityId)}
                       onPressMonth={(monthIndex) => onPressMonth(plant.id, monthIndex)}
+                      onPressMonthRange={(startMonth, endMonth) =>
+                        onPressMonthRange(plant.id, startMonth, endMonth)
+                      }
                       onPressPlant={() => {}}
                       totalMonths={months.length}
                       currentHalfMonth={
