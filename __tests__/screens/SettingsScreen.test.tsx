@@ -6,6 +6,14 @@ import { LanguageProvider } from '../../src/contexts/LanguageContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const mockSetThemeMode = jest.fn();
+const mockRouterReplace = jest.fn();
+
+jest.mock('expo-router', () => ({
+  useRouter: () => ({
+    replace: mockRouterReplace,
+    back: jest.fn(),
+  }),
+}));
 
 jest.mock('../../src/hooks/useTheme', () => ({
   useTheme: () => ({
@@ -143,6 +151,13 @@ describe('SettingsScreen', () => {
     const { getByText } = renderWithProviders(<SettingsScreen />);
     expect(getByText(/Feedback|feedback/i)).toBeTruthy();
     expect(getByText('Ko-fi')).toBeTruthy();
+  });
+
+  it('navigates to "/" (not "/(tabs)") when Schließen/Close is pressed', () => {
+    const { getByText } = renderWithProviders(<SettingsScreen />);
+    fireEvent.press(getByText(/Schließen|Close/));
+    expect(mockRouterReplace).toHaveBeenCalledWith('/');
+    expect(mockRouterReplace).not.toHaveBeenCalledWith('/(tabs)');
   });
 
   it('is a valid React component', () => {

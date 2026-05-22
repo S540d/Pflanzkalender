@@ -16,6 +16,7 @@ interface AddActivityModalProps {
   visible: boolean;
   plantName: string;
   initialMonth?: number;
+  initialEndMonth?: number;
   onClose: () => void;
   onAdd: (type: string, startMonth: number, endMonth: number, color: string, label: string) => void;
 }
@@ -24,6 +25,7 @@ export const AddActivityModal: React.FC<AddActivityModalProps> = ({
   visible,
   plantName,
   initialMonth = 0,
+  initialEndMonth,
   onClose,
   onAdd,
 }) => {
@@ -31,7 +33,7 @@ export const AddActivityModal: React.FC<AddActivityModalProps> = ({
   const { t } = useLanguage();
   const [selectedType, setSelectedType] = useState(ACTIVITY_TYPES[0].type);
   const [startMonth, setStartMonth] = useState(initialMonth);
-  const [endMonth, setEndMonth] = useState(initialMonth);
+  const [endMonth, setEndMonth] = useState(initialEndMonth ?? initialMonth);
   const [customLabel, setCustomLabel] = useState('');
   const [rangeError, setRangeError] = useState('');
 
@@ -49,7 +51,7 @@ export const AddActivityModal: React.FC<AddActivityModalProps> = ({
       // Reset
       setSelectedType(ACTIVITY_TYPES[0].type);
       setStartMonth(initialMonth);
-      setEndMonth(initialMonth);
+      setEndMonth(initialEndMonth ?? initialMonth);
       setCustomLabel('');
       setRangeError('');
       onClose();
@@ -59,7 +61,7 @@ export const AddActivityModal: React.FC<AddActivityModalProps> = ({
   const handleCancel = () => {
     setSelectedType(ACTIVITY_TYPES[0].type);
     setStartMonth(initialMonth);
-    setEndMonth(initialMonth);
+    setEndMonth(initialEndMonth ?? initialMonth);
     setCustomLabel('');
     setRangeError('');
     onClose();

@@ -20,6 +20,7 @@ export const CalendarScreen: React.FC = () => {
   const [selectedPlantId, setSelectedPlantId] = useState<string | null>(null);
   const [selectedActivityId, setSelectedActivityId] = useState<string | null>(null);
   const [selectedMonth, setSelectedMonth] = useState(0);
+  const [selectedEndMonth, setSelectedEndMonth] = useState<number | undefined>(undefined);
   const [activeCategory, setActiveCategory] = useState<CategoryFilter>('all');
   const [zoomLevel, setZoomLevel] = useState(2);
   const fixedScrollRef = useRef<ScrollView>(null);
@@ -77,6 +78,16 @@ export const CalendarScreen: React.FC = () => {
   const handlePressMonth = (plantId: string, monthIndex: number) => {
     setSelectedPlantId(plantId);
     setSelectedMonth(isPortrait ? monthIndex * 4 : monthIndex);
+    setSelectedEndMonth(undefined);
+    setShowAddActivity(true);
+  };
+
+  const handlePressMonthRange = (plantId: string, startIdx: number, endIdx: number) => {
+    setSelectedPlantId(plantId);
+    const startHalf = isPortrait ? startIdx * 4 : startIdx;
+    const endHalf = isPortrait ? Math.min(endIdx * 4 + 3, 23) : endIdx;
+    setSelectedMonth(startHalf);
+    setSelectedEndMonth(endHalf);
     setShowAddActivity(true);
   };
 
@@ -153,6 +164,7 @@ export const CalendarScreen: React.FC = () => {
         cellWidth={cellWidth}
         onPressActivity={handlePressActivity}
         onPressMonth={handlePressMonth}
+        onPressMonthRange={handlePressMonthRange}
         fixedScrollRef={fixedScrollRef}
         headerScrollRef={headerScrollRef}
         loading={loading}
@@ -163,6 +175,7 @@ export const CalendarScreen: React.FC = () => {
           visible={showAddActivity}
           plantName={selectedPlant.name}
           initialMonth={selectedMonth}
+          initialEndMonth={selectedEndMonth}
           onClose={() => setShowAddActivity(false)}
           onAdd={handleAddActivity}
         />

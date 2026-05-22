@@ -12,7 +12,7 @@ export const SettingsScreen: React.FC = () => {
 
   const handleClose = () => {
     setModalVisible(false);
-    router.replace('/(tabs)');
+    router.replace('/');
   };
 
   return (
