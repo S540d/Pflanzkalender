@@ -9,7 +9,7 @@ import { calculateActivityRows } from '../utils/activityLayout';
 interface MonthCellWebProps {
   onMouseDown?: (e: React.MouseEvent) => void;
   onMouseEnter?: () => void;
-  style?: object;
+  style?: React.ComponentProps<typeof View>['style'];
 }
 
 interface PlantRowProps {
@@ -131,7 +131,9 @@ export const PlantRow: React.FC<PlantRowProps> = ({
         style={[
           styles.monthsContainer,
           { width: gridWidth },
-          Platform.OS === 'web' ? ({ userSelect: 'none' } as object) : undefined,
+          Platform.OS === 'web'
+            ? ({ userSelect: 'none' } as React.ComponentProps<typeof View>['style'])
+            : undefined,
         ]}
       >
         {months.map((monthIndex) => {
@@ -152,9 +154,12 @@ export const PlantRow: React.FC<PlantRowProps> = ({
             const webProps: MonthCellWebProps = {
               onMouseDown: (e: React.MouseEvent) => handleCellMouseDown(e, monthIndex),
               onMouseEnter: () => handleCellMouseEnter(monthIndex),
-              style: [...baseStyle, { cursor: 'crosshair' } as object],
+              style: [
+                ...baseStyle,
+                { cursor: 'crosshair' } as React.ComponentProps<typeof View>['style'],
+              ],
             };
-            return <View key={monthIndex} {...(webProps as object)} />;
+            return <View key={monthIndex} {...(webProps as React.ComponentProps<typeof View>)} />;
           }
 
           return (
