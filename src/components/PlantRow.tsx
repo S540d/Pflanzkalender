@@ -1,5 +1,13 @@
 import React, { useMemo, useState, useRef, useEffect, useCallback } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, Platform } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  TextInput,
+  Platform,
+  DimensionValue,
+} from 'react-native';
 import { Plant } from '../types';
 import { ActivityBar } from './ActivityBar';
 import { useTheme } from '../hooks/useTheme';
@@ -119,8 +127,8 @@ export const PlantRow: React.FC<PlantRowProps> = ({
           const start = Math.min(dragPreview.startMonth, dragPreview.endMonth);
           const end = Math.max(dragPreview.startMonth, dragPreview.endMonth);
           return {
-            left: `${(start / totalMonths) * 100}%`,
-            width: `${((end - start + 1) / totalMonths) * 100}%`,
+            left: `${(start / totalMonths) * 100}%` as DimensionValue,
+            width: `${((end - start + 1) / totalMonths) * 100}%` as DimensionValue,
           };
         })()
       : null;
@@ -156,7 +164,7 @@ export const PlantRow: React.FC<PlantRowProps> = ({
               onMouseEnter: () => handleCellMouseEnter(monthIndex),
               style: [
                 ...baseStyle,
-                { cursor: 'crosshair' } as React.ComponentProps<typeof View>['style'],
+                { cursor: 'crosshair' } as unknown as React.ComponentProps<typeof View>['style'],
               ],
             };
             return <View key={monthIndex} {...(webProps as React.ComponentProps<typeof View>)} />;
