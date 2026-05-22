@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -16,6 +16,7 @@ interface AddActivityModalProps {
   visible: boolean;
   plantName: string;
   initialMonth?: number;
+  initialEndMonth?: number;
   onClose: () => void;
   onAdd: (type: string, startMonth: number, endMonth: number, color: string, label: string) => void;
 }
@@ -24,6 +25,7 @@ export const AddActivityModal: React.FC<AddActivityModalProps> = ({
   visible,
   plantName,
   initialMonth = 0,
+  initialEndMonth,
   onClose,
   onAdd,
 }) => {
@@ -31,9 +33,19 @@ export const AddActivityModal: React.FC<AddActivityModalProps> = ({
   const { t } = useLanguage();
   const [selectedType, setSelectedType] = useState(ACTIVITY_TYPES[0].type);
   const [startMonth, setStartMonth] = useState(initialMonth);
-  const [endMonth, setEndMonth] = useState(initialMonth);
+  const [endMonth, setEndMonth] = useState(initialEndMonth ?? initialMonth);
   const [customLabel, setCustomLabel] = useState('');
   const [rangeError, setRangeError] = useState('');
+
+  useEffect(() => {
+    if (visible) {
+      setStartMonth(initialMonth);
+      setEndMonth(initialEndMonth ?? initialMonth);
+      setSelectedType(ACTIVITY_TYPES[0].type);
+      setCustomLabel('');
+      setRangeError('');
+    }
+  }, [visible, initialMonth, initialEndMonth]);
 
   const selectedActivityType = ACTIVITY_TYPES.find((at) => at.type === selectedType);
   const typeLabel = (type: string) => t(`activity.type.${type}`) as string;
@@ -46,22 +58,11 @@ export const AddActivityModal: React.FC<AddActivityModalProps> = ({
     }
     if (selectedActivityType) {
       onAdd(selectedType, startMonth, endMonth, selectedActivityType.color, label);
-      // Reset
-      setSelectedType(ACTIVITY_TYPES[0].type);
-      setStartMonth(initialMonth);
-      setEndMonth(initialMonth);
-      setCustomLabel('');
-      setRangeError('');
       onClose();
     }
   };
 
   const handleCancel = () => {
-    setSelectedType(ACTIVITY_TYPES[0].type);
-    setStartMonth(initialMonth);
-    setEndMonth(initialMonth);
-    setCustomLabel('');
-    setRangeError('');
     onClose();
   };
 

@@ -1,15 +1,30 @@
-import React, { useMemo, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
+import React, { useMemo, useState, useRef, useEffect, useCallback } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  TextInput,
+  Platform,
+  DimensionValue,
+} from 'react-native';
 import { Plant } from '../types';
 import { ActivityBar } from './ActivityBar';
 import { useTheme } from '../hooks/useTheme';
 import { usePlants } from '../contexts/PlantContext';
 import { calculateActivityRows } from '../utils/activityLayout';
 
+interface MonthCellWebProps {
+  onMouseDown?: (e: React.MouseEvent) => void;
+  onMouseEnter?: () => void;
+  style?: React.ComponentProps<typeof View>['style'];
+}
+
 interface PlantRowProps {
   plant: Plant;
   onPressActivity?: (activityId: string) => void;
   onPressMonth?: (monthIndex: number) => void;
+  onPressMonthRange?: (startMonth: number, endMonth: number) => void;
   onPressPlant?: () => void;
   totalMonths?: number; // Anzahl der sichtbaren Monate
   currentHalfMonth?: number; // Aktueller Halbmonat (0-23)
@@ -21,6 +36,7 @@ export const PlantRow: React.FC<PlantRowProps> = ({
   plant,
   onPressActivity,
   onPressMonth,
+  onPressMonthRange,
   onPressPlant: _onPressPlant,
   totalMonths = 24,
   currentHalfMonth,
@@ -31,6 +47,56 @@ export const PlantRow: React.FC<PlantRowProps> = ({
   const { updatePlant } = usePlants();
   const [isEditingNotes, setIsEditingNotes] = useState(false);
   const [notesText, setNotesText] = useState(plant.notes);
+
+  // Drag-to-create state (web only)
+  const [dragPreview, setDragPreview] = useState<{ startMonth: number; endMonth: number } | null>(
+    null
+  );
+  const [isDragging, setIsDragging] = useState(false);
+  const dragStateRef = useRef<{ startMonth: number; endMonth: number } | null>(null);
+  const onPressMonthRef = useRef(onPressMonth);
+  const onPressMonthRangeRef = useRef(onPressMonthRange);
+  useEffect(() => {
+    onPressMonthRef.current = onPressMonth;
+  }, [onPressMonth]);
+  useEffect(() => {
+    onPressMonthRangeRef.current = onPressMonthRange;
+  }, [onPressMonthRange]);
+
+  // Global mouseup listener – registered once when drag starts, removed when it ends
+  useEffect(() => {
+    if (Platform.OS !== 'web' || !isDragging) return;
+    const handleMouseUp = () => {
+      const ds = dragStateRef.current;
+      if (ds) {
+        const start = Math.min(ds.startMonth, ds.endMonth);
+        const end = Math.max(ds.startMonth, ds.endMonth);
+        if (start !== end) {
+          onPressMonthRangeRef.current?.(start, end);
+        } else {
+          onPressMonthRef.current?.(start);
+        }
+      }
+      dragStateRef.current = null;
+      setDragPreview(null);
+      setIsDragging(false);
+    };
+    window.addEventListener('mouseup', handleMouseUp); // platform-safe
+    return () => window.removeEventListener('mouseup', handleMouseUp); // platform-safe
+  }, [isDragging]);
+
+  const handleCellMouseDown = useCallback((e: React.MouseEvent, absoluteIndex: number) => {
+    e.preventDefault();
+    dragStateRef.current = { startMonth: absoluteIndex, endMonth: absoluteIndex };
+    setDragPreview({ startMonth: absoluteIndex, endMonth: absoluteIndex });
+    setIsDragging(true);
+  }, []);
+
+  const handleCellMouseEnter = useCallback((absoluteIndex: number) => {
+    if (!dragStateRef.current) return;
+    dragStateRef.current.endMonth = absoluteIndex;
+    setDragPreview({ startMonth: dragStateRef.current.startMonth, endMonth: absoluteIndex });
+  }, []);
 
   const months = Array.from({ length: totalMonths }, (_, i) => i);
   const gridWidth = totalMonths * cellWidth;
@@ -58,31 +124,73 @@ export const PlantRow: React.FC<PlantRowProps> = ({
     handleNotesSubmit();
   };
 
+  // Compute drag preview bar dimensions
+  const dragPreviewBar =
+    dragPreview !== null
+      ? (() => {
+          const start = Math.min(dragPreview.startMonth, dragPreview.endMonth);
+          const end = Math.max(dragPreview.startMonth, dragPreview.endMonth);
+          return {
+            left: `${(start / totalMonths) * 100}%` as DimensionValue,
+            width: `${((end - start + 1) / totalMonths) * 100}%` as DimensionValue,
+          };
+        })()
+      : null;
+
   return (
     <View style={[styles.row, { minHeight }]}>
-      <View style={[styles.monthsContainer, { width: gridWidth }]}>
+      <View
+        style={[
+          styles.monthsContainer,
+          { width: gridWidth },
+          Platform.OS === 'web'
+            ? ({ userSelect: 'none' } as React.ComponentProps<typeof View>['style'])
+            : undefined,
+        ]}
+      >
         {months.map((monthIndex) => {
           const absoluteMonthIndex = monthIndex + monthOffset;
           const isCurrentHalfMonth =
             currentHalfMonth !== undefined && absoluteMonthIndex === currentHalfMonth;
 
+          const baseStyle = [
+            styles.monthCell,
+            {
+              width: cellWidth,
+              borderColor: theme.border,
+              backgroundColor: isCurrentHalfMonth ? theme.border : 'transparent',
+            },
+          ];
+
+          if (Platform.OS === 'web') {
+            const webProps: MonthCellWebProps = {
+              onMouseDown: (e: React.MouseEvent) => handleCellMouseDown(e, absoluteMonthIndex),
+              onMouseEnter: () => handleCellMouseEnter(absoluteMonthIndex),
+              style: [
+                ...baseStyle,
+                { cursor: 'crosshair' } as unknown as React.ComponentProps<typeof View>['style'],
+              ],
+            };
+            return (
+              <View
+                key={monthIndex}
+                accessibilityRole="button"
+                accessibilityLabel={`Monat ${absoluteMonthIndex + 1}`}
+                {...(webProps as React.ComponentProps<typeof View>)}
+              />
+            );
+          }
+
           return (
             <TouchableOpacity
               key={monthIndex}
-              style={[
-                styles.monthCell,
-                {
-                  width: cellWidth,
-                  borderColor: theme.border,
-                  backgroundColor: isCurrentHalfMonth ? theme.border : 'transparent',
-                },
-              ]}
-              onPress={() => onPressMonth?.(monthIndex)}
+              style={baseStyle}
+              onPress={() => onPressMonth?.(absoluteMonthIndex)}
             />
           );
         })}
 
-        <View style={styles.activitiesLayer}>
+        <View style={styles.activitiesLayer} pointerEvents="box-none">
           {activitiesWithRows.map((activity) => (
             <View key={activity.id} style={[styles.activityContainer, { top: activity.row * 28 }]}>
               <ActivityBar
@@ -92,6 +200,29 @@ export const PlantRow: React.FC<PlantRowProps> = ({
               />
             </View>
           ))}
+          {/* Drag preview bar */}
+          {dragPreviewBar && (
+            <View
+              pointerEvents="none"
+              style={[
+                styles.dragPreviewBar,
+                {
+                  left: dragPreviewBar.left,
+                  width: dragPreviewBar.width,
+                  backgroundColor: theme.primary + '55',
+                  borderColor: theme.primary,
+                },
+              ]}
+            />
+          )}
+          {/* Empty row hint */}
+          {plant.activities.length === 0 && !dragPreview && Platform.OS === 'web' && (
+            <View style={styles.emptyHint} pointerEvents="none">
+              <Text style={[styles.emptyHintText, { color: theme.textSecondary }]}>
+                {'← Klicken oder ziehen →'}
+              </Text>
+            </View>
+          )}
         </View>
       </View>
 
@@ -162,5 +293,26 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     height: 24,
+  },
+  dragPreviewBar: {
+    position: 'absolute',
+    top: 0,
+    height: 24,
+    borderRadius: 4,
+    borderWidth: 1,
+    borderStyle: 'dashed',
+  },
+  emptyHint: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  emptyHintText: {
+    fontSize: 10,
+    opacity: 0.5,
   },
 });
