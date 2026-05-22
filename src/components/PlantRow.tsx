@@ -52,6 +52,7 @@ export const PlantRow: React.FC<PlantRowProps> = ({
   const [dragPreview, setDragPreview] = useState<{ startMonth: number; endMonth: number } | null>(
     null
   );
+  const [isDragging, setIsDragging] = useState(false);
   const dragStateRef = useRef<{ startMonth: number; endMonth: number } | null>(null);
   const onPressMonthRef = useRef(onPressMonth);
   const onPressMonthRangeRef = useRef(onPressMonthRange);
@@ -62,36 +63,39 @@ export const PlantRow: React.FC<PlantRowProps> = ({
     onPressMonthRangeRef.current = onPressMonthRange;
   }, [onPressMonthRange]);
 
-  // Global mouseup listener to finalize drag (web only, registered only during active drag)
+  // Global mouseup listener – registered once when drag starts, removed when it ends
   useEffect(() => {
-    if (Platform.OS !== 'web' || !dragStateRef.current) return;
+    if (Platform.OS !== 'web' || !isDragging) return;
     const handleMouseUp = () => {
       const ds = dragStateRef.current;
-      if (!ds) return;
-      const start = Math.min(ds.startMonth, ds.endMonth);
-      const end = Math.max(ds.startMonth, ds.endMonth);
-      if (start !== end) {
-        onPressMonthRangeRef.current?.(start, end);
-      } else {
-        onPressMonthRef.current?.(start);
+      if (ds) {
+        const start = Math.min(ds.startMonth, ds.endMonth);
+        const end = Math.max(ds.startMonth, ds.endMonth);
+        if (start !== end) {
+          onPressMonthRangeRef.current?.(start, end);
+        } else {
+          onPressMonthRef.current?.(start);
+        }
       }
       dragStateRef.current = null;
       setDragPreview(null);
+      setIsDragging(false);
     };
     window.addEventListener('mouseup', handleMouseUp); // platform-safe
     return () => window.removeEventListener('mouseup', handleMouseUp); // platform-safe
-  }, [dragPreview]);
+  }, [isDragging]);
 
-  const handleCellMouseDown = useCallback((e: React.MouseEvent, monthIndex: number) => {
+  const handleCellMouseDown = useCallback((e: React.MouseEvent, absoluteIndex: number) => {
     e.preventDefault();
-    dragStateRef.current = { startMonth: monthIndex, endMonth: monthIndex };
-    setDragPreview({ startMonth: monthIndex, endMonth: monthIndex });
+    dragStateRef.current = { startMonth: absoluteIndex, endMonth: absoluteIndex };
+    setDragPreview({ startMonth: absoluteIndex, endMonth: absoluteIndex });
+    setIsDragging(true);
   }, []);
 
-  const handleCellMouseEnter = useCallback((monthIndex: number) => {
+  const handleCellMouseEnter = useCallback((absoluteIndex: number) => {
     if (!dragStateRef.current) return;
-    dragStateRef.current.endMonth = monthIndex;
-    setDragPreview({ startMonth: dragStateRef.current.startMonth, endMonth: monthIndex });
+    dragStateRef.current.endMonth = absoluteIndex;
+    setDragPreview({ startMonth: dragStateRef.current.startMonth, endMonth: absoluteIndex });
   }, []);
 
   const months = Array.from({ length: totalMonths }, (_, i) => i);
@@ -160,21 +164,28 @@ export const PlantRow: React.FC<PlantRowProps> = ({
 
           if (Platform.OS === 'web') {
             const webProps: MonthCellWebProps = {
-              onMouseDown: (e: React.MouseEvent) => handleCellMouseDown(e, monthIndex),
-              onMouseEnter: () => handleCellMouseEnter(monthIndex),
+              onMouseDown: (e: React.MouseEvent) => handleCellMouseDown(e, absoluteMonthIndex),
+              onMouseEnter: () => handleCellMouseEnter(absoluteMonthIndex),
               style: [
                 ...baseStyle,
                 { cursor: 'crosshair' } as unknown as React.ComponentProps<typeof View>['style'],
               ],
             };
-            return <View key={monthIndex} {...(webProps as React.ComponentProps<typeof View>)} />;
+            return (
+              <View
+                key={monthIndex}
+                accessibilityRole="button"
+                accessibilityLabel={`Monat ${absoluteMonthIndex + 1}`}
+                {...(webProps as React.ComponentProps<typeof View>)}
+              />
+            );
           }
 
           return (
             <TouchableOpacity
               key={monthIndex}
               style={baseStyle}
-              onPress={() => onPressMonth?.(monthIndex)}
+              onPress={() => onPressMonth?.(absoluteMonthIndex)}
             />
           );
         })}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, fireEvent } from '@testing-library/react-native';
+import { render, fireEvent, waitFor } from '@testing-library/react-native';
 import { CalendarScreen } from '../../src/screens/CalendarScreen';
 import { PlantProvider } from '../../src/contexts/PlantContext';
 import { LanguageProvider } from '../../src/contexts/LanguageContext';
@@ -20,10 +20,63 @@ jest.mock('../../src/hooks/useTheme', () => ({
   }),
 }));
 
+const testPlant = {
+  id: 'plant-1',
+  name: 'Tomate',
+  isDefault: false,
+  userId: null,
+  activities: [],
+  notes: '',
+  createdAt: 1748736000000,
+  updatedAt: 1748736000000,
+};
+
 jest.mock('@react-native-async-storage/async-storage', () => ({
-  getItem: jest.fn().mockResolvedValue(null),
+  getItem: jest
+    .fn()
+    .mockImplementation((key: string) =>
+      key === '@Pflanzkalender:plants'
+        ? Promise.resolve(JSON.stringify([testPlant]))
+        : Promise.resolve(null)
+    ),
   setItem: jest.fn().mockResolvedValue(undefined),
   removeItem: jest.fn().mockResolvedValue(undefined),
+}));
+
+// Capture callbacks passed to PlantRowsContainer so tests can trigger them
+let capturedOnPressMonth: ((plantId: string, monthIndex: number) => void) | null = null;
+let capturedOnPressMonthRange: ((plantId: string, start: number, end: number) => void) | null =
+  null;
+
+jest.mock('../../src/components/PlantRowsContainer', () => ({
+  PlantRowsContainer: (props: {
+    onPressMonth: (plantId: string, monthIndex: number) => void;
+    onPressMonthRange: (plantId: string, start: number, end: number) => void;
+  }) => {
+    capturedOnPressMonth = props.onPressMonth;
+    capturedOnPressMonthRange = props.onPressMonthRange;
+    return null;
+  },
+}));
+
+jest.mock('../../src/components/AddActivityModal', () => ({
+  AddActivityModal: (props: {
+    visible: boolean;
+    initialMonth?: number;
+    initialEndMonth?: number;
+    plantName?: string;
+    onClose?: () => void;
+    onAdd?: () => void;
+  }) => {
+    const { View, Text } = require('react-native');
+    if (!props.visible) return null;
+    return (
+      <View testID="add-activity-modal">
+        <Text testID="modal-initial-month">{props.initialMonth ?? 'none'}</Text>
+        <Text testID="modal-initial-end-month">{props.initialEndMonth ?? 'none'}</Text>
+      </View>
+    );
+  },
 }));
 
 const wrapper = ({ children }: { children: React.ReactNode }) => (
@@ -31,6 +84,11 @@ const wrapper = ({ children }: { children: React.ReactNode }) => (
     <PlantProvider>{children}</PlantProvider>
   </LanguageProvider>
 );
+
+beforeEach(() => {
+  capturedOnPressMonth = null;
+  capturedOnPressMonthRange = null;
+});
 
 describe('CalendarScreen – Rendering', () => {
   it('renders without crashing with required providers', () => {
@@ -68,7 +126,7 @@ describe('CalendarScreen – Zoom controls', () => {
     const { findByTestId, getByTestId } = render(<CalendarScreen />, { wrapper });
     await findByTestId('zoom-label');
     fireEvent.press(getByTestId('zoom-out'));
-    fireEvent.press(getByTestId('zoom-out')); // already at min, should not change
+    fireEvent.press(getByTestId('zoom-out'));
     expect(getByTestId('zoom-label').props.children).toBe('75%');
   });
 
@@ -76,7 +134,7 @@ describe('CalendarScreen – Zoom controls', () => {
     const { findByTestId, getByTestId } = render(<CalendarScreen />, { wrapper });
     await findByTestId('zoom-label');
     fireEvent.press(getByTestId('zoom-in'));
-    fireEvent.press(getByTestId('zoom-in')); // already at max, should not change
+    fireEvent.press(getByTestId('zoom-in'));
     expect(getByTestId('zoom-label').props.children).toBe('133%');
   });
 
@@ -96,31 +154,78 @@ describe('CalendarScreen – Zoom controls', () => {
 });
 
 describe('CalendarScreen – Drag-to-create range selection', () => {
-  it('opens AddActivityModal with initialMonth and initialEndMonth when month range is selected', async () => {
-    const { findByTestId, queryByTestId } = render(<CalendarScreen />, { wrapper });
-    // Modal is initially hidden
-    let modal = queryByTestId('add-activity-modal');
-    expect(modal).toBeFalsy();
-    // Simulate range selection on a row (would be triggered by PlantRow's drag)
-    // For this test, we verify the modal would receive the correct props by checking visibility
-    // In a full integration test, PlantRow would call onPressMonthRange with plant ID and indices
-    // The CalendarScreen would then set selectedMonth, selectedEndMonth, and show the modal
-    // Since we can't easily trigger PlantRow's drag in unit test, we verify the logic is wired
-    expect(typeof CalendarScreen).toBe('function');
+  // In the test environment Dimensions returns portrait (750x1334),
+  // so CalendarScreen maps indices via portrait formula: startHalf = idx*4, endHalf = min(idx*4+3, 23)
+  // AddActivityModal only renders when selectedPlant is set, so we must wait for plant loading first.
+
+  async function waitForReady() {
+    // Wait until PlantRowsContainer has been rendered (callbacks captured) and
+    // PlantContext has finished loading from AsyncStorage (getItem resolves async).
+    await waitFor(() => {
+      expect(capturedOnPressMonthRange).not.toBeNull();
+      expect(capturedOnPressMonth).not.toBeNull();
+    });
+    // Flush all pending microtasks / state updates from the async AsyncStorage load
+    await new Promise((r) => setImmediate(r));
+    await new Promise((r) => setImmediate(r));
+  }
+
+  it('opens AddActivityModal when onPressMonthRange is triggered', async () => {
+    const { queryByTestId } = render(<CalendarScreen />, { wrapper });
+    expect(queryByTestId('add-activity-modal')).toBeFalsy();
+
+    await waitForReady();
+    capturedOnPressMonthRange!('plant-1', 2, 4);
+
+    await waitFor(() => expect(queryByTestId('add-activity-modal')).toBeTruthy());
   });
 
-  it('correctly maps portrait mode indices to half-months', () => {
-    // Portrait: 4 cells per month, so slot 0 = hm 0, slot 1 = hm 4, slot 2 = hm 8, etc.
-    // startIdx=0, endIdx=2 (portrait) should give startHalf=0, endHalf=11 (2*4+3 clamped to 23)
-    // This test verifies the mapping formula in handlePressMonthRange
-    expect(0 * 4).toBe(0); // startIdx=0 → startHalf=0
-    expect(Math.min(2 * 4 + 3, 23)).toBe(11); // endIdx=2 → endHalf=11
+  it('maps portrait indices correctly: startHalf=idx*4, endHalf=min(idx*4+3,23)', async () => {
+    const { queryByTestId } = render(<CalendarScreen />, { wrapper });
+
+    await waitForReady();
+    // idx 2..4 → startHalf=8, endHalf=19
+    capturedOnPressMonthRange!('plant-1', 2, 4);
+
+    await waitFor(() => {
+      expect(queryByTestId('modal-initial-month')?.props.children).toBe(8);
+      expect(queryByTestId('modal-initial-end-month')?.props.children).toBe(19);
+    });
   });
 
-  it('correctly maps landscape mode indices to half-months', () => {
-    // Landscape: indices map 1:1 to half-months
-    // startIdx=5, endIdx=8 should give startHalf=5, endHalf=8
-    expect(5).toBe(5); // startIdx=5 → startHalf=5
-    expect(8).toBe(8); // endIdx=8 → endHalf=8
+  it('clamps endHalf to 23 for last portrait cell', async () => {
+    const { queryByTestId } = render(<CalendarScreen />, { wrapper });
+
+    await waitForReady();
+    // idx 5..5 → startHalf=20, endHalf=min(23,23)=23
+    capturedOnPressMonthRange!('plant-1', 5, 5);
+
+    await waitFor(() => {
+      expect(queryByTestId('modal-initial-month')?.props.children).toBe(20);
+      expect(queryByTestId('modal-initial-end-month')?.props.children).toBe(23);
+    });
+  });
+
+  it('opens AddActivityModal when a single month is pressed', async () => {
+    const { queryByTestId } = render(<CalendarScreen />, { wrapper });
+    expect(queryByTestId('add-activity-modal')).toBeFalsy();
+
+    await waitForReady();
+    capturedOnPressMonth!('plant-1', 1);
+
+    await waitFor(() => expect(queryByTestId('add-activity-modal')).toBeTruthy());
+  });
+
+  it('passes initialMonth (portrait: idx*4) without initialEndMonth for single-month press', async () => {
+    const { queryByTestId } = render(<CalendarScreen />, { wrapper });
+
+    await waitForReady();
+    // idx 1 → selectedMonth = 1*4 = 4, selectedEndMonth = undefined
+    capturedOnPressMonth!('plant-1', 1);
+
+    await waitFor(() => {
+      expect(queryByTestId('modal-initial-month')?.props.children).toBe(4);
+      expect(queryByTestId('modal-initial-end-month')?.props.children).toBe('none');
+    });
   });
 });
