@@ -365,6 +365,93 @@ describe('PlantContext – updateActivity', () => {
   });
 });
 
+describe('PlantContext – isCustomized flag', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockGetItem.mockResolvedValue(null);
+    mockSetItem.mockResolvedValue(undefined);
+  });
+
+  it('setzt isCustomized: true wenn addActivity aufgerufen wird', async () => {
+    const { result } = renderHook(() => usePlants(), { wrapper });
+    await waitForLoaded(result);
+
+    await act(async () => {
+      result.current.addPlant({
+        name: 'TestPflanze',
+        activities: [],
+        isDefault: false,
+        userId: null,
+        notes: '',
+      });
+    });
+
+    const plant = result.current.plants.find((p) => p.name === 'TestPflanze')!;
+
+    await act(async () => {
+      result.current.addActivity(plant.id, {
+        type: 'sow',
+        startMonth: 1,
+        endMonth: 3,
+        color: '#4CAF50',
+        label: 'Aussaat',
+      });
+    });
+
+    const updated = result.current.plants.find((p) => p.id === plant.id)!;
+    expect(updated.activities[0].isCustomized).toBe(true);
+  });
+
+  it('setzt isCustomized: true wenn updateActivity aufgerufen wird', async () => {
+    const { result } = renderHook(() => usePlants(), { wrapper });
+    await waitForLoaded(result);
+
+    await act(async () => {
+      result.current.addPlant({
+        name: 'UpdateTestPflanze',
+        activities: [],
+        isDefault: false,
+        userId: null,
+        notes: '',
+      });
+    });
+
+    const plant = result.current.plants.find((p) => p.name === 'UpdateTestPflanze')!;
+
+    await act(async () => {
+      result.current.addActivity(plant.id, {
+        type: 'harvest',
+        startMonth: 6,
+        endMonth: 9,
+        color: '#FF5722',
+        label: 'Ernte',
+      });
+    });
+
+    const withActivity = result.current.plants.find((p) => p.id === plant.id)!;
+    const activityId = withActivity.activities[0].id;
+
+    await act(async () => {
+      result.current.updateActivity(plant.id, activityId, { startMonth: 7 });
+    });
+
+    const updated = result.current.plants.find((p) => p.id === plant.id)!;
+    expect(updated.activities[0].isCustomized).toBe(true);
+    expect(updated.activities[0].startMonth).toBe(7);
+  });
+
+  it('default-Pflanzen beim ersten Start haben kein isCustomized gesetzt', async () => {
+    const { result } = renderHook(() => usePlants(), { wrapper });
+    await waitForLoaded(result);
+
+    const defaultPlant = result.current.plants.find((p) => p.isDefault);
+    expect(defaultPlant).toBeTruthy();
+    defaultPlant!.activities.forEach((act) => {
+      expect(act.isCustomized).toBeUndefined();
+    });
+  });
+});
+
 describe('PlantContext – deleteActivity', () => {
   beforeEach(() => {
     jest.clearAllMocks();
