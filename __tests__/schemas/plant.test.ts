@@ -39,6 +39,22 @@ describe('ActivitySchema', () => {
     const { id: _id, ...noId } = validActivity;
     expect(ActivitySchema.safeParse(noId).success).toBe(false);
   });
+
+  it('akzeptiert isCustomized: true', () => {
+    expect(ActivitySchema.safeParse({ ...validActivity, isCustomized: true }).success).toBe(true);
+  });
+
+  it('akzeptiert isCustomized: false', () => {
+    expect(ActivitySchema.safeParse({ ...validActivity, isCustomized: false }).success).toBe(true);
+  });
+
+  it('akzeptiert Aktivität ohne isCustomized (optionales Feld)', () => {
+    expect(ActivitySchema.safeParse(validActivity).success).toBe(true);
+  });
+
+  it('lehnt nicht-boolesches isCustomized ab', () => {
+    expect(ActivitySchema.safeParse({ ...validActivity, isCustomized: 'yes' }).success).toBe(false);
+  });
 });
 
 describe('PlantSchema', () => {
