@@ -7,7 +7,6 @@ export const ActivitySchema = z.object({
   endMonth: z.number().int().min(0).max(23),
   color: z.string(),
   label: z.string(),
-  isCustomized: z.boolean().optional(),
 });
 
 export const PlantSchema = z.object({

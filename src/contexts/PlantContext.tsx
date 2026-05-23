@@ -128,7 +128,6 @@ export const PlantProvider: React.FC<PlantProviderProps> = ({ children }) => {
     const newActivity: Activity = {
       ...activity,
       id: `activity-${Date.now()}`,
-      isCustomized: true,
     };
 
     const updatedPlants = plants.map((plant) =>
@@ -149,7 +148,7 @@ export const PlantProvider: React.FC<PlantProviderProps> = ({ children }) => {
         ? {
             ...plant,
             activities: plant.activities.map((act) =>
-              act.id === activityId ? { ...act, ...updates, isCustomized: true } : act
+              act.id === activityId ? { ...act, ...updates } : act
             ),
             updatedAt: Date.now(),
           }
