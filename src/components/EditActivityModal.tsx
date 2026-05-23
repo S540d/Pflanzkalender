@@ -111,6 +111,64 @@ export const EditActivityModal: React.FC<EditActivityModalProps> = ({
             <Text style={[styles.label, { color: theme.text }]}>
               {t('activity.edit.periodLabel') as string}
             </Text>
+            <View style={styles.shiftRow}>
+              <Text style={[styles.shiftLabel, { color: theme.textSecondary }]}>
+                {t('activity.edit.shiftPeriod') as string}
+              </Text>
+              <TouchableOpacity
+                style={[
+                  styles.shiftButton,
+                  { backgroundColor: theme.surface, borderColor: theme.border },
+                  (startMonth === 0 || endMonth === 0) && styles.shiftButtonDisabled,
+                ]}
+                onPress={() => {
+                  if (startMonth > 0 && endMonth > 0) {
+                    setStartMonth(startMonth - 1);
+                    setEndMonth(endMonth - 1);
+                    setRangeError('');
+                  }
+                }}
+                disabled={startMonth === 0 || endMonth === 0}
+              >
+                <Text
+                  style={[
+                    styles.shiftButtonText,
+                    {
+                      color: startMonth === 0 || endMonth === 0 ? theme.textSecondary : theme.text,
+                    },
+                  ]}
+                >
+                  {t('activity.edit.earlier') as string}
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[
+                  styles.shiftButton,
+                  { backgroundColor: theme.surface, borderColor: theme.border },
+                  (endMonth === 23 || startMonth === 23) && styles.shiftButtonDisabled,
+                ]}
+                onPress={() => {
+                  if (endMonth < 23 && startMonth < 23) {
+                    setStartMonth(startMonth + 1);
+                    setEndMonth(endMonth + 1);
+                    setRangeError('');
+                  }
+                }}
+                disabled={endMonth === 23 || startMonth === 23}
+              >
+                <Text
+                  style={[
+                    styles.shiftButtonText,
+                    {
+                      color:
+                        endMonth === 23 || startMonth === 23 ? theme.textSecondary : theme.text,
+                    },
+                  ]}
+                >
+                  {t('activity.edit.later') as string}
+                </Text>
+              </TouchableOpacity>
+            </View>
             <View style={styles.periodRow}>
               <View style={styles.periodField}>
                 <Text style={[styles.periodLabel, { color: theme.textSecondary }]}>
@@ -287,6 +345,28 @@ const styles = StyleSheet.create({
     height: 24,
     borderRadius: 4,
     marginBottom: 8,
+  },
+  shiftRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 12,
+  },
+  shiftLabel: {
+    fontSize: 12,
+    flex: 1,
+  },
+  shiftButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 6,
+    borderWidth: 1,
+  },
+  shiftButtonDisabled: {
+    opacity: 0.4,
+  },
+  shiftButtonText: {
+    fontSize: 13,
   },
   periodRow: {
     flexDirection: 'row',

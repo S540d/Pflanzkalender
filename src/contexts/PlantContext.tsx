@@ -124,10 +124,11 @@ export const PlantProvider: React.FC<PlantProviderProps> = ({ children }) => {
     savePlants(filteredPlants);
   };
 
-  const addActivity = (plantId: string, activity: Omit<Activity, 'id'>) => {
+  const addActivity = (plantId: string, activity: Omit<Activity, 'id' | 'isCustomized'>) => {
     const newActivity: Activity = {
       ...activity,
       id: `activity-${Date.now()}`,
+      isCustomized: true,
     };
 
     const updatedPlants = plants.map((plant) =>
@@ -148,7 +149,7 @@ export const PlantProvider: React.FC<PlantProviderProps> = ({ children }) => {
         ? {
             ...plant,
             activities: plant.activities.map((act) =>
-              act.id === activityId ? { ...act, ...updates } : act
+              act.id === activityId ? { ...act, ...updates, isCustomized: true } : act
             ),
             updatedAt: Date.now(),
           }

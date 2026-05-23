@@ -5,6 +5,7 @@ export interface Activity {
   endMonth: number;
   color: string;
   label: string;
+  isCustomized?: boolean; // true = vom Nutzer verändert; schützt vor künftigen Default-Updates
 }
 
 export type PlantLocation = 'sun' | 'partial-shade' | 'shade';
