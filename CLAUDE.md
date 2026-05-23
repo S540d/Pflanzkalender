@@ -30,12 +30,12 @@ Deploy: GitHub Pages via `gh-pages` unter `/Pflanzkalender/`
 
 ---
 
-## Aktuelle Version: 1.3.1 (main) / testing + PR #137
+## Aktuelle Version: 1.3.2 (main)
 
-**Stand 2026-05-23:** isCustomized-Flag + Zeitraum-Shift-Buttons (Issue #3, PR #137) → testing gemergt.
+**Stand 2026-05-23:** isCustomized-Flag + Zeitraum-Shift-Buttons (Issue #3, PR #137/141) → main gemergt. APK v1.3.2 (versionCode 4) gebaut und auf Gerät installiert.
 
-- **main branch:** v1.3.1 mit Phase 1 + Phase 2 (vollständig, inkl. Icon-Resizing) + Phase 3 (299 Tests) + Phase 4a (ESLint 9, Prettier) + Phase 4b (Expo Router, PR #82) + Phase 5 (TWA-Manifest, PR #106) + Issue #56 Phase 3 (TypeScript-Cleanup, `TouchableWebProps`, Duplikat-Beseitigung) + Klima-Reiter (Issue #55, PR #80) + Splash Screen (Issue #99, PR #106) + User-Feedback (Issue #104, PR #107) + AgendaScreen-Lokalisierung (PR #115)
-- **testing branch:** v1.3.1 + PR #137 (isCustomized-Flag, Shift-Buttons, 326 Tests)
+- **main branch:** v1.3.2 mit Phase 1–5 + isCustomized-Flag + Shift-Buttons (PR #141, 344 neue Zeilen, 326 Tests)
+- **testing branch:** 3 Commits vor main (Squash-Merge-Normal)
 
 Versions-Stellen: `package.json`, `app.json`, `twa-manifest.template.json` – immer alle drei synchron halten, sonst schlägt CI fehl. `SettingsScreen.tsx` liest Version jetzt dynamisch aus `package.json` (seit PR #124), kein manuelles Sync mehr nötig.
 
@@ -237,8 +237,13 @@ Vollständige Roadmap: https://github.com/S540d/Pflanzkalender/issues/47
 
 ## Offene Issues (Stand 2026-05-23)
 
-- **#3** Aktivitäten verschieben/anpassen – Shift-Buttons ✅ in testing (PR #137); Drag & Drop noch offen
+- **#3** Aktivitäten verschieben/anpassen – Shift-Buttons ✅ auf main (PR #141); Drag & Drop noch offen
 - **#48** Klimazonen-Unterstützung – unterschiedliche Aktivitätszeiträume je Region (Ziel: v2.0.0)
+- **#133** Repo-Hygiene: Was muss wirklich im Repository sein?
+- **#126** TypeScript-Fehler: SettingsModal presentationStyle + eslint-config-prettier types
+- **#123** Code-Audit: Wartbarkeit & Security (v1.3.1)
+- **#122** Globaler Jest-Mock für expo-router (useFocusEffect & Co.)
+- **#88** Bug: Data export kein File-Download auf Web (PWA) – priority: high
 
 ## Abgeschlossene Roadmap-Issues
 
@@ -250,6 +255,7 @@ Vollständige Roadmap: https://github.com/S540d/Pflanzkalender/issues/47
 
 | Was                                          | Wann       | Details                                                                                                                                                 |
 | -------------------------------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **PR #141:** testing → main (Issue #3)       | 2026-05-23 | ✅ main `61b12ba`: isCustomized-Flag + Shift-Buttons; Copilot-Fixes (Bound-Prüfung, Typ-Einschränkung); APK v1.3.2 gebaut + installiert                 |
 | **PR #137:** Issue #3 – isCustomized + Shift | 2026-05-23 | ✅ testing `e0f722e`: `Activity.isCustomized?`, Shift-Buttons im EditActivityModal (← Früher / Später →), 326 Tests (vorher 299)                        |
 | **PR #116:** AgendaScreen i18n + Roadmap     | 2026-05-20 | ✅ main `438abdf`: EN-Regressionstest in AgendaScreen.test, Phase 4b/5 ✅ in Roadmap, #47 abgeschlossen                                                 |
 | **PR #115:** AgendaScreen-Lokalisierung      | 2026-05-20 | ✅ main `cefc434`: `getPlantDisplayName(plant.name, language)` für Anzeige+Sortierung; `language` als `useCallback`-Dep                                 |
