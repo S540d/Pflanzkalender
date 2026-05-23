@@ -403,36 +403,46 @@ describe('PlantContext – isCustomized flag', () => {
   });
 
   it('setzt isCustomized: true wenn updateActivity aufgerufen wird', async () => {
+    // Seed eine Pflanze mit einer Aktivität OHNE isCustomized (simuliert unveränderter Default)
+    // so dass der Test beweist, dass updateActivity selbst das Flag setzt –
+    // nicht addActivity (das Flag dort ist separat getestet)
+    const seedPlants = [
+      {
+        id: 'default-0',
+        name: 'SeedPflanze',
+        activities: [
+          {
+            id: 'act-seed-1',
+            type: 'harvest',
+            startMonth: 6,
+            endMonth: 9,
+            color: '#FF5722',
+            label: 'Ernte',
+            // isCustomized bewusst weggelassen → simuliert Default-Aktivität
+          },
+        ],
+        isDefault: true,
+        userId: null,
+        notes: '',
+        createdAt: 1000,
+        updatedAt: 1000,
+      },
+    ];
+    mockGetItem.mockImplementation((key: string) =>
+      key === '@Pflanzkalender:plants'
+        ? Promise.resolve(JSON.stringify(seedPlants))
+        : Promise.resolve(null)
+    );
+
     const { result } = renderHook(() => usePlants(), { wrapper });
     await waitForLoaded(result);
 
-    await act(async () => {
-      result.current.addPlant({
-        name: 'UpdateTestPflanze',
-        activities: [],
-        isDefault: false,
-        userId: null,
-        notes: '',
-      });
-    });
-
-    const plant = result.current.plants.find((p) => p.name === 'UpdateTestPflanze')!;
+    const plant = result.current.plants.find((p) => p.id === 'default-0')!;
+    // Ausgangszustand: isCustomized noch nicht gesetzt
+    expect(plant.activities[0].isCustomized).toBeUndefined();
 
     await act(async () => {
-      result.current.addActivity(plant.id, {
-        type: 'harvest',
-        startMonth: 6,
-        endMonth: 9,
-        color: '#FF5722',
-        label: 'Ernte',
-      });
-    });
-
-    const withActivity = result.current.plants.find((p) => p.id === plant.id)!;
-    const activityId = withActivity.activities[0].id;
-
-    await act(async () => {
-      result.current.updateActivity(plant.id, activityId, { startMonth: 7 });
+      result.current.updateActivity(plant.id, 'act-seed-1', { startMonth: 7 });
     });
 
     const updated = result.current.plants.find((p) => p.id === plant.id)!;
