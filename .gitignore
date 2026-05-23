@@ -67,3 +67,4 @@ gradlew
 gradlew.bat
 settings.gradle
 .gradle/
+local.properties
