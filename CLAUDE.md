@@ -237,13 +237,28 @@ Vollständige Roadmap: https://github.com/S540d/Pflanzkalender/issues/47
 
 ## Offene Issues (Stand 2026-05-23)
 
-- **#3** Aktivitäten verschieben/anpassen – Shift-Buttons ✅ auf main (PR #141); Drag & Drop noch offen
-- **#48** Klimazonen-Unterstützung – unterschiedliche Aktivitätszeiträume je Region (Ziel: v2.0.0)
-- **#133** Repo-Hygiene: Was muss wirklich im Repository sein?
-- **#126** TypeScript-Fehler: SettingsModal presentationStyle + eslint-config-prettier types
-- **#123** Code-Audit: Wartbarkeit & Security (v1.3.1)
-- **#122** Globaler Jest-Mock für expo-router (useFocusEffect & Co.)
-- **#88** Bug: Data export kein File-Download auf Web (PWA) – priority: high
+**Status: Geschlossener Play Store Test (testing branch = v1.3.1 + PR #137)**
+
+### v1.4.0 – Play Store Closed Test Phase
+
+- **#126** TypeScript-Fehler: SettingsModal `presentationStyle` + eslint-config-prettier types – **priority: high**
+- **#88** Bug: Data export kein File-Download auf Web (PWA) – **priority: high**
+- **#122** Globaler Jest-Mock für expo-router (useFocusEffect & Co.) – technisches Debt
+- **#123** Code-Audit: Wartbarkeit & Security – Referenz-Issue mit Action Items
+
+### v1.5.0 – Content & Personalisierung
+
+- **#91** Agenda – Vorschau über aktuelle Woche hinaus
+- **#94** Statistiken / Dashboard – saisonale Übersicht
+- **#87** Import UI für Pflanzendaten (JSON) – hängt von #88 ab
+- **#4** Push-Benachrichtigungen
+
+### v2.0.0 – Klimazonen & Community
+
+- **#48** Klimazonen-Unterstützung – unterschiedliche Aktivitätszeiträume je Region
+- **#142** Drag & Drop für Aktivitäten im Kalender
+- **#8** Template-System: Pflanzpläne teilen und importieren
+- **#9** Intelligente Vorschläge: Fruchtfolge & Mischkultur
 
 ## Abgeschlossene Roadmap-Issues
 
