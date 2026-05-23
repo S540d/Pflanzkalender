@@ -119,21 +119,23 @@ export const EditActivityModal: React.FC<EditActivityModalProps> = ({
                 style={[
                   styles.shiftButton,
                   { backgroundColor: theme.surface, borderColor: theme.border },
-                  startMonth === 0 && styles.shiftButtonDisabled,
+                  (startMonth === 0 || endMonth === 0) && styles.shiftButtonDisabled,
                 ]}
                 onPress={() => {
-                  if (startMonth > 0) {
+                  if (startMonth > 0 && endMonth > 0) {
                     setStartMonth(startMonth - 1);
                     setEndMonth(endMonth - 1);
                     setRangeError('');
                   }
                 }}
-                disabled={startMonth === 0}
+                disabled={startMonth === 0 || endMonth === 0}
               >
                 <Text
                   style={[
                     styles.shiftButtonText,
-                    { color: startMonth === 0 ? theme.textSecondary : theme.text },
+                    {
+                      color: startMonth === 0 || endMonth === 0 ? theme.textSecondary : theme.text,
+                    },
                   ]}
                 >
                   {t('activity.edit.earlier') as string}
@@ -143,21 +145,24 @@ export const EditActivityModal: React.FC<EditActivityModalProps> = ({
                 style={[
                   styles.shiftButton,
                   { backgroundColor: theme.surface, borderColor: theme.border },
-                  endMonth === 23 && styles.shiftButtonDisabled,
+                  (endMonth === 23 || startMonth === 23) && styles.shiftButtonDisabled,
                 ]}
                 onPress={() => {
-                  if (endMonth < 23) {
+                  if (endMonth < 23 && startMonth < 23) {
                     setStartMonth(startMonth + 1);
                     setEndMonth(endMonth + 1);
                     setRangeError('');
                   }
                 }}
-                disabled={endMonth === 23}
+                disabled={endMonth === 23 || startMonth === 23}
               >
                 <Text
                   style={[
                     styles.shiftButtonText,
-                    { color: endMonth === 23 ? theme.textSecondary : theme.text },
+                    {
+                      color:
+                        endMonth === 23 || startMonth === 23 ? theme.textSecondary : theme.text,
+                    },
                   ]}
                 >
                   {t('activity.edit.later') as string}

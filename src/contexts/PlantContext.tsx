@@ -124,7 +124,7 @@ export const PlantProvider: React.FC<PlantProviderProps> = ({ children }) => {
     savePlants(filteredPlants);
   };
 
-  const addActivity = (plantId: string, activity: Omit<Activity, 'id'>) => {
+  const addActivity = (plantId: string, activity: Omit<Activity, 'id' | 'isCustomized'>) => {
     const newActivity: Activity = {
       ...activity,
       id: `activity-${Date.now()}`,
