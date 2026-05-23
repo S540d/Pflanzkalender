@@ -30,12 +30,12 @@ Deploy: GitHub Pages via `gh-pages` unter `/Pflanzkalender/`
 
 ---
 
-## Aktuelle Version: 1.3.1 (main) / testing + PR #137
+## Aktuelle Version: 1.3.1 (main)
 
-**Stand 2026-05-23:** isCustomized-Flag + Zeitraum-Shift-Buttons (Issue #3, PR #137) → testing gemergt.
+**Stand 2026-05-20:** User-Feedback (Issue #104, PR #107) + Lint Fix (Issue #108, PR #111) + AgendaScreen-Lokalisierung (PR #115) + i18n-Regressionstest + Roadmap Phase 4b/5 ✅ (PR #116) gemergt.
 
 - **main branch:** v1.3.1 mit Phase 1 + Phase 2 (vollständig, inkl. Icon-Resizing) + Phase 3 (299 Tests) + Phase 4a (ESLint 9, Prettier) + Phase 4b (Expo Router, PR #82) + Phase 5 (TWA-Manifest, PR #106) + Issue #56 Phase 3 (TypeScript-Cleanup, `TouchableWebProps`, Duplikat-Beseitigung) + Klima-Reiter (Issue #55, PR #80) + Splash Screen (Issue #99, PR #106) + User-Feedback (Issue #104, PR #107) + AgendaScreen-Lokalisierung (PR #115)
-- **testing branch:** v1.3.1 + PR #137 (isCustomized-Flag, Shift-Buttons, 326 Tests)
+- **testing branch:** v1.3.1 (identisch mit main)
 
 Versions-Stellen: `package.json`, `app.json`, `twa-manifest.template.json` – immer alle drei synchron halten, sonst schlägt CI fehl. `SettingsScreen.tsx` liest Version jetzt dynamisch aus `package.json` (seit PR #124), kein manuelles Sync mehr nötig.
 
@@ -93,10 +93,7 @@ Plant {
 
 Activity {
   id, type, startMonth, endMonth,  // 0-23 (Halbmonate: 0 = Jan 1. Hälfte, 23 = Dez 2. Hälfte)
-  color, label,
-  isCustomized?: boolean            // true = vom Nutzer verändert; schützt vor künftigen Default-Updates
-                                    // addActivity() + updateActivity() setzen es automatisch auf true
-                                    // Default-Aktivitäten beim ersten Start haben undefined (kein Flag)
+  color, label
 }
 ```
 
@@ -235,9 +232,8 @@ Vollständige Roadmap: https://github.com/S540d/Pflanzkalender/issues/47
 
 ---
 
-## Offene Issues (Stand 2026-05-23)
+## Offene Issues (Stand 2026-05-20)
 
-- **#3** Aktivitäten verschieben/anpassen – Shift-Buttons ✅ in testing (PR #137); Drag & Drop noch offen
 - **#48** Klimazonen-Unterstützung – unterschiedliche Aktivitätszeiträume je Region (Ziel: v2.0.0)
 
 ## Abgeschlossene Roadmap-Issues
@@ -246,24 +242,23 @@ Vollständige Roadmap: https://github.com/S540d/Pflanzkalender/issues/47
 
 ---
 
-## Letzte Merges / Fixes (2026-05-23)
+## Letzte Merges / Fixes (2026-05-20)
 
-| Was                                          | Wann       | Details                                                                                                                                                 |
-| -------------------------------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **PR #137:** Issue #3 – isCustomized + Shift | 2026-05-23 | ✅ testing `e0f722e`: `Activity.isCustomized?`, Shift-Buttons im EditActivityModal (← Früher / Später →), 326 Tests (vorher 299)                        |
-| **PR #116:** AgendaScreen i18n + Roadmap     | 2026-05-20 | ✅ main `438abdf`: EN-Regressionstest in AgendaScreen.test, Phase 4b/5 ✅ in Roadmap, #47 abgeschlossen                                                 |
-| **PR #115:** AgendaScreen-Lokalisierung      | 2026-05-20 | ✅ main `cefc434`: `getPlantDisplayName(plant.name, language)` für Anzeige+Sortierung; `language` als `useCallback`-Dep                                 |
-| **PR #112:** Review PR #110 – v1.3.1 fixes   | 2026-05-20 | ✅ main `bb58f81`: Version-Bump 1.3.1, toter `settings.version`-Key entfernt, Versions-Test auf Semver-Pattern, CLAUDE.md Test-Count 299                |
-| **PR #111:** Issue #108 – Lint Fix           | 2026-05-19 | ✅ main `61125aa`: ESLint-Warnings 45 → 0 (allow console.error/warn, fix unused vars/types, disable exhaustive-deps, test-file-override for no-console) |
-| **PR #107:** Issue #104 – User-Feedback      | 2026-05-19 | ✅ main `f8a65f5`: Kalender-Zoom (3 Stufen), Pflanzen-Übersetzungen (`plantNames.ts`), Suchleiste in Pflanzenverwaltung, Tab-Overflow-Fix               |
-| **PR #106:** Issue #99 – Splash Screen       | 2026-05-19 | ✅ main `4b9be2e`: `app.json` splash+adaptive-icon `#1a7a4a`, `manifest.json` background, `scripts/add-splash-screen.js`, `twa-manifest.template.json`  |
-| **fix:** PWA Icon-Resizing                   | 2026-05-14 | ✅ main `4e66719`: Icons auf 192×192 / 512×512 resized (waren 1024×1024); generate-icons.js prüft jetzt Pixeldimensionen                                |
-| **PR #80:** Issue #55 – Klima-Reiter         | 2026-05-11 | ✅ main `f7c59af`: `ClimateScreen.tsx` mit 15 Empfehlungen, 4 Filter-Tabs, Trocken-/Hitze-Bewertung, DE/EN, Dark-Mode                                   |
-| **PR #81:** Dependency-Fix                   | 2026-05-11 | ✅ main `ded9532`: Tilde-Ranges für expo-status-bar und @types/react                                                                                    |
-| **PR #79:** Fix Activity-Bar Alignment       | 2026-05-11 | ✅ main `52f6f46`: Activity-Bars auf breiten Screens korrekt ausgerichtet                                                                               |
-| **PR #78:** Issue #77 – Dependency Updates   | 2026-05-11 | ✅ main `a778157`: 19 Security Fixes + 20 Outdated Packages                                                                                             |
-| **PR #75:** Rescue Copilot-Reviews PR #71    | 2026-05-10 | ✅ main `36e8902`: `waitFor`-Pattern in `useTheme.test`, `AgendaScreen.test`                                                                            |
-| **PR #72:** Issue #56 Phase 3 – Type Safety  | 2026-05-10 | ✅ main `d7995bb`: `MONTH_SHORT` statt Duplikat-Array in ActivityBar, `TouchableWebProps`-Interface                                                     |
+| Was                                         | Wann       | Details                                                                                                                                                 |
+| ------------------------------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **PR #116:** AgendaScreen i18n + Roadmap    | 2026-05-20 | ✅ main `438abdf`: EN-Regressionstest in AgendaScreen.test, Phase 4b/5 ✅ in Roadmap, #47 abgeschlossen                                                 |
+| **PR #115:** AgendaScreen-Lokalisierung     | 2026-05-20 | ✅ main `cefc434`: `getPlantDisplayName(plant.name, language)` für Anzeige+Sortierung; `language` als `useCallback`-Dep                                 |
+| **PR #112:** Review PR #110 – v1.3.1 fixes  | 2026-05-20 | ✅ main `bb58f81`: Version-Bump 1.3.1, toter `settings.version`-Key entfernt, Versions-Test auf Semver-Pattern, CLAUDE.md Test-Count 299                |
+| **PR #111:** Issue #108 – Lint Fix          | 2026-05-19 | ✅ main `61125aa`: ESLint-Warnings 45 → 0 (allow console.error/warn, fix unused vars/types, disable exhaustive-deps, test-file-override for no-console) |
+| **PR #107:** Issue #104 – User-Feedback     | 2026-05-19 | ✅ main `f8a65f5`: Kalender-Zoom (3 Stufen), Pflanzen-Übersetzungen (`plantNames.ts`), Suchleiste in Pflanzenverwaltung, Tab-Overflow-Fix               |
+| **PR #106:** Issue #99 – Splash Screen      | 2026-05-19 | ✅ main `4b9be2e`: `app.json` splash+adaptive-icon `#1a7a4a`, `manifest.json` background, `scripts/add-splash-screen.js`, `twa-manifest.template.json`  |
+| **fix:** PWA Icon-Resizing                  | 2026-05-14 | ✅ main `4e66719`: Icons auf 192×192 / 512×512 resized (waren 1024×1024); generate-icons.js prüft jetzt Pixeldimensionen                                |
+| **PR #80:** Issue #55 – Klima-Reiter        | 2026-05-11 | ✅ main `f7c59af`: `ClimateScreen.tsx` mit 15 Empfehlungen, 4 Filter-Tabs, Trocken-/Hitze-Bewertung, DE/EN, Dark-Mode                                   |
+| **PR #81:** Dependency-Fix                  | 2026-05-11 | ✅ main `ded9532`: Tilde-Ranges für expo-status-bar und @types/react                                                                                    |
+| **PR #79:** Fix Activity-Bar Alignment      | 2026-05-11 | ✅ main `52f6f46`: Activity-Bars auf breiten Screens korrekt ausgerichtet                                                                               |
+| **PR #78:** Issue #77 – Dependency Updates  | 2026-05-11 | ✅ main `a778157`: 19 Security Fixes + 20 Outdated Packages                                                                                             |
+| **PR #75:** Rescue Copilot-Reviews PR #71   | 2026-05-10 | ✅ main `36e8902`: `waitFor`-Pattern in `useTheme.test`, `AgendaScreen.test`                                                                            |
+| **PR #72:** Issue #56 Phase 3 – Type Safety | 2026-05-10 | ✅ main `d7995bb`: `MONTH_SHORT` statt Duplikat-Array in ActivityBar, `TouchableWebProps`-Interface                                                     |
 
 ---
 

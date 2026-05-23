@@ -30,9 +30,6 @@ jest.mock('../../src/contexts/LanguageContext', () => ({
         'activity.edit.deleteMessage': 'Aktivität wirklich löschen?',
         'activity.edit.deleteConfirm': 'Löschen',
         'activity.edit.rangeError': 'Startmonat darf nicht nach dem Endmonat liegen.',
-        'activity.edit.shiftPeriod': 'Zeitraum verschieben',
-        'activity.edit.earlier': '← Früher',
-        'activity.edit.later': 'Später →',
         'activity.add.from': 'Von',
         'activity.add.to': 'Bis',
         'common.cancel': 'Abbrechen',
@@ -311,116 +308,6 @@ describe('EditActivityModal Component', () => {
     );
 
     expect(getByDisplayValue('Geändert')).toBeTruthy();
-  });
-
-  it('zeigt Zeitraum-verschieben-Buttons an', () => {
-    const { getByText } = render(
-      <EditActivityModal
-        visible={true}
-        activity={mockActivity}
-        plantName="Tomate"
-        onClose={mockOnClose}
-        onUpdate={mockOnUpdate}
-        onDelete={mockOnDelete}
-      />
-    );
-    expect(getByText('Zeitraum verschieben')).toBeTruthy();
-    expect(getByText('← Früher')).toBeTruthy();
-    expect(getByText('Später →')).toBeTruthy();
-  });
-
-  it('verschiebt Zeitraum nach vorne wenn Später → gedrückt wird', () => {
-    // mockActivity: startMonth=2, endMonth=4
-    const { getByText } = render(
-      <EditActivityModal
-        visible={true}
-        activity={mockActivity}
-        plantName="Tomate"
-        onClose={mockOnClose}
-        onUpdate={mockOnUpdate}
-        onDelete={mockOnDelete}
-      />
-    );
-
-    fireEvent.press(getByText('Später →'));
-    fireEvent.press(getByText('Speichern'));
-
-    expect(mockOnUpdate).toHaveBeenCalledWith('act-1', {
-      label: 'Aussaat',
-      startMonth: 3,
-      endMonth: 5,
-    });
-  });
-
-  it('verschiebt Zeitraum nach hinten wenn ← Früher gedrückt wird', () => {
-    // mockActivity: startMonth=2, endMonth=4
-    const { getByText } = render(
-      <EditActivityModal
-        visible={true}
-        activity={mockActivity}
-        plantName="Tomate"
-        onClose={mockOnClose}
-        onUpdate={mockOnUpdate}
-        onDelete={mockOnDelete}
-      />
-    );
-
-    fireEvent.press(getByText('← Früher'));
-    fireEvent.press(getByText('Speichern'));
-
-    expect(mockOnUpdate).toHaveBeenCalledWith('act-1', {
-      label: 'Aussaat',
-      startMonth: 1,
-      endMonth: 3,
-    });
-  });
-
-  it('blockiert ← Früher wenn startMonth bereits 0 ist', () => {
-    const atStart: Activity = { ...mockActivity, startMonth: 0, endMonth: 2 };
-    const { getByText } = render(
-      <EditActivityModal
-        visible={true}
-        activity={atStart}
-        plantName="Tomate"
-        onClose={mockOnClose}
-        onUpdate={mockOnUpdate}
-        onDelete={mockOnDelete}
-      />
-    );
-
-    fireEvent.press(getByText('← Früher'));
-    fireEvent.press(getByText('Speichern'));
-
-    // startMonth sollte immer noch 0 sein
-    expect(mockOnUpdate).toHaveBeenCalledWith('act-1', {
-      label: 'Aussaat',
-      startMonth: 0,
-      endMonth: 2,
-    });
-  });
-
-  it('blockiert Später → wenn endMonth bereits 23 ist', () => {
-    const atEnd: Activity = { ...mockActivity, startMonth: 21, endMonth: 23 };
-    const { getByText } = render(
-      <EditActivityModal
-        visible={true}
-        activity={atEnd}
-        plantName="Tomate"
-        onClose={mockOnClose}
-        onUpdate={mockOnUpdate}
-        onDelete={mockOnDelete}
-      />
-    );
-
-    fireEvent.press(getByText('Später →'));
-    fireEvent.press(getByText('Speichern'));
-
-    // endMonth sollte immer noch 23 sein
-    expect(mockOnUpdate).toHaveBeenCalledWith('act-1', {
-      label: 'Aussaat',
-      startMonth: 21,
-      endMonth: 23,
-    });
   });
 
   it('renders the month picker with month options', () => {
