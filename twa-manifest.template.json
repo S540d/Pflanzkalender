@@ -22,7 +22,7 @@
     "alias": "android"
   },
   "appVersionCode": 4,
-  "appVersionName": "1.3.2",
+  "appVersionName": "1.4.0",
   "shortcuts": [],
   "generatorApp": "bubblewrap-cli",
   "generatorVersion": "1.21.1",
