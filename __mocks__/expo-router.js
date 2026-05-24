@@ -1,5 +1,8 @@
 const React = require('react');
 
+const Tabs = ({ children }) => children;
+Tabs.Screen = ({ children }) => children;
+
 module.exports = {
   useFocusEffect: jest.fn(),
   useRouter: jest.fn(() => ({
@@ -9,6 +12,6 @@ module.exports = {
   })),
   useLocalSearchParams: jest.fn(() => ({})),
   useSegments: jest.fn(() => []),
-  Tabs: ({ children }) => children,
+  Tabs,
   Link: ({ children }) => children,
 };

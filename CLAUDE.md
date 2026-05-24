@@ -194,7 +194,9 @@ Gleicher Pattern bei React Native Testing Library: `waitFor(() => queryAllByText
 
 `useFocusEffect` (und weitere expo-router-Hooks wie `useRouter`) erwarten intern einen `NavigationContainer`. In Unit-Tests existiert dieser nicht → Hook crasht ohne Mock.
 
-**Lösung (seit Issue #122):** `__mocks__/expo-router.js` neben `node_modules/` liefert no-op-Implementierungen für alle expo-router-Exporte. Jest lädt diese Datei automatisch – **kein** `jest.mock('expo-router', ...)` in einzelnen Test-Dateien mehr nötig.
+**Lösung (seit Issue #122):** `__mocks__/expo-router.js` neben `node_modules/` liefert no-op-Implementierungen für häufig verwendete expo-router-Exports (useFocusEffect, useRouter, useLocalSearchParams, useSegments, Tabs, Link). Jest lädt diese Datei automatisch – **kein** `jest.mock('expo-router', ...)` in einzelnen Test-Dateien mehr nötig.
+
+**Wichtig:** `Tabs` ist eine Komponente mit statischer Property `Tabs.Screen` – diese Struktur wird in `app/_layout.tsx` für `<Tabs.Screen ... />` benötigt.
 
 Per-Datei-Overrides bleiben weiterhin möglich via `jest.mock('expo-router', () => ...)` und haben Vorrang vor dem globalen Mock.
 
