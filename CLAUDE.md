@@ -30,12 +30,12 @@ Deploy: GitHub Pages via `gh-pages` unter `/Pflanzkalender/`
 
 ---
 
-## Aktuelle Version: 1.3.2 (main)
+## Aktuelle Version: 1.4.0 (main)
 
-**Stand 2026-05-24:** testing und main sind synchron. PRs #144 (Issue #126) und #145 (Issue #122) gegen testing offen.
+**Stand 2026-05-24:** main = v1.4.0 (versionCode 5). testing ist hinter main (noch v1.3.2). Keine offenen PRs.
 
-- **main branch:** v1.3.2 mit Phase 1–5 + isCustomized-Flag + Shift-Buttons (PR #141, 344 neue Zeilen, 326 Tests)
-- **testing branch:** synchron mit main (Stand 2026-05-24)
+- **main branch:** v1.4.0 – Issues #122 + #126 geschlossen, APK + AAB gebaut und signiert
+- **testing branch:** hinter main (Stand 2026-05-24) – noch v1.3.2
 
 Versions-Stellen: `package.json`, `app.json`, `twa-manifest.template.json` – immer alle drei synchron halten, sonst schlägt CI fehl. `SettingsScreen.tsx` liest Version jetzt dynamisch aus `package.json` (seit PR #124), kein manuelles Sync mehr nötig.
 
@@ -247,13 +247,13 @@ Vollständige Roadmap: https://github.com/S540d/Pflanzkalender/issues/47
 
 ## Offene Issues (Stand 2026-05-24)
 
-**Status: Play Store Closed Test läuft; testing = main = v1.3.2**
+**Status: main = v1.4.0, APK/AAB gebaut. testing hinter main. Keine offenen PRs.**
 
-### v1.4.0 – Play Store Closed Test Phase
+### v1.4.0 – abgeschlossen / Play Store
 
-- **#126** TypeScript-Fehler: SettingsModal `presentationStyle` + eslint-config-prettier types – **PR #144 offen** (gegen testing)
+- **#126** ✅ Geschlossen (PR #144 gemergt)
+- **#122** ✅ Geschlossen (PR #145 gemergt)
 - **#88** Bug: Data export kein File-Download auf Web (PWA) – **priority: high**
-- **#122** Globaler Jest-Mock für expo-router (useFocusEffect & Co.) – **PR #145 offen** (gegen testing)
 - **#123** Code-Audit: Wartbarkeit & Security – Referenz-Issue mit Action Items
 
 ### v1.5.0 – Content & Personalisierung
@@ -280,8 +280,9 @@ Vollständige Roadmap: https://github.com/S540d/Pflanzkalender/issues/47
 
 | Was                                          | Wann       | Details                                                                                                                                                 |
 | -------------------------------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **PR #145:** Issue #122 – expo-router Mock   | 2026-05-24 | 🔄 offen gegen testing: `__mocks__/expo-router.js` globaler Mock, per-file Boilerplate in PlantManagementScreen.test.tsx entfernt, 326 Tests grün       |
-| **PR #144:** Issue #126 – TS-Fehler          | 2026-05-24 | 🔄 offen gegen testing: `App_BACKUP.tsx` entfernt, `tsc --noEmit` sauber (Exit 0); eigentliche Fixes waren bereits in main                              |
+| **v1.4.0 Bump + APK/AAB**                    | 2026-05-24 | ✅ main `b4627eb`: Version 1.4.0 / versionCode 5; APK + AAB gebaut & signiert; APK auf Testgerät installiert                                            |
+| **PR #145:** Issue #122 – expo-router Mock   | 2026-05-24 | ✅ gemergt: `__mocks__/expo-router.js` globaler Mock, per-file Boilerplate entfernt, 326 Tests grün                                                     |
+| **PR #144:** Issue #126 – TS-Fehler          | 2026-05-24 | ✅ gemergt: `App_BACKUP.tsx` entfernt, `tsc --noEmit` sauber (Exit 0)                                                                                   |
 | **Sync:** testing ↔ main                     | 2026-05-24 | ✅ Beide Branches identisch (Stand nach PR #141/CLAUDE.md-Updates)                                                                                      |
 | **PR #141:** testing → main (Issue #3)       | 2026-05-23 | ✅ main `61b12ba`: isCustomized-Flag + Shift-Buttons; Copilot-Fixes (Bound-Prüfung, Typ-Einschränkung); APK v1.3.2 gebaut + installiert                 |
 | **PR #137:** Issue #3 – isCustomized + Shift | 2026-05-23 | ✅ testing `e0f722e`: `Activity.isCustomized?`, Shift-Buttons im EditActivityModal (← Früher / Später →), 326 Tests (vorher 299)                        |
