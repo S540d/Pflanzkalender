@@ -190,6 +190,14 @@ Gleicher Pattern bei React Native Testing Library: `waitFor(() => queryAllByText
 - `app.json` behält `expo.version` (CI liest `require('./app.json').expo.version`). `app.config.js` ergänzt nur dynamisch – Version weiter dreifach synchron halten.
 - Settings-Tab-Icon ist `⋮` (U+22EE), **nicht** das Zahnrad-Emoji – CI (`grep -rq "⚙" app/`) bricht sonst ab (UX-Guideline).
 
+### Tests – expo-router globaler Mock (`__mocks__/expo-router.js`)
+
+`useFocusEffect` (und weitere expo-router-Hooks wie `useRouter`) erwarten intern einen `NavigationContainer`. In Unit-Tests existiert dieser nicht → Hook crasht ohne Mock.
+
+**Lösung (seit Issue #122):** `__mocks__/expo-router.js` neben `node_modules/` liefert no-op-Implementierungen für alle expo-router-Exporte. Jest lädt diese Datei automatisch – **kein** `jest.mock('expo-router', ...)` in einzelnen Test-Dateien mehr nötig.
+
+Per-Datei-Overrides bleiben weiterhin möglich via `jest.mock('expo-router', () => ...)` und haben Vorrang vor dem globalen Mock.
+
 ### Squash-Merge: Feature-Branches nach Merge löschen
 
 Bleiben Feature-Branches nach einem Squash-Merge im Remote stehen, schlägt jeder spätere Merge oder Rebase mit ihnen mit add/add-Konflikten in den ursprünglich gemergten Dateien fehl – Git erkennt die Inhaltsgleichheit der squash-erzeugten Commits nicht, weil sie neue Hashes haben. **Immer Branch nach Merge löschen.** Falls schon zu spät: nur den Diff `branch..main` als Patch ausschneiden, auf einen frischen Branch von main anwenden, alten Branch wegwerfen (siehe Vorgehen bei PR #75).
@@ -241,9 +249,9 @@ Vollständige Roadmap: https://github.com/S540d/Pflanzkalender/issues/47
 
 ### v1.4.0 – Play Store Closed Test Phase
 
-- **#126** TypeScript-Fehler: SettingsModal `presentationStyle` + eslint-config-prettier types – **priority: high**
+- **#126** TypeScript-Fehler: SettingsModal `presentationStyle` + eslint-config-prettier types – PR offen (claude/ts-fix-126)
 - **#88** Bug: Data export kein File-Download auf Web (PWA) – **priority: high**
-- **#122** Globaler Jest-Mock für expo-router (useFocusEffect & Co.) – technisches Debt
+- **#122** Globaler Jest-Mock für expo-router (useFocusEffect & Co.) – PR offen (claude/jest-mock-122)
 - **#123** Code-Audit: Wartbarkeit & Security – Referenz-Issue mit Action Items
 
 ### v1.5.0 – Content & Personalisierung
