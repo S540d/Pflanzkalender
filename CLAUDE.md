@@ -32,10 +32,10 @@ Deploy: GitHub Pages via `gh-pages` unter `/Pflanzkalender/`
 
 ## Aktuelle Version: 1.3.2 (main)
 
-**Stand 2026-05-23:** isCustomized-Flag + Zeitraum-Shift-Buttons (Issue #3, PR #137/141) → main gemergt. APK v1.3.2 (versionCode 4) gebaut und auf Gerät installiert.
+**Stand 2026-05-24:** testing und main sind synchron. PRs #144 (Issue #126) und #145 (Issue #122) gegen testing offen.
 
 - **main branch:** v1.3.2 mit Phase 1–5 + isCustomized-Flag + Shift-Buttons (PR #141, 344 neue Zeilen, 326 Tests)
-- **testing branch:** 3 Commits vor main (Squash-Merge-Normal)
+- **testing branch:** synchron mit main (Stand 2026-05-24)
 
 Versions-Stellen: `package.json`, `app.json`, `twa-manifest.template.json` – immer alle drei synchron halten, sonst schlägt CI fehl. `SettingsScreen.tsx` liest Version jetzt dynamisch aus `package.json` (seit PR #124), kein manuelles Sync mehr nötig.
 
@@ -190,6 +190,16 @@ Gleicher Pattern bei React Native Testing Library: `waitFor(() => queryAllByText
 - `app.json` behält `expo.version` (CI liest `require('./app.json').expo.version`). `app.config.js` ergänzt nur dynamisch – Version weiter dreifach synchron halten.
 - Settings-Tab-Icon ist `⋮` (U+22EE), **nicht** das Zahnrad-Emoji – CI (`grep -rq "⚙" app/`) bricht sonst ab (UX-Guideline).
 
+### Tests – expo-router globaler Mock (`__mocks__/expo-router.js`)
+
+`useFocusEffect` (und weitere expo-router-Hooks wie `useRouter`) erwarten intern einen `NavigationContainer`. In Unit-Tests existiert dieser nicht → Hook crasht ohne Mock.
+
+**Lösung (seit Issue #122):** `__mocks__/expo-router.js` neben `node_modules/` liefert no-op-Implementierungen für häufig verwendete expo-router-Exports (useFocusEffect, useRouter, useLocalSearchParams, useSegments, Tabs, Link). Jest lädt diese Datei automatisch – **kein** `jest.mock('expo-router', ...)` in einzelnen Test-Dateien mehr nötig.
+
+**Wichtig:** `Tabs` ist eine Komponente mit statischer Property `Tabs.Screen` – diese Struktur wird in `app/_layout.tsx` für `<Tabs.Screen ... />` benötigt.
+
+Per-Datei-Overrides bleiben weiterhin möglich via `jest.mock('expo-router', () => ...)` und haben Vorrang vor dem globalen Mock.
+
 ### Squash-Merge: Feature-Branches nach Merge löschen
 
 Bleiben Feature-Branches nach einem Squash-Merge im Remote stehen, schlägt jeder spätere Merge oder Rebase mit ihnen mit add/add-Konflikten in den ursprünglich gemergten Dateien fehl – Git erkennt die Inhaltsgleichheit der squash-erzeugten Commits nicht, weil sie neue Hashes haben. **Immer Branch nach Merge löschen.** Falls schon zu spät: nur den Diff `branch..main` als Patch ausschneiden, auf einen frischen Branch von main anwenden, alten Branch wegwerfen (siehe Vorgehen bei PR #75).
@@ -235,15 +245,15 @@ Vollständige Roadmap: https://github.com/S540d/Pflanzkalender/issues/47
 
 ---
 
-## Offene Issues (Stand 2026-05-23)
+## Offene Issues (Stand 2026-05-24)
 
-**Status: Geschlossener Play Store Test (testing branch = v1.3.1 + PR #137)**
+**Status: Play Store Closed Test läuft; testing = main = v1.3.2**
 
 ### v1.4.0 – Play Store Closed Test Phase
 
-- **#126** TypeScript-Fehler: SettingsModal `presentationStyle` + eslint-config-prettier types – **priority: high**
+- **#126** TypeScript-Fehler: SettingsModal `presentationStyle` + eslint-config-prettier types – **PR #144 offen** (gegen testing)
 - **#88** Bug: Data export kein File-Download auf Web (PWA) – **priority: high**
-- **#122** Globaler Jest-Mock für expo-router (useFocusEffect & Co.) – technisches Debt
+- **#122** Globaler Jest-Mock für expo-router (useFocusEffect & Co.) – **PR #145 offen** (gegen testing)
 - **#123** Code-Audit: Wartbarkeit & Security – Referenz-Issue mit Action Items
 
 ### v1.5.0 – Content & Personalisierung
@@ -266,10 +276,13 @@ Vollständige Roadmap: https://github.com/S540d/Pflanzkalender/issues/47
 
 ---
 
-## Letzte Merges / Fixes (2026-05-23)
+## Letzte Merges / Fixes (2026-05-24)
 
 | Was                                          | Wann       | Details                                                                                                                                                 |
 | -------------------------------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **PR #145:** Issue #122 – expo-router Mock   | 2026-05-24 | 🔄 offen gegen testing: `__mocks__/expo-router.js` globaler Mock, per-file Boilerplate in PlantManagementScreen.test.tsx entfernt, 326 Tests grün       |
+| **PR #144:** Issue #126 – TS-Fehler          | 2026-05-24 | 🔄 offen gegen testing: `App_BACKUP.tsx` entfernt, `tsc --noEmit` sauber (Exit 0); eigentliche Fixes waren bereits in main                              |
+| **Sync:** testing ↔ main                     | 2026-05-24 | ✅ Beide Branches identisch (Stand nach PR #141/CLAUDE.md-Updates)                                                                                      |
 | **PR #141:** testing → main (Issue #3)       | 2026-05-23 | ✅ main `61b12ba`: isCustomized-Flag + Shift-Buttons; Copilot-Fixes (Bound-Prüfung, Typ-Einschränkung); APK v1.3.2 gebaut + installiert                 |
 | **PR #137:** Issue #3 – isCustomized + Shift | 2026-05-23 | ✅ testing `e0f722e`: `Activity.isCustomized?`, Shift-Buttons im EditActivityModal (← Früher / Später →), 326 Tests (vorher 299)                        |
 | **PR #116:** AgendaScreen i18n + Roadmap     | 2026-05-20 | ✅ main `438abdf`: EN-Regressionstest in AgendaScreen.test, Phase 4b/5 ✅ in Roadmap, #47 abgeschlossen                                                 |

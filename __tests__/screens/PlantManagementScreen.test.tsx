@@ -26,11 +26,6 @@ jest.mock('@react-native-async-storage/async-storage', () => ({
   multiRemove: jest.fn().mockResolvedValue(undefined),
 }));
 
-// useFocusEffect registers a cleanup on screen blur; no-op in tests
-jest.mock('expo-router', () => ({
-  useFocusEffect: jest.fn(),
-}));
-
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
   <LanguageProvider>
     <PlantProvider>{children}</PlantProvider>
@@ -40,9 +35,6 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => (
 describe('PlantManagementScreen', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    // Re-apply the no-op mock after clearAllMocks
-    const { useFocusEffect } = require('expo-router');
-    (useFocusEffect as jest.Mock).mockImplementation(() => {});
   });
 
   it('renders without crashing', () => {
