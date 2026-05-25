@@ -100,8 +100,11 @@ export const storageService = {
         const a = document.createElement('a');
         a.href = url;
         a.download = fileName;
+        document.body.appendChild(a);
         a.click();
-        URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+        // Revoke asynchronously so the browser has time to start the download
+        setTimeout(() => URL.revokeObjectURL(url), 100);
       } else {
         await Share.share({
           message: jsonString,

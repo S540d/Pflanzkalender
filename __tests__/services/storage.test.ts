@@ -125,10 +125,24 @@ describe('storageService.clearAll', () => {
 });
 
 describe('storageService.exportPlants', () => {
+  const g = global as Record<string, unknown>;
+  let origDocument: unknown;
+  let origURL: unknown;
+  let origBlob: unknown;
+
   beforeEach(async () => {
     await AsyncStorage.clear();
     jest.clearAllMocks();
     mockPlatform.OS = 'ios';
+    origDocument = g.document;
+    origURL = g.URL;
+    origBlob = g.Blob;
+  });
+
+  afterEach(() => {
+    g.document = origDocument;
+    g.URL = origURL;
+    g.Blob = origBlob;
   });
 
   it('calls Share.share on native with valid JSON containing the plants', async () => {
@@ -151,25 +165,30 @@ describe('storageService.exportPlants', () => {
 
   it('triggers Blob download on web without calling Share.share', async () => {
     mockPlatform.OS = 'web';
+    jest.useFakeTimers();
     const plants = [makePlant('e2')];
     await storageService.savePlants(plants);
 
     const mockClick = jest.fn();
-    const mockAnchor = { href: '', download: '', click: mockClick };
+    const mockAnchor = {
+      href: '',
+      download: '',
+      click: mockClick,
+      parentNode: null as unknown,
+    };
     const mockCreateElement = jest.fn().mockReturnValue(mockAnchor);
+    const mockAppendChild = jest.fn();
+    const mockRemoveChild = jest.fn();
     const mockUrl = 'blob:mock-url';
     const mockCreateObjectURL = jest.fn().mockReturnValue(mockUrl);
     const mockRevokeObjectURL = jest.fn();
 
-    // Inject browser globals not present in node test env
-    (global as Record<string, unknown>).document = {
+    g.document = {
       createElement: mockCreateElement,
+      body: { appendChild: mockAppendChild, removeChild: mockRemoveChild },
     };
-    (global as Record<string, unknown>).URL = {
-      createObjectURL: mockCreateObjectURL,
-      revokeObjectURL: mockRevokeObjectURL,
-    };
-    (global as Record<string, unknown>).Blob = jest.fn().mockReturnValue({});
+    g.URL = { createObjectURL: mockCreateObjectURL, revokeObjectURL: mockRevokeObjectURL };
+    g.Blob = jest.fn().mockReturnValue({});
 
     await storageService.exportPlants();
 
@@ -177,12 +196,15 @@ describe('storageService.exportPlants', () => {
     expect(mockCreateElement).toHaveBeenCalledWith('a');
     expect(mockAnchor.download).toBe('pflanzkalender-export.json');
     expect(mockAnchor.href).toBe(mockUrl);
+    expect(mockAppendChild).toHaveBeenCalledWith(mockAnchor);
     expect(mockClick).toHaveBeenCalled();
+    expect(mockRemoveChild).toHaveBeenCalledWith(mockAnchor);
+    // revokeObjectURL is deferred via setTimeout
+    expect(mockRevokeObjectURL).not.toHaveBeenCalled();
+    jest.runAllTimers();
     expect(mockRevokeObjectURL).toHaveBeenCalledWith(mockUrl);
 
-    delete (global as Record<string, unknown>).document;
-    delete (global as Record<string, unknown>).URL;
-    delete (global as Record<string, unknown>).Blob;
+    jest.useRealTimers();
   });
 
   it('web export Blob contains all plants and correct metadata', async () => {
@@ -194,17 +216,15 @@ describe('storageService.exportPlants', () => {
     const mockCreateObjectURL = jest.fn().mockReturnValue('blob:x');
     const mockRevokeObjectURL = jest.fn();
 
-    (global as Record<string, unknown>).Blob = jest.fn().mockImplementation((parts: string[]) => {
+    g.Blob = jest.fn().mockImplementation((parts: string[]) => {
       capturedContent = parts[0];
       return {};
     });
-    (global as Record<string, unknown>).document = {
+    g.document = {
       createElement: jest.fn().mockReturnValue({ href: '', download: '', click: jest.fn() }),
+      body: { appendChild: jest.fn(), removeChild: jest.fn() },
     };
-    (global as Record<string, unknown>).URL = {
-      createObjectURL: mockCreateObjectURL,
-      revokeObjectURL: mockRevokeObjectURL,
-    };
+    g.URL = { createObjectURL: mockCreateObjectURL, revokeObjectURL: mockRevokeObjectURL };
 
     await storageService.exportPlants();
 
@@ -212,10 +232,6 @@ describe('storageService.exportPlants', () => {
     expect(parsed.version).toBe('1.0.0');
     expect(parsed.plants).toHaveLength(2);
     expect(parsed.plants.map((p: Plant) => p.id)).toEqual(['e3', 'e4']);
-
-    delete (global as Record<string, unknown>).document;
-    delete (global as Record<string, unknown>).URL;
-    delete (global as Record<string, unknown>).Blob;
   });
 });
 
