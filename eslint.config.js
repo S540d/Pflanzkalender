@@ -97,6 +97,7 @@ module.exports = [
         localStorage: 'readonly',
         navigator: 'readonly',
         alert: 'readonly',
+        Blob: 'readonly',
         MediaQueryList: 'readonly',
         MediaQueryListEvent: 'readonly',
         __DEV__: 'readonly',

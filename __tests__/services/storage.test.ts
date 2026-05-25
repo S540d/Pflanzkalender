@@ -13,7 +13,6 @@ jest.mock('react-native', () => {
   };
 });
 
-// eslint-disable-next-line @typescript-eslint/no-require-imports
 const { __platformState: mockPlatform } = require('react-native') as {
   __platformState: { OS: string };
 };
