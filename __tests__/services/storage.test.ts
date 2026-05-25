@@ -1,11 +1,22 @@
 import { storageService } from '../../src/services/storage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Share } from 'react-native';
 import type { Plant } from '../../src/types';
 
-jest.mock('react-native', () => ({
-  Share: { share: jest.fn() },
-}));
+const mockShareFn = jest.fn();
+
+jest.mock('react-native', () => {
+  const platformState = { OS: 'ios' };
+  return {
+    Share: { share: (...args: unknown[]) => mockShareFn(...args) },
+    Platform: platformState,
+    __platformState: platformState,
+  };
+});
+
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const { __platformState: mockPlatform } = require('react-native') as {
+  __platformState: { OS: string };
+};
 
 const makePlant = (id: string): Plant => ({
   id,
@@ -118,30 +129,94 @@ describe('storageService.exportPlants', () => {
   beforeEach(async () => {
     await AsyncStorage.clear();
     jest.clearAllMocks();
+    mockPlatform.OS = 'ios';
   });
 
-  it('calls Share.share with a JSON string containing the current plants', async () => {
+  it('calls Share.share on native with valid JSON containing the plants', async () => {
+    mockPlatform.OS = 'ios';
     const plants = [makePlant('e1')];
     await storageService.savePlants(plants);
-    (Share.share as jest.Mock).mockResolvedValueOnce({ action: 'sharedAction' });
+    mockShareFn.mockResolvedValueOnce({ action: 'sharedAction' });
 
     await storageService.exportPlants();
 
-    expect(Share.share).toHaveBeenCalledTimes(1);
-    const callArg = (Share.share as jest.Mock).mock.calls[0][0];
+    expect(mockShareFn).toHaveBeenCalledTimes(1);
+    const callArg = mockShareFn.mock.calls[0][0];
     const parsed = JSON.parse(callArg.message);
     expect(parsed.plants).toHaveLength(1);
     expect(parsed.plants[0].id).toBe('e1');
     expect(parsed.version).toBe('1.0.0');
     expect(parsed.timestamp).toBeTruthy();
+    expect(callArg.title).toBe('pflanzkalender-export.json');
   });
 
-  it('does not throw when Share.share rejects (falls back to alert)', async () => {
-    global.alert = jest.fn();
-    await storageService.savePlants([]);
-    (Share.share as jest.Mock).mockRejectedValueOnce(new Error('share failed'));
-    await expect(storageService.exportPlants()).resolves.toBeUndefined();
-    expect(global.alert).toHaveBeenCalled();
+  it('triggers Blob download on web without calling Share.share', async () => {
+    mockPlatform.OS = 'web';
+    const plants = [makePlant('e2')];
+    await storageService.savePlants(plants);
+
+    const mockClick = jest.fn();
+    const mockAnchor = { href: '', download: '', click: mockClick };
+    const mockCreateElement = jest.fn().mockReturnValue(mockAnchor);
+    const mockUrl = 'blob:mock-url';
+    const mockCreateObjectURL = jest.fn().mockReturnValue(mockUrl);
+    const mockRevokeObjectURL = jest.fn();
+
+    // Inject browser globals not present in node test env
+    (global as Record<string, unknown>).document = {
+      createElement: mockCreateElement,
+    };
+    (global as Record<string, unknown>).URL = {
+      createObjectURL: mockCreateObjectURL,
+      revokeObjectURL: mockRevokeObjectURL,
+    };
+    (global as Record<string, unknown>).Blob = jest.fn().mockReturnValue({});
+
+    await storageService.exportPlants();
+
+    expect(mockShareFn).not.toHaveBeenCalled();
+    expect(mockCreateElement).toHaveBeenCalledWith('a');
+    expect(mockAnchor.download).toBe('pflanzkalender-export.json');
+    expect(mockAnchor.href).toBe(mockUrl);
+    expect(mockClick).toHaveBeenCalled();
+    expect(mockRevokeObjectURL).toHaveBeenCalledWith(mockUrl);
+
+    delete (global as Record<string, unknown>).document;
+    delete (global as Record<string, unknown>).URL;
+    delete (global as Record<string, unknown>).Blob;
+  });
+
+  it('web export Blob contains all plants and correct metadata', async () => {
+    mockPlatform.OS = 'web';
+    const plants = [makePlant('e3'), makePlant('e4')];
+    await storageService.savePlants(plants);
+
+    let capturedContent = '';
+    const mockCreateObjectURL = jest.fn().mockReturnValue('blob:x');
+    const mockRevokeObjectURL = jest.fn();
+
+    (global as Record<string, unknown>).Blob = jest.fn().mockImplementation((parts: string[]) => {
+      capturedContent = parts[0];
+      return {};
+    });
+    (global as Record<string, unknown>).document = {
+      createElement: jest.fn().mockReturnValue({ href: '', download: '', click: jest.fn() }),
+    };
+    (global as Record<string, unknown>).URL = {
+      createObjectURL: mockCreateObjectURL,
+      revokeObjectURL: mockRevokeObjectURL,
+    };
+
+    await storageService.exportPlants();
+
+    const parsed = JSON.parse(capturedContent);
+    expect(parsed.version).toBe('1.0.0');
+    expect(parsed.plants).toHaveLength(2);
+    expect(parsed.plants.map((p: Plant) => p.id)).toEqual(['e3', 'e4']);
+
+    delete (global as Record<string, unknown>).document;
+    delete (global as Record<string, unknown>).URL;
+    delete (global as Record<string, unknown>).Blob;
   });
 });
 
