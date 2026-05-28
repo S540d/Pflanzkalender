@@ -128,6 +128,22 @@ const de: Translations = {
   'activity.type.harvest': 'Ernten',
   'activity.type.protect': 'Winterschutz',
   'activity.type.mulch': 'Mulchen',
+
+  // Template Screen
+  'template.title': 'Vorlagen',
+  'template.tab': 'Vorlagen',
+  'template.tabTemplates': 'Vorlagen',
+  'template.tabExport': 'Exportieren',
+  'template.tabImport': 'Importieren',
+  'template.community': 'COMMUNITY VORLAGEN',
+  'template.exportSection': 'EXPORTIEREN',
+  'template.importSection': 'IMPORTIEREN',
+  'template.importBtn': 'Importieren',
+  'template.exportHint': 'Exportiere alle deine Pflanzen als JSON-Datei und sichere deine Daten.',
+  'template.importHint':
+    'JSON-Daten einfügen oder eine Datei auswählen, um Pflanzen zu importieren.',
+  'template.chooseFile': 'Datei auswählen',
+  'template.pasteJson': 'JSON hier einfügen...',
 };
 
 export default de;
