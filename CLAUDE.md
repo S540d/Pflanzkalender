@@ -32,10 +32,10 @@ Deploy: GitHub Pages via `gh-pages` unter `/Pflanzkalender/`
 
 ## Aktuelle Version: 1.4.0 (main)
 
-**Stand 2026-05-24:** main = v1.4.0 (versionCode 5). testing ist hinter main (noch v1.3.2). Keine offenen PRs.
+**Stand 2026-05-30:** main = v1.4.0 (versionCode 5). testing ist hinter main. PR #148 + #149 gemergt.
 
-- **main branch:** v1.4.0 – Issues #122 + #126 geschlossen, APK + AAB gebaut und signiert
-- **testing branch:** hinter main (Stand 2026-05-24) – noch v1.3.2
+- **main branch:** v1.4.0 – Issues #123 + #87 geschlossen (PR #148 / #149)
+- **testing branch:** hinter main – noch v1.3.2
 
 Versions-Stellen: `package.json`, `app.json`, `twa-manifest.template.json` – immer alle drei synchron halten, sonst schlägt CI fehl. `SettingsScreen.tsx` liest Version jetzt dynamisch aus `package.json` (seit PR #124), kein manuelles Sync mehr nötig.
 
@@ -54,20 +54,24 @@ app/                           # Expo Router (file-based routing, Phase 4b)
 app.config.js                  # Dynamische Expo-Config: expo-router plugin, web.output=single, experiments.baseUrl (Prod/Testing)
 src/
   screens/                     # CalendarScreen, AgendaScreen, PlantManagementScreen, ClimateScreen, SettingsScreen
-  components/                  # ActivityBar, PlantRow, AddActivityModal, EditActivityModal, AddPlantModal, AppHeader, Footer, ErrorBoundary
-  contexts/                    # PlantContext (CRUD), LanguageContext (de/en)
+  components/                  # ActivityBar, PlantRow, AddActivityModal, EditActivityModal, AddPlantModal, AppHeader, Footer, ErrorBoundary, SettingsModal
+  contexts/                    # PlantContext (CRUD + replacePlants), LanguageContext (de/en/fr/es/it/pl/nl/pt)
   hooks/                       # useTheme (Dark/Light/System)
   constants/
     defaultPlants.ts           # 32 vordefinierte Pflanzen mit Aktivitäten, Standort, Kategorie
     activityTypes.ts           # Aktivitätstypen mit Farben
+    climateRecommendations.ts  # ClimateRecommendation interface + RECOMMENDATIONS (15 Einträge)
     plantMetadata.ts           # PLANT_LOCATION_METADATA + PLANT_CATEGORY_METADATA (Single Source of Truth)
     plantNames.ts              # PLANT_NAME_EN + getPlantDisplayName() – DE↔EN Übersetzung für Pflanzennamen
     theme.ts                   # Farbpalette
   services/
-    storage.ts                 # AsyncStorage Wrapper
+    storage.ts                 # AsyncStorage Wrapper (inkl. importPlants mit Zod-Validierung)
     firebase.ts                # Firebase Init (Placeholder)
   types/index.ts               # Plant, Activity, User, PlantLocation, PlantCategory
-  utils/                       # activityLayout, monthHelper
+  utils/
+    activityLayout.ts          # Layout-Berechnung für Aktivitätsbars
+    monthHelper.ts             # Halbmonats-Hilfsfunktionen
+    storageError.ts            # withStorageError() – unified AsyncStorage-Fehlerbehandlung
 public/
   service-worker.js            # Custom SW (network-first)
 assets/                        # Icons, Splash
@@ -138,9 +142,19 @@ Drei Stellen müssen immer identisch sein:
 
 `window.*` und `localStorage` nur mit `Platform.OS === 'web'` Guard oder Kommentar `// platform-safe`. React Native hat ein `window`-Objekt, aber nicht alle Web-APIs.
 
+Für `document.*` zusätzlich `typeof document !== 'undefined'` prüfen – auch wenn `Platform.OS === 'web'` gesetzt ist, kann `document` in SSR/Test-Umgebungen undefined sein.
+
+DOM-Typen (`Event`, `HTMLInputElement` etc.) müssen explizit in `eslint.config.js` unter `src/**/*.{ts,tsx}` globals eingetragen sein – TypeScript kennt sie, ESLint's `no-undef` aber nicht.
+
 ### PlantLocation / PlantCategory Typen
 
 **Nie** `as PlantLocation` oder `as PlantCategory` casten. String-Literale werden direkt über den Array-Typ in `Omit<Plant, ...>[]` geprüft. Neue Werte nur in `src/constants/plantMetadata.ts` (PLANT_LOCATION_METADATA / PLANT_CATEGORY_METADATA) und `src/types/index.ts` ergänzen.
+
+### withStorageError – Fehlerbehandlung für AsyncStorage
+
+Alle AsyncStorage-Operationen in `useTheme`, `LanguageContext` und `PlantContext` laufen über `withStorageError(label, op)` aus `src/utils/storageError.ts`. Neue Storage-Operationen ebenfalls damit wrappen, statt try-catch zu duplizieren.
+
+`PlantContext.replacePlants(plants)` ersetzt den gesamten Pflanzenbestand und persistiert via `savePlants`. Im Storage-Mock für Tests immer `savePlants: jest.fn().mockResolvedValue(undefined)` mit angeben, da `PlantProvider` es beim Initialisieren aufrufen kann.
 
 ### Tests – AsyncStorage-Mocking
 
@@ -245,7 +259,7 @@ Vollständige Roadmap: https://github.com/S540d/Pflanzkalender/issues/47
 
 ---
 
-## Offene Issues (Stand 2026-05-24)
+## Offene Issues (Stand 2026-05-30)
 
 **Status: main = v1.4.0, APK/AAB gebaut. testing hinter main. Keine offenen PRs.**
 
@@ -253,14 +267,14 @@ Vollständige Roadmap: https://github.com/S540d/Pflanzkalender/issues/47
 
 - **#126** ✅ Geschlossen (PR #144 gemergt)
 - **#122** ✅ Geschlossen (PR #145 gemergt)
-- **#88** Bug: Data export kein File-Download auf Web (PWA) – **priority: high**
-- **#123** Code-Audit: Wartbarkeit & Security – Referenz-Issue mit Action Items
+- **#123** ✅ Geschlossen (PR #148 gemergt) – Code-Audit: ClimateRecommendations extrahiert, withStorageError-Utility, Navigation-Integrationstests
+- **#88** ✅ Geschlossen – Bug Data-Export (in testing-Branch behoben, PR #146)
+- **#87** ✅ Geschlossen (PR #149 gemergt) – Import-UI: JSON-Datei-Import im SettingsModal (Web), replacePlants in PlantContext, 9 i18n-Keys in 8 Sprachen, 341 Tests
 
 ### v1.5.0 – Content & Personalisierung
 
 - **#91** Agenda – Vorschau über aktuelle Woche hinaus
 - **#94** Statistiken / Dashboard – saisonale Übersicht
-- **#87** Import UI für Pflanzendaten (JSON) – hängt von #88 ab
 - **#4** Push-Benachrichtigungen
 
 ### v2.0.0 – Klimazonen & Community
@@ -276,29 +290,31 @@ Vollständige Roadmap: https://github.com/S540d/Pflanzkalender/issues/47
 
 ---
 
-## Letzte Merges / Fixes (2026-05-24)
+## Letzte Merges / Fixes (2026-05-30)
 
-| Was                                          | Wann       | Details                                                                                                                                                 |
-| -------------------------------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **v1.4.0 Bump + APK/AAB**                    | 2026-05-24 | ✅ main `b4627eb`: Version 1.4.0 / versionCode 5; APK + AAB gebaut & signiert; APK auf Testgerät installiert                                            |
-| **PR #145:** Issue #122 – expo-router Mock   | 2026-05-24 | ✅ gemergt: `__mocks__/expo-router.js` globaler Mock, per-file Boilerplate entfernt, 326 Tests grün                                                     |
-| **PR #144:** Issue #126 – TS-Fehler          | 2026-05-24 | ✅ gemergt: `App_BACKUP.tsx` entfernt, `tsc --noEmit` sauber (Exit 0)                                                                                   |
-| **Sync:** testing ↔ main                     | 2026-05-24 | ✅ Beide Branches identisch (Stand nach PR #141/CLAUDE.md-Updates)                                                                                      |
-| **PR #141:** testing → main (Issue #3)       | 2026-05-23 | ✅ main `61b12ba`: isCustomized-Flag + Shift-Buttons; Copilot-Fixes (Bound-Prüfung, Typ-Einschränkung); APK v1.3.2 gebaut + installiert                 |
-| **PR #137:** Issue #3 – isCustomized + Shift | 2026-05-23 | ✅ testing `e0f722e`: `Activity.isCustomized?`, Shift-Buttons im EditActivityModal (← Früher / Später →), 326 Tests (vorher 299)                        |
-| **PR #116:** AgendaScreen i18n + Roadmap     | 2026-05-20 | ✅ main `438abdf`: EN-Regressionstest in AgendaScreen.test, Phase 4b/5 ✅ in Roadmap, #47 abgeschlossen                                                 |
-| **PR #115:** AgendaScreen-Lokalisierung      | 2026-05-20 | ✅ main `cefc434`: `getPlantDisplayName(plant.name, language)` für Anzeige+Sortierung; `language` als `useCallback`-Dep                                 |
-| **PR #112:** Review PR #110 – v1.3.1 fixes   | 2026-05-20 | ✅ main `bb58f81`: Version-Bump 1.3.1, toter `settings.version`-Key entfernt, Versions-Test auf Semver-Pattern, CLAUDE.md Test-Count 299                |
-| **PR #111:** Issue #108 – Lint Fix           | 2026-05-19 | ✅ main `61125aa`: ESLint-Warnings 45 → 0 (allow console.error/warn, fix unused vars/types, disable exhaustive-deps, test-file-override for no-console) |
-| **PR #107:** Issue #104 – User-Feedback      | 2026-05-19 | ✅ main `f8a65f5`: Kalender-Zoom (3 Stufen), Pflanzen-Übersetzungen (`plantNames.ts`), Suchleiste in Pflanzenverwaltung, Tab-Overflow-Fix               |
-| **PR #106:** Issue #99 – Splash Screen       | 2026-05-19 | ✅ main `4b9be2e`: `app.json` splash+adaptive-icon `#1a7a4a`, `manifest.json` background, `scripts/add-splash-screen.js`, `twa-manifest.template.json`  |
-| **fix:** PWA Icon-Resizing                   | 2026-05-14 | ✅ main `4e66719`: Icons auf 192×192 / 512×512 resized (waren 1024×1024); generate-icons.js prüft jetzt Pixeldimensionen                                |
-| **PR #80:** Issue #55 – Klima-Reiter         | 2026-05-11 | ✅ main `f7c59af`: `ClimateScreen.tsx` mit 15 Empfehlungen, 4 Filter-Tabs, Trocken-/Hitze-Bewertung, DE/EN, Dark-Mode                                   |
-| **PR #81:** Dependency-Fix                   | 2026-05-11 | ✅ main `ded9532`: Tilde-Ranges für expo-status-bar und @types/react                                                                                    |
-| **PR #79:** Fix Activity-Bar Alignment       | 2026-05-11 | ✅ main `52f6f46`: Activity-Bars auf breiten Screens korrekt ausgerichtet                                                                               |
-| **PR #78:** Issue #77 – Dependency Updates   | 2026-05-11 | ✅ main `a778157`: 19 Security Fixes + 20 Outdated Packages                                                                                             |
-| **PR #75:** Rescue Copilot-Reviews PR #71    | 2026-05-10 | ✅ main `36e8902`: `waitFor`-Pattern in `useTheme.test`, `AgendaScreen.test`                                                                            |
-| **PR #72:** Issue #56 Phase 3 – Type Safety  | 2026-05-10 | ✅ main `d7995bb`: `MONTH_SHORT` statt Duplikat-Array in ActivityBar, `TouchableWebProps`-Interface                                                     |
+| Was                                          | Wann       | Details                                                                                                                                                                 |
+| -------------------------------------------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **PR #149:** Issue #87 – Import-UI           | 2026-05-30 | ✅ gemergt: JSON-Import im SettingsModal (Web file picker, Confirm-Dialog, replacePlants), 9 i18n-Keys × 8 Sprachen, ESLint-Globals (Event/HTMLInputElement), 341 Tests |
+| **PR #148:** Issue #123 – Code-Audit         | 2026-05-30 | ✅ gemergt: `climateRecommendations.ts` extrahiert, `withStorageError`-Utility, Navigation-Integrationstests (`tabNavigation.test.tsx`), 338 Tests                      |
+| **v1.4.0 Bump + APK/AAB**                    | 2026-05-24 | ✅ main `b4627eb`: Version 1.4.0 / versionCode 5; APK + AAB gebaut & signiert; APK auf Testgerät installiert                                                            |
+| **PR #145:** Issue #122 – expo-router Mock   | 2026-05-24 | ✅ gemergt: `__mocks__/expo-router.js` globaler Mock, per-file Boilerplate entfernt, 326 Tests grün                                                                     |
+| **PR #144:** Issue #126 – TS-Fehler          | 2026-05-24 | ✅ gemergt: `App_BACKUP.tsx` entfernt, `tsc --noEmit` sauber (Exit 0)                                                                                                   |
+| **Sync:** testing ↔ main                     | 2026-05-24 | ✅ Beide Branches identisch (Stand nach PR #141/CLAUDE.md-Updates)                                                                                                      |
+| **PR #141:** testing → main (Issue #3)       | 2026-05-23 | ✅ main `61b12ba`: isCustomized-Flag + Shift-Buttons; Copilot-Fixes (Bound-Prüfung, Typ-Einschränkung); APK v1.3.2 gebaut + installiert                                 |
+| **PR #137:** Issue #3 – isCustomized + Shift | 2026-05-23 | ✅ testing `e0f722e`: `Activity.isCustomized?`, Shift-Buttons im EditActivityModal (← Früher / Später →), 326 Tests (vorher 299)                                        |
+| **PR #116:** AgendaScreen i18n + Roadmap     | 2026-05-20 | ✅ main `438abdf`: EN-Regressionstest in AgendaScreen.test, Phase 4b/5 ✅ in Roadmap, #47 abgeschlossen                                                                 |
+| **PR #115:** AgendaScreen-Lokalisierung      | 2026-05-20 | ✅ main `cefc434`: `getPlantDisplayName(plant.name, language)` für Anzeige+Sortierung; `language` als `useCallback`-Dep                                                 |
+| **PR #112:** Review PR #110 – v1.3.1 fixes   | 2026-05-20 | ✅ main `bb58f81`: Version-Bump 1.3.1, toter `settings.version`-Key entfernt, Versions-Test auf Semver-Pattern, CLAUDE.md Test-Count 299                                |
+| **PR #111:** Issue #108 – Lint Fix           | 2026-05-19 | ✅ main `61125aa`: ESLint-Warnings 45 → 0 (allow console.error/warn, fix unused vars/types, disable exhaustive-deps, test-file-override for no-console)                 |
+| **PR #107:** Issue #104 – User-Feedback      | 2026-05-19 | ✅ main `f8a65f5`: Kalender-Zoom (3 Stufen), Pflanzen-Übersetzungen (`plantNames.ts`), Suchleiste in Pflanzenverwaltung, Tab-Overflow-Fix                               |
+| **PR #106:** Issue #99 – Splash Screen       | 2026-05-19 | ✅ main `4b9be2e`: `app.json` splash+adaptive-icon `#1a7a4a`, `manifest.json` background, `scripts/add-splash-screen.js`, `twa-manifest.template.json`                  |
+| **fix:** PWA Icon-Resizing                   | 2026-05-14 | ✅ main `4e66719`: Icons auf 192×192 / 512×512 resized (waren 1024×1024); generate-icons.js prüft jetzt Pixeldimensionen                                                |
+| **PR #80:** Issue #55 – Klima-Reiter         | 2026-05-11 | ✅ main `f7c59af`: `ClimateScreen.tsx` mit 15 Empfehlungen, 4 Filter-Tabs, Trocken-/Hitze-Bewertung, DE/EN, Dark-Mode                                                   |
+| **PR #81:** Dependency-Fix                   | 2026-05-11 | ✅ main `ded9532`: Tilde-Ranges für expo-status-bar und @types/react                                                                                                    |
+| **PR #79:** Fix Activity-Bar Alignment       | 2026-05-11 | ✅ main `52f6f46`: Activity-Bars auf breiten Screens korrekt ausgerichtet                                                                                               |
+| **PR #78:** Issue #77 – Dependency Updates   | 2026-05-11 | ✅ main `a778157`: 19 Security Fixes + 20 Outdated Packages                                                                                                             |
+| **PR #75:** Rescue Copilot-Reviews PR #71    | 2026-05-10 | ✅ main `36e8902`: `waitFor`-Pattern in `useTheme.test`, `AgendaScreen.test`                                                                                            |
+| **PR #72:** Issue #56 Phase 3 – Type Safety  | 2026-05-10 | ✅ main `d7995bb`: `MONTH_SHORT` statt Duplikat-Array in ActivityBar, `TouchableWebProps`-Interface                                                                     |
 
 ---
 
