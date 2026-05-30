@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import { Plant, Activity } from '../types';
 import { storageService } from '../services/storage';
 import { DEFAULT_PLANTS } from '../constants/defaultPlants';
+import { withStorageError } from '../utils/storageError';
 
 interface PlantContextType {
   plants: Plant[];
@@ -93,14 +94,11 @@ export const PlantProvider: React.FC<PlantProviderProps> = ({ children }) => {
   }, []);
 
   // Speichere Pflanzen bei jeder Änderung
-  const savePlants = async (newPlants: Plant[]) => {
-    try {
+  const savePlants = (newPlants: Plant[]) =>
+    withStorageError('Error saving plants:', async () => {
       await storageService.savePlants(newPlants);
       setPlants(newPlants);
-    } catch (error) {
-      console.error('Error saving plants:', error);
-    }
-  };
+    });
 
   const addPlant = (plant: Omit<Plant, 'id' | 'createdAt' | 'updatedAt'>) => {
     const newPlant: Plant = {

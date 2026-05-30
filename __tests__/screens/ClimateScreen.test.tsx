@@ -79,4 +79,53 @@ describe('ClimateScreen', () => {
     fireEvent.press(addButtons[0]);
     expect(mockAddPlant).toHaveBeenCalledTimes(1);
   });
+
+  it('renders all 4 filter tabs', () => {
+    const { getByText } = render(<ClimateScreen />);
+    expect(getByText('Alle')).toBeTruthy();
+    expect(getByText('Nutzpflanzen')).toBeTruthy();
+    expect(getByText('Blumen')).toBeTruthy();
+    expect(getByText('Bäume')).toBeTruthy();
+  });
+
+  it('filters to vegetables when Nutzpflanzen tab is pressed', () => {
+    const { getByText, queryByText } = render(<ClimateScreen />);
+
+    fireEvent.press(getByText('Nutzpflanzen'));
+
+    expect(queryByText('Süßkartoffel')).toBeTruthy();
+    expect(queryByText('Lavendel')).toBeNull();
+    expect(queryByText('Edelkastanie')).toBeNull();
+  });
+
+  it('filters to flowers when Blumen tab is pressed', () => {
+    const { getByText, queryByText } = render(<ClimateScreen />);
+
+    fireEvent.press(getByText('Blumen'));
+
+    expect(queryByText('Lavendel')).toBeTruthy();
+    expect(queryByText('Süßkartoffel')).toBeNull();
+    expect(queryByText('Edelkastanie')).toBeNull();
+  });
+
+  it('filters to trees when Bäume tab is pressed', () => {
+    const { getByText, queryByText } = render(<ClimateScreen />);
+
+    fireEvent.press(getByText('Bäume'));
+
+    expect(queryByText('Edelkastanie')).toBeTruthy();
+    expect(queryByText('Süßkartoffel')).toBeNull();
+    expect(queryByText('Lavendel')).toBeNull();
+  });
+
+  it('shows all recommendations again when Alle tab is re-selected', () => {
+    const { getByText, queryByText } = render(<ClimateScreen />);
+
+    fireEvent.press(getByText('Nutzpflanzen'));
+    fireEvent.press(getByText('Alle'));
+
+    expect(queryByText('Süßkartoffel')).toBeTruthy();
+    expect(queryByText('Lavendel')).toBeTruthy();
+    expect(queryByText('Edelkastanie')).toBeTruthy();
+  });
 });

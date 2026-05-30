@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
+import { withStorageError } from '../utils/storageError';
 import * as i18n from '../i18n';
 import type { TranslationValue, Translations } from '../i18n';
 
@@ -65,14 +66,12 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }
   const [language, setLanguageState] = useState<Language>('de');
   const isUserSetRef = React.useRef(false);
 
-  const setLanguage = async (lang: Language) => {
+  const setLanguage = (lang: Language): void => {
     isUserSetRef.current = true;
     setLanguageState(lang);
-    try {
-      await AsyncStorage.setItem(STORAGE_KEY, lang);
-    } catch (error) {
-      console.error('Failed to save language:', error);
-    }
+    void withStorageError('Failed to save language:', () =>
+      AsyncStorage.setItem(STORAGE_KEY, lang)
+    );
   };
 
   const t = (key: string): TranslationValue | string => {
