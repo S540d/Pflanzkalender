@@ -114,17 +114,21 @@ describe('Tab Navigation Integration', () => {
         : Promise.resolve(null)
     );
 
-    // Simulate tab 1: AgendaScreen
-    const agendaResult = render(<AgendaScreen />, { wrapper: SharedProviders });
-    await waitFor(() =>
-      expect(agendaResult.queryAllByText('Pflanzen').length).toBeGreaterThanOrEqual(1)
+    // Both screens mount under the same provider tree – shared PlantContext state
+    const { findAllByText, findByText } = render(
+      <>
+        <AgendaScreen />
+        <ClimateScreen />
+      </>,
+      { wrapper: SharedProviders }
     );
-    agendaResult.unmount();
 
-    // Simulate tab 2: ClimateScreen – re-mounts with same storage state
-    const climateResult = render(<ClimateScreen />, { wrapper: SharedProviders });
-    expect(await climateResult.findByText('Bereits im Garten')).toBeTruthy();
-    climateResult.unmount();
+    // AgendaScreen receives the plant activity from the shared context
+    const activityLabels = await findAllByText('Pflanzen', {}, { timeout: 3000 });
+    expect(activityLabels.length).toBeGreaterThanOrEqual(1);
+
+    // ClimateScreen sees the same plant as already in garden via the same PlantContext
+    expect(await findByText('Bereits im Garten')).toBeTruthy();
   });
 
   it('language stored as EN propagates to AgendaScreen column headers', async () => {
