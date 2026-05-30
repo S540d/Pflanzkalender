@@ -127,6 +127,17 @@ const en: Translations = {
   'activity.type.harvest': 'Harvest',
   'activity.type.protect': 'Winter protection',
   'activity.type.mulch': 'Mulch',
+
+  // Import
+  'settings.importSection': 'IMPORT',
+  'settings.importData': 'Import from JSON',
+  'settings.importConfirmTitle': 'Confirm Import',
+  'settings.importConfirmMessage': 'Import {count} plants? Existing data will be replaced.',
+  'settings.importConfirmOk': 'Import',
+  'settings.importConfirmCancel': 'Cancel',
+  'settings.importSuccess': '{count} plants successfully imported.',
+  'settings.importError': 'Import failed. Please check the file format.',
+  'settings.importWebOnly': 'Import is only available in the browser.',
 };
 
 export default en;

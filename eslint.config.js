@@ -99,6 +99,8 @@ module.exports = [
         alert: 'readonly',
         MediaQueryList: 'readonly',
         MediaQueryListEvent: 'readonly',
+        Event: 'readonly',
+        HTMLInputElement: 'readonly',
         __DEV__: 'readonly',
         caches: 'readonly',
       },

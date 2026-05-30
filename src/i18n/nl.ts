@@ -108,6 +108,18 @@ const nl: Translations = {
   'activity.type.harvest': 'Oogsten',
   'activity.type.protect': 'Winterbescherming',
   'activity.type.mulch': 'Mulchen',
+
+  // Import
+  'settings.importSection': 'IMPORTEREN',
+  'settings.importData': 'Importeren vanuit JSON',
+  'settings.importConfirmTitle': 'Importeren bevestigen',
+  'settings.importConfirmMessage':
+    '{count} planten importeren? Bestaande gegevens worden vervangen.',
+  'settings.importConfirmOk': 'Importeren',
+  'settings.importConfirmCancel': 'Annuleren',
+  'settings.importSuccess': '{count} planten succesvol geïmporteerd.',
+  'settings.importError': 'Import mislukt. Controleer het bestandsformaat.',
+  'settings.importWebOnly': 'Importeren is alleen beschikbaar in de browser.',
 };
 
 export default nl;

@@ -108,6 +108,18 @@ const it: Translations = {
   'activity.type.harvest': 'Raccogliere',
   'activity.type.protect': 'Protezione invernale',
   'activity.type.mulch': 'Pacciamatura',
+
+  // Import
+  'settings.importSection': 'IMPORTARE',
+  'settings.importData': 'Importa da JSON',
+  'settings.importConfirmTitle': 'Conferma importazione',
+  'settings.importConfirmMessage':
+    'Importare {count} piante? I dati esistenti verranno sostituiti.',
+  'settings.importConfirmOk': 'Importa',
+  'settings.importConfirmCancel': 'Annulla',
+  'settings.importSuccess': '{count} piante importate con successo.',
+  'settings.importError': 'Importazione fallita. Verifica il formato del file.',
+  'settings.importWebOnly': "L'importazione è disponibile solo nel browser.",
 };
 
 export default it;

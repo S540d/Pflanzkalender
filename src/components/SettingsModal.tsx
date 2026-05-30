@@ -13,6 +13,7 @@ import {
 import { useTheme } from '../hooks/useTheme';
 import { storageService } from '../services/storage';
 import { useLanguage, PICKER_LANGUAGES } from '../contexts/LanguageContext';
+import { usePlants } from '../contexts/PlantContext';
 import packageJson from '../../package.json';
 
 interface SettingsModalProps {
@@ -25,6 +26,7 @@ const APP_VERSION = packageJson.version;
 export const SettingsModal: React.FC<SettingsModalProps> = ({ visible, onClose }) => {
   const { theme, themeMode, setThemeMode } = useTheme();
   const { language, setLanguage, t } = useLanguage();
+  const { replacePlants } = usePlants();
 
   const handleExport = async () => {
     try {
@@ -34,6 +36,49 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ visible, onClose }
       Alert.alert('Error', 'Failed to export data. Please try again.');
       console.error('Export error:', error);
     }
+  };
+
+  const handleImport = () => {
+    if (Platform.OS !== 'web') {
+      Alert.alert(t('settings.importData') as string, t('settings.importWebOnly') as string);
+      return;
+    }
+    // platform-safe: document only available in web context
+    if (typeof document === 'undefined') return;
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json,application/json';
+    input.onchange = async (e: Event) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (!file) return;
+      try {
+        const text = await file.text();
+        const imported = await storageService.importPlants(text);
+        const msg = (t('settings.importConfirmMessage') as string).replace(
+          '{count}',
+          String(imported.length)
+        );
+        Alert.alert(t('settings.importConfirmTitle') as string, msg, [
+          { text: t('settings.importConfirmCancel') as string, style: 'cancel' },
+          {
+            text: t('settings.importConfirmOk') as string,
+            onPress: () => {
+              replacePlants(imported);
+              const successMsg = (t('settings.importSuccess') as string).replace(
+                '{count}',
+                String(imported.length)
+              );
+              Alert.alert(t('settings.successTitle') as string, successMsg);
+            },
+          },
+        ]);
+      } catch (error) {
+        Alert.alert(t('settings.importData') as string, t('settings.importError') as string);
+        console.error('Import error:', error);
+      }
+      (e.target as HTMLInputElement).value = '';
+    };
+    input.click();
   };
 
   return (
@@ -173,6 +218,26 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ visible, onClose }
                 ]}
               >
                 {t('settings.exportData') as string}
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={[styles.separator, { backgroundColor: theme.border }]} />
+
+          {/* Import Section */}
+          <View style={styles.section}>
+            <Text style={[styles.sectionTitle, { color: theme.textSecondary }]}>
+              {t('settings.importSection') as string}
+            </Text>
+            <TouchableOpacity
+              style={[
+                styles.exportButton,
+                { backgroundColor: theme.surface, borderWidth: 1, borderColor: theme.border },
+              ]}
+              onPress={handleImport}
+            >
+              <Text style={[styles.exportButtonText, { color: theme.text }]}>
+                {t('settings.importData') as string}
               </Text>
             </TouchableOpacity>
           </View>

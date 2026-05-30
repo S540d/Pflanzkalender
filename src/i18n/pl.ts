@@ -108,6 +108,17 @@ const pl: Translations = {
   'activity.type.harvest': 'Zbierać',
   'activity.type.protect': 'Ochrona zimowa',
   'activity.type.mulch': 'Ściółkować',
+
+  // Import
+  'settings.importSection': 'IMPORTUJ',
+  'settings.importData': 'Importuj z JSON',
+  'settings.importConfirmTitle': 'Potwierdź import',
+  'settings.importConfirmMessage': 'Importować {count} roślin? Istniejące dane zostaną zastąpione.',
+  'settings.importConfirmOk': 'Importuj',
+  'settings.importConfirmCancel': 'Anuluj',
+  'settings.importSuccess': '{count} roślin zaimportowanych pomyślnie.',
+  'settings.importError': 'Import nie powiódł się. Sprawdź format pliku.',
+  'settings.importWebOnly': 'Import jest dostępny tylko w przeglądarce.',
 };
 
 export default pl;
