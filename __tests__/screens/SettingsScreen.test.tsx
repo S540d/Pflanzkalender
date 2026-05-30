@@ -3,6 +3,7 @@ import { Alert } from 'react-native';
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
 import { SettingsScreen } from '../../src/screens/SettingsScreen';
 import { LanguageProvider } from '../../src/contexts/LanguageContext';
+import { PlantProvider } from '../../src/contexts/PlantContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const mockSetThemeMode = jest.fn();
@@ -35,6 +36,7 @@ jest.mock('../../src/services/storage', () => ({
   storageService: {
     exportPlants: jest.fn().mockResolvedValue(undefined),
     loadPlants: jest.fn().mockResolvedValue([]),
+    importPlants: jest.fn(),
   },
 }));
 
@@ -45,7 +47,11 @@ jest.mock('react-native/Libraries/Linking/Linking', () => ({
 jest.mock('@react-native-async-storage/async-storage');
 
 const renderWithProviders = (ui: React.ReactElement) =>
-  render(<LanguageProvider>{ui}</LanguageProvider>);
+  render(
+    <LanguageProvider>
+      <PlantProvider>{ui}</PlantProvider>
+    </LanguageProvider>
+  );
 
 describe('SettingsScreen', () => {
   beforeEach(() => {
@@ -162,5 +168,27 @@ describe('SettingsScreen', () => {
 
   it('is a valid React component', () => {
     expect(typeof SettingsScreen).toBe('function');
+  });
+
+  it('renders the import section', () => {
+    const { getByText } = renderWithProviders(<SettingsScreen />);
+    expect(getByText(/IMPORTIEREN|IMPORT/)).toBeTruthy();
+  });
+
+  it('renders the import button', () => {
+    const { getByText } = renderWithProviders(<SettingsScreen />);
+    expect(getByText(/Aus JSON importieren|Import from JSON/)).toBeTruthy();
+  });
+
+  it('shows a native-only alert when import button is pressed on non-web platform', async () => {
+    const alertSpy = jest.spyOn(Alert, 'alert');
+    const { getByText } = renderWithProviders(<SettingsScreen />);
+    fireEvent.press(getByText(/Aus JSON importieren|Import from JSON/));
+    await waitFor(() => {
+      expect(alertSpy).toHaveBeenCalledWith(
+        expect.stringMatching(/Aus JSON importieren|Import from JSON/),
+        expect.stringMatching(/Browser|browser/)
+      );
+    });
   });
 });

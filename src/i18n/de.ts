@@ -128,6 +128,17 @@ const de: Translations = {
   'activity.type.harvest': 'Ernten',
   'activity.type.protect': 'Winterschutz',
   'activity.type.mulch': 'Mulchen',
+
+  // Import
+  'settings.importSection': 'IMPORTIEREN',
+  'settings.importData': 'Aus JSON importieren',
+  'settings.importConfirmTitle': 'Import bestätigen',
+  'settings.importConfirmMessage': '{count} Pflanzen importieren? Bestehende Daten werden ersetzt.',
+  'settings.importConfirmOk': 'Importieren',
+  'settings.importConfirmCancel': 'Abbrechen',
+  'settings.importSuccess': '{count} Pflanzen erfolgreich importiert.',
+  'settings.importError': 'Import fehlgeschlagen. Bitte prüfe das Dateiformat.',
+  'settings.importWebOnly': 'Import ist nur im Browser verfügbar.',
 };
 
 export default de;

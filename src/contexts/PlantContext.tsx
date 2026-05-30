@@ -14,6 +14,7 @@ interface PlantContextType {
   updateActivity: (plantId: string, activityId: string, updates: Partial<Activity>) => void;
   deleteActivity: (plantId: string, activityId: string) => void;
   resetToDefaults: () => void;
+  replacePlants: (plants: Plant[]) => void;
 }
 
 const PlantContext = createContext<PlantContextType | undefined>(undefined);
@@ -179,6 +180,10 @@ export const PlantProvider: React.FC<PlantProviderProps> = ({ children }) => {
     await savePlants(defaultPlants);
   };
 
+  const replacePlants = (newPlants: Plant[]) => {
+    void savePlants(newPlants);
+  };
+
   return (
     <PlantContext.Provider
       value={{
@@ -191,6 +196,7 @@ export const PlantProvider: React.FC<PlantProviderProps> = ({ children }) => {
         updateActivity,
         deleteActivity,
         resetToDefaults,
+        replacePlants,
       }}
     >
       {children}

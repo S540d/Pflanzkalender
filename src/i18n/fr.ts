@@ -108,6 +108,18 @@ const fr: Translations = {
   'activity.type.harvest': 'Récolter',
   'activity.type.protect': 'Protection hivernale',
   'activity.type.mulch': 'Pailler',
+
+  // Import
+  'settings.importSection': 'IMPORTER',
+  'settings.importData': 'Importer depuis JSON',
+  'settings.importConfirmTitle': "Confirmer l'importation",
+  'settings.importConfirmMessage':
+    'Importer {count} plantes ? Les données existantes seront remplacées.',
+  'settings.importConfirmOk': 'Importer',
+  'settings.importConfirmCancel': 'Annuler',
+  'settings.importSuccess': '{count} plantes importées avec succès.',
+  'settings.importError': 'Importation échouée. Veuillez vérifier le format du fichier.',
+  'settings.importWebOnly': "L'importation n'est disponible que dans le navigateur.",
 };
 
 export default fr;
