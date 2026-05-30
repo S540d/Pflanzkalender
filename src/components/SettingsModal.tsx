@@ -44,6 +44,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ visible, onClose }
       return;
     }
     // platform-safe: document only available in web context
+    if (typeof document === 'undefined') return;
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = '.json,application/json';
@@ -72,10 +73,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ visible, onClose }
           },
         ]);
       } catch (error) {
-        Alert.alert(
-          t('settings.importConfirmTitle') as string,
-          t('settings.importError') as string
-        );
+        Alert.alert(t('settings.importData') as string, t('settings.importError') as string);
         console.error('Import error:', error);
       }
       (e.target as HTMLInputElement).value = '';

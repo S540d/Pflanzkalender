@@ -36,6 +36,7 @@ jest.mock('../../src/services/storage', () => ({
   storageService: {
     exportPlants: jest.fn().mockResolvedValue(undefined),
     loadPlants: jest.fn().mockResolvedValue([]),
+    savePlants: jest.fn().mockResolvedValue(undefined),
     importPlants: jest.fn(),
   },
 }));
