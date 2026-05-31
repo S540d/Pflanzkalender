@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Plant } from '../types';
-import { Share } from 'react-native';
+import { Share, Platform } from 'react-native';
 import { PlantSchema, ImportDataSchema } from '../schemas/plant';
 
 const STORAGE_KEYS = {
@@ -92,19 +92,24 @@ export const storageService = {
       };
 
       const jsonString = JSON.stringify(exportData, null, 2);
-      const fileName = `Pflanzkalender_Export_${new Date().toISOString().split('T')[0]}.json`;
+      const fileName = `pflanzkalender-export.json`;
 
-      // For React Native, use Share API
-      try {
+      if (Platform.OS === 'web') {
+        const blob = new Blob([jsonString], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        // Revoke asynchronously so the browser has time to start the download
+        setTimeout(() => URL.revokeObjectURL(url), 100);
+      } else {
         await Share.share({
           message: jsonString,
           title: fileName,
-          url: undefined,
         });
-      } catch (shareError) {
-        console.error('Error sharing file:', shareError);
-        // Fallback: Copy to clipboard
-        alert('Export data ready. Please copy the data manually.');
       }
     } catch (error) {
       console.error('Error exporting plants:', error);

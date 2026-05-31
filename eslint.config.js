@@ -23,6 +23,10 @@ const globals = {
   fetch: 'readonly',
   Buffer: 'readonly',
   URL: 'readonly',
+  Blob: 'readonly',
+  FileReader: 'readonly',
+  document: 'readonly',
+  alert: 'readonly',
 };
 
 /** @type {import('eslint').Linter.Config[]} */
@@ -97,6 +101,7 @@ module.exports = [
         localStorage: 'readonly',
         navigator: 'readonly',
         alert: 'readonly',
+        Blob: 'readonly',
         MediaQueryList: 'readonly',
         MediaQueryListEvent: 'readonly',
         Event: 'readonly',

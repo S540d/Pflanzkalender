@@ -138,6 +138,20 @@ const en: Translations = {
   'settings.importSuccess': '{count} plants successfully imported.',
   'settings.importError': 'Import failed. Please check the file format.',
   'settings.importWebOnly': 'Import is only available in the browser.',
+  // Template Screen
+  'template.title': 'Templates',
+  'template.tab': 'Templates',
+  'template.tabTemplates': 'Templates',
+  'template.tabExport': 'Export',
+  'template.tabImport': 'Import',
+  'template.community': 'COMMUNITY TEMPLATES',
+  'template.exportSection': 'EXPORT',
+  'template.importSection': 'IMPORT',
+  'template.importBtn': 'Import',
+  'template.exportHint': 'Export all your plants as a JSON file to back up your data.',
+  'template.importHint': 'Paste JSON data or choose a file to import plants.',
+  'template.chooseFile': 'Choose File',
+  'template.pasteJson': 'Paste JSON here...',
 };
 
 export default en;
