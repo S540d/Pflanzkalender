@@ -63,6 +63,13 @@ function TabsNavigator() {
           }}
         />
         <Tabs.Screen
+          name="templates"
+          options={{
+            title: isDe ? 'Vorlagen' : 'Templates',
+            tabBarIcon: ({ color }) => <TabBarIcon emoji="📄" color={color} />,
+          }}
+        />
+        <Tabs.Screen
           name="settings"
           options={{
             title: isDe ? 'Einstellungen' : 'Settings',

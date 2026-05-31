@@ -1,11 +1,21 @@
 import { storageService } from '../../src/services/storage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Share } from 'react-native';
 import type { Plant } from '../../src/types';
 
-jest.mock('react-native', () => ({
-  Share: { share: jest.fn() },
-}));
+const mockShareFn = jest.fn();
+
+jest.mock('react-native', () => {
+  const platformState = { OS: 'ios' };
+  return {
+    Share: { share: (...args: unknown[]) => mockShareFn(...args) },
+    Platform: platformState,
+    __platformState: platformState,
+  };
+});
+
+const { __platformState: mockPlatform } = require('react-native') as {
+  __platformState: { OS: string };
+};
 
 const makePlant = (id: string): Plant => ({
   id,
@@ -115,33 +125,115 @@ describe('storageService.clearAll', () => {
 });
 
 describe('storageService.exportPlants', () => {
+  const g = global as Record<string, unknown>;
+  let origDocument: unknown;
+  let origURL: unknown;
+  let origBlob: unknown;
+
   beforeEach(async () => {
     await AsyncStorage.clear();
     jest.clearAllMocks();
+    mockPlatform.OS = 'ios';
+    origDocument = g.document;
+    origURL = g.URL;
+    origBlob = g.Blob;
   });
 
-  it('calls Share.share with a JSON string containing the current plants', async () => {
+  afterEach(() => {
+    g.document = origDocument;
+    g.URL = origURL;
+    g.Blob = origBlob;
+    // Restore real timers even if a test using fake timers failed before its own restore
+    jest.useRealTimers();
+  });
+
+  it('calls Share.share on native with valid JSON containing the plants', async () => {
+    mockPlatform.OS = 'ios';
     const plants = [makePlant('e1')];
     await storageService.savePlants(plants);
-    (Share.share as jest.Mock).mockResolvedValueOnce({ action: 'sharedAction' });
+    mockShareFn.mockResolvedValueOnce({ action: 'sharedAction' });
 
     await storageService.exportPlants();
 
-    expect(Share.share).toHaveBeenCalledTimes(1);
-    const callArg = (Share.share as jest.Mock).mock.calls[0][0];
+    expect(mockShareFn).toHaveBeenCalledTimes(1);
+    const callArg = mockShareFn.mock.calls[0][0];
     const parsed = JSON.parse(callArg.message);
     expect(parsed.plants).toHaveLength(1);
     expect(parsed.plants[0].id).toBe('e1');
     expect(parsed.version).toBe('1.0.0');
     expect(parsed.timestamp).toBeTruthy();
+    expect(callArg.title).toBe('pflanzkalender-export.json');
   });
 
-  it('does not throw when Share.share rejects (falls back to alert)', async () => {
-    global.alert = jest.fn();
-    await storageService.savePlants([]);
-    (Share.share as jest.Mock).mockRejectedValueOnce(new Error('share failed'));
-    await expect(storageService.exportPlants()).resolves.toBeUndefined();
-    expect(global.alert).toHaveBeenCalled();
+  it('triggers Blob download on web without calling Share.share', async () => {
+    mockPlatform.OS = 'web';
+    jest.useFakeTimers();
+    const plants = [makePlant('e2')];
+    await storageService.savePlants(plants);
+
+    const mockClick = jest.fn();
+    const mockAnchor = {
+      href: '',
+      download: '',
+      click: mockClick,
+      parentNode: null as unknown,
+    };
+    const mockCreateElement = jest.fn().mockReturnValue(mockAnchor);
+    const mockAppendChild = jest.fn();
+    const mockRemoveChild = jest.fn();
+    const mockUrl = 'blob:mock-url';
+    const mockCreateObjectURL = jest.fn().mockReturnValue(mockUrl);
+    const mockRevokeObjectURL = jest.fn();
+
+    g.document = {
+      createElement: mockCreateElement,
+      body: { appendChild: mockAppendChild, removeChild: mockRemoveChild },
+    };
+    g.URL = { createObjectURL: mockCreateObjectURL, revokeObjectURL: mockRevokeObjectURL };
+    g.Blob = jest.fn().mockReturnValue({});
+
+    await storageService.exportPlants();
+
+    expect(mockShareFn).not.toHaveBeenCalled();
+    expect(mockCreateElement).toHaveBeenCalledWith('a');
+    expect(mockAnchor.download).toBe('pflanzkalender-export.json');
+    expect(mockAnchor.href).toBe(mockUrl);
+    expect(mockAppendChild).toHaveBeenCalledWith(mockAnchor);
+    expect(mockClick).toHaveBeenCalled();
+    expect(mockRemoveChild).toHaveBeenCalledWith(mockAnchor);
+    // revokeObjectURL is deferred via setTimeout
+    expect(mockRevokeObjectURL).not.toHaveBeenCalled();
+    jest.runAllTimers();
+    expect(mockRevokeObjectURL).toHaveBeenCalledWith(mockUrl);
+
+    jest.useRealTimers();
+  });
+
+  it('web export Blob contains all plants and correct metadata', async () => {
+    mockPlatform.OS = 'web';
+    const plants = [makePlant('e3'), makePlant('e4')];
+    await storageService.savePlants(plants);
+
+    let capturedContent = '';
+    const mockCreateObjectURL = jest.fn().mockReturnValue('blob:x');
+    const mockRevokeObjectURL = jest.fn();
+
+    g.Blob = jest.fn().mockImplementation((parts: string[]) => {
+      capturedContent = parts[0];
+      return {};
+    });
+    g.document = {
+      createElement: jest.fn().mockReturnValue({ href: '', download: '', click: jest.fn() }),
+      body: { appendChild: jest.fn(), removeChild: jest.fn() },
+    };
+    g.URL = { createObjectURL: mockCreateObjectURL, revokeObjectURL: mockRevokeObjectURL };
+
+    await storageService.exportPlants();
+
+    const parsed = JSON.parse(capturedContent);
+    expect(parsed.version).toBe('1.0.0');
+    expect(parsed.plants).toHaveLength(2);
+    expect(parsed.plants.map((p: Plant) => p.id)).toEqual(['e3', 'e4']);
   });
 });
 

@@ -32,10 +32,10 @@ Deploy: GitHub Pages via `gh-pages` unter `/Pflanzkalender/`
 
 ## Aktuelle Version: 1.4.0 (main)
 
-**Stand 2026-05-30:** main = v1.4.0 (versionCode 5). testing ist hinter main. PR #148 + #149 gemergt.
+**Stand 2026-05-31:** main = v1.4.0 (versionCode 5). testing-Commits (Issue #8 Template-System + #88 Export-Fix) in main zusammengeführt – main = testing.
 
-- **main branch:** v1.4.0 – Issues #123 + #87 geschlossen (PR #148 / #149)
-- **testing branch:** hinter main – noch v1.3.2
+- **main branch:** v1.4.0 – Issues #123 + #87 (PR #148 / #149) sowie #8 + #88 (PR #147 / #146 aus testing) geschlossen
+- **testing branch:** mit main zusammengeführt (alle Commits in main)
 
 Versions-Stellen: `package.json`, `app.json`, `twa-manifest.template.json` – immer alle drei synchron halten, sonst schlägt CI fehl. `SettingsScreen.tsx` liest Version jetzt dynamisch aus `package.json` (seit PR #124), kein manuelles Sync mehr nötig.
 
@@ -45,15 +45,16 @@ Versions-Stellen: `package.json`, `app.json`, `twa-manifest.template.json` – i
 
 ```
 app/                           # Expo Router (file-based routing, Phase 4b)
-  _layout.tsx                  # Root: ErrorBoundary/Language/Plant Provider + Bottom-Tabs
-  index.tsx                    # /         → CalendarScreen
-  agenda.tsx                   # /agenda   → AgendaScreen
-  plants.tsx                   # /plants   → PlantManagementScreen
-  climate.tsx                  # /climate  → ClimateScreen
-  settings.tsx                 # /settings → SettingsScreen
+  _layout.tsx                  # Root: ErrorBoundary/Language/Plant Provider + Bottom-Tabs (6 Tabs)
+  index.tsx                    # /           → CalendarScreen
+  agenda.tsx                   # /agenda     → AgendaScreen
+  plants.tsx                   # /plants     → PlantManagementScreen
+  climate.tsx                  # /climate    → ClimateScreen
+  templates.tsx                # /templates  → TemplateScreen (Issue #8, seit PR #147)
+  settings.tsx                 # /settings   → SettingsScreen
 app.config.js                  # Dynamische Expo-Config: expo-router plugin, web.output=single, experiments.baseUrl (Prod/Testing)
 src/
-  screens/                     # CalendarScreen, AgendaScreen, PlantManagementScreen, ClimateScreen, SettingsScreen
+  screens/                     # CalendarScreen, AgendaScreen, PlantManagementScreen, ClimateScreen, SettingsScreen, TemplateScreen
   components/                  # ActivityBar, PlantRow, AddActivityModal, EditActivityModal, AddPlantModal, AppHeader, Footer, ErrorBoundary, SettingsModal
   contexts/                    # PlantContext (CRUD + replacePlants), LanguageContext (de/en/fr/es/it/pl/nl/pt)
   hooks/                       # useTheme (Dark/Light/System)
@@ -63,9 +64,11 @@ src/
     climateRecommendations.ts  # ClimateRecommendation interface + RECOMMENDATIONS (15 Einträge)
     plantMetadata.ts           # PLANT_LOCATION_METADATA + PLANT_CATEGORY_METADATA (Single Source of Truth)
     plantNames.ts              # PLANT_NAME_EN + getPlantDisplayName() – DE↔EN Übersetzung für Pflanzennamen
+    communityTemplates.ts      # 3 Community-Templates (Balkon-Starter, Gemüsegarten, Kräutergarten) – seit PR #147
     theme.ts                   # Farbpalette
   services/
-    storage.ts                 # AsyncStorage Wrapper (inkl. importPlants mit Zod-Validierung)
+    storage.ts                 # AsyncStorage Wrapper (inkl. exportPlants/importPlants mit Zod-Validierung)
+    templateService.ts         # Export/Import Logik: buildExportJson, triggerWebDownload, sharePlants, importFromJson – seit PR #147
     firebase.ts                # Firebase Init (Placeholder)
   types/index.ts               # Plant, Activity, User, PlantLocation, PlantCategory
   utils/
@@ -140,7 +143,9 @@ Drei Stellen müssen immer identisch sein:
 
 ### Platform Safety
 
-`window.*` und `localStorage` nur mit `Platform.OS === 'web'` Guard oder Kommentar `// platform-safe`. React Native hat ein `window`-Objekt, aber nicht alle Web-APIs.
+`window.*`, `document.*`, `localStorage`, `Blob`, `FileReader` nur mit `Platform.OS === 'web'` Guard oder Kommentar `// platform-safe`. React Native hat ein `window`-Objekt, aber nicht alle Web-APIs.
+
+Die ESLint-Globals in `eslint.config.js` enthalten Browser-APIs (`Blob`, `FileReader`, `document`, `alert` u. a.) – diese werden ausschließlich innerhalb von `Platform.OS === 'web'`-Guards verwendet.
 
 Für `document.*` zusätzlich `typeof document !== 'undefined'` prüfen – auch wenn `Platform.OS === 'web'` gesetzt ist, kann `document` in SSR/Test-Umgebungen undefined sein.
 
@@ -259,16 +264,16 @@ Vollständige Roadmap: https://github.com/S540d/Pflanzkalender/issues/47
 
 ---
 
-## Offene Issues (Stand 2026-05-30)
+## Offene Issues (Stand 2026-05-31)
 
-**Status: main = v1.4.0, APK/AAB gebaut. testing hinter main. Keine offenen PRs.**
+**Status: main = v1.4.0, APK/AAB gebaut. testing = v1.4.0 + Issue #8 (PR #147 gemergt). 348 Tests grün.**
 
 ### v1.4.0 – abgeschlossen / Play Store
 
 - **#126** ✅ Geschlossen (PR #144 gemergt)
 - **#122** ✅ Geschlossen (PR #145 gemergt)
 - **#123** ✅ Geschlossen (PR #148 gemergt) – Code-Audit: ClimateRecommendations extrahiert, withStorageError-Utility, Navigation-Integrationstests
-- **#88** ✅ Geschlossen – Bug Data-Export (in testing-Branch behoben, PR #146)
+- **#88** ✅ Geschlossen (PR #146 gemergt) – Bug Data-Export: Blob-Download auf Web via `<a>`-Element
 - **#87** ✅ Geschlossen (PR #149 gemergt) – Import-UI: JSON-Datei-Import im SettingsModal (Web), replacePlants in PlantContext, 9 i18n-Keys in 8 Sprachen, 341 Tests
 
 ### v1.5.0 – Content & Personalisierung
@@ -281,7 +286,7 @@ Vollständige Roadmap: https://github.com/S540d/Pflanzkalender/issues/47
 
 - **#48** Klimazonen-Unterstützung – unterschiedliche Aktivitätszeiträume je Region
 - **#142** Drag & Drop für Aktivitäten im Kalender
-- **#8** Template-System: Pflanzpläne teilen und importieren
+- **#8** ✅ Template-System: Pflanzpläne teilen und importieren – **in main** (PR #147, Commit `ad4c9fb`)
 - **#9** Intelligente Vorschläge: Fruchtfolge & Mischkultur
 
 ## Abgeschlossene Roadmap-Issues
@@ -290,12 +295,14 @@ Vollständige Roadmap: https://github.com/S540d/Pflanzkalender/issues/47
 
 ---
 
-## Letzte Merges / Fixes (2026-05-30)
+## Letzte Merges / Fixes (2026-05-31)
 
 | Was                                          | Wann       | Details                                                                                                                                                                 |
 | -------------------------------------------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **PR #149:** Issue #87 – Import-UI           | 2026-05-30 | ✅ gemergt: JSON-Import im SettingsModal (Web file picker, Confirm-Dialog, replacePlants), 9 i18n-Keys × 8 Sprachen, ESLint-Globals (Event/HTMLInputElement), 341 Tests |
 | **PR #148:** Issue #123 – Code-Audit         | 2026-05-30 | ✅ gemergt: `climateRecommendations.ts` extrahiert, `withStorageError`-Utility, Navigation-Integrationstests (`tabNavigation.test.tsx`), 338 Tests                      |
+| **PR #147:** Issue #8 – Template-System      | 2026-05-29 | ✅ testing `ad4c9fb` (jetzt in main): TemplateScreen (3 Sections), 3 Community-Templates, templateService (Web-Download + Share), 348 Tests grün                        |
+| **PR #146:** Issue #88 – Export-Fix          | 2026-05-29 | ✅ testing `f9e9e1b` (jetzt in main): Blob-Download auf Web für Daten-Export via `<a>`-Element                                                                          |
 | **v1.4.0 Bump + APK/AAB**                    | 2026-05-24 | ✅ main `b4627eb`: Version 1.4.0 / versionCode 5; APK + AAB gebaut & signiert; APK auf Testgerät installiert                                                            |
 | **PR #145:** Issue #122 – expo-router Mock   | 2026-05-24 | ✅ gemergt: `__mocks__/expo-router.js` globaler Mock, per-file Boilerplate entfernt, 326 Tests grün                                                                     |
 | **PR #144:** Issue #126 – TS-Fehler          | 2026-05-24 | ✅ gemergt: `App_BACKUP.tsx` entfernt, `tsc --noEmit` sauber (Exit 0)                                                                                                   |
@@ -331,4 +338,4 @@ ESLint-Warnings 45 → **0** via:
 - **ESLint-Config**: `no-console: allow: ['error', 'warn']`, Test-Override `no-console: off`, `varsIgnorePattern: '^_'` für no-unused-vars
 - **Test-Dateien**: Ungenutzte Imports/Variablen entfernt, `any` → konkrete Typen in Mocks
 - **Produktionscode**: `console.error` intentional, unused params `_` prefixed, `exhaustive-deps` Block-Disable wo Deps redundant
-- **Ergebnis**: 0 Warnings lokal, Prettier clean, 299 Tests grün
+- **Ergebnis**: 0 Warnings lokal, Prettier clean, 299 Tests grün (Stand 2026-05-29: 348)
