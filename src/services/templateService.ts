@@ -19,7 +19,8 @@ export function buildExportJson(plants: Plant[]): string {
 
 export function triggerWebDownload(jsonString: string, filename: string): void {
   if (Platform.OS !== 'web') return;
-  // platform-safe: document only available in web context
+  // platform-safe: document can be undefined in SSR/test even when Platform.OS === 'web'
+  if (typeof document === 'undefined') return;
   const blob = new Blob([jsonString], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
@@ -28,7 +29,8 @@ export function triggerWebDownload(jsonString: string, filename: string): void {
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
-  URL.revokeObjectURL(url);
+  // Revoke asynchronously so the browser has time to start the download
+  setTimeout(() => URL.revokeObjectURL(url), 100);
 }
 
 export async function sharePlants(plants: Plant[]): Promise<void> {

@@ -143,6 +143,8 @@ describe('storageService.exportPlants', () => {
     g.document = origDocument;
     g.URL = origURL;
     g.Blob = origBlob;
+    // Restore real timers even if a test using fake timers failed before its own restore
+    jest.useRealTimers();
   });
 
   it('calls Share.share on native with valid JSON containing the plants', async () => {

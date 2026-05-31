@@ -94,7 +94,8 @@ export const storageService = {
       const jsonString = JSON.stringify(exportData, null, 2);
       const fileName = `pflanzkalender-export.json`;
 
-      if (Platform.OS === 'web') {
+      // platform-safe: document can be undefined in SSR/test even when Platform.OS === 'web'
+      if (Platform.OS === 'web' && typeof document !== 'undefined') {
         const blob = new Blob([jsonString], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');

@@ -105,7 +105,8 @@ export const TemplateScreen: React.FC = () => {
 
   const handleChooseFile = () => {
     if (Platform.OS !== 'web') return;
-    // platform-safe: document only available in web context
+    // platform-safe: document can be undefined in SSR/test even when Platform.OS === 'web'
+    if (typeof document === 'undefined') return;
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = '.json,application/json';
