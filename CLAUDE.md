@@ -32,10 +32,11 @@ Deploy: GitHub Pages via `gh-pages` unter `/Pflanzkalender/`
 
 ## Aktuelle Version: 1.4.0 (main)
 
-**Stand 2026-05-31:** main = v1.4.0 (versionCode 5). testing-Commits (Issue #8 Template-System + #88 Export-Fix) in main zusammengeführt – main = testing.
+**Stand 2026-05-31:** main = v1.4.0 (versionCode 5). PR #151 gemergt – `testing`-Commits (Issue #8 Template-System + #88 Export-Fix) sind jetzt in main. main `833a7f3`.
 
-- **main branch:** v1.4.0 – Issues #123 + #87 (PR #148 / #149) sowie #8 + #88 (PR #147 / #146 aus testing) geschlossen
-- **testing branch:** mit main zusammengeführt (alle Commits in main)
+- **main branch:** v1.4.0 – Issues #123 + #87 (PR #148 / #149) sowie #8 + #88 (PR #147 / #146, via PR #151 nach main) geschlossen
+- **testing branch:** hinter main – sollte auf `origin/main` zurückgesetzt werden (squash-Merge: testing-Commits sind inhaltlich, aber nicht als Hash in main)
+- **Offen:** Issue #152 – Konsolidierung der zwei parallelen Import-/Export-Pfade (SettingsModal-Import #149 vs. TemplateScreen #8); enthält auch die in PR #151 vertagten Import-Bugs (addPlant-Schleife Stale-State/ID-Kollision, `isDefault:true`)
 
 Versions-Stellen: `package.json`, `app.json`, `twa-manifest.template.json` – immer alle drei synchron halten, sonst schlägt CI fehl. `SettingsScreen.tsx` liest Version jetzt dynamisch aus `package.json` (seit PR #124), kein manuelles Sync mehr nötig.
 
@@ -266,7 +267,7 @@ Vollständige Roadmap: https://github.com/S540d/Pflanzkalender/issues/47
 
 ## Offene Issues (Stand 2026-05-31)
 
-**Status: main = v1.4.0, APK/AAB gebaut. testing = v1.4.0 + Issue #8 (PR #147 gemergt). 348 Tests grün.**
+**Status: main = v1.4.0, APK/AAB gebaut. PR #151 gemergt (testing-Commits #8 + #88 in main). 364 Tests grün. Offen: #152 (Import-Konsolidierung).**
 
 ### v1.4.0 – abgeschlossen / Play Store
 
@@ -286,8 +287,12 @@ Vollständige Roadmap: https://github.com/S540d/Pflanzkalender/issues/47
 
 - **#48** Klimazonen-Unterstützung – unterschiedliche Aktivitätszeiträume je Region
 - **#142** Drag & Drop für Aktivitäten im Kalender
-- **#8** ✅ Template-System: Pflanzpläne teilen und importieren – **in main** (PR #147, Commit `ad4c9fb`)
+- **#8** ✅ Template-System: Pflanzpläne teilen und importieren – **in main** (PR #147, via #151)
 - **#9** Intelligente Vorschläge: Fruchtfolge & Mischkultur
+
+### Wartbarkeit / Tech-Debt
+
+- **#152** Konsolidierung der zwei parallelen Import-/Export-Pfade (SettingsModal-Import #149 ersetzt via `replacePlants` vs. TemplateScreen #8 hängt via `addPlant`-Schleife an). Enthält die in PR #151 vertagten Bugs: `addPlant`-Schleife (Stale-State → nur letzte Pflanze, `Date.now()`-ID-Kollision) und `isDefault:true`-Importe nicht-editierbar. Ziel: ein Import-/Export-Service, einheitliches Verhalten, `TemplateScreen`-i18n vollständig (statt `isDe`-Ternaries)
 
 ## Abgeschlossene Roadmap-Issues
 
@@ -299,6 +304,7 @@ Vollständige Roadmap: https://github.com/S540d/Pflanzkalender/issues/47
 
 | Was                                          | Wann       | Details                                                                                                                                                                 |
 | -------------------------------------------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **PR #151:** testing → main (Merge)          | 2026-05-31 | ✅ main `833a7f3`: alle testing-Commits (#8 Template-System, #88 Export-Fix) nach main; i18n-Konflikte (beide Key-Sätze) + CLAUDE.md aufgelöst; 4 Review-Robustheit-Fixes (document-Guards, URL-Revoke-Defer, Test-Timer); 2 Import-Bugs → #152; 364 Tests |
 | **PR #149:** Issue #87 – Import-UI           | 2026-05-30 | ✅ gemergt: JSON-Import im SettingsModal (Web file picker, Confirm-Dialog, replacePlants), 9 i18n-Keys × 8 Sprachen, ESLint-Globals (Event/HTMLInputElement), 341 Tests |
 | **PR #148:** Issue #123 – Code-Audit         | 2026-05-30 | ✅ gemergt: `climateRecommendations.ts` extrahiert, `withStorageError`-Utility, Navigation-Integrationstests (`tabNavigation.test.tsx`), 338 Tests                      |
 | **PR #147:** Issue #8 – Template-System      | 2026-05-29 | ✅ testing `ad4c9fb` (jetzt in main): TemplateScreen (3 Sections), 3 Community-Templates, templateService (Web-Download + Share), 348 Tests grün                        |
