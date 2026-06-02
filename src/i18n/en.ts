@@ -75,6 +75,7 @@ const en: Translations = {
   'settings.about2': 'ABOUT',
   'settings.versionLabel': 'Version',
   'settings.exportSuccess': 'Export successful!',
+  'settings.exportError': 'Failed to export data. Please try again.',
   'settings.successTitle': 'Success',
   'settings.feedbackLink': 'Send Feedback',
   'settings.supportLink': 'Ko-fi',

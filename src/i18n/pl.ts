@@ -59,6 +59,7 @@ const pl: Translations = {
   'settings.about2': 'O APLIKACJI',
   'settings.versionLabel': 'Wersja',
   'settings.exportSuccess': 'Eksport zakończony sukcesem!',
+  'settings.exportError': 'Eksport nie powiódł się. Spróbuj ponownie.',
   'settings.successTitle': 'Sukces',
   'settings.feedbackLink': 'Wyślij opinię',
   'settings.supportLink': 'Ko-fi',

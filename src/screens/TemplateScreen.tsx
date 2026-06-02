@@ -70,7 +70,7 @@ export const TemplateScreen: React.FC = () => {
       Alert.alert(String(t('template.noteTitle')), String(t('template.pastePlease')));
       return;
     }
-    let imported;
+    let imported: ReturnType<typeof importFromJson>;
     try {
       imported = importFromJson(importText.trim());
     } catch (err) {
@@ -83,16 +83,17 @@ export const TemplateScreen: React.FC = () => {
       '{count}',
       String(normalised.length)
     );
-    setImporting(true);
+    // Do not set importing=true before the Alert: if the dialog is dismissed
+    // without a button press (e.g. Android back), the button would stay disabled.
     Alert.alert(String(t('template.importModeTitle')), msg, [
       {
         text: String(t('common.cancel')),
         style: 'cancel',
-        onPress: () => setImporting(false),
       },
       {
         text: String(t('template.importModeAppend')),
         onPress: () => {
+          setImporting(true);
           appendPlants(normalised);
           setImportText('');
           setImporting(false);
@@ -106,6 +107,7 @@ export const TemplateScreen: React.FC = () => {
       {
         text: String(t('template.importModeReplace')),
         onPress: () => {
+          setImporting(true);
           replacePlants(normalised);
           setImportText('');
           setImporting(false);

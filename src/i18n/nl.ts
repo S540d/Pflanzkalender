@@ -59,6 +59,7 @@ const nl: Translations = {
   'settings.about2': 'OVER',
   'settings.versionLabel': 'Versie',
   'settings.exportSuccess': 'Export geslaagd!',
+  'settings.exportError': 'Exporteren mislukt. Probeer het opnieuw.',
   'settings.successTitle': 'Gelukt',
   'settings.feedbackLink': 'Feedback sturen',
   'settings.supportLink': 'Ko-fi',

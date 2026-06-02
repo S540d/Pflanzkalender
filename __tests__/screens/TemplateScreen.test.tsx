@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, fireEvent, waitFor } from '@testing-library/react-native';
+import { render, fireEvent, waitFor, act } from '@testing-library/react-native';
 import { Alert } from 'react-native';
 import { TemplateScreen } from '../../src/screens/TemplateScreen';
 import { LanguageProvider } from '../../src/contexts/LanguageContext';
@@ -131,7 +131,7 @@ describe('TemplateScreen', () => {
 
   it('shows note alert when Import button pressed with empty text', async () => {
     const alertSpy = jest.spyOn(Alert, 'alert').mockImplementation(() => {});
-    const { getAllByText, getByTestId } = renderScreen();
+    const { getAllByText } = renderScreen();
     const allImportLabels = getAllByText(/^Importieren$|^Import$/);
     fireEvent.press(allImportLabels[0]);
     await waitFor(() => {
@@ -143,7 +143,6 @@ describe('TemplateScreen', () => {
       expect(alertSpy).toHaveBeenCalled();
     });
     alertSpy.mockRestore();
-    void getByTestId; // silence unused var
   });
 
   it('shows mode dialog when valid JSON is pasted and import triggered', async () => {
@@ -178,14 +177,52 @@ describe('TemplateScreen', () => {
     alertSpy.mockRestore();
   });
 
-  it('normalises isDefault to false for community template imports', async () => {
-    const alertSpy = jest.spyOn(Alert, 'alert').mockImplementation(() => {});
-    const { getAllByText } = renderScreen();
-    const importBtns = getAllByText(/^Importieren$|^Import$/);
-    fireEvent.press(importBtns[1]);
-    await waitFor(() => {
-      expect(alertSpy).toHaveBeenCalled();
+  it('normalises isDefault to false for JSON imports with isDefault:true source', async () => {
+    const { importFromJson } = require('../../src/services/templateService');
+    importFromJson.mockReturnValue([
+      {
+        id: 'ext-1',
+        name: 'Exportierte Pflanze',
+        isDefault: true, // as if imported from another user's export
+        userId: null,
+        activities: [],
+        notes: '',
+        createdAt: 1,
+        updatedAt: 1,
+      },
+    ]);
+
+    let appendHandler: (() => void) | undefined;
+    const alertSpy = jest.spyOn(Alert, 'alert').mockImplementation((_title, _msg, buttons) => {
+      if (Array.isArray(buttons)) {
+        const appendBtn = buttons.find((b) => /Anhängen|Append/i.test(String(b.text)));
+        appendHandler = appendBtn?.onPress ?? undefined;
+      }
     });
+
+    const { getAllByText, getByPlaceholderText } = renderScreen();
+    fireEvent.press(getAllByText(/^Importieren$|^Import$/)[0]);
+    await waitFor(() => expect(getByPlaceholderText(/JSON/i)).toBeTruthy());
+    fireEvent.changeText(getByPlaceholderText(/JSON/i), '{"dummy":"data"}');
+    fireEvent.press(getAllByText(/📥/)[0]);
+    await waitFor(() => expect(appendHandler).toBeDefined());
+
+    // Clear previous setItem calls (initialization) before triggering append
+    (AsyncStorage.setItem as jest.Mock).mockClear();
+
+    await act(async () => {
+      appendHandler!();
+    });
+
+    await waitFor(() => {
+      const calls = (AsyncStorage.setItem as jest.Mock).mock.calls;
+      const plantsCall = calls.find(([key]: [string]) => key === '@Pflanzkalender:plants');
+      expect(plantsCall).toBeDefined();
+      const saved = JSON.parse(plantsCall[1]) as Array<{ name: string; isDefault: boolean }>;
+      const imported = saved.find((p) => p.name === 'Exportierte Pflanze');
+      expect(imported?.isDefault).toBe(false);
+    });
+
     alertSpy.mockRestore();
   });
 });

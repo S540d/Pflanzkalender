@@ -35,7 +35,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ visible, onClose }
         Alert.alert(t('settings.successTitle') as string, t('settings.exportSuccess') as string);
       }
     } catch (error) {
-      Alert.alert('Error', 'Failed to export data. Please try again.');
+      Alert.alert(t('template.errorTitle') as string, t('settings.exportError') as string);
       console.error('Export error:', error);
     }
   };
