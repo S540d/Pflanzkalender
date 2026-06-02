@@ -139,6 +139,7 @@ const de: Translations = {
   'settings.importSuccess': '{count} Pflanzen erfolgreich importiert.',
   'settings.importError': 'Import fehlgeschlagen. Bitte prüfe das Dateiformat.',
   'settings.importWebOnly': 'Import ist nur im Browser verfügbar.',
+  'settings.importConfirmAppend': 'Anhängen',
   // Template Screen
   'template.title': 'Vorlagen',
   'template.tab': 'Vorlagen',
@@ -154,6 +155,19 @@ const de: Translations = {
     'JSON-Daten einfügen oder eine Datei auswählen, um Pflanzen zu importieren.',
   'template.chooseFile': 'Datei auswählen',
   'template.pasteJson': 'JSON hier einfügen...',
+  'template.importedTitle': 'Importiert!',
+  'template.importedMessage': '{count} Pflanzen aus "{name}" wurden hinzugefügt.',
+  'template.noPlantsTitle': 'Keine Pflanzen',
+  'template.noPlantsMessage': 'Es sind keine Pflanzen zum Exportieren vorhanden.',
+  'template.errorTitle': 'Fehler',
+  'template.exportFailed': 'Export fehlgeschlagen.',
+  'template.noteTitle': 'Hinweis',
+  'template.pastePlease': 'Bitte JSON-Daten einfügen.',
+  'template.exportBtn': '📤 {count} Pflanzen exportieren',
+  'template.importModeTitle': 'Importieren',
+  'template.importModeMessage': '{count} Pflanze(n) gefunden. Wie importieren?',
+  'template.importModeReplace': 'Alles ersetzen',
+  'template.importModeAppend': 'Anhängen',
 };
 
 export default de;

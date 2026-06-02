@@ -30,3 +30,17 @@ export const ImportDataSchema = z.object({
 });
 
 export type ValidatedPlant = z.infer<typeof PlantSchema>;
+
+import { Plant } from '../types';
+
+export function parseImportData(jsonString: string): Plant[] {
+  const raw = JSON.parse(jsonString);
+  const result = ImportDataSchema.safeParse(raw);
+  if (!result.success) {
+    const details = result.error.issues
+      .map((i) => `${i.path.join('.') || 'root'}: ${i.message}`)
+      .join('; ');
+    throw new Error(`Invalid import format: ${details}`);
+  }
+  return result.data.plants as Plant[];
+}

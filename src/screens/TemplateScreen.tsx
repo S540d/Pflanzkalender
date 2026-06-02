@@ -14,15 +14,13 @@ import { useLanguage } from '../contexts/LanguageContext';
 import { usePlants } from '../contexts/PlantContext';
 import { COMMUNITY_TEMPLATES } from '../constants/communityTemplates';
 import { sharePlants, importFromJson } from '../services/templateService';
-import { Plant } from '../types';
 
 type Section = 'templates' | 'export' | 'import';
 
 export const TemplateScreen: React.FC = () => {
   const { theme } = useTheme();
   const { language, t } = useLanguage();
-  const { plants, addPlant } = usePlants();
-  const isDe = language === 'de';
+  const { plants, replacePlants, appendPlants } = usePlants();
 
   const [activeSection, setActiveSection] = useState<Section>('templates');
   const [importText, setImportText] = useState('');
@@ -31,76 +29,94 @@ export const TemplateScreen: React.FC = () => {
 
   const styles = makeStyles();
 
+  const getTemplateLocale = (val: { de: string; en: string }) =>
+    language === 'de' ? val.de : val.en;
+
   const handleImportTemplate = (templateId: string) => {
-    const template = COMMUNITY_TEMPLATES.find((t) => t.id === templateId);
+    const template = COMMUNITY_TEMPLATES.find((tmpl) => tmpl.id === templateId);
     if (!template) return;
 
-    template.plants.forEach((plant) => {
-      addPlant(plant);
-    });
+    appendPlants(template.plants.map((p) => ({ ...p, isDefault: false })));
 
-    const name = isDe ? template.name.de : template.name.en;
+    const name = getTemplateLocale(template.name);
     Alert.alert(
-      isDe ? 'Importiert!' : 'Imported!',
-      isDe
-        ? `${template.plants.length} Pflanzen aus "${name}" wurden hinzugefügt.`
-        : `${template.plants.length} plants from "${name}" have been added.`
+      String(t('template.importedTitle')),
+      String(t('template.importedMessage'))
+        .replace('{count}', String(template.plants.length))
+        .replace('{name}', name)
     );
   };
 
   const handleExport = async () => {
     if (plants.length === 0) {
-      Alert.alert(
-        isDe ? 'Keine Pflanzen' : 'No plants',
-        isDe
-          ? 'Es sind keine Pflanzen zum Exportieren vorhanden.'
-          : 'There are no plants to export.'
-      );
+      Alert.alert(String(t('template.noPlantsTitle')), String(t('template.noPlantsMessage')));
       return;
     }
     setExporting(true);
     try {
       await sharePlants(plants);
       if (Platform.OS !== 'web') {
-        Alert.alert(
-          isDe ? 'Erfolg' : 'Success',
-          isDe ? 'Export erfolgreich!' : 'Export successful!'
-        );
+        Alert.alert(String(t('settings.successTitle')), String(t('settings.exportSuccess')));
       }
     } catch {
-      Alert.alert(isDe ? 'Fehler' : 'Error', isDe ? 'Export fehlgeschlagen.' : 'Export failed.');
+      Alert.alert(String(t('template.errorTitle')), String(t('template.exportFailed')));
     } finally {
       setExporting(false);
     }
   };
 
-  const handleImportJson = async () => {
+  const handleImportJson = () => {
     if (!importText.trim()) {
-      Alert.alert(
-        isDe ? 'Hinweis' : 'Note',
-        isDe ? 'Bitte JSON-Daten einfügen.' : 'Please paste JSON data.'
-      );
+      Alert.alert(String(t('template.noteTitle')), String(t('template.pastePlease')));
       return;
     }
-    setImporting(true);
+    let imported;
     try {
-      const imported: Plant[] = importFromJson(importText.trim());
-      imported.forEach(({ id: _id, createdAt: _c, updatedAt: _u, ...plant }) => {
-        addPlant(plant);
-      });
-      setImportText('');
-      Alert.alert(
-        isDe ? 'Erfolg' : 'Success',
-        isDe
-          ? `${imported.length} Pflanze(n) wurden importiert.`
-          : `${imported.length} plant(s) have been imported.`
-      );
+      imported = importFromJson(importText.trim());
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
-      Alert.alert(isDe ? 'Fehler' : 'Error', msg);
-    } finally {
-      setImporting(false);
+      Alert.alert(String(t('template.errorTitle')), msg);
+      return;
     }
+    const normalised = imported.map((p) => ({ ...p, isDefault: false }));
+    const msg = String(t('template.importModeMessage')).replace(
+      '{count}',
+      String(normalised.length)
+    );
+    setImporting(true);
+    Alert.alert(String(t('template.importModeTitle')), msg, [
+      {
+        text: String(t('common.cancel')),
+        style: 'cancel',
+        onPress: () => setImporting(false),
+      },
+      {
+        text: String(t('template.importModeAppend')),
+        onPress: () => {
+          appendPlants(normalised);
+          setImportText('');
+          setImporting(false);
+          const successMsg = String(t('settings.importSuccess')).replace(
+            '{count}',
+            String(normalised.length)
+          );
+          Alert.alert(String(t('settings.successTitle')), successMsg);
+        },
+      },
+      {
+        text: String(t('template.importModeReplace')),
+        onPress: () => {
+          replacePlants(normalised);
+          setImportText('');
+          setImporting(false);
+          const successMsg = String(t('settings.importSuccess')).replace(
+            '{count}',
+            String(normalised.length)
+          );
+          Alert.alert(String(t('settings.successTitle')), successMsg);
+        },
+      },
+    ]);
   };
 
   const handleChooseFile = () => {
@@ -124,10 +140,12 @@ export const TemplateScreen: React.FC = () => {
   };
 
   const sectionLabel = (section: Section): string => {
-    if (section === 'templates') return isDe ? 'Vorlagen' : 'Templates';
-    if (section === 'export') return isDe ? 'Exportieren' : 'Export';
-    return isDe ? 'Importieren' : 'Import';
+    if (section === 'templates') return String(t('template.tabTemplates'));
+    if (section === 'export') return String(t('template.tabExport'));
+    return String(t('template.tabImport'));
   };
+
+  const exportBtnLabel = String(t('template.exportBtn')).replace('{count}', String(plants.length));
 
   return (
     <ScrollView style={[styles.container, { backgroundColor: theme.background }]}>
@@ -172,10 +190,10 @@ export const TemplateScreen: React.FC = () => {
                 <Text style={styles.cardIcon}>{tmpl.icon}</Text>
                 <View style={styles.cardTitleBlock}>
                   <Text style={[styles.cardTitle, { color: theme.text }]}>
-                    {isDe ? tmpl.name.de : tmpl.name.en}
+                    {getTemplateLocale(tmpl.name)}
                   </Text>
                   <Text style={[styles.cardDesc, { color: theme.textSecondary }]}>
-                    {isDe ? tmpl.description.de : tmpl.description.en}
+                    {getTemplateLocale(tmpl.description)}
                   </Text>
                 </View>
               </View>
@@ -210,9 +228,7 @@ export const TemplateScreen: React.FC = () => {
             onPress={handleExport}
             disabled={exporting}
           >
-            <Text style={styles.actionBtnText}>
-              {`📤 ${isDe ? 'Alle' : 'All'} ${plants.length} ${isDe ? 'Pflanzen exportieren' : 'plants export'}`}
-            </Text>
+            <Text style={styles.actionBtnText}>{exportBtnLabel}</Text>
           </TouchableOpacity>
         </View>
       )}
@@ -260,7 +276,7 @@ export const TemplateScreen: React.FC = () => {
             onPress={handleImportJson}
             disabled={importing}
           >
-            <Text style={styles.actionBtnText}>{`📥 ${isDe ? 'Importieren' : 'Import'}`}</Text>
+            <Text style={styles.actionBtnText}>{`📥 ${String(t('template.tabImport'))}`}</Text>
           </TouchableOpacity>
         </View>
       )}

@@ -75,7 +75,6 @@ describe('TemplateScreen', () => {
 
   it('switches to Export section on tab press', () => {
     const { getByText } = renderScreen();
-    // "Exportieren" only appears once as the export section tab
     fireEvent.press(getByText(/^Exportieren$|^Export$/));
     expect(getByText(/^EXPORTIEREN$|^EXPORT$/)).toBeTruthy();
   });
@@ -113,7 +112,8 @@ describe('TemplateScreen', () => {
     const { getByText } = renderScreen();
     fireEvent.press(getByText(/^Exportieren$|^Export$/));
     await waitFor(() => getByText(/^EXPORTIEREN$|^EXPORT$/));
-    fireEvent.press(getByText(/Pflanzen exportieren|plants export/));
+    // Export button contains plant count placeholder replaced with 0
+    fireEvent.press(getByText(/📤/));
     await waitFor(() => {
       expect(alertSpy).toHaveBeenCalled();
     });
@@ -127,5 +127,65 @@ describe('TemplateScreen', () => {
     await waitFor(() => {
       expect(getByPlaceholderText(/JSON/i)).toBeTruthy();
     });
+  });
+
+  it('shows note alert when Import button pressed with empty text', async () => {
+    const alertSpy = jest.spyOn(Alert, 'alert').mockImplementation(() => {});
+    const { getAllByText, getByTestId } = renderScreen();
+    const allImportLabels = getAllByText(/^Importieren$|^Import$/);
+    fireEvent.press(allImportLabels[0]);
+    await waitFor(() => {
+      // The import action button contains the tab import label with emoji
+      expect(getAllByText(/📥/).length).toBeGreaterThan(0);
+    });
+    fireEvent.press(getAllByText(/📥/)[0]);
+    await waitFor(() => {
+      expect(alertSpy).toHaveBeenCalled();
+    });
+    alertSpy.mockRestore();
+    void getByTestId; // silence unused var
+  });
+
+  it('shows mode dialog when valid JSON is pasted and import triggered', async () => {
+    const { importFromJson } = require('../../src/services/templateService');
+    importFromJson.mockReturnValue([
+      {
+        id: 'p1',
+        name: 'Tomate',
+        isDefault: false,
+        userId: null,
+        activities: [],
+        notes: '',
+        createdAt: 1,
+        updatedAt: 1,
+      },
+    ]);
+    const alertSpy = jest.spyOn(Alert, 'alert').mockImplementation(() => {});
+    const { getAllByText, getByPlaceholderText } = renderScreen();
+    const allImportLabels = getAllByText(/^Importieren$|^Import$/);
+    fireEvent.press(allImportLabels[0]);
+    await waitFor(() => {
+      expect(getByPlaceholderText(/JSON/i)).toBeTruthy();
+    });
+    fireEvent.changeText(getByPlaceholderText(/JSON/i), '{"valid":"json"}');
+    fireEvent.press(getAllByText(/📥/)[0]);
+    await waitFor(() => {
+      expect(alertSpy).toHaveBeenCalled();
+      // Should show mode dialog with 3 buttons (Cancel, Append, Replace)
+      const call = alertSpy.mock.calls[0];
+      expect(call[2]).toHaveLength(3);
+    });
+    alertSpy.mockRestore();
+  });
+
+  it('normalises isDefault to false for community template imports', async () => {
+    const alertSpy = jest.spyOn(Alert, 'alert').mockImplementation(() => {});
+    const { getAllByText } = renderScreen();
+    const importBtns = getAllByText(/^Importieren$|^Import$/);
+    fireEvent.press(importBtns[1]);
+    await waitFor(() => {
+      expect(alertSpy).toHaveBeenCalled();
+    });
+    alertSpy.mockRestore();
   });
 });

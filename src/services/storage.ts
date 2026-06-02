@@ -1,7 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Plant } from '../types';
-import { Share, Platform } from 'react-native';
-import { PlantSchema, ImportDataSchema } from '../schemas/plant';
+import { PlantSchema, parseImportData } from '../schemas/plant';
 
 const STORAGE_KEYS = {
   PLANTS: '@Pflanzkalender:plants',
@@ -81,55 +80,10 @@ export const storageService = {
     }
   },
 
-  // Export plants as JSON
-  async exportPlants(): Promise<void> {
-    try {
-      const plants = await this.loadPlants();
-      const exportData = {
-        version: '1.0.0',
-        timestamp: new Date().toISOString(),
-        plants,
-      };
-
-      const jsonString = JSON.stringify(exportData, null, 2);
-      const fileName = `pflanzkalender-export.json`;
-
-      // platform-safe: document can be undefined in SSR/test even when Platform.OS === 'web'
-      if (Platform.OS === 'web' && typeof document !== 'undefined') {
-        const blob = new Blob([jsonString], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = fileName;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        // Revoke asynchronously so the browser has time to start the download
-        setTimeout(() => URL.revokeObjectURL(url), 100);
-      } else {
-        await Share.share({
-          message: jsonString,
-          title: fileName,
-        });
-      }
-    } catch (error) {
-      console.error('Error exporting plants:', error);
-      throw error;
-    }
-  },
-
-  // Import plants from JSON
+  // Import plants from JSON (delegates validation to parseImportData)
   async importPlants(jsonString: string): Promise<Plant[]> {
     try {
-      const raw = JSON.parse(jsonString);
-      const result = ImportDataSchema.safeParse(raw);
-      if (!result.success) {
-        const details = result.error.issues
-          .map((i) => `${i.path.join('.') || 'root'}: ${i.message}`)
-          .join('; ');
-        throw new Error(`Invalid import format: ${details}`);
-      }
-      return result.data.plants as Plant[];
+      return parseImportData(jsonString);
     } catch (error) {
       console.error('Error importing plants:', error);
       throw error;
