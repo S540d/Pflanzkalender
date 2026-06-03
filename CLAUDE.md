@@ -32,7 +32,7 @@ Deploy: GitHub Pages via `gh-pages` unter `/Pflanzkalender/`
 
 ## Aktuelle Version: 1.4.0 (main)
 
-**Stand 2026-05-31:** main = v1.4.0 (versionCode 5). PR #151 gemergt – `testing`-Commits (Issue #8 Template-System + #88 Export-Fix) sind jetzt in main. main `833a7f3`.
+**Stand 2026-06-03:** main = v1.4.0 (versionCode 5). PR #157 gemergt – CI Standards Audit Listener (project-templates#7) in main. main `eb14beb`.
 
 - **main branch:** v1.4.0 – Issues #123 + #87 (PR #148 / #149) sowie #8 + #88 (PR #147 / #146, via PR #151 nach main) geschlossen
 - **testing branch:** hinter main – sollte auf `origin/main` zurückgesetzt werden (squash-Merge: testing-Commits sind inhaltlich, aber nicht als Hash in main)
@@ -267,7 +267,7 @@ Vollständige Roadmap: https://github.com/S540d/Pflanzkalender/issues/47
 
 ## Offene Issues (Stand 2026-05-31)
 
-**Status: main = v1.4.0, APK/AAB gebaut. PR #151 gemergt (testing-Commits #8 + #88 in main). 364 Tests grün. Offen: #152 (Import-Konsolidierung).**
+**Status: main = v1.4.0, APK/AAB gebaut. PR #157 gemergt (CI Standards Audit). 364 Tests grün. Offen: #152 (Import-Konsolidierung), #155 (PR für #152).**
 
 ### v1.4.0 – abgeschlossen / Play Store
 
@@ -300,10 +300,11 @@ Vollständige Roadmap: https://github.com/S540d/Pflanzkalender/issues/47
 
 ---
 
-## Letzte Merges / Fixes (2026-05-31)
+## Letzte Merges / Fixes (2026-06-03)
 
 | Was                                          | Wann       | Details                                                                                                                                                                                                                                                    |
 | -------------------------------------------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **PR #157:** CI Standards Audit Listener     | 2026-06-03 | ✅ main `eb14beb`: `standards-audit.yml` (reusable-security-scan, reusable-gitignore-audit, reusable-dev-standards-audit @v1); `.gitignore` um `.env.local` + `credentials.json` ergänzt (gitignore-audit Pflichteinträge, project-templates#7) |
 | **PR #151:** testing → main (Merge)          | 2026-05-31 | ✅ main `833a7f3`: alle testing-Commits (#8 Template-System, #88 Export-Fix) nach main; i18n-Konflikte (beide Key-Sätze) + CLAUDE.md aufgelöst; 4 Review-Robustheit-Fixes (document-Guards, URL-Revoke-Defer, Test-Timer); 2 Import-Bugs → #152; 364 Tests |
 | **PR #149:** Issue #87 – Import-UI           | 2026-05-30 | ✅ gemergt: JSON-Import im SettingsModal (Web file picker, Confirm-Dialog, replacePlants), 9 i18n-Keys × 8 Sprachen, ESLint-Globals (Event/HTMLInputElement), 341 Tests                                                                                    |
 | **PR #148:** Issue #123 – Code-Audit         | 2026-05-30 | ✅ gemergt: `climateRecommendations.ts` extrahiert, `withStorageError`-Utility, Navigation-Integrationstests (`tabNavigation.test.tsx`), 338 Tests                                                                                                         |
