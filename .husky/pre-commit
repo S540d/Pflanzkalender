@@ -96,7 +96,7 @@ GITIGNORE_PROBLEMS=0
 set -f
 REQUIRED_GITIGNORE_ENTRIES=".env .env.local credentials.json *.jks *.keystore *.p12 *.p8 docs/private/"
 for entry in $REQUIRED_GITIGNORE_ENTRIES; do
-  if ! grep -Fq "$entry" .gitignore 2>/dev/null; then
+  if ! grep -Fxq "$entry" .gitignore 2>/dev/null; then
     echo "❌ ERROR: Missing required .gitignore entry: '$entry'"
     GITIGNORE_PROBLEMS=1
   fi
