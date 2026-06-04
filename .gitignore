@@ -41,6 +41,9 @@ yarn-error.*
 /android
 coverage/
 
+# Claude Code local files (commands, settings – never commit)
+.claude/
+
 # Private documentation (local only, never commit)
 docs/private/
 
