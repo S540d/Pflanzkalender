@@ -8,6 +8,7 @@ interface PlantContextType {
   plants: Plant[];
   loading: boolean;
   addPlant: (plant: Omit<Plant, 'id' | 'createdAt' | 'updatedAt'>) => void;
+  appendPlants: (newPlants: Omit<Plant, 'id' | 'createdAt' | 'updatedAt'>[]) => void;
   updatePlant: (id: string, updates: Partial<Plant>) => void;
   deletePlant: (id: string) => void;
   addActivity: (plantId: string, activity: Omit<Activity, 'id'>) => void;
@@ -111,6 +112,17 @@ export const PlantProvider: React.FC<PlantProviderProps> = ({ children }) => {
     savePlants([...plants, newPlant]);
   };
 
+  const appendPlants = (newPlants: Omit<Plant, 'id' | 'createdAt' | 'updatedAt'>[]) => {
+    const now = Date.now();
+    const plantsToAdd: Plant[] = newPlants.map((plant, i) => ({
+      ...plant,
+      id: `plant-${now}-${i}`,
+      createdAt: now,
+      updatedAt: now,
+    }));
+    savePlants([...plants, ...plantsToAdd]);
+  };
+
   const updatePlant = (id: string, updates: Partial<Plant>) => {
     const updatedPlants = plants.map((plant) =>
       plant.id === id ? { ...plant, ...updates, updatedAt: Date.now() } : plant
@@ -190,6 +202,7 @@ export const PlantProvider: React.FC<PlantProviderProps> = ({ children }) => {
         plants,
         loading,
         addPlant,
+        appendPlants,
         updatePlant,
         deletePlant,
         addActivity,

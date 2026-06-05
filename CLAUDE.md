@@ -228,14 +228,19 @@ Bleiben Feature-Branches nach einem Squash-Merge im Remote stehen, schlägt jede
 
 ## Branch-Strategie
 
-| Branch                    | Zweck                                                                                    |
-| ------------------------- | ---------------------------------------------------------------------------------------- |
-| `main`                    | Production                                                                               |
-| `develop`                 | Integration (optional)                                                                   |
-| `testing`                 | Löst Deploy auf `gh-pages-testing` aus → https://s540d.github.io/Pflanzkalender-testing/ |
-| `claude/<feature>-<hash>` | Feature-Branches (von Claude generiert)                                                  |
+```
+main (production) ← testing ← feature/issue-XXX
+```
 
-Workflow: Feature-Branch → PR auf main → CI grün → Merge (squash).
+`staging` wurde entfernt (2026-06-03, Issue #7).
+
+| Branch              | Zweck                                                                                         |
+| ------------------- | --------------------------------------------------------------------------------------------- |
+| `main`              | Production                                                                                    |
+| `testing`           | Integration + Deploy auf `gh-pages-testing` → https://s540d.github.io/Pflanzkalender-testing/ |
+| `feature/issue-XXX` | Feature-Branches (kurzlebig, nach Merge löschen)                                              |
+
+Workflow: `feature/issue-XXX` → PR auf `testing` → CI grün → Merge (squash + delete-branch) → PR `testing → main`.
 
 ---
 

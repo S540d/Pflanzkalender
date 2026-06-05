@@ -1,6 +1,6 @@
 import { Platform, Share } from 'react-native';
 import { Plant } from '../types';
-import { ImportDataSchema } from '../schemas/plant';
+import { parseImportData } from '../schemas/plant';
 
 export interface ExportData {
   version: '1.0.0';
@@ -49,13 +49,5 @@ export async function sharePlants(plants: Plant[]): Promise<void> {
 }
 
 export function importFromJson(jsonString: string): Plant[] {
-  const raw = JSON.parse(jsonString);
-  const result = ImportDataSchema.safeParse(raw);
-  if (!result.success) {
-    const details = result.error.issues
-      .map((i) => `${i.path.join('.') || 'root'}: ${i.message}`)
-      .join('; ');
-    throw new Error(`Invalid import format: ${details}`);
-  }
-  return result.data.plants as Plant[];
+  return parseImportData(jsonString);
 }
