@@ -14,14 +14,14 @@ Also available on Google Play Store.
 
 ## 🛠️ Tech Stack
 
-| Technology | Role |
-|---|---|
-| React Native + Expo | Cross-platform framework |
-| React Native Web | Web support |
-| React Navigation (Stack Navigator) | Navigation |
-| React Context / Hooks | State management |
-| AsyncStorage | Local data storage |
-| GitHub Pages | Web deployment |
+| Technology                         | Role                     |
+| ---------------------------------- | ------------------------ |
+| React Native + Expo                | Cross-platform framework |
+| React Native Web                   | Web support              |
+| React Navigation (Stack Navigator) | Navigation               |
+| React Context / Hooks              | State management         |
+| AsyncStorage                       | Local data storage       |
+| GitHub Pages                       | Web deployment           |
 
 ## 📋 Setup
 
@@ -90,6 +90,7 @@ The app can be installed as a PWA:
 ## 📖 Usage
 
 ### Calendar view (📅)
+
 - **Desktop:** Shows all 24 half-months at a glance
 - **Mobile:** Shows 3 months (6 half-months) with ← → navigation
 - **Sticky header:** Table header stays visible while scrolling
@@ -97,18 +98,23 @@ The app can be installed as a PWA:
 - **Click empty cells:** Add new activity for that month
 
 ### Agenda view (📋)
+
 Three-column overview with horizontal scrolling:
+
 - **Left:** Activities from the previous period
 - **Middle:** Current activities (current half-month)
 - **Right:** Upcoming activities (next period)
 
 ### Plant management (🌱)
+
 Central screen for managing all plants:
+
 - **Add new plant:** Large button at the top
 - **Plant list:** Overview with name, notes, and activity count
 - **Delete:** Each plant can be deleted individually
 
 ### Settings (⋮)
+
 - **Theme:** Switch between light/dark/system
 - **Language:** German ⇄ English
 - **Export data:** As JSON file
