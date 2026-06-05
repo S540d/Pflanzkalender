@@ -11,7 +11,7 @@ import {
   Platform,
 } from 'react-native';
 import { useTheme } from '../hooks/useTheme';
-import { storageService } from '../services/storage';
+import { sharePlants, importFromJson } from '../services/templateService';
 import { useLanguage, PICKER_LANGUAGES } from '../contexts/LanguageContext';
 import { usePlants } from '../contexts/PlantContext';
 import packageJson from '../../package.json';
@@ -26,14 +26,16 @@ const APP_VERSION = packageJson.version;
 export const SettingsModal: React.FC<SettingsModalProps> = ({ visible, onClose }) => {
   const { theme, themeMode, setThemeMode } = useTheme();
   const { language, setLanguage, t } = useLanguage();
-  const { replacePlants } = usePlants();
+  const { plants, replacePlants, appendPlants } = usePlants();
 
   const handleExport = async () => {
     try {
-      await storageService.exportPlants();
-      Alert.alert(t('settings.successTitle') as string, t('settings.exportSuccess') as string);
+      await sharePlants(plants);
+      if (Platform.OS !== 'web') {
+        Alert.alert(t('settings.successTitle') as string, t('settings.exportSuccess') as string);
+      }
     } catch (error) {
-      Alert.alert('Error', 'Failed to export data. Please try again.');
+      Alert.alert(t('template.errorTitle') as string, t('settings.exportError') as string);
       console.error('Export error:', error);
     }
   };
@@ -53,20 +55,32 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ visible, onClose }
       if (!file) return;
       try {
         const text = await file.text();
-        const imported = await storageService.importPlants(text);
+        const imported = importFromJson(text);
+        const normalised = imported.map((p) => ({ ...p, isDefault: false }));
         const msg = (t('settings.importConfirmMessage') as string).replace(
           '{count}',
-          String(imported.length)
+          String(normalised.length)
         );
         Alert.alert(t('settings.importConfirmTitle') as string, msg, [
           { text: t('settings.importConfirmCancel') as string, style: 'cancel' },
           {
-            text: t('settings.importConfirmOk') as string,
+            text: t('settings.importConfirmAppend') as string,
             onPress: () => {
-              replacePlants(imported);
+              appendPlants(normalised);
               const successMsg = (t('settings.importSuccess') as string).replace(
                 '{count}',
-                String(imported.length)
+                String(normalised.length)
+              );
+              Alert.alert(t('settings.successTitle') as string, successMsg);
+            },
+          },
+          {
+            text: t('settings.importConfirmOk') as string,
+            onPress: () => {
+              replacePlants(normalised);
+              const successMsg = (t('settings.importSuccess') as string).replace(
+                '{count}',
+                String(normalised.length)
               );
               Alert.alert(t('settings.successTitle') as string, successMsg);
             },
