@@ -10,7 +10,7 @@ A Progressive Web App (PWA) for managing planting calendars with monthly overvie
 
 - **Web App:** [https://s540d.github.io/Pflanzkalender/](https://s540d.github.io/Pflanzkalender/)
 
-Also available on Google Play Store.
+Also available on Google Play Store (search for "Pflanzkalender").
 
 ## 🛠️ Tech Stack
 
@@ -143,13 +143,17 @@ Contributions welcome! Please:
 
 ## 📄 License
 
-This project is licensed under the MIT License. Commercial use is excluded.
+This project is licensed under the [MIT License](LICENSE).
 
 ## 💖 Support
 
 If you like this app, you can support me:
 
 ☕ [Ko-fi](https://ko-fi.com/devsven)
+
+## 📝 Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for version history.
 
 ## 🐛 Bug Reports
 
