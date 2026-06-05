@@ -34,11 +34,14 @@ jest.mock('../../src/hooks/useTheme', () => ({
 
 jest.mock('../../src/services/storage', () => ({
   storageService: {
-    exportPlants: jest.fn().mockResolvedValue(undefined),
     loadPlants: jest.fn().mockResolvedValue([]),
     savePlants: jest.fn().mockResolvedValue(undefined),
-    importPlants: jest.fn(),
   },
+}));
+
+jest.mock('../../src/services/templateService', () => ({
+  sharePlants: jest.fn().mockResolvedValue(undefined),
+  importFromJson: jest.fn(),
 }));
 
 jest.mock('react-native/Libraries/Linking/Linking', () => ({
@@ -130,15 +133,15 @@ describe('SettingsScreen', () => {
     expect(getByText(/Export as JSON|Als JSON exportieren/)).toBeTruthy();
   });
 
-  it('calls storageService.exportPlants when export button is pressed', async () => {
-    const { storageService } = require('../../src/services/storage');
+  it('calls sharePlants when export button is pressed', async () => {
+    const { sharePlants } = require('../../src/services/templateService');
     const alertSpy = jest.spyOn(Alert, 'alert').mockImplementation(() => {});
 
     const { getByText } = renderWithProviders(<SettingsScreen />);
     fireEvent.press(getByText(/Export as JSON|Als JSON exportieren/));
 
     await waitFor(() => {
-      expect(storageService.exportPlants).toHaveBeenCalled();
+      expect(sharePlants).toHaveBeenCalled();
     });
 
     alertSpy.mockRestore();

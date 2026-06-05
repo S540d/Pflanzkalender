@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, fireEvent, waitFor } from '@testing-library/react-native';
+import { render, fireEvent, waitFor, act } from '@testing-library/react-native';
 import { Alert } from 'react-native';
 import { TemplateScreen } from '../../src/screens/TemplateScreen';
 import { LanguageProvider } from '../../src/contexts/LanguageContext';
@@ -75,7 +75,6 @@ describe('TemplateScreen', () => {
 
   it('switches to Export section on tab press', () => {
     const { getByText } = renderScreen();
-    // "Exportieren" only appears once as the export section tab
     fireEvent.press(getByText(/^Exportieren$|^Export$/));
     expect(getByText(/^EXPORTIEREN$|^EXPORT$/)).toBeTruthy();
   });
@@ -113,7 +112,8 @@ describe('TemplateScreen', () => {
     const { getByText } = renderScreen();
     fireEvent.press(getByText(/^Exportieren$|^Export$/));
     await waitFor(() => getByText(/^EXPORTIEREN$|^EXPORT$/));
-    fireEvent.press(getByText(/Pflanzen exportieren|plants export/));
+    // Export button contains plant count placeholder replaced with 0
+    fireEvent.press(getByText(/📤/));
     await waitFor(() => {
       expect(alertSpy).toHaveBeenCalled();
     });
@@ -127,5 +127,102 @@ describe('TemplateScreen', () => {
     await waitFor(() => {
       expect(getByPlaceholderText(/JSON/i)).toBeTruthy();
     });
+  });
+
+  it('shows note alert when Import button pressed with empty text', async () => {
+    const alertSpy = jest.spyOn(Alert, 'alert').mockImplementation(() => {});
+    const { getAllByText } = renderScreen();
+    const allImportLabels = getAllByText(/^Importieren$|^Import$/);
+    fireEvent.press(allImportLabels[0]);
+    await waitFor(() => {
+      // The import action button contains the tab import label with emoji
+      expect(getAllByText(/📥/).length).toBeGreaterThan(0);
+    });
+    fireEvent.press(getAllByText(/📥/)[0]);
+    await waitFor(() => {
+      expect(alertSpy).toHaveBeenCalled();
+    });
+    alertSpy.mockRestore();
+  });
+
+  it('shows mode dialog when valid JSON is pasted and import triggered', async () => {
+    const { importFromJson } = require('../../src/services/templateService');
+    importFromJson.mockReturnValue([
+      {
+        id: 'p1',
+        name: 'Tomate',
+        isDefault: false,
+        userId: null,
+        activities: [],
+        notes: '',
+        createdAt: 1,
+        updatedAt: 1,
+      },
+    ]);
+    const alertSpy = jest.spyOn(Alert, 'alert').mockImplementation(() => {});
+    const { getAllByText, getByPlaceholderText } = renderScreen();
+    const allImportLabels = getAllByText(/^Importieren$|^Import$/);
+    fireEvent.press(allImportLabels[0]);
+    await waitFor(() => {
+      expect(getByPlaceholderText(/JSON/i)).toBeTruthy();
+    });
+    fireEvent.changeText(getByPlaceholderText(/JSON/i), '{"valid":"json"}');
+    fireEvent.press(getAllByText(/📥/)[0]);
+    await waitFor(() => {
+      expect(alertSpy).toHaveBeenCalled();
+      // Should show mode dialog with 3 buttons (Cancel, Append, Replace)
+      const call = alertSpy.mock.calls[0];
+      expect(call[2]).toHaveLength(3);
+    });
+    alertSpy.mockRestore();
+  });
+
+  it('normalises isDefault to false for JSON imports with isDefault:true source', async () => {
+    const { importFromJson } = require('../../src/services/templateService');
+    importFromJson.mockReturnValue([
+      {
+        id: 'ext-1',
+        name: 'Exportierte Pflanze',
+        isDefault: true, // as if imported from another user's export
+        userId: null,
+        activities: [],
+        notes: '',
+        createdAt: 1,
+        updatedAt: 1,
+      },
+    ]);
+
+    let appendHandler: (() => void) | undefined;
+    const alertSpy = jest.spyOn(Alert, 'alert').mockImplementation((_title, _msg, buttons) => {
+      if (Array.isArray(buttons)) {
+        const appendBtn = buttons.find((b) => /Anhängen|Append/i.test(String(b.text)));
+        appendHandler = appendBtn?.onPress ?? undefined;
+      }
+    });
+
+    const { getAllByText, getByPlaceholderText } = renderScreen();
+    fireEvent.press(getAllByText(/^Importieren$|^Import$/)[0]);
+    await waitFor(() => expect(getByPlaceholderText(/JSON/i)).toBeTruthy());
+    fireEvent.changeText(getByPlaceholderText(/JSON/i), '{"dummy":"data"}');
+    fireEvent.press(getAllByText(/📥/)[0]);
+    await waitFor(() => expect(appendHandler).toBeDefined());
+
+    // Clear previous setItem calls (initialization) before triggering append
+    (AsyncStorage.setItem as jest.Mock).mockClear();
+
+    await act(async () => {
+      appendHandler!();
+    });
+
+    await waitFor(() => {
+      const calls = (AsyncStorage.setItem as jest.Mock).mock.calls;
+      const plantsCall = calls.find(([key]: [string]) => key === '@Pflanzkalender:plants');
+      expect(plantsCall).toBeDefined();
+      const saved = JSON.parse(plantsCall[1]) as Array<{ name: string; isDefault: boolean }>;
+      const imported = saved.find((p) => p.name === 'Exportierte Pflanze');
+      expect(imported?.isDefault).toBe(false);
+    });
+
+    alertSpy.mockRestore();
   });
 });
