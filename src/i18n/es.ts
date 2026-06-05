@@ -59,6 +59,7 @@ const es: Translations = {
   'settings.about2': 'ACERCA DE',
   'settings.versionLabel': 'Versión',
   'settings.exportSuccess': '¡Exportación exitosa!',
+  'settings.exportError': 'Error al exportar. Por favor, inténtalo de nuevo.',
   'settings.successTitle': 'Éxito',
   'settings.feedbackLink': 'Enviar comentarios',
   'settings.supportLink': 'Ko-fi',

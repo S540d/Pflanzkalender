@@ -31,9 +31,11 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ visible, onClose }
   const handleExport = async () => {
     try {
       await storageService.exportPlants();
-      Alert.alert(t('settings.successTitle') as string, t('settings.exportSuccess') as string);
+      if (Platform.OS !== 'web') {
+        Alert.alert(t('settings.successTitle') as string, t('settings.exportSuccess') as string);
+      }
     } catch (error) {
-      Alert.alert('Error', 'Failed to export data. Please try again.');
+      Alert.alert(t('settings.successTitle') as string, t('settings.exportError') as string);
       console.error('Export error:', error);
     }
   };

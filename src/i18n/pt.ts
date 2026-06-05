@@ -59,6 +59,7 @@ const pt: Translations = {
   'settings.about2': 'SOBRE',
   'settings.versionLabel': 'Versão',
   'settings.exportSuccess': 'Exportação bem-sucedida!',
+  'settings.exportError': 'Exportação falhou. Tente novamente.',
   'settings.successTitle': 'Sucesso',
   'settings.feedbackLink': 'Enviar feedback',
   'settings.supportLink': 'Ko-fi',
