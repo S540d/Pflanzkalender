@@ -1,242 +1,160 @@
 # 🌱 Pflanzkalender PWA
 
-Eine Progressive Web App (PWA) zur Verwaltung von Pflanzkalendern mit monatlicher Übersicht für Garten- und Pflanzenaktivitäten.
+A Progressive Web App (PWA) for managing planting calendars with monthly overview for garden and plant activities.
 
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![React Native](https://img.shields.io/badge/React%20Native-0.76-blue)
 ![Expo](https://img.shields.io/badge/Expo-54.0-black)
 
-## 🎯 Features
+## Live
 
-- 📅 **Pflanzkalender** mit halber Monatsauflösung (24 Halbmonate)
-- 📱 **Responsive Design** - automatische Anpassung auf kleinen Displays (3 Monate mit Navigation)
-- 📌 **Fixierte Pflanzennamen-Spalte** - bleibt beim horizontalen Scrollen sichtbar
-- 🌿 **32 vordefinierte Pflanzen** in drei Kategorien (Nutzpflanzen, Blumen, Bäume)
-- 🌱 **Pflanzen-Verwaltung** - Dedizierter Screen zum Hinzufügen und Löschen von Pflanzen
-- 🗂️ **Kategorien-Filter** – Kalender und Agenda nach Nutzpflanzen / Blumen / Bäume filtern
-- 📍 **Standortempfehlungen** – Sonne, Halbschatten, Schatten pro Pflanze
-- 🌍 **Mehrsprachig** - Deutsch/Englisch Umschaltung
-- 🎨 **Farbcodierte Aktivitäten** mit einheitlichem Farbschema:
-  - 🌱 Aussäen/Pflanzen: Grüntöne
-  - 🍅 Ernten: Rot/Pink
-  - 🧪 Pflegen/Düngen/Schnitt: Gelb/Orange
-  - ❄️ Winterschutz: Blau/Lila
-- 💬 **Tooltips** - Hover über Aktivitäten zeigt Details (Web)
-- 📊 **Agenda-Ansicht** mit horizontalem Scrolling und kompakten Spalten
-- 🎯 **Kompaktes Layout** - Aktivitäten in derselben Zeile wenn keine Überlappung
-- 📍 **Aktuelle Periode hervorgehoben** - grauer Hintergrund für aktuellen Halbmonat
-- 🖱️ **Interaktive Aktivitäten** - Klick zum Bearbeiten und Löschen
-- 💾 **Lokale Datenspeicherung** ohne Anmeldung
-- 🌓 **Dark/Light Mode** mit System-Theme Option
-- 📴 **Offline-fähig** - PWA mit Service Worker
-- ☕ **Support-Link** in den Einstellungen
+- **Web App:** [https://s540d.github.io/Pflanzkalender/](https://s540d.github.io/Pflanzkalender/)
 
-## 🚀 Live Demo
+Also available on Google Play Store.
 
-🔗 **[https://s540d.github.io/Pflanzkalender/](https://s540d.github.io/Pflanzkalender/)**
+## 🛠️ Tech Stack
 
-## 🛠️ Technologie-Stack
+| Technology | Role |
+|---|---|
+| React Native + Expo | Cross-platform framework |
+| React Native Web | Web support |
+| React Navigation (Stack Navigator) | Navigation |
+| React Context / Hooks | State management |
+| AsyncStorage | Local data storage |
+| GitHub Pages | Web deployment |
 
-- **Framework:** React Native + Expo
-- **Web:** React Native Web
-- **Navigation:** React Navigation (Stack Navigator)
-- **State Management:** React Context / Hooks
-- **Storage:** AsyncStorage (lokal)
-- **Deployment:** GitHub Pages mit automatischem Cache-Busting
+## 📋 Setup
 
-## 📋 Installation
+### Prerequisites
 
-### Voraussetzungen
+- Node.js 18+ and npm
+- Expo CLI (optional, installed automatically)
 
-- Node.js 18+ und npm
-- Expo CLI (optional, wird automatisch installiert)
-
-### Lokale Entwicklung
+### Local Development
 
 ```bash
-# Repository klonen
+# Clone repository
 git clone https://github.com/s540d/Pflanzkalender.git
 cd Pflanzkalender
 
-# Dependencies installieren
+# Install dependencies
 npm install
 
-# Web-Version starten
+# Start web version
 npm run web
 
-# iOS (nur auf macOS)
+# iOS (macOS only)
 npm run ios
 
 # Android
 npm run android
 ```
 
-Die App öffnet sich automatisch im Browser unter `http://localhost:8081`.
+The app opens automatically in the browser at `http://localhost:8081`.
 
 ## 📦 PWA Deployment (GitHub Pages)
 
 ```bash
-# Deploy auf GitHub Pages (baut automatisch)
+# Deploy to GitHub Pages (builds automatically)
 npm run deploy
 ```
 
-Das Deploy-Script:
+## 🎯 Features
 
-- Erstellt einen Production-Build
-- Passt Pfade für GitHub Pages an
-- Deployed auf gh-pages Branch
-- Aktiviert Cache-Busting für Updates
-
-## 📖 Verwendung
-
-### Kalender-Ansicht (📅)
-
-- **Desktop:** Zeigt alle 24 Halbmonate auf einen Blick
-- **Mobile:** Zeigt 3 Monate (6 Halbmonate) mit ← → Navigation
-- **Sticky Header:** Tabellenkopf bleibt beim Scrollen sichtbar
-- **Aktivitäten anklicken:** Öffnet Bearbeitungs-Dialog
-- **Leere Zellen klicken:** Neue Aktivität für den Monat hinzufügen
-
-### Agenda-Ansicht (📋)
-
-Dreispaltige Übersicht mit horizontalem Scrolling:
-
-- **Links:** Aktivitäten vom vorherigen Zeitraum
-- **Mitte:** Aktuelle Aktivitäten (aktueller Halbmonat)
-- **Rechts:** Kommende Aktivitäten (nächster Zeitraum)
-- **Kompakte Spalten:** 160px Breite, horizontal scrollbar
-
-### Pflanzen-Verwaltung (🌱)
-
-Zentraler Screen zur Verwaltung aller Pflanzen:
-
-- **Neue Pflanze hinzufügen:** Großer Button am oberen Rand
-- **Pflanzenliste:** Übersicht mit Name, Notizen und Aktivitätsanzahl
-- **Löschen:** Jede Pflanze kann einzeln gelöscht werden
-- **Sortierung:** Alphabetisch nach Pflanzennamen
-
-### Einstellungen (⋮)
-
-- **Theme:** Umschalten zwischen Hell/Dunkel/System
-- **Sprache:** Deutsch ⇄ English
-- **Daten exportieren:** Als JSON-Datei
-- **Support:** Ko-fi Link (https://ko-fi.com/devsven)
-- **Feedback:** E-Mail an devsven@posteo.de
-- **Info:** Version und Lizenz
-
-## 🌿 Vordefinierte Pflanzen
-
-Die App enthält 32 recherchierte Pflanzen mit typischen Aktivitäten, aufgeteilt in drei Kategorien:
-
-**🥦 Nutzpflanzen (21):**
-Tomaten, Gurken, Paprika, Zucchini, Salat, Karotten, Radieschen, Kartoffeln, Zwiebeln, Knoblauch, Spinat, Kürbis, Erdbeeren, Himbeeren, Basilikum, Petersilie, Schnittlauch
-
-**🌸 Blumen (10):**
-Rosen, Lavendel, Tulpen, Sonnenblumen, Dahlien, Geranien, Hortensien, Pfingstrosen, Chrysanthemen, Ringelblumen
-
-**🌳 Bäume (5):**
-Apfelbaum, Birnbaum, Kirschbaum, Pflaume, Haselnuss
-
-Alle vordefinierten Pflanzen können bearbeitet und gelöscht werden.
-
-## 🎨 Aktivitätstypen
-
-- 🌱 **Aussäen** (Grün #4CAF50)
-- 🌿 **Pflanzen** (Hellgrün #66BB6A)
-- 💧 **Gießen** (Hellblau #42A5F5)
-- 🌾 **Düngen** (Orange #FFA726)
-- ✂️ **Zurückschneiden** (Gelb #FFEB3B)
-- 🍅 **Ernten** (Rot #EF5350)
-- 🛡️ **Winterschutz** (Lila #7E57C2)
-- 🍂 **Mulchen** (Orange #FF9800)
+- 📅 **Planting calendar** with half-month resolution (24 half-months)
+- 📱 **Responsive design** - automatic adaptation on small displays (3 months with navigation)
+- 📌 **Fixed plant name column** - stays visible during horizontal scrolling
+- 🌿 **32 predefined plants** in three categories (crops, flowers, trees)
+- 🌱 **Plant management** - dedicated screen for adding and deleting plants
+- 🗂️ **Category filter** – filter calendar and agenda by crops / flowers / trees
+- 📍 **Location recommendations** – sun, partial shade, shade per plant
+- 🌍 **Multilingual** - German/English switching
+- 🎨 **Color-coded activities** with consistent color scheme
+- 💬 **Tooltips** - hover over activities shows details (Web)
+- 📊 **Agenda view** with horizontal scrolling and compact columns
+- 🎯 **Compact layout** - activities in the same row when no overlap
+- 📍 **Current period highlighted** - gray background for current half-month
+- 🖱️ **Interactive activities** - click to edit and delete
+- 💾 **Local data storage** without login
+- 🌓 **Dark/Light Mode** with system theme option
+- 📴 **Offline-capable** - PWA with service worker
 
 ## 📱 PWA Installation
 
-Die App kann als PWA installiert werden:
+The app can be installed as a PWA:
 
-1. Öffne die App im Browser (Chrome, Safari, Firefox)
-2. Klicke auf "Zum Startbildschirm hinzufügen"
-3. Die App erscheint als eigenständige App auf deinem Gerät
+1. Open the app in a browser (Chrome, Safari, Firefox)
+2. Click "Add to Home Screen"
+3. The app appears as a standalone app on your device
+
+## 📖 Usage
+
+### Calendar view (📅)
+- **Desktop:** Shows all 24 half-months at a glance
+- **Mobile:** Shows 3 months (6 half-months) with ← → navigation
+- **Sticky header:** Table header stays visible while scrolling
+- **Click activities:** Opens edit dialog
+- **Click empty cells:** Add new activity for that month
+
+### Agenda view (📋)
+Three-column overview with horizontal scrolling:
+- **Left:** Activities from the previous period
+- **Middle:** Current activities (current half-month)
+- **Right:** Upcoming activities (next period)
+
+### Plant management (🌱)
+Central screen for managing all plants:
+- **Add new plant:** Large button at the top
+- **Plant list:** Overview with name, notes, and activity count
+- **Delete:** Each plant can be deleted individually
+
+### Settings (⋮)
+- **Theme:** Switch between light/dark/system
+- **Language:** German ⇄ English
+- **Export data:** As JSON file
+- **Support:** Ko-fi link
+- **Feedback:** Email to devsven@posteo.de
+
+## 🌿 Predefined Plants
+
+The app includes 32 researched plants with typical activities in three categories:
+
+**Crops (21):** Tomatoes, cucumbers, peppers, zucchini, lettuce, carrots, radishes, potatoes, onions, garlic, spinach, pumpkin, strawberries, raspberries, basil, parsley, chives
+
+**Flowers (10):** Roses, lavender, tulips, sunflowers, dahlias, geraniums, hydrangeas, peonies, chrysanthemums, marigolds
+
+**Trees (5):** Apple tree, pear tree, cherry tree, plum, hazelnut
 
 ## 🤝 Contributing
 
-Contributions sind willkommen! Bitte:
+Contributions welcome! Please:
 
-1. Fork das Repository
-2. Erstelle einen Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Committe deine Änderungen (`git commit -m 'Add some AmazingFeature'`)
-4. Push den Branch (`git push origin feature/AmazingFeature`)
-5. Öffne einen Pull Request
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
-## 📄 Lizenz
+## 📄 License
 
-Dieses Projekt ist unter der MIT-Lizenz lizenziert. Kommerzielle Nutzung ist ausgeschlossen.
+This project is licensed under the MIT License. Commercial use is excluded.
 
 ## 💖 Support
 
-Wenn dir diese App gefällt, kannst du mich gerne unterstützen:
+If you like this app, you can support me:
 
 ☕ [Ko-fi](https://ko-fi.com/devsven)
 
 ## 🐛 Bug Reports
 
-Bugs bitte als [GitHub Issue](https://github.com/s540d/Pflanzkalender/issues) melden.
+Please report bugs as [GitHub Issues](https://github.com/s540d/Pflanzkalender/issues).
 
-## 📝 Changelog
-
-### Version 1.2.0 (2025-10-26)
-
-- ✨ **NEU:** Dedizierter Pflanzen-Verwaltungs-Screen (🌱)
-  - Zentrale Ansicht zum Hinzufügen und Löschen von Pflanzen
-  - Übersichtliche Liste mit Pflanzenname, Notizen und Aktivitätsanzahl
-  - Navigation über neuen 🌱 Button im Header
-- ✨ **NEU:** Mehrsprachigkeit (Deutsch/English)
-  - Vollständige i18n-Unterstützung
-  - Sprachumschalter in Einstellungen
-  - Automatische Speicherung der Sprachpräferenz
-- ✨ **NEU:** Optimierte Agenda-Ansicht
-  - Kompakte Spalten (160px) für bessere Übersicht
-  - Horizontales Scrolling für alle drei Zeiträume
-  - Mehrsprachige Überschriften
-- 🎨 **VERBESSERT:** UI-Optimierungen
-  - Footer entfernt für mehr Platzgewinn
-  - Support-Link in Einstellungen verschoben
-  - Metrik-Feature entfernt für klarere UI
-  - "Neue Pflanze" Button entfernt (jetzt über 🌱 Screen)
-- 🐛 **FIX:** Navigation im 4-Tab-Layout (Kalender/Agenda/Pflanzen/Einstellungen)
-
-### Version 1.1.0 (2025-10-06)
-
-- ✨ **NEU:** Fixierte Pflanzennamen-Spalte beim horizontalen Scrollen
-- ✨ **NEU:** Einheitliches Farbschema für Aktivitätstypen
-- ✨ **NEU:** Tooltips für Aktivitätsbalken (Web) mit Zeitraum-Info
-- ✨ **NEU:** Aktueller Halbmonat wird grau hervorgehoben
-- ✨ **NEU:** Pflanzen-Verwaltung in Einstellungen mit Löschen-Funktion
-- ✨ **NEU:** Einstellungen als Modal-Popup
-- 🐛 **FIX:** Aktivitätsbalken-Klicks funktionieren jetzt konsistent
-- 🐛 **FIX:** Doppelte Pflanzennamen-Anzeige entfernt
-- 🐛 **FIX:** Scrolling auf Mobile und Desktop optimiert
-
-### Version 1.0.0 (2025-10-06)
-
-- ✅ Pflanzkalender-Grid mit 24 Halbmonaten
-- ✅ Responsive Layout (Desktop: 24, Mobile: 6 Halbmonate)
-- ✅ 20 vordefinierte, recherchierte Pflanzen
-- ✅ Kompaktes Aktivitäten-Layout
-- ✅ Interaktive Aktivitäten (Bearbeiten/Löschen)
-- ✅ Agenda-Ansicht (3 Spalten)
-- ✅ Dark/Light/System Theme
-- ✅ Lokale Datenspeicherung
-- ✅ Navigation im Header (Kalender/Agenda/Einstellungen)
-- ✅ PWA mit Service Worker
-- ✅ GitHub Pages Deployment mit Cache-Busting
-
-## 👨‍💻 Autor
+## 👨‍💻 Author
 
 **Sven Strohkark**
 
 - GitHub: [@s540d](https://github.com/s540d)
-- E-Mail: devsven@posteo.de
+- Email: devsven@posteo.de
 - Ko-fi: [ko-fi.com/devsven](https://ko-fi.com/devsven)
 
 ---
