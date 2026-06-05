@@ -55,6 +55,7 @@ docs/private/
 app-release-*.apk
 app-release-*.aab
 app-release-*.idsig
+aab-archive/
 app-release-unsigned-aligned.apk
 manifest-checksum.txt
 store_icon.png
