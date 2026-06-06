@@ -41,8 +41,9 @@ yarn-error.*
 /android
 coverage/
 
-# Claude Code local files (commands, settings – never commit)
-.claude/
+# Claude Code – .claude/commands/ wird versioniert (Issue #31)
+# Maschinenspezifisches via ~/.gitignore_global ignoriert; settings.json lokal halten
+.claude/settings.json
 
 # Private documentation (local only, never commit)
 docs/private/
