@@ -149,6 +149,11 @@ const es: Translations = {
   'template.importModeMessage': '{count} planta(s) encontrada(s). ¿Cómo importar?',
   'template.importModeReplace': 'Reemplazar todo',
   'template.importModeAppend': 'Añadir',
+  'template.qrShareBtn': '🔳 Compartir con código QR',
+  'template.qrShareTitle': 'Compartir plan por QR',
+  'template.qrShareHint':
+    'Escanea con la cámara de otro dispositivo y pega el texto en «Importar».',
+  'template.qrTooLarge': 'Demasiados datos para un código QR. Usa la exportación a archivo.',
 };
 
 export default es;
