@@ -17,6 +17,7 @@ import { EditPlantModal } from '../components/EditPlantModal';
 import { Plant, PlantLocation, PlantCategory } from '../types';
 import { PLANT_LOCATION_METADATA, PLANT_CATEGORY_METADATA } from '../constants/plantMetadata';
 import { getPlantDisplayName } from '../constants/plantNames';
+import { getPlantEmoji } from '../constants/plantEmojis';
 import { CATEGORY_TABS, CategoryFilter } from '../constants/categoryTabs';
 
 export const PlantManagementScreen: React.FC = () => {
@@ -175,6 +176,9 @@ export const PlantManagementScreen: React.FC = () => {
                 >
                   <View style={styles.plantInfo}>
                     <Text style={[styles.plantName, { color: theme.text }]}>
+                      <Text style={styles.plantEmoji}>
+                        {getPlantEmoji(plant.name, plant.category)}{' '}
+                      </Text>
                       {getPlantDisplayName(plant.name, language)}
                     </Text>
                     <View style={styles.plantMeta}>
@@ -338,6 +342,9 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
     marginBottom: 4,
+  },
+  plantEmoji: {
+    fontSize: 18,
   },
   plantMeta: {
     flexDirection: 'row',

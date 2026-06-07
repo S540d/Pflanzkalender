@@ -5,9 +5,11 @@ import { usePlants } from '../contexts/PlantContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { CATEGORY_TABS, CategoryFilter } from '../constants/categoryTabs';
 import { getPlantDisplayName } from '../constants/plantNames';
+import { getPlantEmoji } from '../constants/plantEmojis';
 
 interface ActivityInfo {
   plantName: string;
+  plantEmoji: string;
   activityLabel: string;
   activityColor: string;
   notes?: string;
@@ -43,6 +45,7 @@ export const AgendaScreen: React.FC = () => {
           if (activity.startMonth <= monthIndex && activity.endMonth >= monthIndex) {
             activities.push({
               plantName: getPlantDisplayName(plant.name, language),
+              plantEmoji: getPlantEmoji(plant.name, plant.category),
               activityLabel: activity.label,
               activityColor: activity.color,
               notes: plant.notes,
@@ -111,7 +114,9 @@ export const AgendaScreen: React.FC = () => {
                   {activity.activityLabel}
                 </Text>
               </View>
-              <Text style={[styles.plantName, { color: theme.text }]}>{activity.plantName}</Text>
+              <Text style={[styles.plantName, { color: theme.text }]}>
+                {activity.plantEmoji} {activity.plantName}
+              </Text>
               {activity.notes && (
                 <Text style={[styles.notes, { color: theme.textSecondary }]}>{activity.notes}</Text>
               )}

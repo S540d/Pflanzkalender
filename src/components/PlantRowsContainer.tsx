@@ -6,6 +6,7 @@ import { Plant } from '../types';
 import { PlantRow } from './PlantRow';
 import { calculateActivityRows, convertActivitiesToPortraitSlots } from '../utils/activityLayout';
 import { getPlantDisplayName } from '../constants/plantNames';
+import { getPlantEmoji } from '../constants/plantEmojis';
 
 interface PlantRowsContainerProps {
   sortedPlants: Plant[];
@@ -75,7 +76,7 @@ export const PlantRowsContainer: React.FC<PlantRowsContainerProps> = ({
                   ]}
                 >
                   <Text style={[styles.plantNameText, { color: theme.text }]} numberOfLines={2}>
-                    {getPlantDisplayName(plant.name, language)}
+                    {getPlantEmoji(plant.name, plant.category)} {getPlantDisplayName(plant.name, language)}
                   </Text>
                 </View>
               );
