@@ -134,6 +134,8 @@ Activity {
 
 `npm ci` in CI ist streng – der Lockfile muss exakt mit package.json übereinstimmen. **Nie manuell bearbeiten.** Nach Dependency-Änderungen immer `npm install --package-lock-only --ignore-scripts` laufen lassen und den resultierenden Lockfile committen.
 
+**Wichtig – `--legacy-peer-deps`:** Der bestehende Dependency-Baum hat einen ungelösten Peer-Konflikt (expo-router / @react-navigation). Jeder `npm install <pkg>` schlägt daher mit `ERESOLVE` fehl, **außer** mit `--legacy-peer-deps`. CI nutzt durchgängig `npm ci --legacy-peer-deps` (siehe `ci-cd.yml`, Deploy-Workflows). Neue Pakete also immer `npm install <pkg> --save --legacy-peer-deps` installieren – der so erzeugte Lockfile ist mit `npm ci --legacy-peer-deps` konsistent.
+
 ### Versions-Konsistenz
 
 Drei Stellen müssen immer identisch sein:
@@ -291,8 +293,8 @@ Vollständige Roadmap: https://github.com/S540d/Pflanzkalender/issues/47
 ### v2.0.0 – Klimazonen & Community
 
 - **#48** Klimazonen-Unterstützung – unterschiedliche Aktivitätszeiträume je Region
-- **#142** Drag & Drop für Aktivitäten im Kalender
-- **#8** ✅ Template-System: Pflanzpläne teilen und importieren – **in main** (PR #147, via #151)
+- **#142** 🛠️ Drag & Drop für Aktivitäten im Kalender – **PR offen** (Branch `claude/issues-142-171-161-8`): Balken per Maus (Web) / PanResponder (Native) verschiebbar, Delta → `clampActivityShift` → `updateActivity`
+- **#8** ✅ Template-System: Pflanzpläne teilen und importieren – **in main** (PR #147, via #151); QR-Code-Teilen ergänzt im o. g. PR (`qrcode-generator` + `react-native-svg`)
 - **#9** Intelligente Vorschläge: Fruchtfolge & Mischkultur
 
 ### Wartbarkeit / Tech-Debt
@@ -309,6 +311,7 @@ Vollständige Roadmap: https://github.com/S540d/Pflanzkalender/issues/47
 
 | Was                                          | Wann       | Details                                                                                                                                                                                                                                                    |
 | -------------------------------------------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Branch `claude/issues-142-171-161-8`:** #142 + #161 + #171 + #8-QR | 2026-06-08 | 🛠️ PR gegen `testing` (neu aus `main` angelegt): #161 Pflanzen-Emojis (`plantEmojis.ts`, sprachunabhängig) in Pflanzenliste/Kalender/Agenda; #171 mehrsprachige Store-Listings (`fastlane/metadata/android/{de-DE,en-US,es-ES}`); #8 QR-Teilen (`qrcode-generator`, SVG-Render, `buildShareString`); #142 Drag&Drop (Maus/PanResponder, `clampActivityShift`). 384 Tests grün, Web-Build ok |
 | **PR #157:** CI Standards Audit Listener     | 2026-06-03 | ✅ main `eb14beb`: `standards-audit.yml` (reusable-security-scan, reusable-gitignore-audit, reusable-dev-standards-audit @v1); `.gitignore` um `.env.local` + `credentials.json` ergänzt (gitignore-audit Pflichteinträge, project-templates#7)            |
 | **PR #151:** testing → main (Merge)          | 2026-05-31 | ✅ main `833a7f3`: alle testing-Commits (#8 Template-System, #88 Export-Fix) nach main; i18n-Konflikte (beide Key-Sätze) + CLAUDE.md aufgelöst; 4 Review-Robustheit-Fixes (document-Guards, URL-Revoke-Defer, Test-Timer); 2 Import-Bugs → #152; 364 Tests |
 | **PR #149:** Issue #87 – Import-UI           | 2026-05-30 | ✅ gemergt: JSON-Import im SettingsModal (Web file picker, Confirm-Dialog, replacePlants), 9 i18n-Keys × 8 Sprachen, ESLint-Globals (Event/HTMLInputElement), 341 Tests                                                                                    |
