@@ -4,9 +4,13 @@ import { QRCodeView } from '../../src/components/QRCodeView';
 import { QR_MAX_BYTES } from '../../src/utils/qrcode';
 
 describe('QRCodeView', () => {
-  it('renders a QR code (no fallback) for a normal value', () => {
-    const { queryByText } = render(<QRCodeView value="Pflanzkalender" tooLargeLabel="zu groß" />);
+  it('renders a QR code SVG (no fallback) for a normal value', () => {
+    const { queryByText, getByTestId } = render(
+      <QRCodeView value="Pflanzkalender" tooLargeLabel="zu groß" />
+    );
     expect(queryByText('zu groß')).toBeNull();
+    // SVG-Root muss tatsächlich gerendert sein (nicht nur Fallback-Abwesenheit)
+    expect(getByTestId('qr-code-svg')).toBeTruthy();
   });
 
   it('renders the fallback label when the value is too large', () => {

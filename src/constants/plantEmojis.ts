@@ -18,6 +18,8 @@ export const PLANT_EMOJI: Record<string, string> = {
   Karotten: '🥕',
   Rosen: '🌹',
   Paprika: '🫑',
+  // Annäherung: Für Zucchini gibt es kein eigenes Emoji – teilt sich 🥒 mit
+  // Gurken. Bewusste Kollision (kein passenderes Unicode-Emoji vorhanden).
   Zucchini: '🥒',
   Gurken: '🥒',
   Basilikum: '🌿',
@@ -25,6 +27,8 @@ export const PLANT_EMOJI: Record<string, string> = {
   Kartoffeln: '🥔',
   Zwiebeln: '🧅',
   Knoblauch: '🧄',
+  // Annäherung: Es gibt kein Himbeer-Emoji – 🫐 (Blaubeere) dient als
+  // generisches Beeren-Symbol, da das Kategorie-Fallback (🥦) hier irreführend wäre.
   Himbeeren: '🫐',
   Lavendel: '🪻',
   Petersilie: '🌿',

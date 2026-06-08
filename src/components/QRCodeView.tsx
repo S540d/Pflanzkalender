@@ -52,7 +52,12 @@ export const QRCodeView: React.FC<QRCodeViewProps> = ({
   }
 
   return (
-    <Svg width={size} height={size} viewBox={`0 0 ${totalModules} ${totalModules}`}>
+    <Svg
+      testID="qr-code-svg"
+      width={size}
+      height={size}
+      viewBox={`0 0 ${totalModules} ${totalModules}`}
+    >
       {/* White background incl. quiet zone for reliable scanning */}
       <Rect x={0} y={0} width={totalModules} height={totalModules} fill="#FFFFFF" />
       <Path d={path} fill={color} />

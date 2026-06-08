@@ -22,6 +22,17 @@ interface ActivityBarProps {
   cellWidth?: number; // Breite einer Monatszelle in px (für px → Einheiten)
 }
 
+// Web-spezifische Props (Maus-Handler), die RNW akzeptiert, aber die View-Typen
+// nicht deklarieren – analog zu MonthCellWebProps in PlantRow.tsx.
+interface ActivityBarWebProps {
+  onMouseDown?: (e: React.MouseEvent) => void;
+  onMouseEnter?: () => void;
+  onMouseLeave?: () => void;
+  style?: StyleProp<ViewStyle>;
+  accessibilityRole?: 'button';
+  accessibilityLabel?: string;
+}
+
 export const ActivityBar: React.FC<ActivityBarProps> = ({
   activity,
   onPress,
@@ -33,19 +44,15 @@ export const ActivityBar: React.FC<ActivityBarProps> = ({
   const [dragPx, setDragPx] = useState(0); // gesnappte visuelle Verschiebung
   const [webDragging, setWebDragging] = useState(false);
 
-  // Refs gegen Stale-Closures (PanResponder + Window-Listener werden einmal gebunden)
+  // Refs gegen Stale-Closures (PanResponder + Window-Listener werden einmal gebunden).
+  // Direkt im Render-Body aktualisieren (nicht via useEffect), damit der Wert beim
+  // Feuern eines Handlers garantiert aktuell ist – kein Frame mit altem cellWidth.
   const onPressRef = useRef(onPress);
   const onMoveRef = useRef(onMove);
   const cellWidthRef = useRef(cellWidth);
-  useEffect(() => {
-    onPressRef.current = onPress;
-  }, [onPress]);
-  useEffect(() => {
-    onMoveRef.current = onMove;
-  }, [onMove]);
-  useEffect(() => {
-    cellWidthRef.current = cellWidth;
-  }, [cellWidth]);
+  onPressRef.current = onPress;
+  onMoveRef.current = onMove;
+  cellWidthRef.current = cellWidth;
 
   // Berechne Position und Breite basierend auf Start- und Endmonat
   const startPosition = (activity.startMonth / totalMonths) * 100;
@@ -85,7 +92,6 @@ export const ActivityBar: React.FC<ActivityBarProps> = ({
 
   // ---- Web: Maus-Drag (kein PanResponder, um Scroll-Konflikte zu vermeiden) -
   const dragStartXRef = useRef<number | null>(null);
-  const movedRef = useRef(false);
 
   useEffect(() => {
     if (Platform.OS !== 'web' || !webDragging) return;
@@ -96,7 +102,6 @@ export const ActivityBar: React.FC<ActivityBarProps> = ({
       if (dragStartXRef.current === null) return;
       const cw = cellWidthRef.current || 1;
       const raw = e.clientX - dragStartXRef.current;
-      if (Math.abs(raw) > TAP_THRESHOLD) movedRef.current = true;
       setDragPx(Math.round(raw / cw) * cw);
     };
     const handleUp = (e: MouseEvent) => {
@@ -105,13 +110,13 @@ export const ActivityBar: React.FC<ActivityBarProps> = ({
       dragStartXRef.current = null;
       setDragPx(0);
       setWebDragging(false);
-      if (!movedRef.current || Math.abs(raw) < TAP_THRESHOLD) {
+      // Einzige Quelle der Wahrheit für Tap vs. Drag: die zurückgelegte Distanz.
+      if (Math.abs(raw) < TAP_THRESHOLD) {
         onPressRef.current?.();
       } else {
         const delta = Math.round(raw / cw);
         if (delta !== 0) onMoveRef.current?.(delta);
       }
-      movedRef.current = false;
     };
 
     window.addEventListener('mousemove', handleMove); // platform-safe
@@ -122,16 +127,11 @@ export const ActivityBar: React.FC<ActivityBarProps> = ({
     };
   }, [webDragging]);
 
-  const handleWebMouseDown = (e: {
-    clientX: number;
-    preventDefault: () => void;
-    stopPropagation: () => void;
-  }) => {
+  const handleWebMouseDown = (e: React.MouseEvent) => {
     e.preventDefault();
     // Verhindert, dass die darunterliegende Monatszelle ein Drag-to-Create startet
     e.stopPropagation();
     dragStartXRef.current = e.clientX;
-    movedRef.current = false;
     setWebDragging(true);
   };
 
@@ -153,14 +153,14 @@ export const ActivityBar: React.FC<ActivityBarProps> = ({
   );
 
   if (Platform.OS === 'web') {
-    const webProps = {
+    const webProps: ActivityBarWebProps = {
       onMouseDown: handleWebMouseDown,
       onMouseEnter: () => setIsHovered(true),
       onMouseLeave: () => setIsHovered(false),
       style: [barStyle, { cursor: webDragging ? 'grabbing' : 'grab' } as unknown as ViewStyle],
       accessibilityRole: 'button',
       accessibilityLabel: activity.label,
-    } as unknown as React.ComponentProps<typeof View>;
+    };
     return (
       <>
         <View {...(webProps as React.ComponentProps<typeof View>)}>{labelNode}</View>
