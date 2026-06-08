@@ -25,6 +25,7 @@ interface PlantRowProps {
   onPressActivity?: (activityId: string) => void;
   onPressMonth?: (monthIndex: number) => void;
   onPressMonthRange?: (startMonth: number, endMonth: number) => void;
+  onMoveActivity?: (activityId: string, deltaUnits: number) => void;
   onPressPlant?: () => void;
   totalMonths?: number; // Anzahl der sichtbaren Monate
   currentHalfMonth?: number; // Aktueller Halbmonat (0-23)
@@ -37,6 +38,7 @@ export const PlantRow: React.FC<PlantRowProps> = ({
   onPressActivity,
   onPressMonth,
   onPressMonthRange,
+  onMoveActivity,
   onPressPlant: _onPressPlant,
   totalMonths = 24,
   currentHalfMonth,
@@ -196,7 +198,9 @@ export const PlantRow: React.FC<PlantRowProps> = ({
               <ActivityBar
                 activity={activity}
                 onPress={() => onPressActivity?.(activity.id)}
+                onMove={(deltaUnits) => onMoveActivity?.(activity.id, deltaUnits)}
                 totalMonths={totalMonths}
+                cellWidth={cellWidth}
               />
             </View>
           ))}

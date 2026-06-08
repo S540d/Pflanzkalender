@@ -149,6 +149,11 @@ const nl: Translations = {
   'template.importModeMessage': '{count} plant(en) gevonden. Hoe importeren?',
   'template.importModeReplace': 'Alles vervangen',
   'template.importModeAppend': 'Toevoegen',
+  'template.qrShareBtn': '🔳 Delen via QR-code',
+  'template.qrShareTitle': 'Plan delen via QR',
+  'template.qrShareHint':
+    'Scan met de camera van een ander apparaat en plak de tekst in “Importeren”.',
+  'template.qrTooLarge': 'Te veel gegevens voor een QR-code. Gebruik de bestandsexport.',
 };
 
 export default nl;

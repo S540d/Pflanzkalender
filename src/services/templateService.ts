@@ -17,6 +17,19 @@ export function buildExportJson(plants: Plant[]): string {
   return JSON.stringify(data, null, 2);
 }
 
+/**
+ * Kompakte Variante von buildExportJson (ohne Einrückung) – für das Teilen per
+ * QR-Code, wo jedes Byte zählt. Das Ergebnis ist mit importFromJson lesbar.
+ */
+export function buildShareString(plants: Plant[]): string {
+  const data: ExportData = {
+    version: '1.0.0',
+    timestamp: new Date().toISOString(),
+    plants,
+  };
+  return JSON.stringify(data);
+}
+
 export function triggerWebDownload(jsonString: string, filename: string): void {
   if (Platform.OS !== 'web') return;
   // platform-safe: document can be undefined in SSR/test even when Platform.OS === 'web'

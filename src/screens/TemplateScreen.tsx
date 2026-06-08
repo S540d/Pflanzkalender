@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   View,
   Text,
@@ -8,12 +8,15 @@ import {
   Alert,
   StyleSheet,
   Platform,
+  Modal,
 } from 'react-native';
 import { useTheme } from '../hooks/useTheme';
 import { useLanguage } from '../contexts/LanguageContext';
 import { usePlants } from '../contexts/PlantContext';
 import { COMMUNITY_TEMPLATES } from '../constants/communityTemplates';
-import { sharePlants, importFromJson } from '../services/templateService';
+import { sharePlants, importFromJson, buildShareString } from '../services/templateService';
+import { QRCodeView } from '../components/QRCodeView';
+import { utf8ByteLength, QR_MAX_BYTES } from '../utils/qrcode';
 
 type Section = 'templates' | 'export' | 'import';
 
@@ -26,8 +29,21 @@ export const TemplateScreen: React.FC = () => {
   const [importText, setImportText] = useState('');
   const [importing, setImporting] = useState(false);
   const [exporting, setExporting] = useState(false);
+  const [showQr, setShowQr] = useState(false);
 
   const styles = makeStyles();
+
+  // Compact, importable payload for the QR code. Recomputed only when plants change.
+  const shareString = useMemo(() => buildShareString(plants), [plants]);
+  const qrTooLarge = utf8ByteLength(shareString) > QR_MAX_BYTES;
+
+  const handleShowQr = () => {
+    if (plants.length === 0) {
+      Alert.alert(String(t('template.noPlantsTitle')), String(t('template.noPlantsMessage')));
+      return;
+    }
+    setShowQr(true);
+  };
 
   const getTemplateLocale = (val: { de: string; en: string }) =>
     language === 'de' ? val.de : val.en;
@@ -232,6 +248,15 @@ export const TemplateScreen: React.FC = () => {
           >
             <Text style={styles.actionBtnText}>{exportBtnLabel}</Text>
           </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.qrBtn, { borderColor: theme.primary }]}
+            onPress={handleShowQr}
+          >
+            <Text style={[styles.qrBtnText, { color: theme.primary }]}>
+              {String(t('template.qrShareBtn'))}
+            </Text>
+          </TouchableOpacity>
         </View>
       )}
 
@@ -284,6 +309,38 @@ export const TemplateScreen: React.FC = () => {
       )}
 
       <View style={styles.spacer} />
+
+      {/* QR-Code Share Modal */}
+      <Modal
+        visible={showQr}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowQr(false)}
+      >
+        <View style={styles.qrOverlay}>
+          <View style={[styles.qrModal, { backgroundColor: theme.surface }]}>
+            <Text style={[styles.qrTitle, { color: theme.text }]}>
+              {String(t('template.qrShareTitle'))}
+            </Text>
+            <Text style={[styles.qrHint, { color: theme.textSecondary }]}>
+              {qrTooLarge ? String(t('template.qrTooLarge')) : String(t('template.qrShareHint'))}
+            </Text>
+            <View style={styles.qrCodeWrap}>
+              <QRCodeView
+                value={shareString}
+                size={240}
+                tooLargeLabel={String(t('template.qrTooLarge'))}
+              />
+            </View>
+            <TouchableOpacity
+              style={[styles.actionBtn, { backgroundColor: theme.primary }]}
+              onPress={() => setShowQr(false)}
+            >
+              <Text style={styles.actionBtnText}>{String(t('settings.close'))}</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </ScrollView>
   );
 };
@@ -383,6 +440,49 @@ const makeStyles = () =>
       color: '#fff',
       fontWeight: '700',
       fontSize: 15,
+    },
+    qrBtn: {
+      borderRadius: 10,
+      borderWidth: 1.5,
+      paddingVertical: 13,
+      alignItems: 'center',
+      marginTop: 10,
+    },
+    qrBtnText: {
+      fontWeight: '700',
+      fontSize: 15,
+    },
+    qrOverlay: {
+      flex: 1,
+      backgroundColor: 'rgba(0,0,0,0.6)',
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: 24,
+    },
+    qrModal: {
+      borderRadius: 16,
+      padding: 20,
+      alignItems: 'center',
+      maxWidth: 340,
+      width: '100%',
+    },
+    qrTitle: {
+      fontSize: 18,
+      fontWeight: '700',
+      marginBottom: 8,
+      textAlign: 'center',
+    },
+    qrHint: {
+      fontSize: 13,
+      marginBottom: 16,
+      textAlign: 'center',
+      lineHeight: 18,
+    },
+    qrCodeWrap: {
+      backgroundColor: '#FFFFFF',
+      padding: 12,
+      borderRadius: 12,
+      marginBottom: 20,
     },
     fileBtn: {
       borderRadius: 8,

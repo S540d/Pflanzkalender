@@ -10,6 +10,7 @@ import { TableHeader } from '../components/TableHeader';
 import { PlantRowsContainer } from '../components/PlantRowsContainer';
 import { CategoryFilter } from '../constants/categoryTabs';
 import { Activity } from '../types';
+import { clampActivityShift } from '../utils/monthHelper';
 
 export const CalendarScreen: React.FC = () => {
   const { theme } = useTheme();
@@ -109,6 +110,21 @@ export const CalendarScreen: React.FC = () => {
     }
   };
 
+  // Drag & Drop (Issue #142): verschiebt eine Aktivität zeitlich.
+  // deltaUnits ist in angezeigten Monats-Einheiten (Portrait: 1 Slot = 4 Halbmonate).
+  const handleMoveActivity = (plantId: string, activityId: string, deltaUnits: number) => {
+    const plant = plants.find((p) => p.id === plantId);
+    const act = plant?.activities.find((a) => a.id === activityId);
+    if (!act) return;
+    const deltaHalf = isPortrait ? deltaUnits * 4 : deltaUnits;
+    const clamped = clampActivityShift(act.startMonth, act.endMonth, deltaHalf);
+    if (clamped === 0) return;
+    updateActivity(plantId, activityId, {
+      startMonth: act.startMonth + clamped,
+      endMonth: act.endMonth + clamped,
+    });
+  };
+
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       <CategoryTabBar activeCategory={activeCategory} onCategoryChange={setActiveCategory} />
@@ -165,6 +181,7 @@ export const CalendarScreen: React.FC = () => {
         onPressActivity={handlePressActivity}
         onPressMonth={handlePressMonth}
         onPressMonthRange={handlePressMonthRange}
+        onMoveActivity={handleMoveActivity}
         fixedScrollRef={fixedScrollRef}
         headerScrollRef={headerScrollRef}
         loading={loading}
