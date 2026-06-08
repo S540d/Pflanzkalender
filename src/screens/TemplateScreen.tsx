@@ -326,7 +326,11 @@ export const TemplateScreen: React.FC = () => {
               {qrTooLarge ? String(t('template.qrTooLarge')) : String(t('template.qrShareHint'))}
             </Text>
             <View style={styles.qrCodeWrap}>
-              <QRCodeView value={shareString} size={240} tooLargeLabel={String(t('template.qrTooLarge'))} />
+              <QRCodeView
+                value={shareString}
+                size={240}
+                tooLargeLabel={String(t('template.qrTooLarge'))}
+              />
             </View>
             <TouchableOpacity
               style={[styles.actionBtn, { backgroundColor: theme.primary }]}

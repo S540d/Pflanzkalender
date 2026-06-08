@@ -169,8 +169,7 @@ const en: Translations = {
   'template.importModeAppend': 'Append',
   'template.qrShareBtn': '🔳 Share via QR code',
   'template.qrShareTitle': 'Share plan via QR',
-  'template.qrShareHint':
-    "Scan with another device's camera and paste the text into “Import”.",
+  'template.qrShareHint': "Scan with another device's camera and paste the text into “Import”.",
   'template.qrTooLarge': 'Too much data for a QR code. Please use the file export.',
 };
 

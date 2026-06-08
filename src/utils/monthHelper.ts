@@ -57,6 +57,21 @@ export const HALF_MONTH_NAMES = [
   'Dez 16-31',
 ];
 
+// Höchster gültiger Halbmonats-Index (0 = Jan 1. Hälfte … 23 = Dez 2. Hälfte)
+export const HALF_MONTH_MAX = 23;
+
+// Begrenzt eine Verschiebung (Delta in Halbmonaten) so, dass die Aktivität
+// vollständig im gültigen Bereich [0, 23] bleibt. Gibt das anwendbare Delta
+// zurück (kann 0 sein, wenn die Aktivität bereits am Rand liegt).
+// Genutzt für Drag & Drop von Aktivitätsbalken (Issue #142).
+export const clampActivityShift = (startMonth: number, endMonth: number, delta: number): number => {
+  const minDelta = -startMonth;
+  const maxDelta = HALF_MONTH_MAX - endMonth;
+  const result = Math.max(minDelta, Math.min(maxDelta, delta));
+  // Normalisiere -0 → 0
+  return result === 0 ? 0 : result;
+};
+
 // Konvertiere halbe Monats-Index zu lesbarem String
 // 0 = Jan 1. Hälfte, 1 = Jan 2. Hälfte, 2 = Feb 1. Hälfte, etc.
 export const halfMonthToString = (halfMonthIndex: number): string => {

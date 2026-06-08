@@ -150,8 +150,7 @@ const pl: Translations = {
   'template.importModeAppend': 'Dodaj',
   'template.qrShareBtn': '🔳 Udostępnij przez kod QR',
   'template.qrShareTitle': 'Udostępnij plan przez QR',
-  'template.qrShareHint':
-    'Zeskanuj aparatem innego urządzenia i wklej tekst w „Importuj”.',
+  'template.qrShareHint': 'Zeskanuj aparatem innego urządzenia i wklej tekst w „Importuj”.',
   'template.qrTooLarge': 'Za dużo danych na kod QR. Użyj eksportu do pliku.',
 };
 

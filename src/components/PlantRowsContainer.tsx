@@ -17,6 +17,7 @@ interface PlantRowsContainerProps {
   onPressActivity: (plantId: string, activityId: string) => void;
   onPressMonth: (plantId: string, monthIndex: number) => void;
   onPressMonthRange: (plantId: string, startMonth: number, endMonth: number) => void;
+  onMoveActivity?: (plantId: string, activityId: string, deltaUnits: number) => void;
   onFixedScrollOffset?: (offset: number) => void;
   fixedScrollRef?: React.RefObject<ScrollView | null>;
   headerScrollRef?: React.RefObject<ScrollView | null>;
@@ -32,6 +33,7 @@ export const PlantRowsContainer: React.FC<PlantRowsContainerProps> = ({
   onPressActivity,
   onPressMonth,
   onPressMonthRange,
+  onMoveActivity,
   onFixedScrollOffset,
   fixedScrollRef: externalFixedScrollRef,
   headerScrollRef,
@@ -76,7 +78,8 @@ export const PlantRowsContainer: React.FC<PlantRowsContainerProps> = ({
                   ]}
                 >
                   <Text style={[styles.plantNameText, { color: theme.text }]} numberOfLines={2}>
-                    {getPlantEmoji(plant.name, plant.category)} {getPlantDisplayName(plant.name, language)}
+                    {getPlantEmoji(plant.name, plant.category)}{' '}
+                    {getPlantDisplayName(plant.name, language)}
                   </Text>
                 </View>
               );
@@ -156,6 +159,9 @@ export const PlantRowsContainer: React.FC<PlantRowsContainerProps> = ({
                       onPressMonth={(monthIndex) => onPressMonth(plant.id, monthIndex)}
                       onPressMonthRange={(startMonth, endMonth) =>
                         onPressMonthRange(plant.id, startMonth, endMonth)
+                      }
+                      onMoveActivity={(activityId, deltaUnits) =>
+                        onMoveActivity?.(plant.id, activityId, deltaUnits)
                       }
                       onPressPlant={() => {}}
                       totalMonths={months.length}
