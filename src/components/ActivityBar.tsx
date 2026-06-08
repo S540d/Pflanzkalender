@@ -1,37 +1,58 @@
-import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  Platform,
-  StyleProp,
-  ViewStyle,
-} from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { View, Text, StyleSheet, Platform, PanResponder, StyleProp, ViewStyle } from 'react-native';
 import { Activity } from '../types';
 import { getContrastTextColor } from '../utils/colorUtils';
 import { MONTH_SHORT } from '../utils/monthHelper';
 
-interface TouchableWebProps {
-  style: StyleProp<ViewStyle>;
-  onPress?: () => void;
-  activeOpacity: number;
-  onMouseEnter?: () => void;
-  onMouseLeave?: () => void;
-}
+// Bewegung (px) unterhalb derer ein Druck als Tap (→ Bearbeiten) statt als
+// Drag (→ Verschieben) gewertet wird.
+const TAP_THRESHOLD = 5;
 
 interface ActivityBarProps {
   activity: Activity;
   onPress?: () => void;
+  /**
+   * Drag & Drop (Issue #142): meldet eine Verschiebung in *angezeigten*
+   * Monats-Einheiten (positiv = nach rechts/später). Die Umrechnung auf
+   * Halbmonate und das Clamping übernimmt der Aufrufer, der die echte
+   * (nicht portrait-konvertierte) Aktivität kennt.
+   */
+  onMove?: (deltaUnits: number) => void;
   totalMonths?: number; // Anzahl der sichtbaren Monate (default: 24)
+  cellWidth?: number; // Breite einer Monatszelle in px (für px → Einheiten)
+}
+
+// Web-spezifische Props (Maus-Handler), die RNW akzeptiert, aber die View-Typen
+// nicht deklarieren – analog zu MonthCellWebProps in PlantRow.tsx.
+interface ActivityBarWebProps {
+  onMouseDown?: (e: React.MouseEvent) => void;
+  onMouseEnter?: () => void;
+  onMouseLeave?: () => void;
+  style?: StyleProp<ViewStyle>;
+  accessibilityRole?: 'button';
+  accessibilityLabel?: string;
 }
 
 export const ActivityBar: React.FC<ActivityBarProps> = ({
   activity,
   onPress,
+  onMove,
   totalMonths = 24,
+  cellWidth = 40,
 }) => {
   const [isHovered, setIsHovered] = useState(false);
+  const [dragPx, setDragPx] = useState(0); // gesnappte visuelle Verschiebung
+  const [webDragging, setWebDragging] = useState(false);
+
+  // Refs gegen Stale-Closures (PanResponder + Window-Listener werden einmal gebunden).
+  // Direkt im Render-Body aktualisieren (nicht via useEffect), damit der Wert beim
+  // Feuern eines Handlers garantiert aktuell ist – kein Frame mit altem cellWidth.
+  const onPressRef = useRef(onPress);
+  const onMoveRef = useRef(onMove);
+  const cellWidthRef = useRef(cellWidth);
+  onPressRef.current = onPress;
+  onMoveRef.current = onMove;
+  cellWidthRef.current = cellWidth;
 
   // Berechne Position und Breite basierend auf Start- und Endmonat
   const startPosition = (activity.startMonth / totalMonths) * 100;
@@ -45,42 +66,122 @@ export const ActivityBar: React.FC<ActivityBarProps> = ({
 
   const tooltipText = `${activity.label}\n${getMonthLabel(activity.startMonth)} - ${getMonthLabel(activity.endMonth)}`;
 
-  const touchableProps: TouchableWebProps = {
-    style: [
-      styles.activityBar,
-      {
-        left: `${startPosition}%`,
-        width: `${width}%`,
-        backgroundColor: activity.color,
+  // ---- Native: PanResponder für Touch-Drag ---------------------------------
+  const panResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => Platform.OS !== 'web',
+      onMoveShouldSetPanResponder: (_e, g) =>
+        Platform.OS !== 'web' && Math.abs(g.dx) > TAP_THRESHOLD && Math.abs(g.dx) > Math.abs(g.dy),
+      onPanResponderMove: (_e, g) => {
+        const cw = cellWidthRef.current || 1;
+        setDragPx(Math.round(g.dx / cw) * cw);
       },
-    ],
-    onPress,
-    activeOpacity: 0.7,
+      onPanResponderRelease: (_e, g) => {
+        const cw = cellWidthRef.current || 1;
+        if (Math.abs(g.dx) < TAP_THRESHOLD && Math.abs(g.dy) < TAP_THRESHOLD) {
+          onPressRef.current?.();
+        } else {
+          const delta = Math.round(g.dx / cw);
+          if (delta !== 0) onMoveRef.current?.(delta);
+        }
+        setDragPx(0);
+      },
+      onPanResponderTerminate: () => setDragPx(0),
+    })
+  ).current;
+
+  // ---- Web: Maus-Drag (kein PanResponder, um Scroll-Konflikte zu vermeiden) -
+  const dragStartXRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (Platform.OS !== 'web' || !webDragging) return;
+    // platform-safe: window nur im Web verfügbar
+    if (typeof window === 'undefined') return;
+
+    const handleMove = (e: MouseEvent) => {
+      if (dragStartXRef.current === null) return;
+      const cw = cellWidthRef.current || 1;
+      const raw = e.clientX - dragStartXRef.current;
+      setDragPx(Math.round(raw / cw) * cw);
+    };
+    const handleUp = (e: MouseEvent) => {
+      const cw = cellWidthRef.current || 1;
+      const raw = dragStartXRef.current === null ? 0 : e.clientX - dragStartXRef.current;
+      dragStartXRef.current = null;
+      setDragPx(0);
+      setWebDragging(false);
+      // Einzige Quelle der Wahrheit für Tap vs. Drag: die zurückgelegte Distanz.
+      if (Math.abs(raw) < TAP_THRESHOLD) {
+        onPressRef.current?.();
+      } else {
+        const delta = Math.round(raw / cw);
+        if (delta !== 0) onMoveRef.current?.(delta);
+      }
+    };
+
+    window.addEventListener('mousemove', handleMove); // platform-safe
+    window.addEventListener('mouseup', handleUp); // platform-safe
+    return () => {
+      window.removeEventListener('mousemove', handleMove); // platform-safe
+      window.removeEventListener('mouseup', handleUp); // platform-safe
+    };
+  }, [webDragging]);
+
+  const handleWebMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
+    // Verhindert, dass die darunterliegende Monatszelle ein Drag-to-Create startet
+    e.stopPropagation();
+    dragStartXRef.current = e.clientX;
+    setWebDragging(true);
   };
 
-  // Add web-only hover handlers
+  const barStyle: StyleProp<ViewStyle> = [
+    styles.activityBar,
+    {
+      left: `${startPosition}%`,
+      width: `${width}%`,
+      backgroundColor: activity.color,
+      transform: [{ translateX: dragPx }],
+      zIndex: dragPx !== 0 ? 1000 : 1,
+    },
+  ];
+
+  const labelNode = (
+    <Text style={[styles.label, { color: getContrastTextColor(activity.color) }]} numberOfLines={1}>
+      {activity.label}
+    </Text>
+  );
+
   if (Platform.OS === 'web') {
-    touchableProps.onMouseEnter = () => setIsHovered(true);
-    touchableProps.onMouseLeave = () => setIsHovered(false);
+    const webProps: ActivityBarWebProps = {
+      onMouseDown: handleWebMouseDown,
+      onMouseEnter: () => setIsHovered(true),
+      onMouseLeave: () => setIsHovered(false),
+      style: [barStyle, { cursor: webDragging ? 'grabbing' : 'grab' } as unknown as ViewStyle],
+      accessibilityRole: 'button',
+      accessibilityLabel: activity.label,
+    };
+    return (
+      <>
+        <View {...(webProps as React.ComponentProps<typeof View>)}>{labelNode}</View>
+        {isHovered && !webDragging && (
+          <View style={[styles.tooltip, { left: `${startPosition}%` }]} pointerEvents="none">
+            <Text style={styles.tooltipText}>{tooltipText}</Text>
+          </View>
+        )}
+      </>
+    );
   }
 
   return (
-    <>
-      <TouchableOpacity {...touchableProps}>
-        <Text
-          style={[styles.label, { color: getContrastTextColor(activity.color) }]}
-          numberOfLines={1}
-        >
-          {activity.label}
-        </Text>
-      </TouchableOpacity>
-
-      {isHovered && Platform.OS === 'web' && (
-        <View style={[styles.tooltip, { left: `${startPosition}%` }]} pointerEvents="none">
-          <Text style={styles.tooltipText}>{tooltipText}</Text>
-        </View>
-      )}
-    </>
+    <View
+      {...panResponder.panHandlers}
+      style={barStyle}
+      accessibilityRole="button"
+      accessibilityLabel={activity.label}
+    >
+      {labelNode}
+    </View>
   );
 };
 

@@ -5,9 +5,11 @@ import { usePlants } from '../contexts/PlantContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { CATEGORY_TABS, CategoryFilter } from '../constants/categoryTabs';
 import { getPlantDisplayName } from '../constants/plantNames';
+import { getPlantEmoji } from '../constants/plantEmojis';
 
 interface ActivityInfo {
   plantName: string;
+  plantEmoji: string;
   activityLabel: string;
   activityColor: string;
   notes?: string;
@@ -43,6 +45,7 @@ export const AgendaScreen: React.FC = () => {
           if (activity.startMonth <= monthIndex && activity.endMonth >= monthIndex) {
             activities.push({
               plantName: getPlantDisplayName(plant.name, language),
+              plantEmoji: getPlantEmoji(plant.name, plant.category),
               activityLabel: activity.label,
               activityColor: activity.color,
               notes: plant.notes,
@@ -111,7 +114,10 @@ export const AgendaScreen: React.FC = () => {
                   {activity.activityLabel}
                 </Text>
               </View>
-              <Text style={[styles.plantName, { color: theme.text }]}>{activity.plantName}</Text>
+              <View style={styles.plantNameRow}>
+                <Text style={styles.plantEmoji}>{activity.plantEmoji}</Text>
+                <Text style={[styles.plantName, { color: theme.text }]}>{activity.plantName}</Text>
+              </View>
               {activity.notes && (
                 <Text style={[styles.notes, { color: theme.textSecondary }]}>{activity.notes}</Text>
               )}
@@ -250,10 +256,18 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
   },
+  plantNameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  plantEmoji: {
+    fontSize: 16,
+    marginRight: 6,
+  },
   plantName: {
     fontSize: 16,
     fontWeight: 'bold',
-    marginBottom: 4,
   },
   notes: {
     fontSize: 12,

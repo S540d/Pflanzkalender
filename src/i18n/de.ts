@@ -169,6 +169,11 @@ const de: Translations = {
   'template.importModeMessage': '{count} Pflanze(n) gefunden. Wie importieren?',
   'template.importModeReplace': 'Alles ersetzen',
   'template.importModeAppend': 'Anhängen',
+  'template.qrShareBtn': '🔳 Per QR-Code teilen',
+  'template.qrShareTitle': 'Pflanzplan per QR teilen',
+  'template.qrShareHint':
+    'Mit der Kamera eines anderen Geräts scannen und den Text unter „Importieren“ einfügen.',
+  'template.qrTooLarge': 'Zu viele Daten für einen QR-Code. Bitte den Datei-Export nutzen.',
 };
 
 export default de;

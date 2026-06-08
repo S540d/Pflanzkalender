@@ -1,6 +1,6 @@
 {
   "name": "pflanzkalender",
-  "version": "1.4.1",
+  "version": "1.5.0",
   "main": "expo-router/entry",
   "scripts": {
     "start": "expo start",
@@ -28,6 +28,7 @@
     "expo-router": "~6.0.23",
     "expo-status-bar": "~3.0.9",
     "firebase": "^12.13.0",
+    "qrcode-generator": "^1.4.4",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-native": "0.81.4",

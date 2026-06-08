@@ -9,6 +9,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 jest.mock('../../src/services/templateService', () => ({
   sharePlants: jest.fn().mockResolvedValue(undefined),
   importFromJson: jest.fn(),
+  buildShareString: jest.fn(() => '{"version":"1.0.0","timestamp":"t","plants":[]}'),
 }));
 
 jest.mock('../../src/hooks/useTheme', () => ({

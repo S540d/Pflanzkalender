@@ -17,6 +17,7 @@ import { EditPlantModal } from '../components/EditPlantModal';
 import { Plant, PlantLocation, PlantCategory } from '../types';
 import { PLANT_LOCATION_METADATA, PLANT_CATEGORY_METADATA } from '../constants/plantMetadata';
 import { getPlantDisplayName } from '../constants/plantNames';
+import { getPlantEmoji } from '../constants/plantEmojis';
 import { CATEGORY_TABS, CategoryFilter } from '../constants/categoryTabs';
 
 export const PlantManagementScreen: React.FC = () => {
@@ -174,9 +175,14 @@ export const PlantManagementScreen: React.FC = () => {
                   ]}
                 >
                   <View style={styles.plantInfo}>
-                    <Text style={[styles.plantName, { color: theme.text }]}>
-                      {getPlantDisplayName(plant.name, language)}
-                    </Text>
+                    <View style={styles.plantNameRow}>
+                      <Text style={styles.plantEmoji}>
+                        {getPlantEmoji(plant.name, plant.category)}
+                      </Text>
+                      <Text style={[styles.plantName, { color: theme.text }]}>
+                        {getPlantDisplayName(plant.name, language)}
+                      </Text>
+                    </View>
                     <View style={styles.plantMeta}>
                       {plant.category && (
                         <Text style={[styles.plantMetaText, { color: theme.textSecondary }]}>
@@ -334,10 +340,19 @@ const styles = StyleSheet.create({
   plantInfo: {
     flex: 1,
   },
+  plantNameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
   plantName: {
     fontSize: 18,
     fontWeight: '600',
-    marginBottom: 4,
+    flexShrink: 1,
+  },
+  plantEmoji: {
+    fontSize: 18,
+    marginRight: 6,
   },
   plantMeta: {
     flexDirection: 'row',

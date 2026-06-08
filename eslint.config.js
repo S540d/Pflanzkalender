@@ -105,6 +105,7 @@ module.exports = [
         MediaQueryList: 'readonly',
         MediaQueryListEvent: 'readonly',
         Event: 'readonly',
+        MouseEvent: 'readonly',
         HTMLInputElement: 'readonly',
         __DEV__: 'readonly',
         caches: 'readonly',
