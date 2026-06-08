@@ -30,12 +30,12 @@ Deploy: GitHub Pages via `gh-pages` unter `/Pflanzkalender/`
 
 ---
 
-## Aktuelle Version: 1.4.0 (main)
+## Aktuelle Version: 1.5.0 (main)
 
-**Stand 2026-06-03:** main = v1.4.0 (versionCode 5). PR #157 gemergt – CI Standards Audit Listener (project-templates#7) in main. main `eb14beb`.
+**Stand 2026-06-08:** main = v1.5.0 (versionCode 5). PR #174 (testing → main) gemergt – Drag & Drop (#142), Pflanzen-Emojis (#161), Store-Listings (#171), QR-Teilen (#8).
 
-- **main branch:** v1.4.0 – Issues #123 + #87 (PR #148 / #149) sowie #8 + #88 (PR #147 / #146, via PR #151 nach main) geschlossen
-- **testing branch:** hinter main – sollte auf `origin/main` zurückgesetzt werden (squash-Merge: testing-Commits sind inhaltlich, aber nicht als Hash in main)
+- **main branch:** v1.5.0 – Issue #142 (Drag & Drop), #161, #171 sowie QR-Teilen für #8 in main
+- **testing branch:** identisch mit main nach PR #174
 - **Offen:** Issue #152 – Konsolidierung der zwei parallelen Import-/Export-Pfade (SettingsModal-Import #149 vs. TemplateScreen #8); enthält auch die in PR #151 vertagten Import-Bugs (addPlant-Schleife Stale-State/ID-Kollision, `isDefault:true`)
 
 Versions-Stellen: `package.json`, `app.json`, `twa-manifest.template.json` – immer alle drei synchron halten, sonst schlägt CI fehl. `SettingsScreen.tsx` liest Version jetzt dynamisch aus `package.json` (seit PR #124), kein manuelles Sync mehr nötig.
@@ -272,9 +272,9 @@ Vollständige Roadmap: https://github.com/S540d/Pflanzkalender/issues/47
 
 ---
 
-## Offene Issues (Stand 2026-05-31)
+## Offene Issues (Stand 2026-06-08)
 
-**Status: main = v1.4.0, APK/AAB gebaut. PR #157 gemergt (CI Standards Audit). 364 Tests grün. Offen: #152 (Import-Konsolidierung), #155 (PR für #152).**
+**Status: main = v1.5.0. PR #174 gemergt (testing → main): #142 Drag&Drop, #161 Emojis, #171 Store-Listings, #8 QR-Teilen. 384 Tests grün. Offen: #152 (Import-Konsolidierung).**
 
 ### v1.4.0 – abgeschlossen / Play Store
 
@@ -293,7 +293,7 @@ Vollständige Roadmap: https://github.com/S540d/Pflanzkalender/issues/47
 ### v2.0.0 – Klimazonen & Community
 
 - **#48** Klimazonen-Unterstützung – unterschiedliche Aktivitätszeiträume je Region
-- **#142** 🛠️ Drag & Drop für Aktivitäten im Kalender – **PR offen** (Branch `claude/issues-142-171-161-8`): Balken per Maus (Web) / PanResponder (Native) verschiebbar, Delta → `clampActivityShift` → `updateActivity`
+- **#142** ✅ Drag & Drop für Aktivitäten im Kalender – **in main** (PR #172 → testing, via PR #174 nach main): Balken per Maus (Web) / PanResponder (Native) verschiebbar, Delta → `clampActivityShift` → `updateActivity`
 - **#8** ✅ Template-System: Pflanzpläne teilen und importieren – **in main** (PR #147, via #151); QR-Code-Teilen ergänzt im o. g. PR (`qrcode-generator` + `react-native-svg`)
 - **#9** Intelligente Vorschläge: Fruchtfolge & Mischkultur
 
@@ -307,11 +307,12 @@ Vollständige Roadmap: https://github.com/S540d/Pflanzkalender/issues/47
 
 ---
 
-## Letzte Merges / Fixes (2026-06-03)
+## Letzte Merges / Fixes (2026-06-08)
 
 | Was                                                                  | Wann       | Details                                                                                                                                                                                                                                                                                                                                                                                     |
 | -------------------------------------------------------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Branch `claude/issues-142-171-161-8`:** #142 + #161 + #171 + #8-QR | 2026-06-08 | 🛠️ PR gegen `testing` (neu aus `main` angelegt): #161 Pflanzen-Emojis (`plantEmojis.ts`, sprachunabhängig) in Pflanzenliste/Kalender/Agenda; #171 mehrsprachige Store-Listings (`fastlane/metadata/android/{de-DE,en-US,es-ES}`); #8 QR-Teilen (`qrcode-generator`, SVG-Render, `buildShareString`); #142 Drag&Drop (Maus/PanResponder, `clampActivityShift`). 384 Tests grün, Web-Build ok |
+| **PR #174:** testing → main (Sync v1.5.0)                            | 2026-06-08 | ✅ main: #142 Drag&Drop, #161 Emojis, #171 Store-Listings, #8 QR-Teilen nach main. Version-Bump 1.4.1 → 1.5.0 (versionCode 5), `twa-manifest`-Sync-Fix (war auf 1.4.0 → Platform-Compatibility-CI rot). pr-review-Findings geprüft: Bug-Findings waren False Positives (abgeschnittener 40k-Diff) – PanResponder in `useRef`, `onPanResponderTerminate` vorhanden, `clampActivityShift` korrekt, `testID="qr-code-svg"` gesetzt. Future-Tickets: Store-Listing-CI-Check, `--legacy-peer-deps`-Konflikt tracken, QR-Import-Validierung |
+| **PR #172:** Drag&Drop + Emojis + Store + QR → testing              | 2026-06-08 | ✅ testing `538ade5`: #161 Pflanzen-Emojis (`plantEmojis.ts`, sprachunabhängig) in Pflanzenliste/Kalender/Agenda; #171 mehrsprachige Store-Listings (`fastlane/metadata/android/{de-DE,en-US,es-ES}`); #8 QR-Teilen (`qrcode-generator`, SVG-Render, `buildShareString`); #142 Drag&Drop (Maus/PanResponder, `clampActivityShift`). 384 Tests grün, Web-Build ok |
 | **PR #157:** CI Standards Audit Listener                             | 2026-06-03 | ✅ main `eb14beb`: `standards-audit.yml` (reusable-security-scan, reusable-gitignore-audit, reusable-dev-standards-audit @v1); `.gitignore` um `.env.local` + `credentials.json` ergänzt (gitignore-audit Pflichteinträge, project-templates#7)                                                                                                                                             |
 | **PR #151:** testing → main (Merge)                                  | 2026-05-31 | ✅ main `833a7f3`: alle testing-Commits (#8 Template-System, #88 Export-Fix) nach main; i18n-Konflikte (beide Key-Sätze) + CLAUDE.md aufgelöst; 4 Review-Robustheit-Fixes (document-Guards, URL-Revoke-Defer, Test-Timer); 2 Import-Bugs → #152; 364 Tests                                                                                                                                  |
 | **PR #149:** Issue #87 – Import-UI                                   | 2026-05-30 | ✅ gemergt: JSON-Import im SettingsModal (Web file picker, Confirm-Dialog, replacePlants), 9 i18n-Keys × 8 Sprachen, ESLint-Globals (Event/HTMLInputElement), 341 Tests                                                                                                                                                                                                                     |
