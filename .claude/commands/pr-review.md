@@ -4,9 +4,9 @@ Automatisierter PR-Review-Workflow: Prüfen, Suggestions umsetzen, Mergen
 
 > **[GLOBAL POLICY] – verbindlich (Issue #7):**
 >
-> - PRs immer gegen `testing`, nie direkt gegen `staging` oder `main`
+> - PRs immer gegen `testing`, nie direkt gegen `main`
 > - **Merge auf `main` nur mit expliziter schriftlicher Freigabe** – niemals eigenständig
-> - `--delete-branch` nur für Feature-Branches (nie `staging`/`testing`)
+> - `--delete-branch` nur für Feature-Branches (nie `testing`)
 > - `--no-verify` nur auf explizite Bitte
 > - Vor Merge immer Copilot-Suggestions abwarten und prüfen
 
@@ -19,7 +19,7 @@ Einen Pull Request gründlich prüfen, Code-Review-Suggestions umsetzen und für
 ### 1. PR Status prüfen
 
 - Zeige PR-Details (Titel, Beschreibung, Files Changed)
-- Prüfe ob PR-Ziel-Branch aktuell ist mit main (kein staging – GLOBAL POLICY)
+- Prüfe ob PR-Ziel-Branch aktuell ist mit main (Ziel-Branch prüfen)
 - Falls outdated: Frage ob Target-Branch in PR-Branch gemergt werden soll
 - Prüfe CI/CD Status (Tests, Linting, Build)
 - Zeige offene Review-Comments
@@ -103,7 +103,7 @@ Bei `needs human review`: Findings lesen, klären/umsetzen, pushen → frischer 
 
 ### 9. Post-Merge Cleanup
 
-- Checkout zurück zu main/staging/testing
+- Checkout zurück zu main/testing
 - Pull neueste Änderungen
 - Zeige nächste offene PRs (falls vorhanden)
 
