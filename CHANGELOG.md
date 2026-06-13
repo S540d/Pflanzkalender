@@ -7,6 +7,13 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 ## [Unreleased]
 
+## [1.5.1] - 2026-06-13
+
+### Geändert
+
+- CI/Review-Workflow auf Review-Modell v2 umgestellt: kostenloses Merge-Gate (GitHub-Mergeability) statt API-gebundenem Gate; KI-Review nur noch on-demand via Label (#178)
+- `pr-review.yml` Berechtigungen korrigiert (`contents: read`, Autofix-Job entfernt) und staging-Referenzen entfernt (#175, #177)
+
 ## [1.3.0] - 2026-05-10
 
 ### Hinzugefügt
