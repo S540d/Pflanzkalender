@@ -7,6 +7,18 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 ## [Unreleased]
 
+### Dependencies
+
+- `@typescript-eslint/eslint-plugin` 8.59.3 → 8.62.0
+- `@typescript-eslint/parser` 8.59.3 → 8.62.0
+- `eslint-plugin-prettier` 5.5.5 → 5.5.6
+- `expo` 54.0.34 → 54.0.35
+- `expo-router` 6.0.23 → 6.0.24
+- `firebase` 12.13.0 → 12.15.0
+- `prettier` 3.8.3 → 3.8.4
+- `react-native-safe-area-context` 5.7.0 → 5.8.0
+- `react-native-screens` 4.25.0 → 4.25.2
+
 ## [1.5.2] - 2026-06-24
 
 ### Geändert
