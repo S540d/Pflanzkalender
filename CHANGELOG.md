@@ -7,6 +7,13 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 ## [Unreleased]
 
+## [1.5.2] - 2026-06-24
+
+### Geändert
+
+- README vereinfacht: kein Setup, kein App-Store-Link, Features aktuell
+- Prettier-Formatierung auf `aufräumen.md` angewendet
+
 ## [1.5.1] - 2026-06-13
 
 ### Geändert
