@@ -2,6 +2,36 @@
 
 Führe den täglichen Cleanup-Workflow durch:
 
+## 0. Branch-Übersicht: testing vs. main (alle Repos)
+
+Erstelle zu Beginn eine Tabelle aller Repositories mit dem Stand von `testing` gegenüber `main`:
+
+```bash
+for repo in Eisenhauer 1x1_Trainer DrawFromMemory EnergyPriceGermany Pflanzkalender safe_my_plants CD-to-Spotify-PWA project-templates; do
+  dir="/Users/svenstrohkark/Documents/Programmierung/Projects/$repo"
+  if [ -d "$dir/.git" ]; then
+    cd "$dir"
+    git fetch --all --prune -q 2>/dev/null
+    ab=$(git rev-list --left-right --count origin/main...origin/testing 2>/dev/null)
+    main_ahead=$(echo $ab | awk '{print $1}')
+    test_ahead=$(echo $ab | awk '{print $2}')
+    echo "$repo | testing +$test_ahead | main +$main_ahead"
+  fi
+done
+```
+
+Zeige das Ergebnis als Markdown-Tabelle:
+
+| Projekt | testing ahead | main ahead | Status                                        |
+| ------- | ------------- | ---------- | --------------------------------------------- |
+| ...     | ...           | ...        | ✅ OK / ⚠️ Leicht divergiert / 🔴 main voraus |
+
+**Statusregeln:**
+
+- ✅ OK — main_ahead = 0 (testing enthält main vollständig)
+- ⚠️ Leicht divergiert — main_ahead ≤ 3 und nur Auto-Commits (z.B. marketdata)
+- 🔴 main voraus — main_ahead > 0 mit echten Commits → Sync-PR nötig
+
 ## 1. Repository Status prüfen
 
 - Prüfe `git status` für uncommitted changes
