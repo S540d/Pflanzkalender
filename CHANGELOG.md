@@ -7,6 +7,13 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 ## [Unreleased]
 
+## [1.5.3] - 2026-06-26
+
+### Geändert
+
+- TWA-vs-PWA-Entscheidung dokumentiert
+- CI-Workflow bereinigt: Android-Kompatibilität verbessert (#173)
+
 ### Dependencies
 
 - `@typescript-eslint/eslint-plugin` 8.59.3 → 8.62.0
