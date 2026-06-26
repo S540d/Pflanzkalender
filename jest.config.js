@@ -10,8 +10,7 @@ module.exports = {
   ],
   moduleNameMapper: {
     'react-native-svg': '<rootDir>/__mocks__/react-native-svg.js',
-    '@react-native-async-storage/async-storage':
-      '@react-native-async-storage/async-storage/jest/async-storage-mock',
+    '@react-native-async-storage/async-storage': '@react-native-async-storage/async-storage/jest',
   },
   setupFiles: [],
   collectCoverageFrom: ['src/**/*.{ts,tsx}', '!src/**/*.d.ts', '!src/services/firebase.ts'],

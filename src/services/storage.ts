@@ -74,7 +74,10 @@ export const storageService = {
   // Alle Daten löschen
   async clearAll(): Promise<void> {
     try {
-      await AsyncStorage.multiRemove([STORAGE_KEYS.PLANTS, STORAGE_KEYS.IS_GUEST]);
+      await Promise.all([
+        AsyncStorage.removeItem(STORAGE_KEYS.PLANTS),
+        AsyncStorage.removeItem(STORAGE_KEYS.IS_GUEST),
+      ]);
     } catch (error) {
       console.error('Error clearing storage:', error);
     }
