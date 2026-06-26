@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text } from 'react-native';
+import { Text, ColorValue } from 'react-native';
 import { Tabs } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -8,7 +8,7 @@ import { LanguageProvider, useLanguage } from '../src/contexts/LanguageContext';
 import { PlantProvider } from '../src/contexts/PlantContext';
 import { useTheme } from '../src/hooks/useTheme';
 
-function TabBarIcon({ emoji, color }: { emoji: string; color: string }) {
+function TabBarIcon({ emoji, color }: { emoji: string; color: ColorValue }) {
   return <Text style={{ fontSize: 20, color }}>{emoji}</Text>;
 }
 

@@ -8,7 +8,7 @@ const baseUrl = isTesting ? '/Pflanzkalender-testing' : '/Pflanzkalender';
 module.exports = ({ config }) => ({
   ...config,
   scheme: 'pflanzkalender',
-  plugins: [...(config.plugins ?? []), 'expo-router'],
+  plugins: [...(config.plugins ?? []), 'expo-router', 'expo-status-bar'],
   web: {
     ...config.web,
     output: 'single',

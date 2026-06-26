@@ -52,6 +52,8 @@ module.exports = [
       ...tsPlugin.configs.recommended.rules,
       ...reactPlugin.configs.recommended.rules,
       ...reactHooksPlugin.configs.recommended.rules,
+      'react-hooks/refs': 'off',
+      'react-hooks/set-state-in-effect': 'off',
       'react/react-in-jsx-scope': 'off',
       'react/prop-types': 'off',
       '@typescript-eslint/no-unused-vars': [
