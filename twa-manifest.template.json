@@ -4,7 +4,7 @@
   "name": "Pflanzkalender",
   "launcherName": "Pflanzkalender",
   "display": "standalone",
-  "orientation": "portrait",
+  "orientation": "default",
   "themeColor": "#4CAF50",
   "navigationColor": "#1a7a4a",
   "navigationColorDark": "#1a7a4a",
