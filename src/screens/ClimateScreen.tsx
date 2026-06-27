@@ -4,14 +4,16 @@ import { useTheme } from '../hooks/useTheme';
 import { useLanguage } from '../contexts/LanguageContext';
 import { usePlants } from '../contexts/PlantContext';
 import { ClimateRecommendation, RECOMMENDATIONS } from '../constants/climateRecommendations';
+import { Card, Icon, type IconName } from '../components/ui';
+import { radius, spacing } from '../constants/designTokens';
 
 type FilterCategory = 'all' | 'vegetable' | 'flower' | 'tree';
 
-const FILTER_TABS: { key: FilterCategory; de: string; en: string; icon: string }[] = [
-  { key: 'all', de: 'Alle', en: 'All', icon: '🌍' },
-  { key: 'vegetable', de: 'Nutzpflanzen', en: 'Crops', icon: '🥦' },
-  { key: 'flower', de: 'Blumen', en: 'Flowers', icon: '🌸' },
-  { key: 'tree', de: 'Bäume', en: 'Trees', icon: '🌳' },
+const FILTER_TABS: { key: FilterCategory; de: string; en: string; icon: IconName }[] = [
+  { key: 'all', de: 'Alle', en: 'All', icon: 'globe' },
+  { key: 'vegetable', de: 'Nutzpflanzen', en: 'Crops', icon: 'vegetable' },
+  { key: 'flower', de: 'Blumen', en: 'Flowers', icon: 'flower' },
+  { key: 'tree', de: 'Bäume', en: 'Trees', icon: 'tree' },
 ];
 
 function ResistanceDots({
@@ -130,7 +132,7 @@ export const ClimateScreen: React.FC = () => {
                   ]}
                   accessibilityLabel={language === 'de' ? tab.de : tab.en}
                 >
-                  <Text style={styles.tabIcon}>{tab.icon}</Text>
+                  <Icon name={tab.icon} size={16} color={isActive ? '#FFFFFF' : theme.text} />
                   <Text style={[styles.tabLabel, { color: isActive ? '#fff' : theme.text }]}>
                     {language === 'de' ? tab.de : tab.en}
                   </Text>
@@ -146,13 +148,7 @@ export const ClimateScreen: React.FC = () => {
               const inGarden = isInGarden(rec);
               const justAdded = addedKeys.has(cardKey);
               return (
-                <View
-                  key={cardKey}
-                  style={[
-                    styles.card,
-                    { backgroundColor: theme.surface, borderColor: theme.border },
-                  ]}
-                >
+                <Card key={cardKey} elevation={2} padding={spacing.lg} style={styles.card}>
                   <View style={styles.cardHeader}>
                     <Text style={styles.cardIcon}>{rec.icon}</Text>
                     <Text style={[styles.cardName, { color: theme.text }]}>
@@ -177,9 +173,12 @@ export const ClimateScreen: React.FC = () => {
 
                   <View style={styles.resistanceRow}>
                     <View style={styles.resistanceItem}>
-                      <Text style={[styles.resistanceLabel, { color: theme.textSecondary }]}>
-                        💧 {droughtLabel}
-                      </Text>
+                      <View style={styles.resistanceLabelRow}>
+                        <Icon name="drought" size={13} color="#2196F3" />
+                        <Text style={[styles.resistanceLabel, { color: theme.textSecondary }]}>
+                          {droughtLabel}
+                        </Text>
+                      </View>
                       <ResistanceDots
                         level={rec.droughtResistance}
                         color="#2196F3"
@@ -187,9 +186,12 @@ export const ClimateScreen: React.FC = () => {
                       />
                     </View>
                     <View style={styles.resistanceItem}>
-                      <Text style={[styles.resistanceLabel, { color: theme.textSecondary }]}>
-                        🌡️ {heatLabel}
-                      </Text>
+                      <View style={styles.resistanceLabelRow}>
+                        <Icon name="heat" size={13} color="#FF5722" />
+                        <Text style={[styles.resistanceLabel, { color: theme.textSecondary }]}>
+                          {heatLabel}
+                        </Text>
+                      </View>
                       <ResistanceDots
                         level={rec.heatTolerance}
                         color="#FF5722"
@@ -222,7 +224,7 @@ export const ClimateScreen: React.FC = () => {
                       {justAdded ? addedLabel : inGarden ? alreadyLabel : addLabel}
                     </Text>
                   </TouchableOpacity>
-                </View>
+                </Card>
               );
             })}
           </View>
@@ -266,12 +268,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 14,
     paddingVertical: 8,
-    borderRadius: 20,
+    borderRadius: radius.pill,
     borderWidth: 1,
     gap: 6,
-  },
-  tabIcon: {
-    fontSize: 16,
   },
   tabLabel: {
     fontSize: 14,
@@ -281,9 +280,7 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   card: {
-    borderRadius: 12,
-    borderWidth: 1,
-    padding: 16,
+    marginBottom: 0,
   },
   cardHeader: {
     flexDirection: 'row',
@@ -326,9 +323,14 @@ const styles = StyleSheet.create({
   resistanceItem: {
     flex: 1,
   },
+  resistanceLabelRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    marginBottom: 4,
+  },
   resistanceLabel: {
     fontSize: 12,
-    marginBottom: 4,
   },
   dotsRow: {
     flexDirection: 'row',

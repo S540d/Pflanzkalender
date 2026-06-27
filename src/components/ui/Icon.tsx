@@ -40,6 +40,11 @@ const ICONS = {
   protect: 'snow-outline',
   mulch: 'layers-outline',
 
+  // Klima / Resistenz
+  heat: 'thermometer-outline',
+  drought: 'water-outline',
+  globe: 'earth',
+
   // Meta / Standort
   sun: 'sunny',
   partialShade: 'partly-sunny',
