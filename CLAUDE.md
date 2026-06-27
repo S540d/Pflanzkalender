@@ -14,29 +14,38 @@ Repo: https://github.com/s540d/Pflanzkalender
 
 ## Tech Stack (exakte Versionen)
 
-| Paket                                  | Version                                     |
-| -------------------------------------- | ------------------------------------------- |
-| Expo                                   | ~54.0.12                                    |
-| React                                  | 19.1.0                                      |
-| React Native                           | 0.81.4                                      |
-| React Native Web                       | ^0.21.0                                     |
-| TypeScript                             | ~5.9.2                                      |
-| React Navigation (Bottom Tabs + Stack) | ^7.x                                        |
-| AsyncStorage                           | ^2.2.0                                      |
-| Firebase                               | ^12.3.0 (initialisiert, Placeholder-Config) |
+Stand **testing** (SDK 56). **main** liegt noch auf SDK 54 (Expo `^54.0.35`, RN `0.81.x`, TS `~5.9.2`) – siehe „Aktuelle Version".
+
+| Paket                | Version (testing)                            |
+| -------------------- | -------------------------------------------- |
+| Expo                 | ^56.0.12                                     |
+| React                | 19.2.3                                       |
+| React Native         | 0.85.3                                       |
+| React Native Web     | ^0.21.2                                      |
+| TypeScript           | ~6.0.3                                       |
+| expo-router          | ~56.2.11                                     |
+| @expo/vector-icons   | ^15.0.2 (seit Redesign PR #193)              |
+| expo-linear-gradient | ~56.0.4 (seit Redesign PR #193)              |
+| AsyncStorage         | ^3.1.1                                       |
+| Firebase             | ^12.15.0 (initialisiert, Placeholder-Config) |
 
 Build: `expo export --platform web` → Metro Bundler  
 Deploy: GitHub Pages via `gh-pages` unter `/Pflanzkalender/`
 
 ---
 
-## Aktuelle Version: 1.5.0 (main)
+## Aktuelle Version: 1.5.3
 
-**Stand 2026-06-08:** main = v1.5.0 (versionCode 5). PR #174 (testing → main) gemergt – Drag & Drop (#142), Pflanzen-Emojis (#161), Store-Listings (#171), QR-Teilen (#8).
+**Stand 2026-06-27:** main = v1.5.3 (Expo SDK 54). **testing ist 2 Commits voraus** und noch nicht in main:
 
-- **main branch:** v1.5.0 – Issue #142 (Drag & Drop), #161, #171 sowie QR-Teilen für #8 in main
-- **testing branch:** identisch mit main nach PR #174
+- **main branch:** v1.5.3, Expo **SDK 54** (`f725479`, via PR #191). Stabiler Production-Stand.
+- **testing branch:** v1.5.3, Expo **SDK 56** + UI-Redesign (`6cd4013`). Enthält:
+  - **PR #192 (#189):** Expo SDK 54 → 56 Upgrade (RN 0.85, TS 6, eslint-hooks 7)
+  - **PR #193:** Optisches Modern-Redesign – Vektor-Icons (`@expo/vector-icons`/Ionicons), Design-Token-System (`src/constants/designTokens.ts`), UI-Primitive (`src/components/ui/`: Icon, Button, Card, Badge, AppText), neue Farbpalette (Primär `#3C9D5A`)
+  - **Noch offen:** PR `testing → main` für SDK 56 + Redesign. Version-Bump vor diesem Merge erwägen (testing trägt weiter 1.5.3, kein Bump für SDK-Upgrade/Redesign).
 - **Offen:** Issue #152 – Konsolidierung der zwei parallelen Import-/Export-Pfade (SettingsModal-Import #149 vs. TemplateScreen #8); enthält auch die in PR #151 vertagten Import-Bugs (addPlant-Schleife Stale-State/ID-Kollision, `isDefault:true`)
+
+**SDK-56-Fallstrick (aus PR #193 gelernt):** Unter SDK 56 / RN 0.85 nötig, was unter SDK 54 noch ging: `StyleSheet.absoluteFillObject` → `absoluteFill` (RN-0.85-Rename); `tabBarIcon`-Callback von expo-router 56 liefert `ColorValue` statt `string`; `@expo/vector-icons` muss explizit deklariert sein (war nur transitiv).
 
 Versions-Stellen: `package.json`, `app.json`, `twa-manifest.template.json` – immer alle drei synchron halten, sonst schlägt CI fehl. `SettingsScreen.tsx` liest Version jetzt dynamisch aus `package.json` (seit PR #124), kein manuelles Sync mehr nötig.
 
@@ -56,12 +65,15 @@ app/                           # Expo Router (file-based routing, Phase 4b)
 app.config.js                  # Dynamische Expo-Config: expo-router plugin, web.output=single, experiments.baseUrl (Prod/Testing)
 src/
   screens/                     # CalendarScreen, AgendaScreen, PlantManagementScreen, ClimateScreen, SettingsScreen, TemplateScreen
-  components/                  # ActivityBar, PlantRow, AddActivityModal, EditActivityModal, AddPlantModal, AppHeader, Footer, ErrorBoundary, SettingsModal
+  components/                  # ActivityBar, PlantRow, CategoryTabBar, TableHeader, AddActivityModal, EditActivityModal, AddPlantModal, EditPlantModal, ErrorBoundary, SettingsModal
+    ui/                        # UI-Primitive (PR #193): Icon (Ionicons-Wrapper + ICONS-Mapping), Button, Card, Badge, AppText, index (Barrel)
   contexts/                    # PlantContext (CRUD + replacePlants), LanguageContext (de/en/fr/es/it/pl/nl/pt)
   hooks/                       # useTheme (Dark/Light/System)
   constants/
     defaultPlants.ts           # 32 vordefinierte Pflanzen mit Aktivitäten, Standort, Kategorie
-    activityTypes.ts           # Aktivitätstypen mit Farben
+    activityTypes.ts           # Aktivitätstypen mit Farben + icon (IconName, seit PR #193)
+    categoryTabs.ts            # Kategorie-Tabs + iconName (IconName, seit PR #193)
+    designTokens.ts            # Spacing, Radius, Typografie-Skala, shadow(level)-Helper (seit PR #193)
     climateRecommendations.ts  # ClimateRecommendation interface + RECOMMENDATIONS (15 Einträge)
     plantMetadata.ts           # PLANT_LOCATION_METADATA + PLANT_CATEGORY_METADATA (Single Source of Truth)
     plantNames.ts              # PLANT_NAME_EN + getPlantDisplayName() – DE↔EN Übersetzung für Pflanzennamen
@@ -272,9 +284,12 @@ Vollständige Roadmap: https://github.com/S540d/Pflanzkalender/issues/47
 
 ---
 
-## Offene Issues (Stand 2026-06-08)
+## Offene Issues (Stand 2026-06-27)
 
-**Status: main = v1.5.0. PR #174 gemergt (testing → main): #142 Drag&Drop, #161 Emojis, #171 Store-Listings, #8 QR-Teilen. 384 Tests grün. Offen: #152 (Import-Konsolidierung).**
+**Status: main = v1.5.3 (SDK 54). testing = v1.5.3 (SDK 56 + UI-Redesign), 2 Commits voraus, PR `testing → main` noch offen. 384 Tests grün.**
+
+**Aktuell offen:** #171 (Store-Eintrag überarbeiten), #94 (Statistik/Dashboard), #91 (Agenda-Vorschau), #48 (Klimazonen), #9 (Fruchtfolge/Mischkultur), #4 (Push), #152 (Import-Konsolidierung, Tech-Debt).
+**Zuletzt geschlossen (2026-06-27):** #161 (Emojis, PR #172/#174) und #8 (Template-System, PR #147/#151) – waren versehentlich offen geblieben.
 
 ### v1.4.0 – abgeschlossen / Play Store
 
@@ -294,7 +309,7 @@ Vollständige Roadmap: https://github.com/S540d/Pflanzkalender/issues/47
 
 - **#48** Klimazonen-Unterstützung – unterschiedliche Aktivitätszeiträume je Region
 - **#142** ✅ Drag & Drop für Aktivitäten im Kalender – **in main** (PR #172 → testing, via PR #174 nach main): Balken per Maus (Web) / PanResponder (Native) verschiebbar, Delta → `clampActivityShift` → `updateActivity`
-- **#8** ✅ Template-System: Pflanzpläne teilen und importieren – **in main** (PR #147, via #151); QR-Code-Teilen ergänzt im o. g. PR (`qrcode-generator` + `react-native-svg`)
+- **#8** ✅ **Geschlossen** – Template-System: Pflanzpläne teilen und importieren – **in main** (PR #147, via #151); QR-Code-Teilen ergänzt (`qrcode-generator` + `react-native-svg`)
 - **#9** Intelligente Vorschläge: Fruchtfolge & Mischkultur
 
 ### Wartbarkeit / Tech-Debt
@@ -307,10 +322,12 @@ Vollständige Roadmap: https://github.com/S540d/Pflanzkalender/issues/47
 
 ---
 
-## Letzte Merges / Fixes (2026-06-08)
+## Letzte Merges / Fixes (2026-06-27)
 
 | Was                                                    | Wann       | Details                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 | ------------------------------------------------------ | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **PR #193:** UI-Modern-Redesign → testing              | 2026-06-27 | ✅ testing `6cd4013`: Vektor-Icons (`@expo/vector-icons`/Ionicons), Design-Tokens (`designTokens.ts`), UI-Primitive (`src/components/ui/`), neue Farbpalette (Primär `#3C9D5A`). Branch lag vor SDK-56-Upgrade → Konflikte aufgelöst (SDK-56-Deps übernommen, `expo-linear-gradient ~56.0.4`) + 3 SDK-56-Kompat-Fixes (`absoluteFill`, `ColorValue`, `@expo/vector-icons` deklariert). #161/#8 nachträglich geschlossen. 384 Tests grün. **PR `testing → main` noch offen.**                                                          |
+| **PR #192 (#189):** Expo SDK 54 → 56 → testing         | 2026-06-27 | ✅ testing `1cdfe98`: Expo SDK 54 → 56, RN 0.85, TS 6, eslint-hooks 7. Details siehe Memory `project_dependencies.md`.                                                                                                                                                                                                                                                                                                                                                                                                                |
 | **PR #174:** testing → main (Sync v1.5.0)              | 2026-06-08 | ✅ main: #142 Drag&Drop, #161 Emojis, #171 Store-Listings, #8 QR-Teilen nach main. Version-Bump 1.4.1 → 1.5.0 (versionCode 5), `twa-manifest`-Sync-Fix (war auf 1.4.0 → Platform-Compatibility-CI rot). pr-review-Findings geprüft: Bug-Findings waren False Positives (abgeschnittener 40k-Diff) – PanResponder in `useRef`, `onPanResponderTerminate` vorhanden, `clampActivityShift` korrekt, `testID="qr-code-svg"` gesetzt. Future-Tickets: Store-Listing-CI-Check, `--legacy-peer-deps`-Konflikt tracken, QR-Import-Validierung |
 | **PR #172:** Drag&Drop + Emojis + Store + QR → testing | 2026-06-08 | ✅ testing `538ade5`: #161 Pflanzen-Emojis (`plantEmojis.ts`, sprachunabhängig) in Pflanzenliste/Kalender/Agenda; #171 mehrsprachige Store-Listings (`fastlane/metadata/android/{de-DE,en-US,es-ES}`); #8 QR-Teilen (`qrcode-generator`, SVG-Render, `buildShareString`); #142 Drag&Drop (Maus/PanResponder, `clampActivityShift`). 384 Tests grün, Web-Build ok                                                                                                                                                                      |
 | **PR #157:** CI Standards Audit Listener               | 2026-06-03 | ✅ main `eb14beb`: `standards-audit.yml` (reusable-security-scan, reusable-gitignore-audit, reusable-dev-standards-audit @v1); `.gitignore` um `.env.local` + `credentials.json` ergänzt (gitignore-audit Pflichteinträge, project-templates#7)                                                                                                                                                                                                                                                                                       |
