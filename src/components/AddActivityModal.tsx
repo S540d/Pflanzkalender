@@ -11,6 +11,8 @@ import {
 import { useTheme } from '../hooks/useTheme';
 import { useLanguage } from '../contexts/LanguageContext';
 import { ACTIVITY_TYPES } from '../constants/activityTypes';
+import { Icon } from './ui';
+import { radius } from '../constants/designTokens';
 
 interface AddActivityModalProps {
   visible: boolean;
@@ -75,7 +77,11 @@ export const AddActivityModal: React.FC<AddActivityModalProps> = ({
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
       <View style={styles.overlay}>
-        <TouchableOpacity style={styles.backdrop} activeOpacity={1} onPress={handleCancel} />
+        <TouchableOpacity
+          style={[styles.backdrop, { backgroundColor: theme.overlay }]}
+          activeOpacity={1}
+          onPress={handleCancel}
+        />
         <View style={[styles.modal, { backgroundColor: theme.background }]}>
           <View style={[styles.header, { borderBottomColor: theme.border }]}>
             <Text style={[styles.title, { color: theme.text }]}>
@@ -93,31 +99,36 @@ export const AddActivityModal: React.FC<AddActivityModalProps> = ({
                 {t('activity.add.typeLabel') as string}
               </Text>
               <View style={styles.typeGrid}>
-                {ACTIVITY_TYPES.map((activityType) => (
-                  <TouchableOpacity
-                    key={activityType.type}
-                    style={[
-                      styles.typeButton,
-                      {
-                        backgroundColor:
-                          selectedType === activityType.type ? activityType.color : theme.surface,
-                        borderColor: theme.border,
-                      },
-                    ]}
-                    onPress={() => setSelectedType(activityType.type)}
-                  >
-                    <Text
+                {ACTIVITY_TYPES.map((activityType) => {
+                  const isSelected = selectedType === activityType.type;
+                  return (
+                    <TouchableOpacity
+                      key={activityType.type}
                       style={[
-                        styles.typeButtonText,
+                        styles.typeButton,
                         {
-                          color: selectedType === activityType.type ? '#FFFFFF' : theme.text,
+                          backgroundColor: isSelected ? activityType.color : theme.surface,
+                          borderColor: isSelected ? activityType.color : theme.border,
                         },
                       ]}
+                      onPress={() => setSelectedType(activityType.type)}
                     >
-                      {typeLabel(activityType.type)}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
+                      <Icon
+                        name={activityType.icon}
+                        size={15}
+                        color={isSelected ? '#FFFFFF' : activityType.color}
+                      />
+                      <Text
+                        style={[
+                          styles.typeButtonText,
+                          { color: isSelected ? '#FFFFFF' : theme.text },
+                        ]}
+                      >
+                        {typeLabel(activityType.type)}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
               </View>
             </View>
 
@@ -278,16 +289,11 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   backdrop: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    ...StyleSheet.absoluteFill,
   },
   modal: {
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
+    borderTopLeftRadius: radius.xl,
+    borderTopRightRadius: radius.xl,
     maxHeight: '85%',
   },
   header: {
@@ -319,9 +325,12 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   typeButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
     paddingVertical: 10,
-    paddingHorizontal: 16,
-    borderRadius: 8,
+    paddingHorizontal: 14,
+    borderRadius: radius.pill,
     borderWidth: 1,
   },
   typeButtonText: {

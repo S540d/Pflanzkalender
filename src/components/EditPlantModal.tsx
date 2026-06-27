@@ -82,7 +82,11 @@ export const EditPlantModal: React.FC<EditPlantModalProps> = ({
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.overlay}
       >
-        <TouchableOpacity style={styles.backdrop} activeOpacity={1} onPress={handleCancel} />
+        <TouchableOpacity
+          style={[styles.backdrop, { backgroundColor: theme.overlay }]}
+          activeOpacity={1}
+          onPress={handleCancel}
+        />
         <View style={[styles.modal, { backgroundColor: theme.background }]}>
           <View style={[styles.header, { borderBottomColor: theme.border }]}>
             <Text style={[styles.title, { color: theme.text }]}>
@@ -228,12 +232,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   backdrop: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    ...StyleSheet.absoluteFill,
   },
   modal: {
     borderTopLeftRadius: 20,

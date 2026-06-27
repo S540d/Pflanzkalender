@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useRef } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Dimensions, ScrollView } from 'react-native';
 import { useTheme } from '../hooks/useTheme';
+import { radius, spacing } from '../constants/designTokens';
 import { useLanguage } from '../contexts/LanguageContext';
 import { usePlants } from '../contexts/PlantContext';
 import { AddActivityModal } from '../components/AddActivityModal';
@@ -132,7 +133,7 @@ export const CalendarScreen: React.FC = () => {
       <View
         style={[
           styles.zoomBar,
-          { backgroundColor: theme.background, borderBottomColor: theme.border },
+          { backgroundColor: theme.surfaceElevated, borderBottomColor: theme.border },
         ]}
       >
         <TouchableOpacity
@@ -141,7 +142,10 @@ export const CalendarScreen: React.FC = () => {
           accessibilityLabel="Zoom out"
           accessibilityHint="Reduces calendar cell size to show more months"
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-          style={[styles.zoomButton, { opacity: zoomLevel <= 1 ? 0.3 : 1 }]}
+          style={[
+            styles.zoomButton,
+            { backgroundColor: theme.surface, opacity: zoomLevel <= 1 ? 0.3 : 1 },
+          ]}
           onPress={() => setZoomLevel((l) => Math.max(1, l - 1))}
           disabled={zoomLevel <= 1}
         >
@@ -156,7 +160,10 @@ export const CalendarScreen: React.FC = () => {
           accessibilityLabel="Zoom in"
           accessibilityHint="Increases calendar cell size for easier tapping"
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-          style={[styles.zoomButton, { opacity: zoomLevel >= 3 ? 0.3 : 1 }]}
+          style={[
+            styles.zoomButton,
+            { backgroundColor: theme.surface, opacity: zoomLevel >= 3 ? 0.3 : 1 },
+          ]}
           onPress={() => setZoomLevel((l) => Math.min(3, l + 1))}
           disabled={zoomLevel >= 3}
         >
@@ -220,25 +227,27 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'flex-end',
-    paddingHorizontal: 12,
-    paddingVertical: 4,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm - 2,
     borderBottomWidth: 1,
-    gap: 8,
+    gap: spacing.sm,
   },
   zoomButton: {
-    width: 28,
-    height: 28,
+    width: 32,
+    height: 32,
+    borderRadius: radius.pill,
     alignItems: 'center',
     justifyContent: 'center',
   },
   zoomButtonText: {
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: '700',
     lineHeight: 22,
   },
   zoomLabel: {
-    fontSize: 11,
-    minWidth: 36,
+    fontSize: 13,
+    fontWeight: '600',
+    minWidth: 40,
     textAlign: 'center',
   },
 });

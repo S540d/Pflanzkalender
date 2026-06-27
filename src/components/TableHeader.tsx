@@ -29,7 +29,7 @@ export const TableHeader: React.FC<TableHeaderProps> = ({
       <View
         style={[
           styles.fixedHeaderColumn,
-          { borderColor: theme.border, backgroundColor: theme.surface },
+          { borderColor: theme.border, backgroundColor: theme.surfaceElevated },
         ]}
       >
         <Text style={[styles.headerText, { color: theme.text }]}>Pflanze</Text>
@@ -57,6 +57,7 @@ export const TableHeader: React.FC<TableHeaderProps> = ({
               isCurrentPeriod = index === currentHalfMonth;
             }
 
+            const periodColor = isCurrentPeriod ? theme.primary : theme.textSecondary;
             return (
               <View
                 key={index}
@@ -64,16 +65,21 @@ export const TableHeader: React.FC<TableHeaderProps> = ({
                   isPortrait ? styles.twoMonthCell : styles.monthCell,
                   {
                     borderColor: theme.border,
-                    backgroundColor: isCurrentPeriod ? theme.border : theme.surface,
+                    backgroundColor: isCurrentPeriod ? theme.primaryLight : theme.surface,
                     ...(cellWidth !== undefined ? { width: cellWidth } : {}),
                   },
                 ]}
               >
-                <Text style={[styles.monthText, { color: theme.textSecondary }]}>
+                <Text
+                  style={[
+                    styles.monthText,
+                    { color: periodColor, fontWeight: isCurrentPeriod ? '700' : '500' },
+                  ]}
+                >
                   {isPortrait ? month : index % 2 === 0 ? month : ''}
                 </Text>
                 {!isPortrait && (
-                  <Text style={[styles.halfMonthText, { color: theme.textSecondary }]}>
+                  <Text style={[styles.halfMonthText, { color: periodColor }]}>
                     {index % 2 === 0 ? '1' : '2'}
                   </Text>
                 )}
@@ -83,7 +89,7 @@ export const TableHeader: React.FC<TableHeaderProps> = ({
           <View
             style={[
               styles.notesCell,
-              { borderColor: theme.border, backgroundColor: theme.surface },
+              { borderColor: theme.border, backgroundColor: theme.surfaceElevated },
             ]}
           >
             <Text style={[styles.headerText, { color: theme.text }]}>Notizen</Text>

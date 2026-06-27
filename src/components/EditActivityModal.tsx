@@ -12,6 +12,9 @@ import {
 import { useTheme } from '../hooks/useTheme';
 import { useLanguage } from '../contexts/LanguageContext';
 import { Activity } from '../types';
+import { radius } from '../constants/designTokens';
+import { getActivityTypeByType } from '../constants/activityTypes';
+import { Icon } from './ui';
 
 interface EditActivityModalProps {
   visible: boolean;
@@ -84,8 +87,8 @@ export const EditActivityModal: React.FC<EditActivityModalProps> = ({
 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
-      <View style={styles.overlay}>
-        <View style={[styles.modal, { backgroundColor: theme.background }]}>
+      <View style={[styles.overlay, { backgroundColor: theme.overlay }]}>
+        <View style={[styles.modal, { backgroundColor: theme.surfaceElevated }]}>
           <Text style={[styles.title, { color: theme.text }]}>
             {t('activity.edit.title') as string}
           </Text>
@@ -263,14 +266,18 @@ export const EditActivityModal: React.FC<EditActivityModalProps> = ({
             ) : null}
           </View>
 
-          <View style={styles.section}>
-            <View style={[styles.colorPreview, { backgroundColor: activity.color }]} />
+          <View style={[styles.section, styles.typeRow]}>
+            <View style={[styles.colorPreview, { backgroundColor: activity.color }]}>
+              {getActivityTypeByType(activity.type)?.icon ? (
+                <Icon name={getActivityTypeByType(activity.type)!.icon} size={14} color="#FFFFFF" />
+              ) : null}
+            </View>
             <Text style={[styles.value, { color: theme.textSecondary }]}>{activity.type}</Text>
           </View>
 
           <View style={styles.buttons}>
             <TouchableOpacity
-              style={[styles.button, styles.deleteButton, { backgroundColor: '#DC143C' }]}
+              style={[styles.button, styles.deleteButton, { backgroundColor: theme.error }]}
               onPress={handleDelete}
             >
               <Text style={styles.buttonText}>{t('activity.edit.deleteConfirm') as string}</Text>
@@ -303,7 +310,6 @@ export const EditActivityModal: React.FC<EditActivityModalProps> = ({
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -311,8 +317,13 @@ const styles = StyleSheet.create({
     width: '90%',
     maxWidth: 400,
     padding: 24,
-    borderRadius: 12,
+    borderRadius: radius.xl,
     maxHeight: '90%',
+  },
+  typeRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
   },
   title: {
     fontSize: 20,
@@ -342,9 +353,10 @@ const styles = StyleSheet.create({
   },
   colorPreview: {
     width: 40,
-    height: 24,
-    borderRadius: 4,
-    marginBottom: 8,
+    height: 26,
+    borderRadius: radius.sm,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   shiftRow: {
     flexDirection: 'row',

@@ -7,7 +7,7 @@
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#1a7a4a",
-  "theme_color": "#4CAF50",
+  "theme_color": "#3C9D5A",
   "icons": [
     {
       "src": "/Pflanzkalender/icon-192.png",
