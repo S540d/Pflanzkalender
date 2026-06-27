@@ -23,6 +23,7 @@
     "@react-native-async-storage/async-storage": "^2.2.0",
     "expo": "^54.0.35",
     "expo-constants": "~18.0.13",
+    "expo-linear-gradient": "~15.0.8",
     "expo-linking": "~8.0.12",
     "expo-navigation-bar": "~3.0.0",
     "expo-router": "^6.0.24",
