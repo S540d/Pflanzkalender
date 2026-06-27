@@ -42,7 +42,7 @@ describe('TemplateScreen', () => {
     jest.clearAllMocks();
     (AsyncStorage.getItem as jest.Mock).mockImplementation(() => Promise.resolve(null));
     (AsyncStorage.setItem as jest.Mock).mockResolvedValue(undefined);
-    (AsyncStorage.multiRemove as jest.Mock).mockResolvedValue(undefined);
+    (AsyncStorage.removeItem as jest.Mock).mockResolvedValue(undefined);
   });
 
   it('renders without crashing', () => {

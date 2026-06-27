@@ -1,5 +1,6 @@
 import React from 'react';
 import { Ionicons } from '@expo/vector-icons';
+import type { ColorValue } from 'react-native';
 
 /**
  * Zentrales Icon-Mapping. Alle Icons der App laufen über semantische Namen,
@@ -66,7 +67,7 @@ export type IconName = keyof typeof ICONS;
 interface IconProps {
   name: IconName;
   size?: number;
-  color?: string;
+  color?: ColorValue;
 }
 
 export const Icon: React.FC<IconProps> = ({ name, size = 20, color = '#000000' }) => {

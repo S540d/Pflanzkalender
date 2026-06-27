@@ -8,7 +8,7 @@
  *   - data loaded from AsyncStorage is visible in each screen independently
  */
 import React from 'react';
-import { render, waitFor } from '@testing-library/react-native';
+import { render } from '@testing-library/react-native';
 import { AgendaScreen } from '../../src/screens/AgendaScreen';
 import { ClimateScreen } from '../../src/screens/ClimateScreen';
 import { PlantProvider } from '../../src/contexts/PlantContext';

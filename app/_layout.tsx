@@ -1,4 +1,5 @@
 import React from 'react';
+import type { ColorValue } from 'react-native';
 import { Tabs } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -9,7 +10,15 @@ import { useTheme } from '../src/hooks/useTheme';
 import { Icon, type IconName } from '../src/components/ui';
 import { shadow } from '../src/constants/designTokens';
 
-function TabBarIcon({ name, color, focused }: { name: IconName; color: string; focused: boolean }) {
+function TabBarIcon({
+  name,
+  color,
+  focused,
+}: {
+  name: IconName;
+  color: ColorValue;
+  focused: boolean;
+}) {
   return <Icon name={name} size={focused ? 26 : 23} color={color} />;
 }
 
