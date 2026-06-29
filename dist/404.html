@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <title>Pflanzkalender</title>
+    <!-- The `react-native-web` recommended style reset: https://necolas.github.io/react-native-web/docs/setup/#root-element -->
+    <style id="expo-reset">
+      /* These styles make the body full-height */
+      html,
+      body {
+        height: 100%;
+      }
+      /* These styles disable body scrolling if you are using <ScrollView> */
+      body {
+        overflow: hidden;
+      }
+      /* These styles make the root element full-height */
+      #root {
+        display: flex;
+        height: 100%;
+        flex: 1;
+      }
+    </style>
+  <meta name="theme-color" content="#4CAF50">
+<link rel="icon" href="/Pflanzkalender/favicon.ico" />
+  <!-- Aggressive Cache Busting -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <meta name="version" content="1.5.3">
+  <meta name="build-timestamp" content="1782715507155">
+  <meta name="last-modified" content="2026-06-29T06:45:07.155Z">
+
+  <link rel="manifest" href="/Pflanzkalender/manifest.json">
+<meta name="description" content="Plant Calendar – Gartenaktivitäten mit halber Monatsauflösung planen und verwalten">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Pflanzkalender">
+  <link rel="apple-touch-icon" href="/Pflanzkalender/icon-192.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/Pflanzkalender/icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="/Pflanzkalender/icon-512.png">
+  </head>
+
+  <body>
+  <style>
+    #pwa-splash {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: #1a7a4a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.35s ease;
+    }
+    #pwa-splash.fade-out {
+      opacity: 0;
+      pointer-events: none;
+    }
+    #pwa-splash img {
+      width: 128px;
+      height: 128px;
+      border-radius: 28px;
+    }
+  </style>
+  <div id="pwa-splash">
+    <img src="/Pflanzkalender/icon-512.png" alt="Pflanzkalender" />
+  </div>
+  <script>
+    (function () {
+      var splash = document.getElementById('pwa-splash');
+      if (!splash) return;
+      var hidden = false;
+      function hideSplash() {
+        if (hidden) return;
+        hidden = true;
+        splash.classList.add('fade-out');
+        setTimeout(function () { splash.style.display = 'none'; }, 350);
+      }
+      // Hide once React has mounted content into the root.
+      // Only observe #root — using document.body as fallback would fire
+      // immediately because the body already contains the splash div.
+      var root = document.getElementById('root');
+      if (root) {
+        var observer = new MutationObserver(function () {
+          if (root.children.length > 0) {
+            observer.disconnect();
+            hideSplash();
+          }
+        });
+        observer.observe(root, { childList: true });
+      }
+      // Fallback: hide after 4 s regardless
+      setTimeout(hideSplash, 4000);
+    })();
+  </script>
+  <!-- Deployment Info: v1.5.3 - 2026-06-29T06:45:07.155Z -->
+
+    <!-- Use static rendering with Expo Router to support running without JavaScript. -->
+    <noscript>
+      You need to enable JavaScript to run this app.
+    </noscript>
+    <!-- The root element for your Expo app. -->
+    <div id="root"></div>
+  <script src="/Pflanzkalender/_expo/static/js/web/entry-891733f50cc61f49178f40b317f397ee.js" defer></script>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/Pflanzkalender/service-worker.js?v=1782715507200')
+          .then(function(registration) {
+            // Periodically check for updates
+            setInterval(function() { registration.update(); }, 60000);
+
+            // When a new SW is found, ask it to take over immediately
+            registration.addEventListener('updatefound', function() {
+              var newWorker = registration.installing;
+              newWorker.addEventListener('statechange', function() {
+                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                  newWorker.postMessage({ type: 'SKIP_WAITING' });
+                }
+              });
+            });
+          })
+          .catch(function(err) {
+            console.error('[SW] Registration failed:', err);
+          });
+
+        // Reload once when new SW takes control (flag prevents loop)
+        var reloading = false;
+        navigator.serviceWorker.addEventListener('controllerchange', function() {
+          if (!reloading) {
+            reloading = true;
+            window.location.reload();
+          }
+        });
+      });
+    }
+  </script>
+  </body>
+</html>
