@@ -3,6 +3,9 @@ import { View, Text, StyleSheet, Platform, PanResponder, StyleProp, ViewStyle } 
 import { Activity } from '../types';
 import { getContrastTextColor } from '../utils/colorUtils';
 import { MONTH_SHORT } from '../utils/monthHelper';
+import { getActivityTypeByType } from '../constants/activityTypes';
+import { Icon } from './ui';
+import { radius, shadow } from '../constants/designTokens';
 
 // Bewegung (px) unterhalb derer ein Druck als Tap (→ Bearbeiten) statt als
 // Drag (→ Verschieben) gewertet wird.
@@ -137,6 +140,7 @@ export const ActivityBar: React.FC<ActivityBarProps> = ({
 
   const barStyle: StyleProp<ViewStyle> = [
     styles.activityBar,
+    shadow(1),
     {
       left: `${startPosition}%`,
       width: `${width}%`,
@@ -146,10 +150,16 @@ export const ActivityBar: React.FC<ActivityBarProps> = ({
     },
   ];
 
+  const contrastColor = getContrastTextColor(activity.color);
+  const activityIcon = getActivityTypeByType(activity.type)?.icon;
+
   const labelNode = (
-    <Text style={[styles.label, { color: getContrastTextColor(activity.color) }]} numberOfLines={1}>
-      {activity.label}
-    </Text>
+    <View style={styles.labelRow}>
+      {activityIcon ? <Icon name={activityIcon} size={13} color={contrastColor} /> : null}
+      <Text style={[styles.label, { color: contrastColor }]} numberOfLines={1}>
+        {activity.label}
+      </Text>
+    </View>
   );
 
   if (Platform.OS === 'web') {
@@ -188,15 +198,21 @@ export const ActivityBar: React.FC<ActivityBarProps> = ({
 const styles = StyleSheet.create({
   activityBar: {
     position: 'absolute',
-    height: 24,
-    borderRadius: 4,
+    height: 30,
+    borderRadius: radius.sm,
     justifyContent: 'center',
-    paddingHorizontal: 4,
+    paddingHorizontal: 6,
     marginVertical: 2,
   },
+  labelRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 3,
+  },
   label: {
-    fontSize: 10,
+    fontSize: 11,
     fontWeight: '600',
+    flexShrink: 1,
     textShadowColor: 'rgba(0, 0, 0, 0.3)',
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 1,

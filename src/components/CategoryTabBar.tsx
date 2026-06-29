@@ -1,8 +1,10 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { useTheme } from '../hooks/useTheme';
 import { useLanguage } from '../contexts/LanguageContext';
 import { CATEGORY_TABS, CategoryFilter } from '../constants/categoryTabs';
+import { AppText, Icon } from './ui';
+import { radius, spacing } from '../constants/designTokens';
 
 interface CategoryTabBarProps {
   activeCategory: CategoryFilter;
@@ -20,7 +22,7 @@ export const CategoryTabBar: React.FC<CategoryTabBarProps> = ({
     <View
       style={[
         styles.tabBar,
-        { borderBottomColor: theme.border, backgroundColor: theme.background },
+        { borderBottomColor: theme.border, backgroundColor: theme.surfaceElevated },
       ]}
     >
       {CATEGORY_TABS.map((tab) => {
@@ -29,28 +31,29 @@ export const CategoryTabBar: React.FC<CategoryTabBarProps> = ({
         return (
           <TouchableOpacity
             key={tab.value}
-            style={styles.tab}
+            style={[
+              styles.chip,
+              {
+                backgroundColor: isActive ? tab.color : tab.color + '1A',
+                borderColor: isActive ? tab.color : 'transparent',
+              },
+            ]}
             onPress={() => onCategoryChange(tab.value)}
+            accessibilityRole="button"
+            accessibilityState={{ selected: isActive }}
+            accessibilityLabel={label}
           >
-            <View
-              style={[
-                styles.iconBadge,
-                { backgroundColor: isActive ? tab.color : tab.color + '30' },
-              ]}
-            >
-              <Text style={styles.tabIcon}>{tab.icon}</Text>
-            </View>
-            <Text
-              style={[
-                styles.tabLabel,
-                {
-                  color: isActive ? tab.color : theme.textSecondary,
-                  fontWeight: isActive ? '700' : '400',
-                },
-              ]}
+            <Icon name={tab.iconName} size={16} color={isActive ? '#FFFFFF' : tab.color} />
+            <AppText
+              variant="caption"
+              numberOfLines={1}
+              style={{
+                color: isActive ? '#FFFFFF' : theme.textSecondary,
+                fontWeight: isActive ? '700' : '500',
+              }}
             >
               {label}
-            </Text>
+            </AppText>
           </TouchableOpacity>
         );
       })}
@@ -62,25 +65,19 @@ const styles = StyleSheet.create({
   tabBar: {
     flexDirection: 'row',
     borderBottomWidth: 1,
-    paddingHorizontal: 4,
-    paddingVertical: 8,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.sm,
+    gap: spacing.xs,
   },
-  tab: {
+  chip: {
     flex: 1,
-    alignItems: 'center',
-    gap: 4,
-  },
-  iconBadge: {
-    width: 32,
-    height: 32,
-    borderRadius: 8,
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  tabIcon: {
-    fontSize: 16,
-  },
-  tabLabel: {
-    fontSize: 9,
+    gap: spacing.xs,
+    paddingVertical: spacing.sm - 1,
+    paddingHorizontal: spacing.xs,
+    borderRadius: radius.pill,
+    borderWidth: 1,
   },
 });

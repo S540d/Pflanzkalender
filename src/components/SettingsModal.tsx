@@ -15,6 +15,8 @@ import { sharePlants, importFromJson } from '../services/templateService';
 import { useLanguage, PICKER_LANGUAGES } from '../contexts/LanguageContext';
 import { usePlants } from '../contexts/PlantContext';
 import packageJson from '../../package.json';
+import { Button, Card, Icon } from './ui';
+import { radius, spacing } from '../constants/designTokens';
 
 interface SettingsModalProps {
   visible: boolean;
@@ -107,14 +109,19 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ visible, onClose }
         <View
           style={[
             styles.header,
-            { backgroundColor: theme.background, borderBottomColor: theme.border },
+            { backgroundColor: theme.surfaceElevated, borderBottomColor: theme.border },
           ]}
         >
           <Text style={[styles.headerTitle, { color: theme.text }]}>
             {t('settings.settings') as string}
           </Text>
-          <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-            <Text style={{ color: '#6200EE', fontSize: 16, fontWeight: '600' }}>
+          <TouchableOpacity
+            onPress={onClose}
+            style={[styles.closeButton, { backgroundColor: theme.surface }]}
+            accessibilityRole="button"
+            accessibilityLabel={t('settings.close') as string}
+          >
+            <Text style={{ color: theme.primary, fontSize: 14, fontWeight: '700' }}>
               {t('settings.close') as string}
             </Text>
           </TouchableOpacity>
@@ -123,16 +130,20 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ visible, onClose }
         {/* Content */}
         <ScrollView style={styles.content} contentContainerStyle={styles.contentContainer}>
           {/* Appearance Settings - Dark/System Only */}
-          <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: theme.textSecondary }]}>
-              {t('settings.appearance') as string}
-            </Text>
+          <Card elevation={1} padding={spacing.lg} style={styles.card}>
+            <View style={styles.sectionTitleRow}>
+              <Icon name="theme" size={16} color={theme.primary} />
+              <Text style={[styles.sectionTitle, { color: theme.textSecondary }]}>
+                {t('settings.appearance') as string}
+              </Text>
+            </View>
             <View style={styles.themeToggleContainer}>
               <TouchableOpacity
                 style={[
                   styles.themeButton,
                   {
-                    backgroundColor: themeMode === 'dark' ? '#6200EE' : theme.border,
+                    backgroundColor: themeMode === 'dark' ? theme.primary : theme.surface,
+                    borderColor: theme.border,
                     flex: 1,
                   },
                 ]}
@@ -141,9 +152,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ visible, onClose }
                 <Text
                   style={[
                     styles.themeButtonText,
-                    {
-                      color: themeMode === 'dark' ? '#fff' : theme.text,
-                    },
+                    { color: themeMode === 'dark' ? '#fff' : theme.text },
                   ]}
                 >
                   {t('settings.dark') as string}
@@ -153,7 +162,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ visible, onClose }
                 style={[
                   styles.themeButton,
                   {
-                    backgroundColor: themeMode === 'system' ? '#6200EE' : theme.border,
+                    backgroundColor: themeMode === 'system' ? theme.primary : theme.surface,
+                    borderColor: theme.border,
                     flex: 1,
                   },
                 ]}
@@ -162,24 +172,23 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ visible, onClose }
                 <Text
                   style={[
                     styles.themeButtonText,
-                    {
-                      color: themeMode === 'system' ? '#fff' : theme.text,
-                    },
+                    { color: themeMode === 'system' ? '#fff' : theme.text },
                   ]}
                 >
                   {t('settings.system') as string}
                 </Text>
               </TouchableOpacity>
             </View>
-          </View>
-
-          <View style={[styles.separator, { backgroundColor: theme.border }]} />
+          </Card>
 
           {/* Language Settings */}
-          <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: theme.textSecondary }]}>
-              {t('settings.languageSection') as string}
-            </Text>
+          <Card elevation={1} padding={spacing.lg} style={styles.card}>
+            <View style={styles.sectionTitleRow}>
+              <Icon name="language" size={16} color={theme.primary} />
+              <Text style={[styles.sectionTitle, { color: theme.textSecondary }]}>
+                {t('settings.languageSection') as string}
+              </Text>
+            </View>
             <View style={styles.languageGrid}>
               {PICKER_LANGUAGES.map((lang) => (
                 <TouchableOpacity
@@ -187,7 +196,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ visible, onClose }
                   style={[
                     styles.langButton,
                     {
-                      backgroundColor: language === lang.code ? '#6200EE' : theme.border,
+                      backgroundColor: language === lang.code ? theme.primary : theme.surface,
+                      borderColor: language === lang.code ? theme.primary : theme.border,
                     },
                   ]}
                   onPress={() => setLanguage(lang.code)}
@@ -195,9 +205,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ visible, onClose }
                   <Text
                     style={[
                       styles.themeButtonText,
-                      {
-                        color: language === lang.code ? '#fff' : theme.text,
-                      },
+                      { color: language === lang.code ? '#fff' : theme.text },
                     ]}
                   >
                     {lang.nativeLabel}
@@ -205,58 +213,34 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ visible, onClose }
                 </TouchableOpacity>
               ))}
             </View>
-          </View>
+          </Card>
 
-          <View style={[styles.separator, { backgroundColor: theme.border }]} />
-
-          {/* Export Section */}
-          <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: theme.textSecondary }]}>
-              {t('settings.exportSection') as string}
-            </Text>
-            <TouchableOpacity
-              style={[
-                styles.exportButton,
-                {
-                  backgroundColor: '#6200EE',
-                },
-              ]}
-              onPress={handleExport}
-            >
-              <Text
-                style={[
-                  styles.exportButtonText,
-                  {
-                    color: '#fff',
-                  },
-                ]}
-              >
-                {t('settings.exportData') as string}
+          {/* Export / Import Section */}
+          <Card elevation={1} padding={spacing.lg} style={styles.card}>
+            <View style={styles.sectionTitleRow}>
+              <Icon name="share" size={16} color={theme.primary} />
+              <Text style={[styles.sectionTitle, { color: theme.textSecondary }]}>
+                {t('settings.exportSection') as string}
               </Text>
-            </TouchableOpacity>
-          </View>
-
-          <View style={[styles.separator, { backgroundColor: theme.border }]} />
-
-          {/* Import Section */}
-          <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: theme.textSecondary }]}>
+            </View>
+            <Button
+              label={t('settings.exportData') as string}
+              icon="download"
+              fullWidth
+              onPress={handleExport}
+              style={styles.dataButton}
+            />
+            <Text style={[styles.sectionTitle, styles.importTitle, { color: theme.textSecondary }]}>
               {t('settings.importSection') as string}
             </Text>
-            <TouchableOpacity
-              style={[
-                styles.exportButton,
-                { backgroundColor: theme.surface, borderWidth: 1, borderColor: theme.border },
-              ]}
+            <Button
+              label={t('settings.importData') as string}
+              icon="upload"
+              variant="secondary"
+              fullWidth
               onPress={handleImport}
-            >
-              <Text style={[styles.exportButtonText, { color: theme.text }]}>
-                {t('settings.importData') as string}
-              </Text>
-            </TouchableOpacity>
-          </View>
-
-          <View style={[styles.separator, { backgroundColor: theme.border }]} />
+            />
+          </Card>
 
           {/* Feedback and Support in One Row */}
           <View style={[styles.section, styles.sectionRow]}>
@@ -266,7 +250,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ visible, onClose }
                 Linking.openURL('mailto:feedback@example.com');
               }}
             >
-              <Text style={[styles.linkText, { color: '#6200EE' }]}>
+              <Text style={[styles.linkText, { color: theme.primary }]}>
                 {t('settings.feedbackLink') as string}
               </Text>
             </TouchableOpacity>
@@ -274,13 +258,11 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ visible, onClose }
               style={styles.linkItemFlex}
               onPress={() => Linking.openURL('https://ko-fi.com/devsven')}
             >
-              <Text style={[styles.linkText, { color: '#6200EE' }]}>
+              <Text style={[styles.linkText, { color: theme.primary }]}>
                 {t('settings.supportLink') as string}
               </Text>
             </TouchableOpacity>
           </View>
-
-          <View style={[styles.separator, { backgroundColor: theme.border }]} />
 
           {/* About */}
           <View style={styles.section}>
@@ -311,17 +293,24 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
   },
   headerTitle: {
-    fontSize: 18,
-    fontWeight: '600',
+    fontSize: 20,
+    fontWeight: '700',
   },
   closeButton: {
-    paddingHorizontal: 8,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs + 2,
+    borderRadius: radius.pill,
   },
   content: {
     flex: 1,
   },
   contentContainer: {
-    padding: 20,
+    padding: 16,
+    gap: spacing.md,
+  },
+
+  card: {
+    marginBottom: 0,
   },
 
   section: {
@@ -334,12 +323,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 0,
   },
 
+  sectionTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    marginBottom: 12,
+  },
+
   sectionTitle: {
     fontSize: 12,
-    fontWeight: '600',
+    fontWeight: '700',
     textTransform: 'uppercase',
     letterSpacing: 0.5,
-    marginBottom: 12,
   },
 
   themeToggleContainer: {
@@ -350,10 +345,11 @@ const styles = StyleSheet.create({
   themeButton: {
     paddingVertical: 10,
     paddingHorizontal: 12,
-    borderRadius: 6,
+    borderRadius: radius.md,
+    borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    minHeight: 40,
+    minHeight: 44,
   },
 
   themeButtonText: {
@@ -370,20 +366,23 @@ const styles = StyleSheet.create({
   langButton: {
     paddingVertical: 10,
     paddingHorizontal: 14,
-    borderRadius: 6,
+    borderRadius: radius.md,
+    borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    minHeight: 40,
+    minHeight: 44,
   },
 
-  separator: {
-    height: 1,
-    marginVertical: 8,
+  dataButton: {
+    marginBottom: spacing.md,
+  },
+  importTitle: {
+    marginBottom: spacing.sm,
   },
 
   linkText: {
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: '600',
     paddingVertical: 12,
   },
 
@@ -396,22 +395,5 @@ const styles = StyleSheet.create({
   infoText: {
     fontSize: 13,
     marginTop: 4,
-  },
-
-  exportButton: {
-    width: '100%',
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-    borderRadius: 6,
-    alignItems: 'center',
-    justifyContent: 'center',
-    minHeight: 44,
-  },
-
-  exportButtonText: {
-    fontSize: 12,
-    fontWeight: '600',
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
   },
 });

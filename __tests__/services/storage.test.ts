@@ -103,8 +103,8 @@ describe('storageService.clearAll', () => {
     expect(isGuest).toBe(true);
   });
 
-  it('silently ignores AsyncStorage.multiRemove errors', async () => {
-    jest.spyOn(AsyncStorage, 'multiRemove').mockRejectedValueOnce(new Error('remove error'));
+  it('silently ignores AsyncStorage.removeItem errors', async () => {
+    jest.spyOn(AsyncStorage, 'removeItem').mockRejectedValueOnce(new Error('remove error'));
     await expect(storageService.clearAll()).resolves.toBeUndefined();
   });
 });

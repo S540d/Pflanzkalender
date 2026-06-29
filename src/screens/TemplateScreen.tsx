@@ -17,8 +17,16 @@ import { COMMUNITY_TEMPLATES } from '../constants/communityTemplates';
 import { sharePlants, importFromJson, buildShareString } from '../services/templateService';
 import { QRCodeView } from '../components/QRCodeView';
 import { utf8ByteLength, QR_MAX_BYTES } from '../utils/qrcode';
+import { Card, Icon, type IconName } from '../components/ui';
+import { radius } from '../constants/designTokens';
 
 type Section = 'templates' | 'export' | 'import';
+
+const SECTION_ICON: Record<Section, IconName> = {
+  templates: 'templates',
+  export: 'share',
+  import: 'download',
+};
 
 export const TemplateScreen: React.FC = () => {
   const { theme } = useTheme();
@@ -171,26 +179,31 @@ export const TemplateScreen: React.FC = () => {
 
       {/* Section switcher */}
       <View style={styles.tabRow}>
-        {(['templates', 'export', 'import'] as Section[]).map((section) => (
-          <TouchableOpacity
-            key={section}
-            style={[
-              styles.tabBtn,
-              { borderColor: theme.border },
-              activeSection === section && { backgroundColor: theme.primary },
-            ]}
-            onPress={() => setActiveSection(section)}
-          >
-            <Text
+        {(['templates', 'export', 'import'] as Section[]).map((section) => {
+          const isActive = activeSection === section;
+          return (
+            <TouchableOpacity
+              key={section}
               style={[
-                styles.tabBtnText,
-                { color: activeSection === section ? '#fff' : theme.textSecondary },
+                styles.tabBtn,
+                {
+                  borderColor: isActive ? theme.primary : theme.border,
+                  backgroundColor: isActive ? theme.primary : theme.surface,
+                },
               ]}
+              onPress={() => setActiveSection(section)}
             >
-              {sectionLabel(section)}
-            </Text>
-          </TouchableOpacity>
-        ))}
+              <Icon
+                name={SECTION_ICON[section]}
+                size={15}
+                color={isActive ? '#fff' : theme.textSecondary}
+              />
+              <Text style={[styles.tabBtnText, { color: isActive ? '#fff' : theme.textSecondary }]}>
+                {sectionLabel(section)}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
       </View>
 
       {/* Community Templates */}
@@ -200,10 +213,7 @@ export const TemplateScreen: React.FC = () => {
             {String(t('template.community'))}
           </Text>
           {COMMUNITY_TEMPLATES.map((tmpl) => (
-            <View
-              key={tmpl.id}
-              style={[styles.card, { backgroundColor: theme.surface, borderColor: theme.border }]}
-            >
+            <Card key={tmpl.id} elevation={1} padding={14} style={styles.card}>
               <View style={styles.cardHeader}>
                 <Text style={styles.cardIcon}>{tmpl.icon}</Text>
                 <View style={styles.cardTitleBlock}>
@@ -224,7 +234,7 @@ export const TemplateScreen: React.FC = () => {
               >
                 <Text style={styles.importBtnText}>{String(t('template.importBtn'))}</Text>
               </TouchableOpacity>
-            </View>
+            </Card>
           ))}
         </View>
       )}
@@ -317,8 +327,8 @@ export const TemplateScreen: React.FC = () => {
         animationType="fade"
         onRequestClose={() => setShowQr(false)}
       >
-        <View style={styles.qrOverlay}>
-          <View style={[styles.qrModal, { backgroundColor: theme.surface }]}>
+        <View style={[styles.qrOverlay, { backgroundColor: theme.overlay }]}>
+          <View style={[styles.qrModal, { backgroundColor: theme.surfaceElevated }]}>
             <Text style={[styles.qrTitle, { color: theme.text }]}>
               {String(t('template.qrShareTitle'))}
             </Text>
@@ -364,11 +374,14 @@ const makeStyles = () =>
     },
     tabBtn: {
       flex: 1,
-      paddingVertical: 8,
+      flexDirection: 'row',
+      paddingVertical: 9,
       paddingHorizontal: 4,
-      borderRadius: 8,
+      borderRadius: radius.pill,
       borderWidth: 1,
       alignItems: 'center',
+      justifyContent: 'center',
+      gap: 5,
     },
     tabBtnText: {
       fontSize: 13,
@@ -385,9 +398,6 @@ const makeStyles = () =>
       textTransform: 'uppercase',
     },
     card: {
-      borderRadius: 12,
-      borderWidth: 1,
-      padding: 14,
       marginBottom: 12,
     },
     cardHeader: {

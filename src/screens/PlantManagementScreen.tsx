@@ -18,7 +18,10 @@ import { Plant, PlantLocation, PlantCategory } from '../types';
 import { PLANT_LOCATION_METADATA, PLANT_CATEGORY_METADATA } from '../constants/plantMetadata';
 import { getPlantDisplayName } from '../constants/plantNames';
 import { getPlantEmoji } from '../constants/plantEmojis';
-import { CATEGORY_TABS, CategoryFilter } from '../constants/categoryTabs';
+import { CategoryFilter } from '../constants/categoryTabs';
+import { CategoryTabBar } from '../components/CategoryTabBar';
+import { Button, Card, Icon } from '../components/ui';
+import { radius, spacing } from '../constants/designTokens';
 
 export const PlantManagementScreen: React.FC = () => {
   const { theme } = useTheme();
@@ -112,51 +115,18 @@ export const PlantManagementScreen: React.FC = () => {
           />
 
           {/* Kategorie-Filter */}
-          <View
-            style={[
-              styles.categoryBar,
-              { borderColor: theme.border, backgroundColor: theme.surface },
-            ]}
-          >
-            {CATEGORY_TABS.map((tab) => {
-              const isActive = activeCategory === tab.value;
-              const label = language === 'de' ? tab.labelDe : tab.labelEn;
-              return (
-                <TouchableOpacity
-                  key={tab.value}
-                  style={styles.categoryTab}
-                  onPress={() => setActiveCategory(tab.value)}
-                >
-                  <View
-                    style={[
-                      styles.categoryIconBadge,
-                      { backgroundColor: isActive ? tab.color : tab.color + '30' },
-                    ]}
-                  >
-                    <Text style={styles.categoryTabIcon}>{tab.icon}</Text>
-                  </View>
-                  <Text
-                    style={[
-                      styles.categoryTabLabel,
-                      {
-                        color: isActive ? tab.color : theme.textSecondary,
-                        fontWeight: isActive ? '700' : '400',
-                      },
-                    ]}
-                  >
-                    {label}
-                  </Text>
-                </TouchableOpacity>
-              );
-            })}
+          <View style={styles.categoryBarWrap}>
+            <CategoryTabBar activeCategory={activeCategory} onCategoryChange={setActiveCategory} />
           </View>
 
-          <TouchableOpacity
-            style={[styles.addButton, { backgroundColor: theme.primary }]}
+          <Button
+            label={t('plants.add') as string}
+            icon="add"
+            size="lg"
+            fullWidth
             onPress={() => setShowAddPlant(true)}
-          >
-            <Text style={styles.addButtonText}>{t('plants.add') as string}</Text>
-          </TouchableOpacity>
+            style={styles.addButton}
+          />
 
           <View style={styles.plantList}>
             {filteredPlants.length === 0 ? (
@@ -167,13 +137,7 @@ export const PlantManagementScreen: React.FC = () => {
               </Text>
             ) : (
               filteredPlants.map((plant) => (
-                <View
-                  key={plant.id}
-                  style={[
-                    styles.plantItem,
-                    { backgroundColor: theme.surface, borderColor: theme.border },
-                  ]}
-                >
+                <Card key={plant.id} elevation={1} padding={spacing.lg} style={styles.plantItem}>
                   <View style={styles.plantInfo}>
                     <View style={styles.plantNameRow}>
                       <Text style={styles.plantEmoji}>
@@ -216,21 +180,21 @@ export const PlantManagementScreen: React.FC = () => {
                       accessibilityLabel={`${t('plants.editTitle') as string}: ${getPlantDisplayName(plant.name, language)}`}
                       accessibilityRole="button"
                     >
-                      <Text style={styles.actionButtonText}>✏️</Text>
+                      <Icon name="edit" size={18} color={theme.primary} />
                     </TouchableOpacity>
                     <TouchableOpacity
                       style={[
                         styles.actionButton,
-                        { backgroundColor: '#ff4444', borderColor: '#ff4444' },
+                        { backgroundColor: theme.error, borderColor: theme.error },
                       ]}
                       onPress={() => handleDeletePlant(plant.id, plant.name)}
                       accessibilityLabel={`${t('plants.deleteTitle') as string}: ${getPlantDisplayName(plant.name, language)}`}
                       accessibilityRole="button"
                     >
-                      <Text style={styles.actionButtonText}>🗑️</Text>
+                      <Icon name="delete" size={18} color="#FFFFFF" />
                     </TouchableOpacity>
                   </View>
-                </View>
+                </Card>
               ))
             )}
           </View>
@@ -274,52 +238,18 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     padding: 12,
-    borderRadius: 10,
+    borderRadius: radius.md,
     borderWidth: 1,
     fontSize: 15,
     marginBottom: 12,
   },
-  categoryBar: {
-    flexDirection: 'row',
-    borderRadius: 12,
-    borderWidth: 1,
-    paddingVertical: 8,
-    paddingHorizontal: 4,
-    marginBottom: 16,
-  },
-  categoryTab: {
-    flex: 1,
-    alignItems: 'center',
-    gap: 4,
-  },
-  categoryIconBadge: {
-    width: 32,
-    height: 32,
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  categoryTabIcon: {
-    fontSize: 16,
-  },
-  categoryTabLabel: {
-    fontSize: 9,
+  categoryBarWrap: {
+    borderRadius: radius.lg,
+    overflow: 'hidden',
+    marginBottom: spacing.lg,
   },
   addButton: {
-    padding: 16,
-    borderRadius: 12,
-    alignItems: 'center',
-    marginBottom: 24,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  addButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
+    marginBottom: spacing.xxl,
   },
   plantList: {
     gap: 12,
@@ -332,9 +262,6 @@ const styles = StyleSheet.create({
   plantItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 16,
-    borderRadius: 12,
-    borderWidth: 1,
     marginBottom: 12,
   },
   plantInfo: {
@@ -377,12 +304,11 @@ const styles = StyleSheet.create({
     marginLeft: 12,
   },
   actionButton: {
-    padding: 10,
-    borderRadius: 8,
+    width: 40,
+    height: 40,
+    borderRadius: radius.md,
     borderWidth: 1,
     alignItems: 'center',
-  },
-  actionButtonText: {
-    fontSize: 18,
+    justifyContent: 'center',
   },
 });

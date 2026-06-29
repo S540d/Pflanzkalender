@@ -96,9 +96,10 @@ describe('PlantManagementScreen', () => {
       key === '@Pflanzkalender:plants' ? Promise.resolve(testPlant) : Promise.resolve(null)
     );
 
-    const { findByText } = render(<PlantManagementScreen />, { wrapper: Wrapper });
+    const { findByLabelText } = render(<PlantManagementScreen />, { wrapper: Wrapper });
 
-    const deleteButton = await findByText('🗑️', {}, { timeout: 3000 });
+    // Delete-Button wird per accessibilityLabel gefunden (Vektor-Icon statt Emoji).
+    const deleteButton = await findByLabelText(/löschen|delete/i, {}, { timeout: 3000 });
     fireEvent.press(deleteButton);
 
     expect(alertSpy).toHaveBeenCalled();

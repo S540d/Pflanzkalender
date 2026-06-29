@@ -13,6 +13,10 @@ import { ActivityBar } from './ActivityBar';
 import { useTheme } from '../hooks/useTheme';
 import { usePlants } from '../contexts/PlantContext';
 import { calculateActivityRows } from '../utils/activityLayout';
+import { radius } from '../constants/designTokens';
+
+// Vertikaler Abstand pro Aktivitäts-Zeile (muss zur ActivityBar-Höhe passen).
+const ROW_STRIDE = 34;
 
 interface MonthCellWebProps {
   onMouseDown?: (e: React.MouseEvent) => void;
@@ -109,7 +113,7 @@ export const PlantRow: React.FC<PlantRowProps> = ({
   );
 
   const maxRow = activitiesWithRows.reduce((max, a) => Math.max(max, a.row), 0);
-  const minHeight = Math.max(60, (maxRow + 1) * 28 + 8);
+  const minHeight = Math.max(64, (maxRow + 1) * ROW_STRIDE + 8);
 
   const handleNotesPress = () => {
     setIsEditingNotes(true);
@@ -194,7 +198,10 @@ export const PlantRow: React.FC<PlantRowProps> = ({
 
         <View style={styles.activitiesLayer} pointerEvents="box-none">
           {activitiesWithRows.map((activity) => (
-            <View key={activity.id} style={[styles.activityContainer, { top: activity.row * 28 }]}>
+            <View
+              key={activity.id}
+              style={[styles.activityContainer, { top: activity.row * ROW_STRIDE }]}
+            >
               <ActivityBar
                 activity={activity}
                 onPress={() => onPressActivity?.(activity.id)}
@@ -296,13 +303,13 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 0,
     right: 0,
-    height: 24,
+    height: 30,
   },
   dragPreviewBar: {
     position: 'absolute',
     top: 0,
-    height: 24,
-    borderRadius: 4,
+    height: 30,
+    borderRadius: radius.sm,
     borderWidth: 1,
     borderStyle: 'dashed',
   },

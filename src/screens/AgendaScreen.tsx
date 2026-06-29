@@ -1,17 +1,22 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { useTheme } from '../hooks/useTheme';
 import { usePlants } from '../contexts/PlantContext';
 import { useLanguage } from '../contexts/LanguageContext';
-import { CATEGORY_TABS, CategoryFilter } from '../constants/categoryTabs';
+import { CategoryFilter } from '../constants/categoryTabs';
+import { CategoryTabBar } from '../components/CategoryTabBar';
 import { getPlantDisplayName } from '../constants/plantNames';
 import { getPlantEmoji } from '../constants/plantEmojis';
+import { getActivityTypeByType } from '../constants/activityTypes';
+import { Card, Icon, type IconName } from '../components/ui';
+import { radius, spacing } from '../constants/designTokens';
 
 interface ActivityInfo {
   plantName: string;
   plantEmoji: string;
   activityLabel: string;
   activityColor: string;
+  activityIcon?: IconName;
   notes?: string;
 }
 
@@ -48,6 +53,7 @@ export const AgendaScreen: React.FC = () => {
               plantEmoji: getPlantEmoji(plant.name, plant.category),
               activityLabel: activity.label,
               activityColor: activity.color,
+              activityIcon: getActivityTypeByType(activity.type)?.icon,
               notes: plant.notes,
             });
           }
@@ -104,12 +110,18 @@ export const AgendaScreen: React.FC = () => {
           </Text>
         ) : (
           activities.map((activity, index) => (
-            <View
+            <Card
               key={index}
-              style={[styles.card, { backgroundColor: theme.surface, borderColor: theme.border }]}
+              elevation={1}
+              padding={spacing.md}
+              style={[styles.card, { borderLeftWidth: 4, borderLeftColor: activity.activityColor }]}
             >
               <View style={styles.cardHeader}>
-                <View style={[styles.colorDot, { backgroundColor: activity.activityColor }]} />
+                <View style={[styles.iconChip, { backgroundColor: activity.activityColor }]}>
+                  {activity.activityIcon ? (
+                    <Icon name={activity.activityIcon} size={13} color="#FFFFFF" />
+                  ) : null}
+                </View>
                 <Text style={[styles.activityLabel, { color: theme.text }]}>
                   {activity.activityLabel}
                 </Text>
@@ -121,7 +133,7 @@ export const AgendaScreen: React.FC = () => {
               {activity.notes && (
                 <Text style={[styles.notes, { color: theme.textSecondary }]}>{activity.notes}</Text>
               )}
-            </View>
+            </Card>
           ))
         )}
       </View>
@@ -130,45 +142,7 @@ export const AgendaScreen: React.FC = () => {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
-      {/* Kategorie-Tabs */}
-      <View
-        style={[
-          styles.tabBar,
-          { borderBottomColor: theme.border, backgroundColor: theme.background },
-        ]}
-      >
-        {CATEGORY_TABS.map((tab) => {
-          const isActive = activeCategory === tab.value;
-          const label = language === 'de' ? tab.labelDe : tab.labelEn;
-          return (
-            <TouchableOpacity
-              key={tab.value}
-              style={styles.tab}
-              onPress={() => setActiveCategory(tab.value)}
-            >
-              <View
-                style={[
-                  styles.iconBadge,
-                  { backgroundColor: isActive ? tab.color : tab.color + '30' },
-                ]}
-              >
-                <Text style={styles.tabIcon}>{tab.icon}</Text>
-              </View>
-              <Text
-                style={[
-                  styles.tabLabel,
-                  {
-                    color: isActive ? tab.color : theme.textSecondary,
-                    fontWeight: isActive ? '700' : '400',
-                  },
-                ]}
-              >
-                {label}
-              </Text>
-            </TouchableOpacity>
-          );
-        })}
-      </View>
+      <CategoryTabBar activeCategory={activeCategory} onCategoryChange={setActiveCategory} />
 
       <ScrollView horizontal style={styles.scrollView}>
         <View style={styles.columnsContainer}>
@@ -185,45 +159,21 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  tabBar: {
-    flexDirection: 'row',
-    borderBottomWidth: 1,
-    paddingHorizontal: 4,
-    paddingVertical: 8,
-  },
-  tab: {
-    flex: 1,
-    alignItems: 'center',
-    gap: 4,
-  },
-  iconBadge: {
-    width: 36,
-    height: 36,
-    borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  tabIcon: {
-    fontSize: 18,
-  },
-  tabLabel: {
-    fontSize: 10,
-  },
   scrollView: {
     flex: 1,
   },
   columnsContainer: {
     flexDirection: 'row',
-    padding: 16,
-    gap: 16,
+    padding: spacing.lg,
+    gap: spacing.lg,
   },
   column: {
-    width: 160,
-    paddingTop: 4,
+    width: 168,
+    paddingTop: spacing.xs,
   },
   columnTitle: {
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: '700',
     marginBottom: 4,
   },
   columnSubtitle: {
@@ -231,30 +181,30 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   emptyText: {
-    fontSize: 12,
+    fontSize: 13,
     textAlign: 'center',
-    marginTop: 16,
+    marginTop: spacing.lg,
   },
   card: {
-    padding: 12,
-    marginBottom: 8,
-    borderRadius: 8,
-    borderWidth: 1,
+    marginBottom: spacing.sm,
   },
   cardHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 4,
+    gap: spacing.sm,
+    marginBottom: spacing.xs + 2,
   },
-  colorDot: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-    marginRight: 8,
+  iconChip: {
+    width: 22,
+    height: 22,
+    borderRadius: radius.sm,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   activityLabel: {
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: '700',
+    flexShrink: 1,
   },
   plantNameRow: {
     flexDirection: 'row',
@@ -266,10 +216,11 @@ const styles = StyleSheet.create({
     marginRight: 6,
   },
   plantName: {
-    fontSize: 16,
-    fontWeight: 'bold',
+    fontSize: 15,
+    fontWeight: '600',
   },
   notes: {
     fontSize: 12,
+    lineHeight: 17,
   },
 });
