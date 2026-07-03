@@ -21,7 +21,7 @@
     "path": "./android.keystore",
     "alias": "android"
   },
-  "appVersionCode": 10,
+  "appVersionCode": 11,
   "appVersionName": "1.5.3",
   "shortcuts": [],
   "generatorApp": "bubblewrap-cli",
