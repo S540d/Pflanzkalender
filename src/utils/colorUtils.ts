@@ -45,3 +45,42 @@ export const getContrastTextColor = (hex: string): string => {
 
   return luminance > 0.179 ? '#000000' : '#FFFFFF';
 };
+
+/**
+ * Aufhellt (percent > 0) oder verdunkelt (percent < 0) eine Hex-Farbe um den
+ * angegebenen Prozentsatz. Für Gradient-Stops (heller/dunklerer zweiter Stop
+ * derselben Grundfarbe statt einer zweiten, unabhängigen Farbe).
+ *
+ * Unterstützt 3- und 6-stellige Hex-Farben. Ungültige Eingaben werden
+ * unverändert zurückgegeben.
+ *
+ * @param hex - Ausgangsfarbe als Hex-String
+ * @param percent - -100 bis 100
+ */
+export const shadeColor = (hex: string, percent: number): string => {
+  let sanitized = hex.replace('#', '');
+
+  if (sanitized.length === 3) {
+    sanitized = sanitized
+      .split('')
+      .map((c) => c + c)
+      .join('');
+  }
+
+  if (sanitized.length !== 6) {
+    return hex;
+  }
+
+  const num = parseInt(sanitized, 16);
+  if (isNaN(num)) {
+    return hex;
+  }
+
+  const amt = Math.round(2.55 * percent);
+  const clamp = (value: number) => Math.max(0, Math.min(255, value));
+  const r = clamp((num >> 16) + amt);
+  const g = clamp(((num >> 8) & 0x00ff) + amt);
+  const b = clamp((num & 0x0000ff) + amt);
+
+  return `#${(0x1000000 + r * 0x10000 + g * 0x100 + b).toString(16).slice(1)}`;
+};
