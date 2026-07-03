@@ -14,10 +14,10 @@ Repo: https://github.com/s540d/Pflanzkalender
 
 ## Tech Stack (exakte Versionen)
 
-Stand **testing** (SDK 56). **main** liegt noch auf SDK 54 (Expo `^54.0.35`, RN `0.81.x`, TS `~5.9.2`) – siehe „Aktuelle Version".
+Stand main = testing (SDK 56, seit PR #194 synchron) – siehe „Aktuelle Version".
 
-| Paket                | Version (testing)                            |
-| -------------------- | -------------------------------------------- |
+| Paket                | Version                                      |
+| -------------------- | --------------------------------------------- |
 | Expo                 | ^56.0.12                                     |
 | React                | 19.2.3                                       |
 | React Native         | 0.85.3                                       |
@@ -25,7 +25,8 @@ Stand **testing** (SDK 56). **main** liegt noch auf SDK 54 (Expo `^54.0.35`, RN 
 | TypeScript           | ~6.0.3                                       |
 | expo-router          | ~56.2.11                                     |
 | @expo/vector-icons   | ^15.0.2 (seit Redesign PR #193)              |
-| expo-linear-gradient | ~56.0.4 (seit Redesign PR #193)              |
+| expo-linear-gradient | ~56.0.4 (seit PR #193 installiert, seit PR #195 genutzt: CategoryTabBar/Button) |
+| expo-haptics         | ~56.0.3 (seit PR #195 – Impact-Feedback bei Button-Press/Drag&Drop) |
 | AsyncStorage         | ^3.1.1                                       |
 | Firebase             | ^12.15.0 (initialisiert, Placeholder-Config) |
 
@@ -36,18 +37,16 @@ Deploy: GitHub Pages via `gh-pages` unter `/Pflanzkalender/`
 
 ## Aktuelle Version: 1.5.3
 
-**Stand 2026-06-27:** main = v1.5.3 (Expo SDK 54). **testing ist 2 Commits voraus** und noch nicht in main:
+**Stand 2026-07-03:** main und testing sind seit PR #194 (2026-06-27) wieder synchron – beide auf v1.5.3, Expo **SDK 56** + UI-Redesign. Die frühere „main hängt 2 Commits hinterher"-Situation (SDK 54 vs. SDK 56) ist aufgelöst.
 
-- **main branch:** v1.5.3, Expo **SDK 54** (`f725479`, via PR #191). Stabiler Production-Stand.
-- **testing branch:** v1.5.3, Expo **SDK 56** + UI-Redesign (`6cd4013`). Enthält:
-  - **PR #192 (#189):** Expo SDK 54 → 56 Upgrade (RN 0.85, TS 6, eslint-hooks 7)
-  - **PR #193:** Optisches Modern-Redesign – Vektor-Icons (`@expo/vector-icons`/Ionicons), Design-Token-System (`src/constants/designTokens.ts`), UI-Primitive (`src/components/ui/`: Icon, Button, Card, Badge, AppText), neue Farbpalette (Primär `#3C9D5A`)
-  - **Noch offen:** PR `testing → main` für SDK 56 + Redesign. Version-Bump vor diesem Merge erwägen (testing trägt weiter 1.5.3, kein Bump für SDK-Upgrade/Redesign).
-- **Offen:** Issue #152 – Konsolidierung der zwei parallelen Import-/Export-Pfade (SettingsModal-Import #149 vs. TemplateScreen #8); enthält auch die in PR #151 vertagten Import-Bugs (addPlant-Schleife Stale-State/ID-Kollision, `isDefault:true`)
+- **PR #192 (#189):** Expo SDK 54 → 56 Upgrade (RN 0.85, TS 6, eslint-hooks 7) – in main
+- **PR #193:** Optisches Modern-Redesign – Vektor-Icons (`@expo/vector-icons`/Ionicons), Design-Token-System (`src/constants/designTokens.ts`), UI-Primitive (`src/components/ui/`: Icon, Button, Card, Badge, AppText), neue Farbpalette (Primär `#3C9D5A`) – in main
+- **PR #195 (in Arbeit):** `appVersionCode` 10 → 11 (nächster Play-Store-Build) + UI-Politur auf Basis des Redesigns: `expo-linear-gradient` (bis dahin installiert, aber ungenutzt) jetzt in `CategoryTabBar` (aktiver Chip, Cross-Fade) und `ui/Button` (primary/danger) eingesetzt; `ActivityBar` bekommt eine Fade/Scale-Entrance-Animation über die vorhandenen `duration`-Tokens; `expo-haptics` (`~56.0.3`) für Impact-Feedback bei Button-Press und Drag&Drop ergänzt; Empty-State in `PlantRowsContainer` nutzt jetzt Icon + den vorhandenen i18n-Key `plants.empty` statt hartcodiertem Text.
+- **Issue #152** (Import-/Export-Konsolidierung) ist **geschlossen** (2026-06-05) – war in älteren CLAUDE.md-Ständen fälschlich noch als offen gelistet, siehe „Offene Issues" unten für den aktuellen Stand.
 
 **SDK-56-Fallstrick (aus PR #193 gelernt):** Unter SDK 56 / RN 0.85 nötig, was unter SDK 54 noch ging: `StyleSheet.absoluteFillObject` → `absoluteFill` (RN-0.85-Rename); `tabBarIcon`-Callback von expo-router 56 liefert `ColorValue` statt `string`; `@expo/vector-icons` muss explizit deklariert sein (war nur transitiv).
 
-Versions-Stellen: `package.json`, `app.json`, `twa-manifest.template.json` – immer alle drei synchron halten, sonst schlägt CI fehl. `SettingsScreen.tsx` liest Version jetzt dynamisch aus `package.json` (seit PR #124), kein manuelles Sync mehr nötig.
+Versions-Stellen: `package.json`, `app.json`, `twa-manifest.template.json` – immer alle drei synchron halten, sonst schlägt CI fehl. `SettingsScreen.tsx` liest Version jetzt dynamisch aus `package.json` (seit PR #124), kein manuelles Sync mehr nötig. `twa-manifest.template.json` trägt zusätzlich `appVersionCode` (reiner Android-Build-Zähler für den Play Store, unabhängig vom Semver-`version`-String) – bei jedem neuen Play-Store-Upload hochzählen, auch ohne Feature-Release (siehe PR #195).
 
 ---
 
@@ -147,6 +146,10 @@ Activity {
 `npm ci` in CI ist streng – der Lockfile muss exakt mit package.json übereinstimmen. **Nie manuell bearbeiten.** Nach Dependency-Änderungen immer `npm install --package-lock-only --ignore-scripts` laufen lassen und den resultierenden Lockfile committen.
 
 **Wichtig – `--legacy-peer-deps`:** Der bestehende Dependency-Baum hat einen ungelösten Peer-Konflikt (expo-router / @react-navigation). Jeder `npm install <pkg>` schlägt daher mit `ERESOLVE` fehl, **außer** mit `--legacy-peer-deps`. CI nutzt durchgängig `npm ci --legacy-peer-deps` (siehe `ci-cd.yml`, Deploy-Workflows). Neue Pakete also immer `npm install <pkg> --save --legacy-peer-deps` installieren – der so erzeugte Lockfile ist mit `npm ci --legacy-peer-deps` konsistent.
+
+### Lint & Format Check – `eslint` reicht nicht, `prettier --check` separat prüfen
+
+Der CI-Job „Lint & Format Check" prüft **beides**: `npm run lint` (ESLint) **und** `npm run format:check` (`prettier --check .`). Lokal nur `eslint .` laufen zu lassen reicht nicht – Prettier hat eigene Regeln (Zeilenumbrüche, Einrückung bei mehrzeiligen JSX-Props etc.), die ESLint nicht meldet. Vor jedem Commit mit Formatierungsrelevanz beides laufen lassen: `npx eslint <geänderte Dateien>` **und** `npx prettier --check <geänderte Dateien>` (bzw. bei Abweichungen `npx prettier --write`). Erlebt in PR #195: CI-Job rot trotz sauberem `tsc`/`eslint`, weil zwei JSX-Dateien nicht Prettier-formatiert waren.
 
 ### Versions-Konsistenz
 
@@ -284,12 +287,12 @@ Vollständige Roadmap: https://github.com/S540d/Pflanzkalender/issues/47
 
 ---
 
-## Offene Issues (Stand 2026-06-27)
+## Offene Issues (Stand 2026-07-03)
 
-**Status: main = v1.5.3 (SDK 54). testing = v1.5.3 (SDK 56 + UI-Redesign), 2 Commits voraus, PR `testing → main` noch offen. 384 Tests grün.**
+**Status: main = testing = v1.5.3 (SDK 56 + UI-Redesign), seit PR #194 synchron. PR #195 (appVersionCode-Bump + UI-Politur: Gradients/Micro-Interactions/Haptics) unterwegs testing → main. 384 Tests grün.**
 
-**Aktuell offen:** #171 (Store-Eintrag überarbeiten), #94 (Statistik/Dashboard), #91 (Agenda-Vorschau), #48 (Klimazonen), #9 (Fruchtfolge/Mischkultur), #4 (Push), #152 (Import-Konsolidierung, Tech-Debt).
-**Zuletzt geschlossen (2026-06-27):** #161 (Emojis, PR #172/#174) und #8 (Template-System, PR #147/#151) – waren versehentlich offen geblieben.
+**Aktuell offen:** #171 (Store-Eintrag überarbeiten), #94 (Statistik/Dashboard), #91 (Agenda-Vorschau), #48 (Klimazonen), #9 (Fruchtfolge/Mischkultur), #4 (Push).
+**Zuletzt geschlossen:** #152 (Import-/Export-Konsolidierung, 2026-06-05), #161 (Emojis, PR #172/#174) und #8 (Template-System, PR #147/#151, 2026-06-27).
 
 ### v1.4.0 – abgeschlossen / Play Store
 
@@ -314,7 +317,7 @@ Vollständige Roadmap: https://github.com/S540d/Pflanzkalender/issues/47
 
 ### Wartbarkeit / Tech-Debt
 
-- **#152** Konsolidierung der zwei parallelen Import-/Export-Pfade (SettingsModal-Import #149 ersetzt via `replacePlants` vs. TemplateScreen #8 hängt via `addPlant`-Schleife an). Enthält die in PR #151 vertagten Bugs: `addPlant`-Schleife (Stale-State → nur letzte Pflanze, `Date.now()`-ID-Kollision) und `isDefault:true`-Importe nicht-editierbar. Ziel: ein Import-/Export-Service, einheitliches Verhalten, `TemplateScreen`-i18n vollständig (statt `isDe`-Ternaries)
+- **#152** ✅ **Geschlossen** (2026-06-05) – Konsolidierung der zwei parallelen Import-/Export-Pfade (SettingsModal-Import #149 vs. TemplateScreen #8), inkl. der in PR #151 vertagten Bugs (`addPlant`-Schleife Stale-State/ID-Kollision, `isDefault:true`-Importe nicht-editierbar)
 
 ## Abgeschlossene Roadmap-Issues
 
@@ -322,11 +325,13 @@ Vollständige Roadmap: https://github.com/S540d/Pflanzkalender/issues/47
 
 ---
 
-## Letzte Merges / Fixes (2026-06-27)
+## Letzte Merges / Fixes (2026-07-03)
 
 | Was                                                    | Wann       | Details                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 | ------------------------------------------------------ | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **PR #193:** UI-Modern-Redesign → testing              | 2026-06-27 | ✅ testing `6cd4013`: Vektor-Icons (`@expo/vector-icons`/Ionicons), Design-Tokens (`designTokens.ts`), UI-Primitive (`src/components/ui/`), neue Farbpalette (Primär `#3C9D5A`). Branch lag vor SDK-56-Upgrade → Konflikte aufgelöst (SDK-56-Deps übernommen, `expo-linear-gradient ~56.0.4`) + 3 SDK-56-Kompat-Fixes (`absoluteFill`, `ColorValue`, `@expo/vector-icons` deklariert). #161/#8 nachträglich geschlossen. 384 Tests grün. **PR `testing → main` noch offen.**                                                          |
+| **PR #195:** appVersionCode-Bump + UI-Politur → testing → main | 2026-07-03 | ✅ `appVersionCode` 10 → 11 (`twa-manifest.template.json`, kein Feature-Release, nur neuer Play-Store-Build). Dazu UI-Politur auf Basis des ungenutzten Redesign-Potenzials: `expo-linear-gradient` erstmals eingesetzt (`CategoryTabBar` aktiver Chip mit Cross-Fade, `ui/Button` primary/danger), `ActivityBar`-Entrance-Animation (Fade/Scale über `duration`-Tokens), `expo-haptics` (`~56.0.3`) für Impact-Feedback, Empty-State in `PlantRowsContainer` mit Icon + vorhandenem i18n-Key `plants.empty` statt hartcodiertem Text. Unterwegs Bug im eigenen Gradient-Code gefunden (Icon/Label doppelt gerendert, brach 2 Tests) und vor dem Commit behoben. `Lint & Format Check` schlug initial fehl, da nur `eslint` (nicht `prettier --check`) lokal geprüft wurde – nachgezogen. 384 Tests grün. |
+| **PR #194:** testing → main (Sync SDK 56 + Redesign)   | 2026-06-27 | ✅ main `189cb1c`: PR #192 (SDK 56) + PR #193 (Redesign) nach main gemergt – main und testing seitdem wieder inhaltsgleich.                                                                                                                                                                                                                                                                                                                                                                                                          |
+| **PR #193:** UI-Modern-Redesign → testing              | 2026-06-27 | ✅ testing `6cd4013`: Vektor-Icons (`@expo/vector-icons`/Ionicons), Design-Tokens (`designTokens.ts`), UI-Primitive (`src/components/ui/`), neue Farbpalette (Primär `#3C9D5A`). Branch lag vor SDK-56-Upgrade → Konflikte aufgelöst (SDK-56-Deps übernommen, `expo-linear-gradient ~56.0.4`) + 3 SDK-56-Kompat-Fixes (`absoluteFill`, `ColorValue`, `@expo/vector-icons` deklariert). #161/#8 nachträglich geschlossen. 384 Tests grün.                                                                                        |
 | **PR #192 (#189):** Expo SDK 54 → 56 → testing         | 2026-06-27 | ✅ testing `1cdfe98`: Expo SDK 54 → 56, RN 0.85, TS 6, eslint-hooks 7. Details siehe Memory `project_dependencies.md`.                                                                                                                                                                                                                                                                                                                                                                                                                |
 | **PR #174:** testing → main (Sync v1.5.0)              | 2026-06-08 | ✅ main: #142 Drag&Drop, #161 Emojis, #171 Store-Listings, #8 QR-Teilen nach main. Version-Bump 1.4.1 → 1.5.0 (versionCode 5), `twa-manifest`-Sync-Fix (war auf 1.4.0 → Platform-Compatibility-CI rot). pr-review-Findings geprüft: Bug-Findings waren False Positives (abgeschnittener 40k-Diff) – PanResponder in `useRef`, `onPanResponderTerminate` vorhanden, `clampActivityShift` korrekt, `testID="qr-code-svg"` gesetzt. Future-Tickets: Store-Listing-CI-Check, `--legacy-peer-deps`-Konflikt tracken, QR-Import-Validierung |
 | **PR #172:** Drag&Drop + Emojis + Store + QR → testing | 2026-06-08 | ✅ testing `538ade5`: #161 Pflanzen-Emojis (`plantEmojis.ts`, sprachunabhängig) in Pflanzenliste/Kalender/Agenda; #171 mehrsprachige Store-Listings (`fastlane/metadata/android/{de-DE,en-US,es-ES}`); #8 QR-Teilen (`qrcode-generator`, SVG-Render, `buildShareString`); #142 Drag&Drop (Maus/PanResponder, `clampActivityShift`). 384 Tests grün, Web-Build ok                                                                                                                                                                      |
