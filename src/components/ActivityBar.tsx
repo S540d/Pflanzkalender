@@ -1,11 +1,21 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, StyleSheet, Platform, PanResponder, StyleProp, ViewStyle } from 'react-native';
+import {
+  Animated,
+  View,
+  Text,
+  StyleSheet,
+  Platform,
+  PanResponder,
+  StyleProp,
+  ViewStyle,
+} from 'react-native';
+import * as Haptics from 'expo-haptics';
 import { Activity } from '../types';
 import { getContrastTextColor } from '../utils/colorUtils';
 import { MONTH_SHORT } from '../utils/monthHelper';
 import { getActivityTypeByType } from '../constants/activityTypes';
 import { Icon } from './ui';
-import { radius, shadow } from '../constants/designTokens';
+import { radius, shadow, duration as durationTokens } from '../constants/designTokens';
 
 // Bewegung (px) unterhalb derer ein Druck als Tap (→ Bearbeiten) statt als
 // Drag (→ Verschieben) gewertet wird.
@@ -47,6 +57,28 @@ export const ActivityBar: React.FC<ActivityBarProps> = ({
   const [dragPx, setDragPx] = useState(0); // gesnappte visuelle Verschiebung
   const [webDragging, setWebDragging] = useState(false);
 
+  // Entrance-Animation: sanftes Einblenden/Skalieren beim ersten Mount (neue
+  // Aktivität hinzugefügt bzw. initiales Rendern des Kalenders). Läuft nur
+  // einmal pro Activity-Instanz, da PlantRow den Wrapper über activity.id keyed.
+  const mountOpacity = useRef(new Animated.Value(0)).current;
+  const mountScale = useRef(new Animated.Value(0.9)).current;
+
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(mountOpacity, {
+        toValue: 1,
+        duration: durationTokens.base,
+        useNativeDriver: true,
+      }),
+      Animated.timing(mountScale, {
+        toValue: 1,
+        duration: durationTokens.base,
+        useNativeDriver: true,
+      }),
+    ]).start();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Refs gegen Stale-Closures (PanResponder + Window-Listener werden einmal gebunden).
   // Direkt im Render-Body aktualisieren (nicht via useEffect), damit der Wert beim
   // Feuern eines Handlers garantiert aktuell ist – kein Frame mit altem cellWidth.
@@ -85,7 +117,10 @@ export const ActivityBar: React.FC<ActivityBarProps> = ({
           onPressRef.current?.();
         } else {
           const delta = Math.round(g.dx / cw);
-          if (delta !== 0) onMoveRef.current?.(delta);
+          if (delta !== 0) {
+            onMoveRef.current?.(delta);
+            void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+          }
         }
         setDragPx(0);
       },
@@ -145,9 +180,15 @@ export const ActivityBar: React.FC<ActivityBarProps> = ({
       left: `${startPosition}%`,
       width: `${width}%`,
       backgroundColor: activity.color,
-      transform: [{ translateX: dragPx }],
       zIndex: dragPx !== 0 ? 1000 : 1,
     },
+    // Animierte Werte (Entrance-Fade/Scale) zusammen mit dem Drag-Offset in
+    // einem Objekt, da RN bei mehreren `transform`-Einträgen im Style-Array
+    // nur den letzten übernimmt statt sie zu mergen.
+    {
+      opacity: mountOpacity,
+      transform: [{ translateX: dragPx }, { scale: mountScale }],
+    } as unknown as ViewStyle,
   ];
 
   const contrastColor = getContrastTextColor(activity.color);
@@ -173,7 +214,9 @@ export const ActivityBar: React.FC<ActivityBarProps> = ({
     };
     return (
       <>
-        <View {...(webProps as React.ComponentProps<typeof View>)}>{labelNode}</View>
+        <Animated.View {...(webProps as unknown as React.ComponentProps<typeof Animated.View>)}>
+          {labelNode}
+        </Animated.View>
         {isHovered && !webDragging && (
           <View style={[styles.tooltip, { left: `${startPosition}%` }]} pointerEvents="none">
             <Text style={styles.tooltipText}>{tooltipText}</Text>
@@ -184,14 +227,14 @@ export const ActivityBar: React.FC<ActivityBarProps> = ({
   }
 
   return (
-    <View
+    <Animated.View
       {...panResponder.panHandlers}
       style={barStyle}
       accessibilityRole="button"
       accessibilityLabel={activity.label}
     >
       {labelNode}
-    </View>
+    </Animated.View>
   );
 };
 

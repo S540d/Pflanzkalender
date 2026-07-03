@@ -7,6 +7,8 @@ import { PlantRow } from './PlantRow';
 import { calculateActivityRows, convertActivitiesToPortraitSlots } from '../utils/activityLayout';
 import { getPlantDisplayName } from '../constants/plantNames';
 import { getPlantEmoji } from '../constants/plantEmojis';
+import { AppText, Icon } from './ui';
+import { spacing } from '../constants/designTokens';
 
 interface PlantRowsContainerProps {
   sortedPlants: Plant[];
@@ -40,7 +42,7 @@ export const PlantRowsContainer: React.FC<PlantRowsContainerProps> = ({
   loading = false,
 }) => {
   const { theme } = useTheme();
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
   const localFixedScrollRef = useRef<ScrollView>(null);
   const cellWidth = cellWidthProp ?? (isPortrait ? 60 : 40);
   const fixedScrollRef = externalFixedScrollRef || localFixedScrollRef;
@@ -127,9 +129,13 @@ export const PlantRowsContainer: React.FC<PlantRowsContainerProps> = ({
                 </View>
               ) : sortedPlants.length === 0 ? (
                 <View style={styles.emptyState}>
-                  <Text style={[styles.emptyText, { color: theme.textSecondary }]}>
-                    Noch keine Pflanzen vorhanden.
-                  </Text>
+                  <Icon name="plant" size={32} color={theme.textSecondary} />
+                  <AppText
+                    variant="bodySm"
+                    style={[styles.emptyText, { color: theme.textSecondary }]}
+                  >
+                    {t('plants.empty') as string}
+                  </AppText>
                 </View>
               ) : (
                 sortedPlants.map((plant) => {
@@ -228,6 +234,7 @@ const styles = StyleSheet.create({
   emptyState: {
     padding: 40,
     alignItems: 'center',
+    gap: spacing.sm,
   },
   emptyText: {
     fontSize: 14,
