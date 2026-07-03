@@ -1,7 +1,17 @@
 import React, { useRef } from 'react';
-import { Animated, Pressable, StyleSheet, type ViewStyle, type StyleProp } from 'react-native';
+import {
+  Animated,
+  Platform,
+  Pressable,
+  View,
+  StyleSheet,
+  type ViewStyle,
+  type StyleProp,
+} from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import * as Haptics from 'expo-haptics';
 import { useTheme } from '../../hooks/useTheme';
-import { getContrastTextColor } from '../../utils/colorUtils';
+import { getContrastTextColor, shadeColor } from '../../utils/colorUtils';
 import { radius, spacing, typography, duration } from '../../constants/designTokens';
 import { AppText } from './AppText';
 import { Icon, type IconName } from './Icon';
@@ -82,6 +92,39 @@ export const Button: React.FC<ButtonProps> = ({
       useNativeDriver: true,
     }).start();
 
+  const handlePressIn = () => {
+    animateTo(0.96);
+    // Nur auf Touch-Plattformen fühlbar; auf Web ist expo-haptics ein No-Op.
+    if (Platform.OS !== 'web') {
+      void Haptics.impactAsync(
+        variant === 'danger' ? Haptics.ImpactFeedbackStyle.Medium : Haptics.ImpactFeedbackStyle.Light
+      );
+    }
+  };
+
+  const isGradient = variant === 'primary' || variant === 'danger';
+  const shapeStyle: ViewStyle = {
+    borderRadius: radius.md,
+    paddingVertical: dims.padV,
+    paddingHorizontal: dims.padH,
+    borderWidth: borderColor ? 1 : 0,
+    borderColor,
+  };
+
+  const content = (
+    <>
+      {icon ? <Icon name={icon} size={dims.icon} color={textColor} /> : null}
+      {label ? (
+        <AppText
+          style={[typography.bodyStrong, { fontSize: dims.font, color: textColor }]}
+          numberOfLines={1}
+        >
+          {label}
+        </AppText>
+      ) : null}
+    </>
+  );
+
   return (
     <Animated.View
       style={[
@@ -92,33 +135,25 @@ export const Button: React.FC<ButtonProps> = ({
     >
       <Pressable
         onPress={disabled ? undefined : onPress}
-        onPressIn={() => animateTo(0.96)}
+        onPressIn={handlePressIn}
         onPressOut={() => animateTo(1)}
         disabled={disabled}
         testID={testID}
         accessibilityRole="button"
         accessibilityLabel={accessibilityLabel ?? label}
-        style={[
-          styles.base,
-          {
-            backgroundColor,
-            borderRadius: radius.md,
-            paddingVertical: dims.padV,
-            paddingHorizontal: dims.padH,
-            borderWidth: borderColor ? 1 : 0,
-            borderColor,
-          },
-        ]}
       >
-        {icon ? <Icon name={icon} size={dims.icon} color={textColor} /> : null}
-        {label ? (
-          <AppText
-            style={[typography.bodyStrong, { fontSize: dims.font, color: textColor }]}
-            numberOfLines={1}
+        {isGradient ? (
+          <LinearGradient
+            colors={[baseColor, shadeColor(baseColor, -14)]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={[styles.base, shapeStyle]}
           >
-            {label}
-          </AppText>
-        ) : null}
+            {content}
+          </LinearGradient>
+        ) : (
+          <View style={[styles.base, shapeStyle, { backgroundColor }]}>{content}</View>
+        )}
       </Pressable>
     </Animated.View>
   );
