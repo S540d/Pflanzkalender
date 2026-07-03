@@ -53,7 +53,9 @@ const CategoryChip: React.FC<CategoryChipProps> = ({
       accessibilityState={{ selected: isActive }}
       accessibilityLabel={label}
     >
-      <View style={[StyleSheet.absoluteFill, styles.chipBackground, { backgroundColor: color + '1A' }]} />
+      <View
+        style={[StyleSheet.absoluteFill, styles.chipBackground, { backgroundColor: color + '1A' }]}
+      />
       <Animated.View
         style={[StyleSheet.absoluteFill, styles.chipBackground, { opacity: activeOpacity }]}
       >
@@ -69,7 +71,10 @@ const CategoryChip: React.FC<CategoryChipProps> = ({
         <AppText
           variant="caption"
           numberOfLines={1}
-          style={{ color: isActive ? '#FFFFFF' : textSecondary, fontWeight: isActive ? '700' : '500' }}
+          style={{
+            color: isActive ? '#FFFFFF' : textSecondary,
+            fontWeight: isActive ? '700' : '500',
+          }}
         >
           {label}
         </AppText>

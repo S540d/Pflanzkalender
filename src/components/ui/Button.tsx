@@ -97,7 +97,9 @@ export const Button: React.FC<ButtonProps> = ({
     // Nur auf Touch-Plattformen fühlbar; auf Web ist expo-haptics ein No-Op.
     if (Platform.OS !== 'web') {
       void Haptics.impactAsync(
-        variant === 'danger' ? Haptics.ImpactFeedbackStyle.Medium : Haptics.ImpactFeedbackStyle.Light
+        variant === 'danger'
+          ? Haptics.ImpactFeedbackStyle.Medium
+          : Haptics.ImpactFeedbackStyle.Light
       );
     }
   };
