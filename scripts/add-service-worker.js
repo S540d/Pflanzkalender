@@ -92,14 +92,12 @@ if (fs.existsSync(indexPath)) {
             console.error('[SW] Registration failed:', err);
           });
 
-        // Reload once when new SW takes control (flag prevents loop)
-        var reloading = false;
-        navigator.serviceWorker.addEventListener('controllerchange', function() {
-          if (!reloading) {
-            reloading = true;
-            window.location.reload();
-          }
-        });
+        // Note: we deliberately do NOT reload the page when a new service
+        // worker takes control. The already-rendered page was already
+        // served fresh from the network (fetch handler is network-first),
+        // so a reload here only causes a jarring flash/restart right after
+        // startup without fetching anything new. The new worker simply
+        // takes over silently for the next navigation.
       });
     }
   </script>
