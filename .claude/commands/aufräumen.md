@@ -22,9 +22,9 @@ done
 
 Zeige das Ergebnis als Markdown-Tabelle:
 
-| Projekt | testing ahead | main ahead | Status                                        |
-| ------- | ------------- | ---------- | --------------------------------------------- |
-| ...     | ...           | ...        | ✅ OK / ⚠️ Leicht divergiert / 🔴 main voraus |
+| Projekt | testing ahead | main ahead | Status                                 |
+| ------- | ------------- | ---------- | -------------------------------------- |
+| ...     | ...           | ...        | ✅ OK / ⚠️ Divergiert / 🔴 main voraus |
 
 **Statusregeln:**
 
