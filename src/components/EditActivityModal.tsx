@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -14,7 +14,7 @@ import { useLanguage } from '../contexts/LanguageContext';
 import { Activity } from '../types';
 import { radius } from '../constants/designTokens';
 import { getActivityTypeByType } from '../constants/activityTypes';
-import { Icon } from './ui';
+import { Icon, SuccessOverlay } from './ui';
 
 interface EditActivityModalProps {
   visible: boolean;
@@ -39,17 +39,24 @@ export const EditActivityModal: React.FC<EditActivityModalProps> = ({
   const [startMonth, setStartMonth] = useState(activity?.startMonth ?? 0);
   const [endMonth, setEndMonth] = useState(activity?.endMonth ?? 0);
   const [rangeError, setRangeError] = useState('');
+  const [pendingAction, setPendingAction] = useState<'update' | 'delete' | null>(null);
+  const lastActivityRef = useRef<Activity | null>(activity);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (activity) {
       setLabel(activity.label);
       setStartMonth(activity.startMonth);
       setEndMonth(activity.endMonth);
       setRangeError('');
+      lastActivityRef.current = activity;
     }
   }, [activity]);
 
-  if (!activity) return null;
+  // Während der Erfolgs-Animation (nach onDelete) wird `activity` vom Parent auf
+  // null gesetzt, sobald die Pflanze die Aktivität nicht mehr führt. Der letzte
+  // bekannte Stand bleibt bis onDone() für das Rendering erhalten.
+  const displayActivity = activity ?? (pendingAction ? lastActivityRef.current : null);
+  if (!displayActivity) return null;
 
   const monthLabels = t('agenda.months') as string[];
   const months = Array.from({ length: 24 }, (_, i) => ({
@@ -63,8 +70,8 @@ export const EditActivityModal: React.FC<EditActivityModalProps> = ({
       return;
     }
     setRangeError('');
-    onUpdate(activity.id, { label, startMonth, endMonth });
-    onClose();
+    onUpdate(displayActivity.id, { label, startMonth, endMonth });
+    setPendingAction('update');
   };
 
   const handleDelete = () => {
@@ -77,8 +84,8 @@ export const EditActivityModal: React.FC<EditActivityModalProps> = ({
           text: t('activity.edit.deleteConfirm') as string,
           style: 'destructive',
           onPress: () => {
-            onDelete(activity.id);
-            onClose();
+            onDelete(displayActivity.id);
+            setPendingAction('delete');
           },
         },
       ]
@@ -267,18 +274,25 @@ export const EditActivityModal: React.FC<EditActivityModalProps> = ({
           </View>
 
           <View style={[styles.section, styles.typeRow]}>
-            <View style={[styles.colorPreview, { backgroundColor: activity.color }]}>
-              {getActivityTypeByType(activity.type)?.icon ? (
-                <Icon name={getActivityTypeByType(activity.type)!.icon} size={14} color="#FFFFFF" />
+            <View style={[styles.colorPreview, { backgroundColor: displayActivity.color }]}>
+              {getActivityTypeByType(displayActivity.type)?.icon ? (
+                <Icon
+                  name={getActivityTypeByType(displayActivity.type)!.icon}
+                  size={14}
+                  color="#FFFFFF"
+                />
               ) : null}
             </View>
-            <Text style={[styles.value, { color: theme.textSecondary }]}>{activity.type}</Text>
+            <Text style={[styles.value, { color: theme.textSecondary }]}>
+              {displayActivity.type}
+            </Text>
           </View>
 
           <View style={styles.buttons}>
             <TouchableOpacity
               style={[styles.button, styles.deleteButton, { backgroundColor: theme.error }]}
               onPress={handleDelete}
+              disabled={pendingAction !== null}
             >
               <Text style={styles.buttonText}>{t('activity.edit.deleteConfirm') as string}</Text>
             </TouchableOpacity>
@@ -287,6 +301,7 @@ export const EditActivityModal: React.FC<EditActivityModalProps> = ({
               <TouchableOpacity
                 style={[styles.button, { backgroundColor: theme.border }]}
                 onPress={onClose}
+                disabled={pendingAction !== null}
               >
                 <Text style={[styles.buttonText, { color: theme.text }]}>
                   {t('common.cancel') as string}
@@ -296,11 +311,21 @@ export const EditActivityModal: React.FC<EditActivityModalProps> = ({
               <TouchableOpacity
                 style={[styles.button, { backgroundColor: theme.primary }]}
                 onPress={handleUpdate}
+                disabled={pendingAction !== null}
               >
                 <Text style={styles.buttonText}>{t('common.save') as string}</Text>
               </TouchableOpacity>
             </View>
           </View>
+
+          <SuccessOverlay
+            visible={pendingAction !== null}
+            color={pendingAction === 'delete' ? theme.error : theme.primary}
+            onDone={() => {
+              setPendingAction(null);
+              onClose();
+            }}
+          />
         </View>
       </View>
     </Modal>
