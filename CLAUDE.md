@@ -237,6 +237,17 @@ Gleicher Pattern bei React Native Testing Library: `waitFor(() => queryAllByText
 
 Per-Datei-Overrides bleiben weiterhin möglich via `jest.mock('expo-router', () => ...)` und haben Vorrang vor dem globalen Mock.
 
+### Android Target API Level (Play Store) – `android/` ist generiert, nicht im Repo
+
+Das native Android-Projekt (`android/app/build.gradle` mit `compileSdkVersion`/`targetSdkVersion`) wird **nicht** in diesem Repo geführt – `android/` und `app/build.gradle` stehen in `.gitignore` („generated native folders"). Es entsteht lokal durch die **Bubblewrap CLI** aus `twa-manifest.template.json` (siehe `docs/twa-vs-pwa.md`). Ein API-Level-Bump lässt sich daher **nicht** über einen Commit in diesem Repo erledigen, sondern nur im lokalen Build-Schritt:
+
+1. `npm i -g @bubblewrap/cli@latest` (bzw. `npx @bubblewrap/cli`) – aktuellste Version installieren, die den geforderten API-Level bereits als Default in ihren Templates trägt.
+2. `bubblewrap update` im Projektverzeichnis mit dem gepflegten `twa-manifest.template.json` als Basis ausführen, um `android/` neu zu generieren.
+3. Fall die installierte Bubblewrap-Version das neue API-Level noch nicht selbst setzt: in `android/app/build.gradle` manuell `compileSdkVersion`/`targetSdkVersion` (und ggf. Android Gradle Plugin/Gradle-Wrapper-Version, `androidx.browser`/`androidbrowserhelper`-Version) auf das geforderte Level anheben.
+4. AAB neu bauen und signieren, dabei `appVersionCode` in `twa-manifest.template.json` hochzählen (jeder Play-Store-Upload braucht einen höheren Code, siehe PR #195) und im Play Console hochladen.
+
+Play Console verlangt ab 31.08.2026 `targetSdkVersion 36` (Android 16) für neue Uploads bestehender Apps (Stand Google-Play-Anforderungen, Google gewährt auf Anfrage Fristverlängerung bis 01.11.2026).
+
 ### Squash-Merge: Feature-Branches nach Merge löschen
 
 Bleiben Feature-Branches nach einem Squash-Merge im Remote stehen, schlägt jeder spätere Merge oder Rebase mit ihnen mit add/add-Konflikten in den ursprünglich gemergten Dateien fehl – Git erkennt die Inhaltsgleichheit der squash-erzeugten Commits nicht, weil sie neue Hashes haben. **Immer Branch nach Merge löschen.** Falls schon zu spät: nur den Diff `branch..main` als Patch ausschneiden, auf einen frischen Branch von main anwenden, alten Branch wegwerfen (siehe Vorgehen bei PR #75).
