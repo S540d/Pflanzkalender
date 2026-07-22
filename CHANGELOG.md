@@ -7,6 +7,15 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 ## [Unreleased]
 
+### Hinzugefügt
+
+- Erfolgs-Animation (Checkmark-Puls + Haptic-Feedback) beim Speichern/Löschen einer Aktivität (`EditActivityModal`) sowie beim Hinzufügen (`AddActivityModal`), neue wiederverwendbare `ui/SuccessOverlay`-Komponente
+
+### Geändert
+
+- `appVersionCode` 13 → 14 (Vorbereitung für Play-Store-Upload mit `targetSdkVersion 36`)
+- CLAUDE.md: Anleitung ergänzt, wie das Android Target API Level (Play-Store-Pflicht ab 31.08.2026: API 36 / Android 16) über die lokal generierte Bubblewrap-Hülle angehoben wird, da `android/` nicht im Repo geführt wird
+
 ## [1.5.3] - 2026-06-26
 
 ### Geändert

@@ -237,6 +237,29 @@ Gleicher Pattern bei React Native Testing Library: `waitFor(() => queryAllByText
 
 Per-Datei-Overrides bleiben weiterhin möglich via `jest.mock('expo-router', () => ...)` und haben Vorrang vor dem globalen Mock.
 
+### Android Target API Level (Play Store) – `android/` ist generiert, nicht im Repo
+
+Das native Android-Projekt (`android/app/build.gradle` mit `compileSdkVersion`/`targetSdkVersion`) wird **nicht** in diesem Repo geführt – `android/` und `app/build.gradle` stehen in `.gitignore` („generated native folders"). Es entsteht lokal durch die **Bubblewrap CLI** aus `twa-manifest.template.json` (siehe `docs/twa-vs-pwa.md`). Ein API-Level-Bump lässt sich daher **nicht** über einen Commit in diesem Repo erledigen, sondern nur im lokalen Build-Schritt:
+
+1. `npm i -g @bubblewrap/cli@latest` (bzw. `npx @bubblewrap/cli`) – aktuellste Version installieren, die den geforderten API-Level bereits als Default in ihren Templates trägt.
+2. `bubblewrap update` im Projektverzeichnis mit dem gepflegten `twa-manifest.template.json` als Basis ausführen, um `android/` neu zu generieren.
+3. Fall die installierte Bubblewrap-Version das neue API-Level noch nicht selbst setzt: in `android/app/build.gradle` manuell `compileSdkVersion`/`targetSdkVersion` (und ggf. Android Gradle Plugin/Gradle-Wrapper-Version, `androidx.browser`/`androidbrowserhelper`-Version) auf das geforderte Level anheben.
+4. AAB neu bauen und signieren, dabei `appVersionCode` in `twa-manifest.template.json` hochzählen (jeder Play-Store-Upload braucht einen höheren Code, siehe PR #195) und im Play Console hochladen.
+
+Play Console verlangt ab 31.08.2026 `targetSdkVersion 36` (Android 16) für neue Uploads bestehender Apps (Stand Google-Play-Anforderungen, Google gewährt auf Anfrage Fristverlängerung bis 01.11.2026).
+
+### Android 15 Edge-to-Edge / deprecated Status-/Navbar-APIs (Issue #206) – `scripts/patch-twa-edge-to-edge.sh`
+
+Play Console meldet für die TWA die Nutzung unter Android 15 nicht mehr unterstützter APIs (`Window.setStatusBarColor`/`getStatusBarColor`/`setNavigationBarColor`, `LAYOUT_IN_DISPLAY_CUTOUT_MODE_*`). **Kein eigener App-Code** ist betroffen – die Aufrufe stammen aus `androidbrowserhelper:2.6.2`, der von Bubblewrap gepinnten Version. `androidbrowserhelper 2.7.0` (PR GoogleChrome/android-browser-helper#525) ersetzt diese durch `WindowInsetsController`-basierte Edge-to-Edge-Behandlung. Bubblewrap (`@bubblewrap/core` bis 1.24.1) zieht 2.7.x aber **nicht** automatisch als Stable.
+
+Da das generierte `android/`-Projekt gitignored ist, wird der Fix nach jeder Bubblewrap-(Re)Generierung über ein **tracked Skript** re-appliziert – **vor** `./gradlew bundleRelease` ausführen:
+
+```bash
+bash scripts/patch-twa-edge-to-edge.sh
+```
+
+Das Skript ist idempotent und setzt in den generierten Gradle-Dateien: `androidbrowserhelper` → `2.7.2`; `jcenter()` → `mavenCentral()` (jcenter ist EOL und war das einzige Nicht-`google()`-Repo, über das u. a. die Buildscript-Classpath-Artefakte aufgelöst werden – ersatzloses Löschen bricht den Build); `minSdkVersion` → `23` (ABH 2.7.x fordert minSdk 23, Bubblewrap defaultet auf 21 → sonst Manifest-Merge-Fehler).
+
 ### Squash-Merge: Feature-Branches nach Merge löschen
 
 Bleiben Feature-Branches nach einem Squash-Merge im Remote stehen, schlägt jeder spätere Merge oder Rebase mit ihnen mit add/add-Konflikten in den ursprünglich gemergten Dateien fehl – Git erkennt die Inhaltsgleichheit der squash-erzeugten Commits nicht, weil sie neue Hashes haben. **Immer Branch nach Merge löschen.** Falls schon zu spät: nur den Diff `branch..main` als Patch ausschneiden, auf einen frischen Branch von main anwenden, alten Branch wegwerfen (siehe Vorgehen bei PR #75).
@@ -377,3 +400,32 @@ ESLint-Warnings 45 → **0** via:
 - **Test-Dateien**: Ungenutzte Imports/Variablen entfernt, `any` → konkrete Typen in Mocks
 - **Produktionscode**: `console.error` intentional, unused params `_` prefixed, `exhaustive-deps` Block-Disable wo Deps redundant
 - **Ergebnis**: 0 Warnings lokal, Prettier clean, 299 Tests grün (Stand 2026-05-29: 348)
+
+<!-- GLOBAL POLICY:START -->
+
+## [GLOBAL POLICY]
+
+> Automatisch synchronisiert aus project-templates (Issue #7). Nicht manuell editieren –
+> Änderungen hier werden beim nächsten Sync überschrieben. Quelle anpassen statt lokal.
+
+- PRs immer gegen `testing`, nie direkt gegen `staging` oder `main`
+- Merge auf `main` nur mit expliziter schriftlicher Freigabe
+- `--delete-branch` nur für Feature-Branches (nie staging/testing)
+- **Lokales Branch-Cleanup:** `main` und `testing` NIE löschen — auch nicht beim Bulk-Delete verwaister `[gone]`-Branches. Ein fehlender `origin/main`/`origin/testing` ist ein **wiederherzustellender Defekt** (lokal behalten, nach origin zurückpushen), kein Aufräum-Signal.
+- `--no-verify` nur auf explizite Bitte
+- **Vor jedem Push: lokale Tests ausführen** (`npm test` bzw. projektspezifischer Test-Befehl) – kein Push ohne grüne lokale Tests
+- **Kein Merge bei CI-Fail** – Branch Protection erzwingt das technisch; nie mit `--admin` umgehen außer auf explizite Bitte
+
+## [ANDROID BUILD – PFLICHTREGELN]
+
+- **Git-Tag** nach jedem Play-Store-Upload setzen: `git tag vX.Y.Z && git push origin vX.Y.Z` – der Tag markiert den tatsächlich veröffentlichten Stand und dient als Changelog-Baseline für den nächsten Build
+- **EAS Local Build (DrawFromMemory):** Workingdir vor jedem Build leeren: `rm -rf ~/tmp/eas-build && mkdir -p ~/tmp/eas-build` – ein nicht-leeres Verzeichnis bricht den Build sofort ab
+- **Disk-Check vor EAS Build:** Skia-Libraries benötigen ~5–8 GB. Bei < 5 GB frei: `npm cache clean --force && rm -rf ~/.npm/_npx` (~13 GB, sicher löschbar)
+- **JAVA_HOME** für EAS/Expo-Builds explizit auf Android Studio JBR setzen: `export JAVA_HOME="/Applications/Android Studio.app/Contents/jbr/Contents/Home"`
+- **Gradle-Lock nach Absturz:** Bei "Cannot lock file hash cache"-Fehler Daemons stoppen: `pkill -f GradleDaemon`, dann Workingdir leeren und neu starten
+- **AAB-Archiv:** Gebaute Release-AABs in einem **gitignored** `aab-archive/`-Verzeichnis im Repo-Root ablegen (in `.gitignore` aufnehmen – AABs sind 3–110 MB und gehören nie in die Git-History). Benennung: `<Projekt>-vX.Y.Z-vc<versionCode>-YYYY-MM-DD.aab`. **Retention: max. 2 Dateien** (aktuelles Release + ein Vorgänger für schnelles Rollback); ältere AABs löschen. Der Git-Tag `vX.Y.Z` ist die eigentliche Release-Baseline – ältere AABs lassen sich daraus jederzeit neu bauen.
+
+## [CI – CACHE-CLEANUP]
+
+- **Cache-Cleanup-Workflow** (`.github/workflows/cache-cleanup.yml`) in jedem Repo mit GitHub-Actions-Caches: löscht wöchentlich (So 03:00 UTC) bzw. on-demand alle Action-Caches älter als der jeweils letzte Lauf. GitHub-Limit ist 10 GB pro Repo – ohne Cleanup laufen Build-Caches (node_modules, Gradle, Expo) voll und verdrängen frische Einträge. Vorlage: `cache-cleanup.yml` in project-templates.
+<!-- GLOBAL POLICY:END -->

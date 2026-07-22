@@ -1,6 +1,6 @@
 import React from 'react';
 import { Alert } from 'react-native';
-import { render, fireEvent } from '@testing-library/react-native';
+import { render, fireEvent, waitFor } from '@testing-library/react-native';
 import { EditActivityModal } from '../../src/components/EditActivityModal';
 import { Activity } from '../../src/types';
 
@@ -158,7 +158,7 @@ describe('EditActivityModal Component', () => {
     expect(getByText('Bis')).toBeTruthy();
   });
 
-  it('calls onUpdate with updated label and months when Speichern is pressed', () => {
+  it('calls onUpdate with updated label and months when Speichern is pressed, then closes after the success animation', async () => {
     const { getByText, getByDisplayValue } = render(
       <EditActivityModal
         visible={true}
@@ -178,7 +178,7 @@ describe('EditActivityModal Component', () => {
       startMonth: 2,
       endMonth: 4,
     });
-    expect(mockOnClose).toHaveBeenCalledTimes(1);
+    await waitFor(() => expect(mockOnClose).toHaveBeenCalledTimes(1));
   });
 
   it('calls onClose when Abbrechen is pressed', () => {
@@ -220,7 +220,7 @@ describe('EditActivityModal Component', () => {
     alertSpy.mockRestore();
   });
 
-  it('calls onDelete and onClose when delete is confirmed', () => {
+  it('calls onDelete and onClose when delete is confirmed, after the success animation', async () => {
     const alertSpy = jest.spyOn(Alert, 'alert').mockImplementation((_title, _msg, buttons) => {
       const deleteButton = buttons?.find(
         (b: { style?: string; onPress?: () => void }) => b.style === 'destructive'
@@ -242,7 +242,7 @@ describe('EditActivityModal Component', () => {
     fireEvent.press(getByText('Löschen'));
 
     expect(mockOnDelete).toHaveBeenCalledWith('act-1');
-    expect(mockOnClose).toHaveBeenCalledTimes(1);
+    await waitFor(() => expect(mockOnClose).toHaveBeenCalledTimes(1));
 
     alertSpy.mockRestore();
   });

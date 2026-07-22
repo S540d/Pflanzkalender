@@ -7,6 +7,9 @@ const indexPath = path.join(distPath, 'index.html');
 // Determine base URL from environment or defaults
 const isTesting = process.env.TESTING === 'true';
 const baseUrl = isTesting ? '/Pflanzkalender-testing' : '/Pflanzkalender';
+const siteUrl = `https://s540d.github.io${baseUrl}/`;
+const description =
+  'Pflanzkalender: kostenlose PWA für den Gartenkalender – Aussaat, Pflanzung und Pflege für 32 vordefinierte Pflanzen in Halbmonats-Auflösung planen, offline nutzbar, ohne Login.';
 
 if (fs.existsSync(indexPath)) {
   let html = fs.readFileSync(indexPath, 'utf8');
@@ -21,7 +24,44 @@ if (fs.existsSync(indexPath)) {
     {
       tag: 'meta',
       attr: 'name="description"',
-      html: `<meta name="description" content="Plant Calendar – Gartenaktivitäten mit halber Monatsauflösung planen und verwalten">`,
+      html: `<meta name="description" content="${description}">`,
+    },
+    {
+      tag: 'meta',
+      attr: 'name="robots"',
+      // Only the production deployment should be indexed; the testing
+      // deployment would otherwise be crawlable duplicate content.
+      html: `<meta name="robots" content="${isTesting ? 'noindex, nofollow' : 'index, follow'}">`,
+    },
+    {
+      tag: 'link',
+      attr: 'rel="canonical"',
+      html: `<link rel="canonical" href="${siteUrl}">`,
+    },
+    {
+      tag: 'meta',
+      attr: 'property="og:title"',
+      html: `<meta property="og:title" content="Pflanzkalender">`,
+    },
+    {
+      tag: 'meta',
+      attr: 'property="og:description"',
+      html: `<meta property="og:description" content="${description}">`,
+    },
+    {
+      tag: 'meta',
+      attr: 'property="og:type"',
+      html: `<meta property="og:type" content="website">`,
+    },
+    {
+      tag: 'meta',
+      attr: 'property="og:url"',
+      html: `<meta property="og:url" content="${siteUrl}">`,
+    },
+    {
+      tag: 'meta',
+      attr: 'property="og:image"',
+      html: `<meta property="og:image" content="${siteUrl}icon-512.png">`,
     },
     {
       tag: 'meta',
