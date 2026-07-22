@@ -7,6 +7,10 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 ## [Unreleased]
 
+### Hinzugefügt
+
+- Erfolgs-Animation (Checkmark-Puls + Haptic-Feedback) beim Speichern/Löschen einer Aktivität (`EditActivityModal`) sowie beim Hinzufügen (`AddActivityModal`), neue wiederverwendbare `ui/SuccessOverlay`-Komponente
+
 ### Geändert
 
 - `appVersionCode` 13 → 14 (Vorbereitung für Play-Store-Upload mit `targetSdkVersion 36`)

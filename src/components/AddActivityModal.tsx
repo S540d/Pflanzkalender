@@ -11,7 +11,7 @@ import {
 import { useTheme } from '../hooks/useTheme';
 import { useLanguage } from '../contexts/LanguageContext';
 import { ACTIVITY_TYPES } from '../constants/activityTypes';
-import { Icon } from './ui';
+import { Icon, SuccessOverlay } from './ui';
 import { radius } from '../constants/designTokens';
 
 interface AddActivityModalProps {
@@ -38,6 +38,7 @@ export const AddActivityModal: React.FC<AddActivityModalProps> = ({
   const [endMonth, setEndMonth] = useState(initialEndMonth ?? initialMonth);
   const [customLabel, setCustomLabel] = useState('');
   const [rangeError, setRangeError] = useState('');
+  const [pendingAdd, setPendingAdd] = useState(false);
 
   useEffect(() => {
     if (visible) {
@@ -46,6 +47,7 @@ export const AddActivityModal: React.FC<AddActivityModalProps> = ({
       setSelectedType(ACTIVITY_TYPES[0].type);
       setCustomLabel('');
       setRangeError('');
+      setPendingAdd(false);
     }
   }, [visible, initialMonth, initialEndMonth]);
 
@@ -60,7 +62,7 @@ export const AddActivityModal: React.FC<AddActivityModalProps> = ({
     }
     if (selectedActivityType) {
       onAdd(selectedType, startMonth, endMonth, selectedActivityType.color, label);
-      onClose();
+      setPendingAdd(true);
     }
   };
 
@@ -261,7 +263,11 @@ export const AddActivityModal: React.FC<AddActivityModalProps> = ({
           </ScrollView>
 
           <View style={[styles.footer, { borderTopColor: theme.border }]}>
-            <TouchableOpacity style={[styles.button, styles.cancelButton]} onPress={handleCancel}>
+            <TouchableOpacity
+              style={[styles.button, styles.cancelButton]}
+              onPress={handleCancel}
+              disabled={pendingAdd}
+            >
               <Text style={[styles.buttonText, { color: theme.text }]}>
                 {t('common.cancel') as string}
               </Text>
@@ -273,10 +279,20 @@ export const AddActivityModal: React.FC<AddActivityModalProps> = ({
                 { backgroundColor: selectedActivityType?.color || theme.primary },
               ]}
               onPress={handleAdd}
+              disabled={pendingAdd}
             >
               <Text style={styles.addButtonText}>{t('common.add') as string}</Text>
             </TouchableOpacity>
           </View>
+
+          <SuccessOverlay
+            visible={pendingAdd}
+            color={selectedActivityType?.color || theme.primary}
+            onDone={() => {
+              setPendingAdd(false);
+              onClose();
+            }}
+          />
         </View>
       </View>
     </Modal>
