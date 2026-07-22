@@ -248,6 +248,18 @@ Das native Android-Projekt (`android/app/build.gradle` mit `compileSdkVersion`/`
 
 Play Console verlangt ab 31.08.2026 `targetSdkVersion 36` (Android 16) für neue Uploads bestehender Apps (Stand Google-Play-Anforderungen, Google gewährt auf Anfrage Fristverlängerung bis 01.11.2026).
 
+### Android 15 Edge-to-Edge / deprecated Status-/Navbar-APIs (Issue #206) – `scripts/patch-twa-edge-to-edge.sh`
+
+Play Console meldet für die TWA die Nutzung unter Android 15 nicht mehr unterstützter APIs (`Window.setStatusBarColor`/`getStatusBarColor`/`setNavigationBarColor`, `LAYOUT_IN_DISPLAY_CUTOUT_MODE_*`). **Kein eigener App-Code** ist betroffen – die Aufrufe stammen aus `androidbrowserhelper:2.6.2`, der von Bubblewrap gepinnten Version. `androidbrowserhelper 2.7.0` (PR GoogleChrome/android-browser-helper#525) ersetzt diese durch `WindowInsetsController`-basierte Edge-to-Edge-Behandlung. Bubblewrap (`@bubblewrap/core` bis 1.24.1) zieht 2.7.x aber **nicht** automatisch als Stable.
+
+Da das generierte `android/`-Projekt gitignored ist, wird der Fix nach jeder Bubblewrap-(Re)Generierung über ein **tracked Skript** re-appliziert – **vor** `./gradlew bundleRelease` ausführen:
+
+```bash
+bash scripts/patch-twa-edge-to-edge.sh
+```
+
+Das Skript ist idempotent und setzt in den generierten Gradle-Dateien: `androidbrowserhelper` → `2.7.2`; `jcenter()` → `mavenCentral()` (jcenter ist EOL und war das einzige Nicht-`google()`-Repo, über das u. a. die Buildscript-Classpath-Artefakte aufgelöst werden – ersatzloses Löschen bricht den Build); `minSdkVersion` → `23` (ABH 2.7.x fordert minSdk 23, Bubblewrap defaultet auf 21 → sonst Manifest-Merge-Fehler).
+
 ### Squash-Merge: Feature-Branches nach Merge löschen
 
 Bleiben Feature-Branches nach einem Squash-Merge im Remote stehen, schlägt jeder spätere Merge oder Rebase mit ihnen mit add/add-Konflikten in den ursprünglich gemergten Dateien fehl – Git erkennt die Inhaltsgleichheit der squash-erzeugten Commits nicht, weil sie neue Hashes haben. **Immer Branch nach Merge löschen.** Falls schon zu spät: nur den Diff `branch..main` als Patch ausschneiden, auf einen frischen Branch von main anwenden, alten Branch wegwerfen (siehe Vorgehen bei PR #75).
