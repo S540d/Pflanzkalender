@@ -260,6 +260,23 @@ bash scripts/patch-twa-edge-to-edge.sh
 
 Das Skript ist idempotent und setzt in den generierten Gradle-Dateien: `androidbrowserhelper` → `2.7.2`; `jcenter()` → `mavenCentral()` (jcenter ist EOL und war das einzige Nicht-`google()`-Repo, über das u. a. die Buildscript-Classpath-Artefakte aufgelöst werden – ersatzloses Löschen bricht den Build); `minSdkVersion` → `23` (ABH 2.7.x fordert minSdk 23, Bubblewrap defaultet auf 21 → sonst Manifest-Merge-Fehler).
 
+### Play Store API-Level 36 + Large-Screen-Warnung (Issue #210 / #202) – `scripts/patch-twa-target-sdk36.sh`
+
+Zwei weitere Play-Console-Warnungen betreffen ebenfalls nur das generierte, gitignorete `android/`-Projekt (nicht den App-Code):
+
+- **#210:** `targetSdkVersion`/`compileSdkVersion` müssen auf **36** (Android 16) angehoben sein (Play-Store-Pflicht ab 31.08.2026, siehe oben).
+- **#202:** Die Large-Screen-Warnung verlangt `android:resizeableActivity="true"` im generierten `AndroidManifest.xml`. Die Quelle ist bereits korrekt (`twa-manifest.template.json` → `"orientation": "default"`), nur die generierten Artefakte (`app/build.gradle`, `AndroidManifest.xml`) hinken nach einer Bubblewrap-Regenerierung hinterher.
+
+Wie beim Edge-to-Edge-Fix (#206) gibt es dafür ein **tracked Skript**, das nach jeder Bubblewrap-(Re)Generierung – zusätzlich zu `patch-twa-edge-to-edge.sh` – **vor** `./gradlew bundleRelease` läuft:
+
+```bash
+bash scripts/patch-twa-target-sdk36.sh
+```
+
+Das Skript ist idempotent und setzt: `compileSdkVersion`/`targetSdkVersion` → `36` (`app/build.gradle`); `android:resizeableActivity="true"` im `<application>`-Tag (`app/src/main/AndroidManifest.xml`). Ob die installierte Bubblewrap-Version 36 inzwischen selbst als Default setzt, vor jedem Lauf kurz prüfen (`grep compileSdkVersion app/build.gradle`) – das Skript ist dann ein No-op. Falls AGP-/Gradle-Wrapper-Version oder `androidx.browser` für API 36 ebenfalls angehoben werden müssen, ist das (Stand dieses Issues) noch nicht automatisiert und manuell zu prüfen.
+
+**Wichtig:** Beide Issues können nicht durch einen reinen Repo-Commit „gelöst" werden – das Akzeptanzkriterium ist jeweils der tatsächliche Play-Console-Zustand nach einem neuen Upload. Die hier committeten Skripte automatisieren den lokalen Build-Schritt; Bubblewrap-Regenerierung, `gradlew bundleRelease`, Signierung und Play-Store-Upload bleiben manuelle Schritte (siehe Abschnitt „Android Target API Level" oben, Schritte 1–6), die lokale Android-Tooling/Keystore-Zugriff voraussetzen.
+
 ### Squash-Merge: Feature-Branches nach Merge löschen
 
 Bleiben Feature-Branches nach einem Squash-Merge im Remote stehen, schlägt jeder spätere Merge oder Rebase mit ihnen mit add/add-Konflikten in den ursprünglich gemergten Dateien fehl – Git erkennt die Inhaltsgleichheit der squash-erzeugten Commits nicht, weil sie neue Hashes haben. **Immer Branch nach Merge löschen.** Falls schon zu spät: nur den Diff `branch..main` als Patch ausschneiden, auf einen frischen Branch von main anwenden, alten Branch wegwerfen (siehe Vorgehen bei PR #75).
