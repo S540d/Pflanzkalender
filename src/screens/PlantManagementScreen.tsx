@@ -16,7 +16,7 @@ import { AddPlantModal } from '../components/AddPlantModal';
 import { EditPlantModal } from '../components/EditPlantModal';
 import { Plant, PlantLocation, PlantCategory } from '../types';
 import { PLANT_LOCATION_METADATA, PLANT_CATEGORY_METADATA } from '../constants/plantMetadata';
-import { getPlantDisplayName } from '../constants/plantNames';
+import { getPlantDisplayName, getPlantDisplayNotes } from '../constants/plantNames';
 import { getPlantEmoji } from '../constants/plantEmojis';
 import { CategoryFilter } from '../constants/categoryTabs';
 import { CategoryTabBar } from '../components/CategoryTabBar';
@@ -163,7 +163,7 @@ export const PlantManagementScreen: React.FC = () => {
                     </View>
                     {plant.notes && (
                       <Text style={[styles.plantNotes, { color: theme.textSecondary }]}>
-                        {plant.notes}
+                        {getPlantDisplayNotes(plant.name, plant.notes, language)}
                       </Text>
                     )}
                     <Text style={[styles.activityCount, { color: theme.textSecondary }]}>

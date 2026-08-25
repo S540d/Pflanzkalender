@@ -14,6 +14,8 @@ import { Activity } from '../types';
 import { getContrastTextColor } from '../utils/colorUtils';
 import { MONTH_SHORT } from '../utils/monthHelper';
 import { getActivityTypeByType } from '../constants/activityTypes';
+import { getActivityDisplayLabel } from '../utils/activityLabel';
+import { useLanguage } from '../contexts/LanguageContext';
 import { Icon } from './ui';
 import { radius, shadow, duration as durationTokens } from '../constants/designTokens';
 
@@ -53,6 +55,8 @@ export const ActivityBar: React.FC<ActivityBarProps> = ({
   totalMonths = 24,
   cellWidth = 40,
 }) => {
+  const { t } = useLanguage();
+  const displayLabel = getActivityDisplayLabel(activity, t);
   const [isHovered, setIsHovered] = useState(false);
   const [dragPx, setDragPx] = useState(0); // gesnappte visuelle Verschiebung
   const [webDragging, setWebDragging] = useState(false);
@@ -99,7 +103,7 @@ export const ActivityBar: React.FC<ActivityBarProps> = ({
     return `${MONTH_SHORT[monthIndex]} ${half}`;
   };
 
-  const tooltipText = `${activity.label}\n${getMonthLabel(activity.startMonth)} - ${getMonthLabel(activity.endMonth)}`;
+  const tooltipText = `${displayLabel}\n${getMonthLabel(activity.startMonth)} - ${getMonthLabel(activity.endMonth)}`;
 
   // ---- Native: PanResponder für Touch-Drag ---------------------------------
   const panResponder = useRef(
@@ -198,7 +202,7 @@ export const ActivityBar: React.FC<ActivityBarProps> = ({
     <View style={styles.labelRow}>
       {activityIcon ? <Icon name={activityIcon} size={13} color={contrastColor} /> : null}
       <Text style={[styles.label, { color: contrastColor }]} numberOfLines={1}>
-        {activity.label}
+        {displayLabel}
       </Text>
     </View>
   );
@@ -210,7 +214,7 @@ export const ActivityBar: React.FC<ActivityBarProps> = ({
       onMouseLeave: () => setIsHovered(false),
       style: [barStyle, { cursor: webDragging ? 'grabbing' : 'grab' } as unknown as ViewStyle],
       accessibilityRole: 'button',
-      accessibilityLabel: activity.label,
+      accessibilityLabel: displayLabel,
     };
     return (
       <>
@@ -231,7 +235,7 @@ export const ActivityBar: React.FC<ActivityBarProps> = ({
       {...panResponder.panHandlers}
       style={barStyle}
       accessibilityRole="button"
-      accessibilityLabel={activity.label}
+      accessibilityLabel={displayLabel}
     >
       {labelNode}
     </Animated.View>

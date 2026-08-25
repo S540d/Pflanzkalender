@@ -14,6 +14,7 @@ import { useLanguage } from '../contexts/LanguageContext';
 import { Activity } from '../types';
 import { radius } from '../constants/designTokens';
 import { getActivityTypeByType } from '../constants/activityTypes';
+import { getActivityDisplayLabel } from '../utils/activityLabel';
 import { Icon, SuccessOverlay } from './ui';
 
 interface EditActivityModalProps {
@@ -35,7 +36,7 @@ export const EditActivityModal: React.FC<EditActivityModalProps> = ({
 }) => {
   const { theme } = useTheme();
   const { t } = useLanguage();
-  const [label, setLabel] = useState(activity?.label || '');
+  const [label, setLabel] = useState(activity ? getActivityDisplayLabel(activity, t) : '');
   const [startMonth, setStartMonth] = useState(activity?.startMonth ?? 0);
   const [endMonth, setEndMonth] = useState(activity?.endMonth ?? 0);
   const [rangeError, setRangeError] = useState('');
@@ -44,12 +45,15 @@ export const EditActivityModal: React.FC<EditActivityModalProps> = ({
 
   useEffect(() => {
     if (activity) {
-      setLabel(activity.label);
+      setLabel(getActivityDisplayLabel(activity, t));
       setStartMonth(activity.startMonth);
       setEndMonth(activity.endMonth);
       setRangeError('');
       lastActivityRef.current = activity;
     }
+    // t excluded intentionally: its identity changes on every LanguageProvider
+    // render, which would overwrite in-progress user edits to the label field.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activity]);
 
   // Während der Erfolgs-Animation (nach onDelete) wird `activity` vom Parent auf
