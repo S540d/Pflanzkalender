@@ -376,12 +376,14 @@ Vollständige Roadmap: https://github.com/S540d/Pflanzkalender/issues/47
 
 ---
 
-## Offene Issues (Stand 2026-07-03)
+## Offene Issues (Stand 2026-08-28)
 
-**Status (2026-08-25): main = v1.6.1, testing liegt mehrere Commits voraus (u. a. PR #214, siehe „Aktuelle Version"). 384 Tests grün. Offen: `resizeableActivity` (#202) fehlt in vc17 → beim nächsten Build (vc18) mitnehmen.**
+**Status (2026-08-28): main = v1.6.1, testing liegt mehrere Commits voraus (u. a. PR #214, siehe „Aktuelle Version"). 384 Tests grün. Offen: `resizeableActivity` (#202) fehlt in vc17 → beim nächsten Build (vc18) mitnehmen.**
 
-**Aktuell offen:** #171 (Store-Eintrag überarbeiten), #94 (Statistik/Dashboard), #91 (Agenda-Vorschau), #48 (Klimazonen), #9 (Fruchtfolge/Mischkultur), #4 (Push).
-**Zuletzt geschlossen:** #213 (User Feedback: unübersetzte Default-Aktivitäten/Notizen + Menüleiste, PR #214, 2026-08-25), #152 (Import-/Export-Konsolidierung, 2026-06-05), #161 (Emojis, PR #172/#174) und #8 (Template-System, PR #147/#151, 2026-06-27).
+**Aktuell offen:** #210 (targetSdkVersion 36, Deadline 31.08.2026 – **nur lokal umsetzbar**, s. u.), #202 (Large-Screen-Fix vc18 – **nur lokal umsetzbar**, Patch-Skripte bereits vorhanden). Vier Feature-Issues (#94 Statistik/Dashboard, #48 Klimazonen, #9 Fruchtfolge/Mischkultur, #4 Push) wurden am 2026-08-28 mit Label `maybe later` versehen – bewusst zurückgestellt, kein aktiver Scope.
+**Zuletzt geschlossen:** #91 (Agenda-Vorschau) und #171 (Store-Eintrag überarbeiten) am 2026-08-28 als bereits erledigt identifiziert und geschlossen – beide waren in PR #121 bzw. PR #172 längst umgesetzt, nur nie geschlossen worden (siehe Issue-Kommentare für Details). Davor: #213 (User Feedback: unübersetzte Default-Aktivitäten/Notizen + Menüleiste, PR #214, 2026-08-25), #152 (Import-/Export-Konsolidierung, 2026-06-05), #161 (Emojis, PR #172/#174) und #8 (Template-System, PR #147/#151, 2026-06-27).
+
+**#210/#202 – warum „nur lokal umsetzbar":** Beide erfordern native Android-Build-Schritte (Bubblewrap-Regenerierung, Gradle-Patches, AAB signieren, Play-Console-Upload). `android/` ist gitignored und wird nie im Repo geführt – eine Remote-Coding-Session ohne Android SDK/Signing-Keystore/Play-Console-Zugriff kann hier nichts beitragen. Repo-seitig ist bereits alles vorbereitet: `scripts/patch-twa-target-sdk36.sh` (hebt compileSdkVersion/targetSdkVersion auf 36, setzt `resizeableActivity="true"`) und `scripts/patch-twa-edge-to-edge.sh` (androidbrowserhelper 2.7.2). Runbook: `bubblewrap update` → beide Patch-Skripte → `appVersionCode` in `twa-manifest.template.json` hochzählen → `./gradlew bundleRelease` → Play-Console-Upload → Git-Tag.
 
 ### v1.4.0 – abgeschlossen / Play Store
 
@@ -393,16 +395,16 @@ Vollständige Roadmap: https://github.com/S540d/Pflanzkalender/issues/47
 
 ### v1.5.0 – Content & Personalisierung
 
-- **#91** Agenda – Vorschau über aktuelle Woche hinaus
-- **#94** Statistiken / Dashboard – saisonale Übersicht
-- **#4** Push-Benachrichtigungen
+- **#91** ✅ **Geschlossen** (2026-08-28) – Agenda-Vorschau über aktuelle Woche hinaus – war bereits seit PR #121 (2026-05-20) umgesetzt (7-Spalten-Ansicht), nur nie geschlossen
+- **#94** `maybe later` (2026-08-28) – Statistiken / Dashboard – saisonale Übersicht, bewusst zurückgestellt
+- **#4** `maybe later` (2026-08-28) – Push-Benachrichtigungen, bewusst zurückgestellt
 
 ### v2.0.0 – Klimazonen & Community
 
-- **#48** Klimazonen-Unterstützung – unterschiedliche Aktivitätszeiträume je Region
+- **#48** `maybe later` (2026-08-28) – Klimazonen-Unterstützung – unterschiedliche Aktivitätszeiträume je Region, bewusst zurückgestellt
 - **#142** ✅ Drag & Drop für Aktivitäten im Kalender – **in main** (PR #172 → testing, via PR #174 nach main): Balken per Maus (Web) / PanResponder (Native) verschiebbar, Delta → `clampActivityShift` → `updateActivity`
 - **#8** ✅ **Geschlossen** – Template-System: Pflanzpläne teilen und importieren – **in main** (PR #147, via #151); QR-Code-Teilen ergänzt (`qrcode-generator` + `react-native-svg`)
-- **#9** Intelligente Vorschläge: Fruchtfolge & Mischkultur
+- **#9** `maybe later` (2026-08-28) – Intelligente Vorschläge: Fruchtfolge & Mischkultur, bewusst zurückgestellt
 
 ### Wartbarkeit / Tech-Debt
 
