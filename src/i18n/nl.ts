@@ -70,6 +70,7 @@ const nl: Translations = {
   'plants.add': '➕ Nieuwe plant toevoegen',
   'plants.empty': 'Nog geen planten',
   'plants.activities': 'Activiteiten',
+  'plants.notesPlaceholder': 'Notities toevoegen...',
   'plants.deleteTitle': 'Plant verwijderen',
   'plants.deleteMessage': 'echt verwijderen?',
   'plants.deleteConfirm': 'Verwijderen',

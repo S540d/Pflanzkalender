@@ -11,8 +11,10 @@ import {
 import { Plant } from '../types';
 import { ActivityBar } from './ActivityBar';
 import { useTheme } from '../hooks/useTheme';
+import { useLanguage } from '../contexts/LanguageContext';
 import { usePlants } from '../contexts/PlantContext';
 import { calculateActivityRows } from '../utils/activityLayout';
+import { getPlantDisplayNotes } from '../constants/plantNames';
 import { radius } from '../constants/designTokens';
 
 // Vertikaler Abstand pro Aktivitäts-Zeile (muss zur ActivityBar-Höhe passen).
@@ -50,6 +52,7 @@ export const PlantRow: React.FC<PlantRowProps> = ({
   cellWidth = 40,
 }) => {
   const { theme } = useTheme();
+  const { t, language } = useLanguage();
   const { updatePlant } = usePlants();
   const [isEditingNotes, setIsEditingNotes] = useState(false);
   const [notesText, setNotesText] = useState(plant.notes);
@@ -252,7 +255,8 @@ export const PlantRow: React.FC<PlantRowProps> = ({
         ) : (
           <TouchableOpacity onPress={handleNotesPress}>
             <Text style={[styles.notes, { color: theme.textSecondary }]} numberOfLines={2}>
-              {plant.notes || 'Notizen hinzufügen...'}
+              {getPlantDisplayNotes(plant.name, plant.notes, language) ||
+                (t('plants.notesPlaceholder') as string)}
             </Text>
           </TouchableOpacity>
         )}

@@ -8,6 +8,8 @@ import { CategoryTabBar } from '../components/CategoryTabBar';
 import { getPlantDisplayName } from '../constants/plantNames';
 import { getPlantEmoji } from '../constants/plantEmojis';
 import { getActivityTypeByType } from '../constants/activityTypes';
+import { getActivityDisplayLabel } from '../utils/activityLabel';
+import { getPlantDisplayNotes } from '../constants/plantNames';
 import { Card, Icon, type IconName } from '../components/ui';
 import { radius, spacing } from '../constants/designTokens';
 
@@ -51,17 +53,17 @@ export const AgendaScreen: React.FC = () => {
             activities.push({
               plantName: getPlantDisplayName(plant.name, language),
               plantEmoji: getPlantEmoji(plant.name, plant.category),
-              activityLabel: activity.label,
+              activityLabel: getActivityDisplayLabel(activity, t),
               activityColor: activity.color,
               activityIcon: getActivityTypeByType(activity.type)?.icon,
-              notes: plant.notes,
+              notes: getPlantDisplayNotes(plant.name, plant.notes, language),
             });
           }
         });
       });
       return activities.sort((a, b) => a.plantName.localeCompare(b.plantName, language));
     },
-    [filteredPlants, language]
+    [filteredPlants, language, t]
   );
 
   const monthNames = t('agenda.months') as string[];

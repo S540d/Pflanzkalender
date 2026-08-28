@@ -86,6 +86,7 @@ const en: Translations = {
   'plants.add': '➕ Add New Plant',
   'plants.empty': 'No plants yet',
   'plants.activities': 'Activities',
+  'plants.notesPlaceholder': 'Add notes...',
   'plants.deleteTitle': 'Delete Plant',
   'plants.deleteMessage': 'really delete?',
   'plants.deleteConfirm': 'Delete',

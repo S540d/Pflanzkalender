@@ -66,8 +66,11 @@ fi
 #    voraus (Bubblewrap/twa-manifest defaulten auf 21) – ohne Anhebung schlägt
 #    der Manifest-Merge fehl. API 23 (Android 6.0, 2015) deckt praktisch alle
 #    aktiven Geräte ab.
-if grep -qE "minSdkVersion 2[0-2]\b" "$APP_GRADLE"; then
-  sed -i '' -E "s/minSdkVersion 2[0-2]\b/minSdkVersion 23/" "$APP_GRADLE"
+# Hinweis: KEIN \b in der sed-Regex verwenden – BSD-sed (macOS) kennt die
+# Wortgrenze nicht und ersetzt dann lautlos nichts, während grep -E sie kennt.
+# Das Skript meldete dadurch fälschlich Erfolg (erlebt beim vc16-Build).
+if grep -qE "minSdkVersion 2[0-2]([^0-9]|$)" "$APP_GRADLE"; then
+  sed -i '' -E "s/minSdkVersion 2[0-2]([^0-9]|$)/minSdkVersion 23\1/" "$APP_GRADLE"
   echo "minSdkVersion → 23 angehoben (app/build.gradle)."
 else
   echo "minSdkVersion bereits ≥ 23."

@@ -70,6 +70,7 @@ const fr: Translations = {
   'plants.add': '➕ Ajouter une plante',
   'plants.empty': 'Aucune plante pour le moment',
   'plants.activities': 'Activités',
+  'plants.notesPlaceholder': 'Ajouter des notes...',
   'plants.deleteTitle': 'Supprimer la plante',
   'plants.deleteMessage': 'vraiment supprimer ?',
   'plants.deleteConfirm': 'Supprimer',

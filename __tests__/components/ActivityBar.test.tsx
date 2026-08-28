@@ -16,6 +16,10 @@ jest.mock('../../src/hooks/useTheme', () => ({
   }),
 }));
 
+jest.mock('../../src/contexts/LanguageContext', () => ({
+  useLanguage: () => ({ t: (key: string) => key, language: 'de' }),
+}));
+
 describe('ActivityBar Component', () => {
   const mockActivity = {
     id: 'test-activity',
