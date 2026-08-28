@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { Animated, View, StyleSheet, TouchableOpacity } from 'react-native';
+import { Animated, View, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '../hooks/useTheme';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -97,35 +97,42 @@ export const CategoryTabBar: React.FC<CategoryTabBarProps> = ({
         { borderBottomColor: theme.border, backgroundColor: theme.surfaceElevated },
       ]}
     >
-      {CATEGORY_TABS.map((tab) => {
-        const isActive = activeCategory === tab.value;
-        const label = language === 'de' ? tab.labelDe : tab.labelEn;
-        return (
-          <CategoryChip
-            key={tab.value}
-            isActive={isActive}
-            color={tab.color}
-            label={label}
-            iconName={tab.iconName}
-            textSecondary={theme.textSecondary}
-            onPress={() => onCategoryChange(tab.value)}
-          />
-        );
-      })}
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.tabBarContent}
+      >
+        {CATEGORY_TABS.map((tab) => {
+          const isActive = activeCategory === tab.value;
+          const label = language === 'de' ? tab.labelDe : tab.labelEn;
+          return (
+            <CategoryChip
+              key={tab.value}
+              isActive={isActive}
+              color={tab.color}
+              label={label}
+              iconName={tab.iconName}
+              textSecondary={theme.textSecondary}
+              onPress={() => onCategoryChange(tab.value)}
+            />
+          );
+        })}
+      </ScrollView>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   tabBar: {
-    flexDirection: 'row',
     borderBottomWidth: 1,
-    paddingHorizontal: spacing.sm,
     paddingVertical: spacing.sm,
+  },
+  tabBarContent: {
+    flexDirection: 'row',
+    paddingHorizontal: spacing.sm,
     gap: spacing.xs,
   },
   chipTouchable: {
-    flex: 1,
     borderRadius: radius.pill,
     borderWidth: 1,
     overflow: 'hidden',

@@ -87,6 +87,7 @@ const de: Translations = {
   'plants.add': '➕ Neue Pflanze hinzufügen',
   'plants.empty': 'Noch keine Pflanzen vorhanden',
   'plants.activities': 'Aktivitäten',
+  'plants.notesPlaceholder': 'Notizen hinzufügen...',
   'plants.deleteTitle': 'Pflanze löschen',
   'plants.deleteMessage': 'wirklich löschen?',
   'plants.deleteConfirm': 'Löschen',

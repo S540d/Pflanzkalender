@@ -112,6 +112,7 @@ describe('AgendaScreen', () => {
             endMonth: 23,
             color: '#4CAF50',
             label: 'Aussaat',
+            isCustomized: true,
           },
         ],
         isDefault: false,
