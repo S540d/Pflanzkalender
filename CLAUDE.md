@@ -37,7 +37,9 @@ Deploy: GitHub Pages via `gh-pages` unter `/Pflanzkalender/`
 
 ## Aktuelle Version: 1.6.1 (appVersionCode 17)
 
-**Stand 2026-08-25:** main = **v1.6.1** (Play-Store-Build vc17). testing ist main inzwischen wieder um mehrere Commits voraus (PR #209 CI-Trigger-Fix, #211 targetSdk-36-Patch-Skript, #212 TWA-Launch-URL-Fix, #214 Issue-#213-User-Feedback-Fixes) – noch nicht per `testing → main`-PR zurückgeführt.
+**Stand 2026-08-28:** main = testing = **v1.6.1** (appVersionCode 17), wieder synchron per PR #218 (`f9332b6`). Enthält u. a. PR #209 (CI-Trigger-Fix), #211 (targetSdk-36-Patch-Skript), #212 (TWA-Launch-URL-Fix), #214 (Issue-#213-User-Feedback-Fixes) sowie die CLAUDE.md-Aktualisierung aus #216. PR #218 ersetzte den ursprünglichen Release-PR #217, der wegen der unten dokumentierten Squash-Merge-Falle (PR #208) Konflikte in 4 Dateien hatte (CLAUDE.md, `scripts/patch-twa-edge-to-edge.sh`, `EditActivityModal.tsx`, `twa-manifest.template.json`) – manuell aufgelöst, 384/384 Tests grün.
+
+**Stand 2026-08-25:** main = **v1.6.1** (Play-Store-Build vc17). testing war main zu diesem Zeitpunkt noch mehrere Commits voraus – seit 2026-08-28 (s. o.) wieder zurückgeführt.
 
 **Stand 2026-08-24:** main = testing = **v1.6.1**. Play-Store-Build **vc17** gebaut, signiert und hochgeladen – enthält den Fix für die TWA-Launch-URL (Doppel-Domain, siehe „TWA-Build" unten), `minSdkVersion 23`, `targetSdkVersion 36` und `androidbrowserhelper 2.7.2`. Der Semver-String bleibt `1.6.1` (kein Code-Change gegenüber Tag `v1.6.1`, nur Build-Konfiguration) – nur `appVersionCode` zählt hoch. Git-Tag `v1.6.1` existiert bereits und bleibt die Release-Baseline.
 

@@ -4,35 +4,39 @@ A planting calendar Progressive Web App — monthly overview for garden and plan
 
 ## Live
 
-[https://s540d.github.io/Pflanzkalender/](https://s540d.github.io/Pflanzkalender/)
+- Web: [https://s540d.github.io/Pflanzkalender/](https://s540d.github.io/Pflanzkalender/)
+- Android: available on Google Play (Trusted Web Activity)
 
 ## Tech Stack
 
-| Technology                         | Role                     |
-| ---------------------------------- | ------------------------ |
-| React Native + Expo                | Cross-platform framework |
-| React Native Web                   | Web support              |
-| React Navigation (Stack Navigator) | Navigation               |
-| React Context / Hooks              | State management         |
-| AsyncStorage                       | Local data storage       |
-| GitHub Pages                       | Web deployment           |
+| Technology            | Role                              |
+| --------------------- | --------------------------------- |
+| React Native + Expo   | Cross-platform framework (SDK 56) |
+| expo-router           | File-based routing, bottom tabs   |
+| React Native Web      | Web support                       |
+| React Context / Hooks | State management                  |
+| AsyncStorage          | Local data storage                |
+| GitHub Pages          | Web deployment                    |
+| Bubblewrap / TWA      | Android Play Store packaging      |
 
 ## Features
 
 - **Planting calendar** — half-month resolution (24 half-months per year)
-- **Agenda view** — three-column overview (previous, current, upcoming period)
+- **Agenda preview** — 7-column overview (previous, current period plus 5 upcoming half-months)
 - **32 predefined plants** — crops, flowers, and trees with typical activities
-- **Plant management** — add and delete custom plants
+- **Plant management** — add, edit, and delete custom plants, with search
 - **Category filter** — filter by crops / flowers / trees
+- **Climate recommendations** — location-aware tips for hot and dry spots
 - **Location recommendations** — sun, partial shade, shade per plant
-- **Drag & Drop** — reorder activities in the calendar
-- **Interactive activities** — click to edit or delete
-- **Current period highlighted** — gray background for the current half-month
+- **Drag & Drop** — reorder activities in the calendar (mouse and touch)
+- **Interactive activities** — click to edit or delete, shift periods earlier/later
+- **Current period highlighted** — visually marked in calendar and agenda
+- **Templates** — community starter templates, export/import planting plans as a file, share via QR code
 - **Tooltips** — hover over activities shows details (Web)
 - **Dark/Light mode** with system theme option
 - **Offline-capable** — PWA with service worker
-- **Local data storage** — no login required
-- **Bilingual** — German and English
+- **Local data storage** — no login required, no personal data collected
+- **8 languages** — German, English, Spanish, French, Italian, Dutch, Polish, Portuguese
 
 ## Predefined Plants
 
