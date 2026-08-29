@@ -91,7 +91,6 @@ src/
   services/
     storage.ts                 # AsyncStorage Wrapper (inkl. exportPlants/importPlants mit Zod-Validierung)
     templateService.ts         # Export/Import Logik: buildExportJson, triggerWebDownload, sharePlants, importFromJson – seit PR #147
-    firebase.ts                # Firebase Init (Placeholder)
   types/index.ts               # Plant, Activity, User, PlantLocation, PlantCategory
   utils/
     activityLayout.ts          # Layout-Berechnung für Aktivitätsbars
