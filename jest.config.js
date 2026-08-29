@@ -3,9 +3,9 @@ module.exports = {
   preset: 'jest-expo',
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
   // jest-expo preset already sets the correct transformIgnorePatterns.
-  // We extend it to also include firebase and react-native-svg.
+  // We extend it to also include react-native-svg.
   transformIgnorePatterns: [
-    '/node_modules/(?!(.pnpm|react-native|@react-native|@react-native-community|expo|@expo|@expo-google-fonts|react-navigation|@react-navigation|@sentry/react-native|native-base|react-native-svg|firebase))',
+    '/node_modules/(?!(.pnpm|react-native|@react-native|@react-native-community|expo|@expo|@expo-google-fonts|react-navigation|@react-navigation|@sentry/react-native|native-base|react-native-svg))',
     '/node_modules/react-native-reanimated/plugin/',
   ],
   moduleNameMapper: {
@@ -13,7 +13,7 @@ module.exports = {
     '@react-native-async-storage/async-storage': '@react-native-async-storage/async-storage/jest',
   },
   setupFiles: [],
-  collectCoverageFrom: ['src/**/*.{ts,tsx}', '!src/**/*.d.ts', '!src/services/firebase.ts'],
+  collectCoverageFrom: ['src/**/*.{ts,tsx}', '!src/**/*.d.ts'],
   coverageReporters: ['text', 'lcov', 'html'],
   coverageDirectory: 'coverage',
   testTimeout: 10000,

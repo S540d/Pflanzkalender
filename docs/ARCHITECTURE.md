@@ -37,8 +37,7 @@ delegates to the matching screen in `src/screens/`.
 │   │   └── LanguageContext.tsx  #   de/en switching
 │   ├── services/
 │   │   ├── storage.ts           #   AsyncStorage persistence
-│   │   ├── templateService.ts   #   community templates
-│   │   └── firebase.ts          #   UNUSED — see Key Decisions
+│   │   └── templateService.ts   #   community templates
 │   ├── schemas/plant.ts   # Zod schemas, import validation
 │   ├── constants/         # defaultPlants, plantMetadata, activityTypes,
 │   │                      # climateRecommendations, designTokens, theme
@@ -59,13 +58,13 @@ delegates to the matching screen in `src/screens/`.
 (24 per year: January 1st half = 0, January 2nd half = 1, …), not month numbers.
 Treating them as months is the single easiest mistake to make in this codebase.
 
-### No backend — and Firebase is not wired up
+### No backend, no auth
 
-Everything lives in `AsyncStorage` via `storageService`. `src/services/firebase.ts`
-exists but is **dead code**: it still contains `YOUR_API_KEY` placeholders and is
-imported nowhere. It is a leftover of an abandoned sync idea — do not treat it as
-an available backend, and do not assume auth exists because `getAuth` appears in
-the tree.
+Everything lives in `AsyncStorage` via `storageService`. There is no server, no
+account and no sync. A `src/services/firebase.ts` with placeholder credentials
+used to sit here as a leftover of an abandoned sync idea; it was never imported
+anywhere and was removed along with the `firebase` dependency. If sync is ever
+revisited, start from a deliberate design — not from that file's history.
 
 ### Zod at the import boundary
 
