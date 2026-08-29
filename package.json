@@ -30,7 +30,6 @@
     "expo-navigation-bar": "~57.0.2",
     "expo-router": "~57.0.17",
     "expo-status-bar": "~57.0.1",
-    "firebase": "^12.15.0",
     "qrcode-generator": "^1.4.4",
     "react": "19.2.3",
     "react-dom": "19.2.3",
