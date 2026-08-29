@@ -5,7 +5,7 @@ A planting calendar Progressive Web App — monthly overview for garden and plan
 ## Live
 
 - Web: [https://s540d.github.io/Pflanzkalender/](https://s540d.github.io/Pflanzkalender/)
-- Android: available on Google Play (Trusted Web Activity)
+- Android: [Google Play](https://play.google.com/store/apps/details?id=io.github.s540d.pflanzkalender&referrer=utm_source%3Dgithub_readme%26utm_medium%3Dreferral%26utm_campaign%3Dweb_presence) (Trusted Web Activity)
 
 ## Tech Stack
 

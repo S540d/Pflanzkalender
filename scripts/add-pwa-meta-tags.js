@@ -11,6 +11,13 @@ const siteUrl = `https://s540d.github.io${baseUrl}/`;
 const description =
   'Pflanzkalender: kostenlose PWA für den Gartenkalender – Aussaat, Pflanzung und Pflege für 32 vordefinierte Pflanzen in Halbmonats-Auflösung planen, offline nutzbar, ohne Login.';
 
+// Play-Store-Link mit utm-Parametern: macht in der Play Console messbar, wie viele
+// Installationen über die Web-App kommen (sonst tauchen sie dort als "organisch" auf).
+const PLAY_STORE_PACKAGE = 'io.github.s540d.pflanzkalender';
+const playStoreUrl =
+  `https://play.google.com/store/apps/details?id=${PLAY_STORE_PACKAGE}` +
+  '&referrer=utm_source%3Dweb_app%26utm_medium%3Dreferral%26utm_campaign%3Dweb_presence';
+
 if (fs.existsSync(indexPath)) {
   let html = fs.readFileSync(indexPath, 'utf8');
 
@@ -93,7 +100,22 @@ if (fs.existsSync(indexPath)) {
       attr: 'rel="icon" type="image/png" sizes="512x512"',
       html: `<link rel="icon" type="image/png" sizes="512x512" href="${baseUrl}/icon-512.png">`,
     },
+    {
+      tag: 'meta',
+      attr: 'property="og:see_also"',
+      html: `<meta property="og:see_also" content="${playStoreUrl}">`,
+    },
   ];
+
+  // Expo emits lang="en", but the app and all its content are German. A wrong
+  // lang attribute hurts indexing for German search terms and screen readers.
+  if (/<html[^>]*\slang="en"/i.test(html)) {
+    html = html.replace(/(<html[^>]*\s)lang="en"/i, '$1lang="de"');
+    console.log('✓ html lang="en" → lang="de"');
+  } else if (!/<html[^>]*\slang=/i.test(html)) {
+    html = html.replace(/<html\b/i, '<html lang="de"');
+    console.log('✓ html lang="de" added');
+  }
 
   let addedCount = 0;
   for (const tag of tagsToAdd) {
