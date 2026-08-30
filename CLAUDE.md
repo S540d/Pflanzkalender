@@ -288,6 +288,27 @@ Das Skript ist idempotent und setzt: `compileSdkVersion`/`targetSdkVersion` → 
 
 **Wichtig:** Beide Issues können nicht durch einen reinen Repo-Commit „gelöst" werden – das Akzeptanzkriterium ist jeweils der tatsächliche Play-Console-Zustand nach einem neuen Upload. Die hier committeten Skripte automatisieren den lokalen Build-Schritt; Bubblewrap-Regenerierung, `gradlew bundleRelease`, Signierung und Play-Store-Upload bleiben manuelle Schritte (siehe Abschnitt „Android Target API Level" oben, Schritte 1–6), die lokale Android-Tooling/Keystore-Zugriff voraussetzen.
 
+### Play-Console-Empfehlungen für Release 18/1.6.1 (Stand 2026-08-30) – `scripts/patch-twa-r8-optimization.sh`
+
+Play Console listet für den vc18-Upload vier Empfehlungen unter „Nutzererfahrung" / „Arbeitsspeichernutzung":
+
+1. **Randlose Anzeige (Edge-to-Edge) funktioniert möglicherweise nicht für alle Nutzer** – bereits durch `patch-twa-edge-to-edge.sh` adressiert (androidbrowserhelper 2.7.2, Issue #206). Falls die Warnung nach einem neuen Upload weiterhin erscheint: prüfen, ob eine neuere ABH-Version die verbleibenden `Window.setStatusBarColor`-Aufrufe (falls noch vorhanden) ersetzt.
+2. **Nicht mehr unterstützte APIs/Parameter für die randlose Anzeige** – dieselbe Ursache wie 1., ebenfalls über `patch-twa-edge-to-edge.sh` abgedeckt.
+3. **Einschränkungen für Größenänderung und Ausrichtung entfernen (große Displays)** – teilweise durch `patch-twa-target-sdk36.sh` (Issue #202, `android:resizeableActivity="true"`) abgedeckt. Ergänzt am 2026-08-30 um Schritt 4 im selben Skript: normalisiert ein hartes `android:screenOrientation` auf der LauncherActivity (z. B. `portrait`) auf `unspecified`, falls Bubblewrap ein solches trotz `"orientation": "default"` in `twa-manifest.template.json` generiert.
+4. **R8-Optimierung aktivieren (Arbeitsspeicher/Leistung)** – neues Skript `scripts/patch-twa-r8-optimization.sh`: setzt `minifyEnabled true` und `shrinkResources true` im `release`-BuildType von `app/build.gradle`. **Nach diesem Patch immer einen lokalen Release-Build installieren und die App manuell durchklicken** (Kalender, Pflanzenverwaltung, Import/Export, Templates) – R8 kann bei fehlenden Keep-Regeln zur Laufzeit crashen, ohne dass der Build selbst fehlschlägt.
+
+Alle vier Punkte betreffen ausschließlich das generierte, gitignorete `android/`-Projekt – wie bei #210/#202 ist eine Remote-Coding-Session ohne Android SDK/Keystore/Play-Console-Zugriff hier nur für die Skript-Vorbereitung zuständig, nicht für Build/Upload/Verifikation. `appVersionCode` in `twa-manifest.template.json` wurde am 2026-08-30 vorsorglich auf **19** hochgezählt (für den nächsten Upload, der diese vier Punkte adressiert).
+
+Runbook für den nächsten Build (ergänzt Abschnitt „TWA-Build" oben um den dritten Patch-Schritt):
+
+```bash
+git status --short
+bash scripts/patch-twa-edge-to-edge.sh
+bash scripts/patch-twa-target-sdk36.sh
+bash scripts/patch-twa-r8-optimization.sh
+grep -nE "minifyEnabled|shrinkResources" app/build.gradle
+```
+
 ### TWA-Build: verbindliche Reihenfolge + Bubblewrap-Fallen (erlebt beim vc17-Build, 2026-08-24)
 
 **`bubblewrap build` nach dem Patchen NICHT mehr verwenden.** Der Ein-Schritt-Befehl regeneriert das Android-Projekt und verwirft dabei _alle_ Patches (ABH fällt auf 2.6.2 zurück, `minSdkVersion` auf 21, `launchUrl` wird neu abgeleitet). Der Build läuft dann fehlerfrei durch und erzeugt ein Artefakt, das die Issues #206/#210/#202 wieder enthält – der Fehler fällt erst im Play Console auf.
@@ -383,7 +404,7 @@ Vollständige Roadmap: https://github.com/S540d/Pflanzkalender/issues/47
 
 **Status (2026-08-30): v1.6.1, Play-Store-Build vc18 lokal gebaut und signiert – `targetSdkVersion 36` und `resizeableActivity="true"` im Artefakt verifiziert. 384 Tests grün. Offen: Play-Console-Upload des vc18-AAB, danach #210/#202 schließen.**
 
-**Aktuell offen:** #210 (targetSdkVersion 36, Deadline 31.08.2026) und #202 (Large-Screen-Fix, in #210 zusammengeführt) – Build-seitig mit vc18 (2026-08-30) erledigt und am Artefakt verifiziert; es fehlt nur noch der Play-Console-Upload, da das Akzeptanzkriterium beider Issues der Play-Console-Zustand ist. Vier Feature-Issues (#94 Statistik/Dashboard, #48 Klimazonen, #9 Fruchtfolge/Mischkultur, #4 Push) wurden am 2026-08-28 mit Label `maybe later` versehen – bewusst zurückgestellt, kein aktiver Scope.
+**Aktuell offen:** #210 (targetSdkVersion 36, Deadline 31.08.2026) und #202 (Large-Screen-Fix, in #210 zusammengeführt) – Build-seitig mit vc18 (2026-08-30) erledigt und am Artefakt verifiziert; es fehlt nur noch der Play-Console-Upload, da das Akzeptanzkriterium beider Issues der Play-Console-Zustand ist. Zusätzlich meldet Play Console für Release 18/1.6.1 vier Empfehlungen (Edge-to-Edge, Größenänderung/Ausrichtung, R8-Optimierung) – siehe „Play-Console-Empfehlungen für Release 18/1.6.1" oben; Skripte vorbereitet (`patch-twa-r8-optimization.sh` neu, `patch-twa-target-sdk36.sh` um Schritt 4 ergänzt), `appVersionCode` auf 19 hochgezählt, Build/Upload noch offen. Vier Feature-Issues (#94 Statistik/Dashboard, #48 Klimazonen, #9 Fruchtfolge/Mischkultur, #4 Push) wurden am 2026-08-28 mit Label `maybe later` versehen – bewusst zurückgestellt, kein aktiver Scope.
 **Zuletzt geschlossen:** #91 (Agenda-Vorschau) und #171 (Store-Eintrag überarbeiten) am 2026-08-28 als bereits erledigt identifiziert und geschlossen – beide waren in PR #121 bzw. PR #172 längst umgesetzt, nur nie geschlossen worden (siehe Issue-Kommentare für Details). Davor: #213 (User Feedback: unübersetzte Default-Aktivitäten/Notizen + Menüleiste, PR #214, 2026-08-25), #152 (Import-/Export-Konsolidierung, 2026-06-05), #161 (Emojis, PR #172/#174) und #8 (Template-System, PR #147/#151, 2026-06-27).
 
 **#210/#202 – warum „nur lokal umsetzbar":** Beide erfordern native Android-Build-Schritte (Bubblewrap-Regenerierung, Gradle-Patches, AAB signieren, Play-Console-Upload). `android/` ist gitignored und wird nie im Repo geführt – eine Remote-Coding-Session ohne Android SDK/Signing-Keystore/Play-Console-Zugriff kann hier nichts beitragen. Repo-seitig ist bereits alles vorbereitet: `scripts/patch-twa-target-sdk36.sh` (hebt compileSdkVersion/targetSdkVersion auf 36, setzt `resizeableActivity="true"`) und `scripts/patch-twa-edge-to-edge.sh` (androidbrowserhelper 2.7.2). Runbook: `bubblewrap update` → beide Patch-Skripte → `appVersionCode` in `twa-manifest.template.json` hochzählen → `./gradlew bundleRelease` → Play-Console-Upload → Git-Tag.
