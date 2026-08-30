@@ -1,0 +1,28 @@
+# Dependabot – kostenlose Dependency-Updates + Security-Alerts.
+# Ersetzt zusammen mit codeql.yml den kostenpflichtigen Anthropic-API-Scan.
+
+version: 2
+updates:
+  # GitHub-Actions-Versionen (gilt für ALLE Repos, auch ohne package.json).
+  - package-ecosystem: 'github-actions'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: 'ci'
+
+  # NPM/Yarn/PNPM-Abhängigkeiten.
+  - package-ecosystem: 'npm'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: 'chore'
+    # Patch-/Minor-Updates gebündelt, damit nicht pro Paket ein PR aufgeht.
+    groups:
+      minor-and-patch:
+        update-types:
+          - 'minor'
+          - 'patch'
