@@ -17,4 +17,14 @@ module.exports = {
   coverageReporters: ['text', 'lcov', 'html'],
   coverageDirectory: 'coverage',
   testTimeout: 10000,
+  // Schutz vor Regression: auf dem gemessenen Stand minus kleinem Puffer.
+  // Bei Verbesserungen nachziehen (Issue project-templates#113).
+  coverageThreshold: {
+    global: {
+      statements: 69,
+      branches: 63,
+      functions: 64,
+      lines: 69,
+    },
+  },
 };
