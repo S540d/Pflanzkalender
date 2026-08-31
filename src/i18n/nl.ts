@@ -4,6 +4,7 @@ const nl: Translations = {
   'nav.calendar': '📅',
   'nav.agenda': '📋',
   'calendar.title': 'Plantenkalender',
+  'table.plantColumn': 'Plant',
   'calendar.addPlant': 'Nieuwe plant',
   'calendar.months.short': [
     'Jan',
@@ -97,6 +98,7 @@ const nl: Translations = {
   'activity.add.customLabel': 'Aangepast label (optioneel)',
   'activity.edit.title': 'Activiteit bewerken',
   'activity.edit.nameLabel': 'Label',
+  'activity.edit.namePlaceholder': 'bijv. Zaaien',
   'activity.edit.periodLabel': 'Periode *',
   'activity.edit.deleteTitle': 'Activiteit verwijderen',
   'activity.edit.deleteMessage': 'Activiteit echt verwijderen?',

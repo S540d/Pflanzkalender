@@ -4,6 +4,7 @@ const fr: Translations = {
   'nav.calendar': '📅',
   'nav.agenda': '📋',
   'calendar.title': 'Calendrier des plantes',
+  'table.plantColumn': 'Plante',
   'calendar.addPlant': 'Nouvelle plante',
   'calendar.months.short': [
     'Jan',
@@ -97,6 +98,7 @@ const fr: Translations = {
   'activity.add.customLabel': 'Libellé personnalisé (optionnel)',
   'activity.edit.title': "Modifier l'activité",
   'activity.edit.nameLabel': 'Libellé',
+  'activity.edit.namePlaceholder': 'ex. Semis',
   'activity.edit.periodLabel': 'Période *',
   'activity.edit.deleteTitle': "Supprimer l'activité",
   'activity.edit.deleteMessage': 'Vraiment supprimer cette activité ?',

@@ -7,6 +7,7 @@ const de: Translations = {
 
   // Calendar Screen
   'calendar.title': 'Pflanzkalender',
+  'table.plantColumn': 'Pflanze',
   'calendar.addPlant': 'Neue Pflanze',
   'calendar.months.short': [
     'Jan',
@@ -114,6 +115,7 @@ const de: Translations = {
   'activity.add.customLabel': 'Eigene Bezeichnung (optional)',
   'activity.edit.title': 'Aktivität bearbeiten',
   'activity.edit.nameLabel': 'Bezeichnung',
+  'activity.edit.namePlaceholder': 'z.B. Aussäen',
   'activity.edit.periodLabel': 'Zeitraum *',
   'activity.edit.deleteTitle': 'Aktivität löschen',
   'activity.edit.deleteMessage': 'Aktivität wirklich löschen?',

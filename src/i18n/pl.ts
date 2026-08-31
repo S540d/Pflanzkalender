@@ -4,6 +4,7 @@ const pl: Translations = {
   'nav.calendar': '📅',
   'nav.agenda': '📋',
   'calendar.title': 'Kalendarz roślin',
+  'table.plantColumn': 'Roślina',
   'calendar.addPlant': 'Nowa roślina',
   'calendar.months.short': [
     'Sty',
@@ -97,6 +98,7 @@ const pl: Translations = {
   'activity.add.customLabel': 'Własna etykieta (opcjonalnie)',
   'activity.edit.title': 'Edytuj aktywność',
   'activity.edit.nameLabel': 'Etykieta',
+  'activity.edit.namePlaceholder': 'np. Siew',
   'activity.edit.periodLabel': 'Okres *',
   'activity.edit.deleteTitle': 'Usuń aktywność',
   'activity.edit.deleteMessage': 'Na pewno usunąć tę aktywność?',
