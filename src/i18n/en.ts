@@ -7,6 +7,7 @@ const en: Translations = {
 
   // Calendar Screen
   'calendar.title': 'Plant Calendar',
+  'table.plantColumn': 'Plant',
   'calendar.addPlant': 'New Plant',
   'calendar.months.short': [
     'Jan',
@@ -113,6 +114,7 @@ const en: Translations = {
   'activity.add.customLabel': 'Custom label (optional)',
   'activity.edit.title': 'Edit Activity',
   'activity.edit.nameLabel': 'Label',
+  'activity.edit.namePlaceholder': 'e.g. Sowing',
   'activity.edit.periodLabel': 'Period *',
   'activity.edit.deleteTitle': 'Delete Activity',
   'activity.edit.deleteMessage': 'Really delete this activity?',

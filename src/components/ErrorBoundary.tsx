@@ -1,6 +1,14 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Platform } from 'react-native';
 
+// The ErrorBoundary wraps LanguageProvider, so it cannot rely on useLanguage()
+// and must detect the language on its own if it needs to render a fallback.
+function isGermanLocale(): boolean {
+  if (Platform.OS !== 'web') return true; // platform-safe
+  const locale = typeof navigator !== 'undefined' ? navigator.language : undefined; // platform-safe
+  return !locale || locale.toLowerCase().startsWith('de');
+}
+
 interface Props {
   children: ReactNode;
 }
@@ -49,6 +57,7 @@ export class ErrorBoundary extends Component<Props, State> {
 
   render() {
     if (this.state.hasError) {
+      const isDe = isGermanLocale();
       const webUserAgent = Platform.OS === 'web' ? navigator.userAgent : ''; // platform-safe
       const webScreen = Platform.OS === 'web' ? `${window.innerWidth}x${window.innerHeight}` : ''; // platform-safe
       const webUrl = Platform.OS === 'web' ? window.location.href : ''; // platform-safe
@@ -70,10 +79,10 @@ export class ErrorBoundary extends Component<Props, State> {
                 marginBottom: 5,
               }}
             >
-              ⚠️ App Fehler
+              {isDe ? '⚠️ App Fehler' : '⚠️ App Error'}
             </Text>
             <Text style={{ color: 'white', fontSize: 14 }}>
-              Die App ist auf einen Fehler gestoßen
+              {isDe ? 'Die App ist auf einen Fehler gestoßen' : 'The app has encountered an error'}
             </Text>
           </View>
 
@@ -120,13 +129,13 @@ export class ErrorBoundary extends Component<Props, State> {
                 }}
               >
                 <Text style={{ color: '#00ff00', fontSize: 12, marginBottom: 10 }}>
-                  Debug-Informationen:
+                  {isDe ? 'Debug-Informationen:' : 'Debug information:'}
                 </Text>
                 <Text style={{ color: '#aaa', fontSize: 11, fontFamily: 'monospace' }}>
                   User Agent: {webUserAgent}
                 </Text>
                 <Text style={{ color: '#aaa', fontSize: 11, fontFamily: 'monospace' }}>
-                  Bildschirm: {webScreen}
+                  {isDe ? 'Bildschirm' : 'Screen'}: {webScreen}
                 </Text>
                 <Text style={{ color: '#aaa', fontSize: 11, fontFamily: 'monospace' }}>
                   URL: {webUrl}
@@ -146,7 +155,13 @@ export class ErrorBoundary extends Component<Props, State> {
             }}
           >
             <Text style={{ color: 'white', fontSize: 16, fontWeight: 'bold' }}>
-              {Platform.OS === 'web' ? '🔄 Cache leeren & Neu laden' : '🔄 App zurücksetzen'}
+              {Platform.OS === 'web'
+                ? isDe
+                  ? '🔄 Cache leeren & Neu laden'
+                  : '🔄 Clear Cache & Reload'
+                : isDe
+                  ? '🔄 App zurücksetzen'
+                  : '🔄 Reset App'}
             </Text>
           </TouchableOpacity>
         </View>
