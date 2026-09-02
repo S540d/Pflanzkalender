@@ -35,4 +35,4 @@ jobs:
   # auf uses:-Jobs nicht erlaubt – die Non-Blocking-Semantik muss daher im Template
   # bleiben; security-scan und gitignore-audit (fail_on_*: true) gaten den Merge.
   dev-standards-audit:
-    uses: S540d/project-templates/.github/workflows/reusable-dev-standards-audit.yml@v1
+    uses: S540d/project-templates/.github/workflows/reusable-dev-standards-audit.yml@v2
