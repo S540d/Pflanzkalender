@@ -21,7 +21,7 @@ permissions:
 
 jobs:
   security-scan:
-    uses: S540d/project-templates/.github/workflows/reusable-security-scan.yml@v1
+    uses: S540d/project-templates/.github/workflows/reusable-security-scan.yml@v2
     with:
       fail_on_findings: true
 
