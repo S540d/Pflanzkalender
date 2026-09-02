@@ -1,5 +1,6 @@
 import React from 'react';
 import type { ColorValue } from 'react-native';
+import { Text } from 'react-native';
 import { Tabs } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -20,6 +21,19 @@ function TabBarIcon({
   focused: boolean;
 }) {
   return <Icon name={name} size={focused ? 26 : 23} color={color} />;
+}
+
+function TabBarLabel({ label, color }: { label: string; color: ColorValue }) {
+  return (
+    <Text
+      style={{ fontSize: 11, fontWeight: '600', color }}
+      numberOfLines={1}
+      adjustsFontSizeToFit
+      minimumFontScale={0.75}
+    >
+      {label}
+    </Text>
+  );
 }
 
 function TabsNavigator() {
@@ -43,10 +57,7 @@ function TabsNavigator() {
             paddingBottom: 8,
             ...shadow(2),
           },
-          tabBarLabelStyle: {
-            fontSize: 11,
-            fontWeight: '600',
-          },
+          tabBarLabel: ({ color, children }) => <TabBarLabel label={children} color={color} />,
           tabBarItemStyle: {
             paddingTop: 2,
           },

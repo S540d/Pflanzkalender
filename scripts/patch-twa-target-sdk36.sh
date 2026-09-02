@@ -67,4 +67,21 @@ else
   echo "android:resizeableActivity=\"true\" zum <application>-Tag ergänzt (AndroidManifest.xml)."
 fi
 
+# 4) Verbleibende Größenänderungs-/Ausrichtungs-Einschränkungen auf der
+#    LauncherActivity entfernen (Play-Console-Warnung "Einschränkungen für
+#    die Größenänderung und Ausrichtung entfernen"). twa-manifest.template.json
+#    setzt "orientation": "default" bereits korrekt, aber Bubblewrap kann bei
+#    der Generierung dennoch ein hartes android:screenOrientation auf der
+#    Activity hinterlassen – hier auf "unspecified" (keine Einschränkung)
+#    normalisieren, statt den Wert ganz zu entfernen (Attribut fehlt sonst
+#    nicht automatisch aus dem Manifest-Merge der Bubblewrap-Vorlage).
+if [ ! -f "$MANIFEST" ]; then
+  : # bereits oben behandelt
+elif grep -qE 'android:screenOrientation="(portrait|landscape|userPortrait|userLandscape|sensorPortrait|sensorLandscape|reversePortrait|reverseLandscape)"' "$MANIFEST"; then
+  sed -i '' -E 's/android:screenOrientation="(portrait|landscape|userPortrait|userLandscape|sensorPortrait|sensorLandscape|reversePortrait|reverseLandscape)"/android:screenOrientation="unspecified"/' "$MANIFEST"
+  echo "android:screenOrientation auf unspecified normalisiert (AndroidManifest.xml)."
+else
+  echo "Keine feste android:screenOrientation-Einschränkung gefunden."
+fi
+
 echo "Fertig. Target-SDK-36- und Large-Screen-Patch (Issue #210/#202) angewendet."

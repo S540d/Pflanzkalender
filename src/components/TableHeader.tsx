@@ -1,6 +1,7 @@
 import React, { useRef } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { useTheme } from '../hooks/useTheme';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface TableHeaderProps {
   months: string[];
@@ -20,6 +21,7 @@ export const TableHeader: React.FC<TableHeaderProps> = ({
   headerScrollRef,
 }) => {
   const { theme } = useTheme();
+  const { t } = useLanguage();
   const localRef = useRef<ScrollView>(null);
   const ref = headerScrollRef || localRef;
 
@@ -32,7 +34,9 @@ export const TableHeader: React.FC<TableHeaderProps> = ({
           { borderColor: theme.border, backgroundColor: theme.surfaceElevated },
         ]}
       >
-        <Text style={[styles.headerText, { color: theme.text }]}>Pflanze</Text>
+        <Text style={[styles.headerText, { color: theme.text }]}>
+          {t('table.plantColumn') as string}
+        </Text>
       </View>
 
       {/* Scrollable Months Header */}
@@ -92,7 +96,9 @@ export const TableHeader: React.FC<TableHeaderProps> = ({
               { borderColor: theme.border, backgroundColor: theme.surfaceElevated },
             ]}
           >
-            <Text style={[styles.headerText, { color: theme.text }]}>Notizen</Text>
+            <Text style={[styles.headerText, { color: theme.text }]}>
+              {t('plants.fieldNotes') as string}
+            </Text>
           </View>
         </View>
       </ScrollView>
