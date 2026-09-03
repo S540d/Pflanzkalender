@@ -26,7 +26,7 @@ jobs:
       fail_on_findings: true
 
   gitignore-audit:
-    uses: S540d/project-templates/.github/workflows/reusable-gitignore-audit.yml@v1
+    uses: S540d/project-templates/.github/workflows/reusable-gitignore-audit.yml@v2
     with:
       fail_on_missing: true
 
