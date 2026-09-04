@@ -65,7 +65,10 @@ module.exports = [
       'no-console': ['warn', { allow: ['error', 'warn'] }],
     },
     settings: {
-      react: { version: 'detect' },
+      // Explizite Version statt 'detect': eslint-plugin-react ruft für
+      // 'detect' intern context.getFilename() auf, das ESLint 10 entfernt
+      // hat (siehe Issue #249). React-Version aus package.json übernehmen.
+      react: { version: require('./package.json').dependencies.react },
     },
   },
   {
