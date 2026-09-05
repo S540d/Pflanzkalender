@@ -14,7 +14,7 @@ Repo: https://github.com/s540d/Pflanzkalender
 
 ## Tech Stack (exakte Versionen)
 
-Stand testing (SDK 57, seit Issue #222): main ist noch auf SDK 56, bis `testing → main`-PR zurückgeführt wurde – siehe „Aktuelle Version".
+Stand 2026-09-05: main = testing, beide auf SDK 57 (seit Issue #222, PR #264 hat `testing → main` zurückgeführt) – siehe „Aktuelle Version".
 
 | Paket                | Version                                                                         |
 | -------------------- | ------------------------------------------------------------------------------- |
@@ -36,6 +36,8 @@ Deploy: GitHub Pages via `gh-pages` unter `/Pflanzkalender/`
 ---
 
 ## Aktuelle Version: 1.6.1 (appVersionCode 19)
+
+**Stand 2026-09-05 (Nachmittag):** `testing → main` gemerged (PR #264, Merge-Commit `1051892`) – main und testing sind wieder inhaltsgleich (`b661213`). Enthält die vc19-Doku (#257/#258, s. u.) sowie PR #263 (`feature/issue-259-260-261`, zuvor per Squash in `testing` gemergt): **#260** (Zeilen von Pflanzennamen-Spalte und Aktivitätsspalte liefen beim Scrollen auseinander – Ursache war eine abweichende Zeilenhöhen-Formel zwischen `PlantRowsContainer` und `PlantRow`, 28px- vs. 34px-Stride; jetzt gemeinsame `calculateRowMinHeight()`-Funktion in `src/utils/activityLayout.ts`), **#261** (Pflanzenverwaltung zu verschwenderisch mit Platz – "Neue Pflanze"-Button von `size="lg" fullWidth` auf `size="sm"`, reduzierte Innenabstände, doppelten Zeilenabstand in der Liste entfernt) und **#259** (dynamischer Splash Screen – PWA-Web-Splash `scripts/add-splash-screen.js` hatte nur eine einmalige Eingangsanimation, jetzt zusätzlich fortlaufender Puls + Rotationsring solange die App lädt, deaktiviert unter `prefers-reduced-motion`; der native Android-Splash ist nicht betroffen, da `android/` gitignored/Bubblewrap-generiert ist). tsc 0, 384/384 Tests grün, eslint/prettier sauber. Alle drei Issues geschlossen.
 
 **Stand 2026-09-05 (vc19):** Play-Store-Build **vc19** gebaut, signiert und **in den Play Store hochgeladen** (Upload durch den User bestätigt). Reiner Build-Konfig-Bump, kein Feature-Release: `appVersionCode` 18 → 19, `versionName` bleibt `1.6.1`. Anlass: seit vc18 (30.8.) kein neuer Play-Store-Build, obwohl mehrere Fixes seitdem in main/testing lagen (#234 Restdeutsch-Übersetzung + Tab-Bar-Lesbarkeit, #227 R8-Optimierung + Ausrichtungs-Fix, Expo SDK 57). `main`/`testing` waren zu Sessionbeginn bereits inhaltlich synchron (`225b3c1`) – lediglich das lokale `main` hing der Remote nach (25 Commits), per `git fetch --all --prune` + `checkout main && pull` behoben, kein inhaltlicher Merge nötig. Alle drei TWA-Patch-Skripte liefen erneut (idempotent) – zwei meldeten „bereits gesetzt" (Edge-to-Edge, targetSdk36/Large-Screen, da vom vc18-Lauf noch vorhanden), das R8-Skript ergänzte fehlendes `shrinkResources true` (`minifyEnabled` war schon gesetzt). `versionCode` in `app/build.gradle` und `appVersionCode` in `twa-manifest.json` manuell auf 19 synchronisiert (`twa-manifest.template.json` hatte den Wert bereits seit PR #227 vorbereitet). Signiert mit `pflanzkalender.keystore`, SHA256-Fingerprint `AC:D5:…:08:06` – identisch zu vc17/vc18. tsc 0, 384/384 Tests grün. Git-Tag `v1.6.1-vc19` gesetzt und gepusht. **Verbindlicher Build-Workflow jetzt konsolidiert unter „TWA-Build" (siehe unten, Abschnitt „Standard-Ablauf für einen reinen Play-Store-Build")** – dieser Lauf folgte ihm erstmals vollständig ohne Regenerierung. Doku-Update lief als PR #257 gegen `testing` (Merge auf `main` erfolgt separat, siehe „Offene Issues").
 
@@ -457,7 +459,9 @@ Vollständige Roadmap: https://github.com/S540d/Pflanzkalender/issues/47
 
 ## Offene Issues (Stand 2026-09-05)
 
-**Status (2026-09-05): v1.6.1, Play-Store-Build vc19 gebaut, signiert und in den Play Store hochgeladen** (`app/build.gradle`/`twa-manifest.json` auf `appVersionCode` 19 gebumpt, R8-Patch ergänzte fehlendes `shrinkResources true`), Tag `v1.6.1-vc19` gesetzt und gepusht. 384 Tests grün, tsc sauber. Kein inhaltlicher `testing → main`-Merge nötig gewesen – beide Branches waren bereits synchron, nur lokales `main` hing der Remote nach. Doku-Update dazu (PR #257) ist in `testing` gemergt; **Merge `testing → main` steht noch aus** (macht der User später selbst).\*\*
+**Status (2026-09-05, Nachmittag): #259/#260/#261 geschlossen** (PR #263 → `testing`, dann PR #264 `testing → main`) – main und testing wieder synchron (`b661213`/`1051892`). Details siehe „Aktuelle Version" oben.
+
+**Status (2026-09-05, vormittags): v1.6.1, Play-Store-Build vc19 gebaut, signiert und in den Play Store hochgeladen** (`app/build.gradle`/`twa-manifest.json` auf `appVersionCode` 19 gebumpt, R8-Patch ergänzte fehlendes `shrinkResources true`), Tag `v1.6.1-vc19` gesetzt und gepusht. 384 Tests grün, tsc sauber. Doku-Update dazu war PR #257 → `testing`; der `testing → main`-Merge ist seit dem Nachmittags-Update (s. o.) erledigt.
 
 **Status (2026-09-04):** main → testing gesynct (main hatte 7 sichere Dependabot-Bumps, die testing noch fehlten: `actions/checkout` 4→7 #241, `actions/setup-node` 4→7 #239, drei project-templates-Reusable-Workflow-Bumps #237/#238/#240, `eslint-config-prettier` 9.1.2→10.1.8 #244, `jest` 29→30.5.0 + `@types/jest` 30.0.0 #245). Damit vereint: testings ESLint-9→10-Migration (PR #251, schließt Meta-Issue #249 – die 3 zuvor blockierten Dependabot-PRs #243/#246/#247 sind dadurch obsolet) UND die 7 Bumps von main. Migrierte Pakete beim Sync bewusst auf testings neueren Stand gehalten (`eslint` ^10.9.1, `@eslint/js` ^10.0.1, `@typescript-eslint/*` ^8.69.0), `jest`/`@types/jest` von main übernommen.
 
