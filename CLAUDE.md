@@ -35,7 +35,9 @@ Deploy: GitHub Pages via `gh-pages` unter `/Pflanzkalender/`
 
 ---
 
-## Aktuelle Version: 1.6.1 (appVersionCode 17)
+## Aktuelle Version: 1.6.1 (appVersionCode 19)
+
+**Stand 2026-09-05 (vc19):** Play-Store-Build **vc19** gebaut, signiert und zum Upload gegeben. Reiner Build-Konfig-Bump, kein Feature-Release: `appVersionCode` 18 → 19, `versionName` bleibt `1.6.1`. Anlass: seit vc18 (30.8.) kein neuer Play-Store-Build, obwohl mehrere Fixes seitdem in main/testing lagen (#234 Restdeutsch-Übersetzung + Tab-Bar-Lesbarkeit, #227 R8-Optimierung + Ausrichtungs-Fix, Expo SDK 57). `main`/`testing` waren zu Sessionbeginn bereits inhaltlich synchron (`225b3c1`) – lediglich das lokale `main` hing der Remote nach (25 Commits), per `git fetch --all --prune` + `checkout main && pull` behoben, kein inhaltlicher Merge nötig. Alle drei TWA-Patch-Skripte liefen erneut (idempotent) – zwei meldeten „bereits gesetzt" (Edge-to-Edge, targetSdk36/Large-Screen, da vom vc18-Lauf noch vorhanden), das R8-Skript ergänzte fehlendes `shrinkResources true` (`minifyEnabled` war schon gesetzt). `versionCode` in `app/build.gradle` und `appVersionCode` in `twa-manifest.json` manuell auf 19 synchronisiert (`twa-manifest.template.json` hatte den Wert bereits seit PR #227 vorbereitet). Signiert mit `pflanzkalender.keystore`, SHA256-Fingerprint `AC:D5:…:08:06` – identisch zu vc17/vc18. tsc 0, 384/384 Tests grün. Git-Tag `v1.6.1-vc19` gesetzt und gepusht. **Verbindlicher Build-Workflow jetzt konsolidiert unter „TWA-Build" (siehe unten, Abschnitt „Standard-Ablauf für einen reinen Play-Store-Build")** – dieser Lauf folgte ihm erstmals vollständig ohne Regenerierung.
 
 **Stand 2026-08-30 (vc18, Issue #210/#202):** Play-Store-Build **vc18** gebaut und signiert. Der Semver-String bleibt `1.6.1` – reine Build-Konfiguration, nur `appVersionCode` 17 → 18. Im Artefakt verifiziert (Proto-Manifest der AAB, nicht nur die Skript-Ausgaben): `targetSdkVersion 36`, `minSdkVersion 23`, `android:resizeableActivity="true"` (fehlte in vc17), `versionCode 18`, `androidbrowserhelper 2.7.2`, Launch-URL `https://s540d.github.io/Pflanzkalender/` ohne Doppel-Domain. Signiert mit `pflanzkalender.keystore` (SHA256 `AC:D5:…:08:06`, identisch zu vc17). **Kein `bubblewrap update` / `bubblewrap build`** – das lokale generierte Projekt war aus dem vc17-Lauf bereits korrekt gepatcht; eine Regenerierung hätte alle Patches verworfen (siehe „TWA-Build" unten). Ablauf: `appVersionCode` bumpen → beide Patch-Skripte (beide meldeten „bereits gesetzt", idempotent) → `./gradlew bundleRelease assembleRelease` → `jarsigner` → Verifikation am Artefakt. tsc 0, 384/384 Tests grün, expo-router-`app/`-Dateien unangetastet. **Offen:** Play-Console-Upload des vc18-AAB (`aab-archive/Pflanzkalender-v1.6.1-vc18-2026-08-30.aab`) – erst danach sind #210/#202 formal erfüllt (Akzeptanzkriterium ist der Play-Console-Zustand).
 
@@ -350,6 +352,59 @@ AAPT=$(ls ~/Library/Android/sdk/build-tools/*/aapt2 | tail -1)
 ./gradlew -q app:dependencies --configuration releaseRuntimeClasspath | grep -i browserhelper
 ```
 
+### Standard-Ablauf für einen reinen Play-Store-Build (kein neues Feature) – erstmals vollständig so gelaufen bei vc19, 2026-09-05
+
+Wenn `app/build.gradle` aus einem vorherigen Build **bereits existiert** (Regelfall zwischen zwei Uploads – Bubblewrap-Regenerierung ist dann NICHT nötig, siehe Falle 1/2 oben), reicht dieser schlanke Ablauf:
+
+```bash
+# 0. Git-Sessionstart (verbindlich, siehe globale CLAUDE.md): main/testing synchron ziehen
+git fetch --all --prune
+git checkout testing && git pull origin testing
+git checkout main    && git pull origin main
+
+# 1. Prüfen, ob app/ existiert – falls nicht: erst Bubblewrap-Abschnitt oben abarbeiten
+ls app/build.gradle
+
+# 2. Alle drei Patch-Skripte laufen lassen (idempotent, auch wenn vermutlich alles schon gesetzt ist –
+#    Erfolgsmeldung "bereits gesetzt" reicht NICHT als Beleg, s. u.)
+bash scripts/patch-twa-edge-to-edge.sh
+bash scripts/patch-twa-target-sdk36.sh
+bash scripts/patch-twa-r8-optimization.sh
+
+# 3. Werte in den Quelldateien verifizieren (nicht nur Skript-Output vertrauen)
+grep -nE "minSdkVersion|targetSdkVersion|compileSdkVersion|androidbrowserhelper:|versionCode|launchUrl:|minifyEnabled|shrinkResources" app/build.gradle
+grep -n "resizeableActivity" app/src/main/AndroidManifest.xml
+
+# 4. appVersionCode bumpen – twa-manifest.template.json (getrackt) ist die Quelle der Wahrheit für den
+#    NÄCHSTEN Bump und wird oft schon vom Vor-PR vorbereitet; app/build.gradle + twa-manifest.json
+#    (beide gitignored, generiert) müssen manuell nachgezogen werden:
+sed -i '' "s/versionCode <ALT>/versionCode <NEU>/" app/build.gradle
+node -e "const f='twa-manifest.json',p=JSON.parse(require('fs').readFileSync(f));p.appVersionCode=<NEU>;require('fs').writeFileSync(f,JSON.stringify(p,null,2)+'\n')"
+
+# 5. Sicherheitscheck vor dem Build
+npx tsc --noEmit
+npm test -- --silent
+
+# 6. Bauen (erzeugt bereits ein *unsigniertes* AAB)
+./gradlew bundleRelease --no-daemon --console=plain
+ls -lh app/build/outputs/bundle/release/app-release.aab
+
+# 7. Ins Archiv kopieren, DORT signieren (jarsigner überschreibt in-place), Retention 2 Dateien
+mkdir -p aab-archive
+cp app/build/outputs/bundle/release/app-release.aab "aab-archive/Pflanzkalender-v<VERSION>-vc<NEU>-$(date +%Y-%m-%d).aab"
+jarsigner -verbose -sigalg SHA256withRSA -digestalg SHA-256 \
+  -keystore "/Users/svenstrohkark/Documents/Programmierung/Projects/Keystore/Keystore_Pflanzkalender/pflanzkalender.keystore" \
+  -storepass "$PW" -keypass "$PW" \
+  "aab-archive/Pflanzkalender-v<VERSION>-vc<NEU>-<DATUM>.aab" "pflanzkalender"
+jarsigner -verify -verbose -certs "aab-archive/Pflanzkalender-v<VERSION>-vc<NEU>-<DATUM>.aab" | tail -8
+ls -t aab-archive/*.aab | tail -n +3 | xargs -r rm -f
+
+# 8. Nach dem Play-Console-Upload: Tag setzen
+git tag v<VERSION>-vc<NEU> && git push origin v<VERSION>-vc<NEU>
+```
+
+**Erkenntnis vc19 – Artefakt-Verifikation von AAB-Dateien ist mit Bordmitteln nur eingeschränkt möglich:** `aapt2 dump badging/xmltree/strings` arbeitet auf **APK**-Struktur (`AndroidManifest.xml` im Root, Binary-XML) – ein AAB hat ein anderes Layout (`base/manifest/AndroidManifest.xml`, **Protobuf**-kompiliert, nicht Binary-XML) und lässt sich damit nicht direkt dumpen. `bundletool` müsste als ausführbares `bundletool-all-*.jar` vorliegen (reine Library-Jars aus dem Gradle-Cache unter `~/.gradle/caches/modules-2/.../bundletool/*.jar` haben kein Main-Manifest und sind nicht direkt aufrufbar). **Praktikabler Ersatz, wenn kein `bundletool-all.jar` vorhanden ist:** Werte bereits in Schritt 3 direkt in den Quelldateien (`app/build.gradle`, `AndroidManifest.xml`) verifizieren, BEVOR gebaut wird – der Gradle-Build kompiliert diese Quellen unverändert. Am fertigen AAB dann nur noch Package-Name/Struktur per `unzip -l`/`strings` auf `base/manifest/AndroidManifest.xml` stichprobenartig gegenchecken (zeigt z. B. `io.github.s540d.pflanzkalender.LauncherActivity`) und die Signatur per `jarsigner -verify` + SHA256-Fingerprint-Abgleich mit dem Keystore (`keytool -list -v -keystore ... | grep SHA256`) bestätigen. Ein voller `aapt2`/`bundletool`-Dump auf dem AAB selbst ist für die Routine-Verifikation nicht nötig, wenn die Quelldateien vor dem Build schon geprüft wurden.
+
 ### Squash-Merge: Feature-Branches nach Merge löschen
 
 Bleiben Feature-Branches nach einem Squash-Merge im Remote stehen, schlägt jeder spätere Merge oder Rebase mit ihnen mit add/add-Konflikten in den ursprünglich gemergten Dateien fehl – Git erkennt die Inhaltsgleichheit der squash-erzeugten Commits nicht, weil sie neue Hashes haben. **Immer Branch nach Merge löschen.** Falls schon zu spät: nur den Diff `branch..main` als Patch ausschneiden, auf einen frischen Branch von main anwenden, alten Branch wegwerfen (siehe Vorgehen bei PR #75).
@@ -400,7 +455,9 @@ Vollständige Roadmap: https://github.com/S540d/Pflanzkalender/issues/47
 
 ---
 
-## Offene Issues (Stand 2026-09-04)
+## Offene Issues (Stand 2026-09-05)
+
+**Status (2026-09-05): v1.6.1, Play-Store-Build vc19 lokal gebaut und signiert (`app/build.gradle`/`twa-manifest.json` auf `appVersionCode` 19 gebumpt, R8-Patch ergänzte fehlendes `shrinkResources true`), Tag `v1.6.1-vc19` gesetzt. Play-Console-Upload durch den User angestoßen (Stand dieses Dokuments: Upload läuft/läuft gerade an, Ergebnis hier noch nicht bestätigt). 384 Tests grün, tsc sauber. Kein inhaltlicher `testing → main`-Merge nötig gewesen – beide Branches waren bereits synchron, nur lokales `main` hing der Remote nach.**
 
 **Status (2026-09-04):** main → testing gesynct (main hatte 7 sichere Dependabot-Bumps, die testing noch fehlten: `actions/checkout` 4→7 #241, `actions/setup-node` 4→7 #239, drei project-templates-Reusable-Workflow-Bumps #237/#238/#240, `eslint-config-prettier` 9.1.2→10.1.8 #244, `jest` 29→30.5.0 + `@types/jest` 30.0.0 #245). Damit vereint: testings ESLint-9→10-Migration (PR #251, schließt Meta-Issue #249 – die 3 zuvor blockierten Dependabot-PRs #243/#246/#247 sind dadurch obsolet) UND die 7 Bumps von main. Migrierte Pakete beim Sync bewusst auf testings neueren Stand gehalten (`eslint` ^10.9.1, `@eslint/js` ^10.0.1, `@typescript-eslint/*` ^8.69.0), `jest`/`@types/jest` von main übernommen.
 
