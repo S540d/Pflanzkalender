@@ -51,7 +51,7 @@ export const TableHeader: React.FC<TableHeaderProps> = ({
       >
         <View style={[styles.headerRow, { backgroundColor: theme.background }]}>
           {months.map((month, index) => {
-            let isCurrentPeriod = false;
+            let isCurrentPeriod: boolean;
 
             if (isPortrait) {
               const slotStart = index * 4;
