@@ -122,8 +122,7 @@ export const PlantManagementScreen: React.FC = () => {
           <Button
             label={t('plants.add') as string}
             icon="add"
-            size="lg"
-            fullWidth
+            size="sm"
             onPress={() => setShowAddPlant(true)}
             style={styles.addButton}
           />
@@ -137,7 +136,7 @@ export const PlantManagementScreen: React.FC = () => {
               </Text>
             ) : (
               filteredPlants.map((plant) => (
-                <Card key={plant.id} elevation={1} padding={spacing.lg} style={styles.plantItem}>
+                <Card key={plant.id} elevation={1} padding={spacing.sm} style={styles.plantItem}>
                   <View style={styles.plantInfo}>
                     <View style={styles.plantNameRow}>
                       <Text style={styles.plantEmoji}>
@@ -228,31 +227,32 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
-    padding: 20,
+    padding: spacing.md,
   },
   title: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: '700',
-    marginBottom: 20,
+    marginBottom: spacing.md,
     textAlign: 'center',
   },
   searchInput: {
-    padding: 12,
+    padding: spacing.sm,
     borderRadius: radius.md,
     borderWidth: 1,
     fontSize: 15,
-    marginBottom: 12,
+    marginBottom: spacing.sm,
   },
   categoryBarWrap: {
     borderRadius: radius.lg,
     overflow: 'hidden',
-    marginBottom: spacing.lg,
+    marginBottom: spacing.md,
   },
   addButton: {
-    marginBottom: spacing.xxl,
+    alignSelf: 'flex-start',
+    marginBottom: spacing.md,
   },
   plantList: {
-    gap: 12,
+    gap: spacing.sm,
   },
   emptyText: {
     fontSize: 16,
@@ -262,7 +262,6 @@ const styles = StyleSheet.create({
   plantItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 12,
   },
   plantInfo: {
     flex: 1,

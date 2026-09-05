@@ -4,7 +4,11 @@ import { useTheme } from '../hooks/useTheme';
 import { useLanguage } from '../contexts/LanguageContext';
 import { Plant } from '../types';
 import { PlantRow } from './PlantRow';
-import { calculateActivityRows, convertActivitiesToPortraitSlots } from '../utils/activityLayout';
+import {
+  calculateActivityRows,
+  calculateRowMinHeight,
+  convertActivitiesToPortraitSlots,
+} from '../utils/activityLayout';
 import { getPlantDisplayName } from '../constants/plantNames';
 import { getPlantEmoji } from '../constants/plantEmojis';
 import { AppText, Icon } from './ui';
@@ -68,8 +72,7 @@ export const PlantRowsContainer: React.FC<PlantRowsContainerProps> = ({
                 ? convertActivitiesToPortraitSlots(plant.activities)
                 : plant.activities;
               const activitiesWithRows = calculateActivityRows(visibleActivities);
-              const maxRow = activitiesWithRows.reduce((max, a) => Math.max(max, a.row), 0);
-              const minHeight = Math.max(60, (maxRow + 1) * 28 + 8);
+              const minHeight = calculateRowMinHeight(activitiesWithRows);
 
               return (
                 <View

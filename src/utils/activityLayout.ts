@@ -4,6 +4,20 @@ export interface ActivityWithRow extends Activity {
   row: number;
 }
 
+// Vertikaler Abstand pro Aktivitäts-Zeile. Muss zwischen der fixen Namensspalte
+// (PlantRowsContainer) und den scrollbaren Aktivitäts-Zeilen (PlantRow) identisch
+// sein, sonst laufen die Zeilenhöhen beider Spalten auseinander und die manuell
+// synchronisierten ScrollViews driften beim Scrollen auseinander (Issue #260).
+export const ROW_STRIDE = 34;
+const BASE_ROW_MIN_HEIGHT = 64;
+
+// Berechnet die Mindesthöhe einer Pflanzen-Zeile aus den (bereits nach Zeilen
+// aufgeteilten) Aktivitäten – einheitlich für Namensspalte und Aktivitätsspalte.
+export const calculateRowMinHeight = (activitiesWithRows: ActivityWithRow[]): number => {
+  const maxRow = activitiesWithRows.reduce((max, a) => Math.max(max, a.row), 0);
+  return Math.max(BASE_ROW_MIN_HEIGHT, (maxRow + 1) * ROW_STRIDE + 8);
+};
+
 // Konvertiert Activities für Portrait-Modus (24 Halbmonate → 6 Slots à 4 Halbmonate)
 export const convertActivitiesToPortraitSlots = (activities: Activity[]): Activity[] => {
   return activities.map((activity) => ({
