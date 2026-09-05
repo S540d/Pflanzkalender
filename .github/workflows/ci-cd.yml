@@ -12,6 +12,13 @@ permissions:
 
 jobs:
   # ============================================================================
+  # JOB 0: Workflow-Linting (Issue #445)
+  # ============================================================================
+  actionlint:
+    name: ⚙️ Workflow Linting
+    uses: S540d/project-templates/.github/workflows/reusable-actionlint.yml@v2
+
+  # ============================================================================
   # JOB 1: Code Quality & Linting
   # ============================================================================
   code-quality:
