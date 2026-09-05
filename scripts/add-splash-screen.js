@@ -42,15 +42,29 @@ const splashHtml = `
       opacity: 0;
       pointer-events: none;
     }
+    #pwa-splash .pwa-splash-icon-wrap {
+      position: relative;
+      width: 112px;
+      height: 112px;
+      animation: pwa-splash-in 0.5s ease-out;
+    }
+    #pwa-splash .pwa-splash-ring {
+      position: absolute;
+      inset: -14px;
+      border-radius: 32px;
+      border: 3px solid rgba(255, 255, 255, 0.35);
+      border-top-color: rgba(255, 255, 255, 0.9);
+      animation: pwa-splash-spin 1.1s linear infinite;
+    }
     #pwa-splash img {
       width: 112px;
       height: 112px;
       border-radius: 26px;
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
-      animation: pwa-splash-in 0.5s ease-out;
+      animation: pwa-splash-pulse 1.8s ease-in-out infinite;
     }
     #pwa-splash span {
-      margin-top: 16px;
+      margin-top: 20px;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       font-size: 15px;
       font-weight: 600;
@@ -66,9 +80,24 @@ const splashHtml = `
       from { opacity: 0; }
       to { opacity: 1; }
     }
+    @keyframes pwa-splash-pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.06); }
+    }
+    @keyframes pwa-splash-spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      #pwa-splash img { animation: none; }
+      #pwa-splash .pwa-splash-ring { animation: none; }
+    }
   </style>
   <div id="pwa-splash">
-    <img src="${baseUrl}/icon-192.png" alt="" fetchpriority="high" decoding="async" />
+    <div class="pwa-splash-icon-wrap">
+      <div class="pwa-splash-ring"></div>
+      <img src="${baseUrl}/icon-192.png" alt="" fetchpriority="high" decoding="async" />
+    </div>
     <span>Pflanzkalender</span>
   </div>
   <script>

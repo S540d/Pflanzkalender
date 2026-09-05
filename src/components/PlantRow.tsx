@@ -13,12 +13,9 @@ import { ActivityBar } from './ActivityBar';
 import { useTheme } from '../hooks/useTheme';
 import { useLanguage } from '../contexts/LanguageContext';
 import { usePlants } from '../contexts/PlantContext';
-import { calculateActivityRows } from '../utils/activityLayout';
+import { calculateActivityRows, calculateRowMinHeight, ROW_STRIDE } from '../utils/activityLayout';
 import { getPlantDisplayNotes } from '../constants/plantNames';
 import { radius } from '../constants/designTokens';
-
-// Vertikaler Abstand pro Aktivitäts-Zeile (muss zur ActivityBar-Höhe passen).
-const ROW_STRIDE = 34;
 
 interface MonthCellWebProps {
   onMouseDown?: (e: React.MouseEvent) => void;
@@ -115,8 +112,7 @@ export const PlantRow: React.FC<PlantRowProps> = ({
     [plant.activities]
   );
 
-  const maxRow = activitiesWithRows.reduce((max, a) => Math.max(max, a.row), 0);
-  const minHeight = Math.max(64, (maxRow + 1) * ROW_STRIDE + 8);
+  const minHeight = calculateRowMinHeight(activitiesWithRows);
 
   const handleNotesPress = () => {
     setIsEditingNotes(true);
