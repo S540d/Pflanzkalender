@@ -57,6 +57,11 @@ export class ErrorBoundary extends Component<Props, State> {
 
   render() {
     if (this.state.hasError) {
+      // Deliberately not using designTokens/theme.ts here: this boundary wraps
+      // LanguageProvider/PlantProvider/useTheme (see isGermanLocale above), so it
+      // must render a crash screen even if those providers themselves are the
+      // cause of the error. A fixed, hardcoded dark palette keeps this fallback
+      // renderable independent of app/context state.
       const isDe = isGermanLocale();
       const webUserAgent = Platform.OS === 'web' ? navigator.userAgent : ''; // platform-safe
       const webScreen = Platform.OS === 'web' ? `${window.innerWidth}x${window.innerHeight}` : ''; // platform-safe
