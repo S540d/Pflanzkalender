@@ -4,7 +4,7 @@ on:
   push:
     branches: [main, testing]
   pull_request:
-    branches: [main]
+    branches: [main, testing]
 
 # Security: Explicitly set minimal permissions
 permissions:
@@ -75,7 +75,7 @@ jobs:
           fi
 
       - name: TypeScript Type Check
-        run: npx tsc --noEmit || true
+        run: npx tsc --noEmit
 
   # ============================================================================
   # JOB 1b: Lint & Format Check
@@ -124,7 +124,7 @@ jobs:
         run: npm ci --legacy-peer-deps
 
       - name: Run tests
-        run: npm test -- --ci --runInBand --forceExit
+        run: npm test -- --ci --coverage --runInBand --forceExit
 
       - name: Upload coverage report
         uses: actions/upload-artifact@v4
@@ -159,9 +159,15 @@ jobs:
       - name: Check bundle size
         run: |
           if [ -d "dist" ]; then
-            SIZE=$(du -sh dist | cut -f1)
-            echo "📦 Bundle size: $SIZE"
-            # Optional: Add size threshold check
+            SIZE_KB=$(du -sk dist | cut -f1)
+            SIZE_HUMAN=$(du -sh dist | cut -f1)
+            echo "📦 Bundle size: $SIZE_HUMAN"
+            # Current size (2026-09) is ~6.4 MB; fail on unexpected growth beyond 2x.
+            THRESHOLD_KB=13000
+            if [ "$SIZE_KB" -gt "$THRESHOLD_KB" ]; then
+              echo "❌ ERROR: dist/ is ${SIZE_HUMAN}, exceeding the ${THRESHOLD_KB}KB threshold!"
+              exit 1
+            fi
           fi
 
       - name: Upload Web artifacts
