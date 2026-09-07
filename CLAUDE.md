@@ -457,7 +457,15 @@ Vollständige Roadmap: https://github.com/S540d/Pflanzkalender/issues/47
 
 ---
 
-## Offene Issues (Stand 2026-09-05)
+## Offene Issues (Stand 2026-09-07)
+
+**Status (2026-09-07): 5 offene Dependabot-PRs geprüft, main und testing wieder synchron.** Alle 5 PRs (#270–#274) waren wie üblich direkt gegen `main` geöffnet (Dependabot-Default, siehe „Squash-Merge"-Abschnitt unten). Ergebnis:
+
+- ✅ Gemergt nach `main`: #274 (`qrcode-generator` 1.5.2→2.0.4), #270 (`actions/upload-artifact` 4→7) – beide grüne CI, risikoarme Bumps.
+- ⏸️ Blockiert, bewusst offen gelassen: #273 (`typescript` 6.0.3→**7.0.2**) – `typescript-eslint` unterstützt TS 7.0 noch nicht (Upstream-Blocker, siehe [typescript-eslint#10940](https://github.com/typescript-eslint/typescript-eslint/issues/10940)); #272 (`@testing-library/react-native` 13.3.3→**14.0.1**) – Breaking-API-Änderung in `renderHook`/`act` (212/384 Tests rot) **und** verlangt Node `^22.13.0 || >=24` (CI läuft auf Node 20); #271 (Dependabot-Gruppe „minor-and-patch", 14 Updates) – enthält u. a. `react-native@0.87.1`, das ebenfalls Node ≥22.13 verlangt (`npm warn EBADENGINE`), CI-Node-Version müsste zuerst angehoben werden. Alle drei brauchen eine bewusste Migrationsentscheidung, kein Blind-Fix.
+- `main → testing`-Sync (PR #276) nachgezogen, damit beide Branches wieder deckungsgleich sind – `testing` war main zuvor in 3 eigenen Commits voraus (#266/#267/#268-269), main in den 2 gemergten Dependency-Bumps.
+- Geprüft und verworfen: CLAUDE.md-Prettier-Fehler, der bei #273/#271 im `Lint & Format Check` auftauchte, betraf nur den veralteten PR-Basis-Commit (`1051892`) – auf aktuellem `main`/`testing` ist CLAUDE.md bereits sauber formatiert (durch #268/#269 oder #267 miterledigt). Kein separater Fix nötig.
+- Entscheidung geprüft und verworfen: Dependabot künftig gegen `testing` statt `main` laufen zu lassen. Aktuell würde das volle CI (Lint, Unit Tests, Build) verlieren, da `ci-cd.yml` `pull_request` nur auf `branches: [main]` triggert. Nur sinnvoll als Paket-Änderung (`dependabot.yml` → `target-branch: testing` UND `ci-cd.yml` → `branches: [main, testing]` gemeinsam) – nicht isoliert umgesetzt, da nicht angefragt.
 
 **Status (2026-09-05, Nachmittag): #259/#260/#261 geschlossen** (PR #263 → `testing`, dann PR #264 `testing → main`) – main und testing wieder synchron (`b661213`/`1051892`). Details siehe „Aktuelle Version" oben.
 
