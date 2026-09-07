@@ -43,7 +43,7 @@
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@react-native/jest-preset": "^0.86.3",
-    "@testing-library/react-native": "^13.3.3",
+    "@testing-library/react-native": "^14.0.1",
     "@types/jest": "^30.0.0",
     "@types/react": "~19.1.17",
     "@typescript-eslint/eslint-plugin": "^8.69.0",
