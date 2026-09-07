@@ -58,7 +58,7 @@
     "jest": "^30.5.0",
     "jest-expo": "~57.0.5",
     "prettier": "^3.8.4",
-    "typescript": "~6.0.3"
+    "typescript": "~7.0.2"
   },
   "private": true
 }
