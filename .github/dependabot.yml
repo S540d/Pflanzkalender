@@ -8,23 +8,27 @@ updates:
     directory: '/'
     target-branch: 'testing'
     schedule:
-      interval: 'weekly'
+      interval: 'monthly'
     open-pull-requests-limit: 5
     commit-message:
       prefix: 'ci'
+    groups:
+      # Kein update-types-Filter → Major landet mit im Sammel-PR.
+      actions-all:
+        patterns:
+          - '*'
 
   # NPM/Yarn/PNPM-Abhängigkeiten.
   - package-ecosystem: 'npm'
     directory: '/'
     target-branch: 'testing'
     schedule:
-      interval: 'weekly'
+      interval: 'monthly'
     open-pull-requests-limit: 5
     commit-message:
       prefix: 'chore'
-    # Patch-/Minor-Updates gebündelt, damit nicht pro Paket ein PR aufgeht.
     groups:
-      minor-and-patch:
-        update-types:
-          - 'minor'
-          - 'patch'
+      # Kein update-types-Filter → Major landet mit im Sammel-PR.
+      npm-all:
+        patterns:
+          - '*'
