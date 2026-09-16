@@ -25,6 +25,17 @@ interface SettingsModalProps {
 
 const APP_VERSION = packageJson.version;
 
+/**
+ * Zentrales Impressum für alle Projekte unter s540d.github.io (nicht
+ * projektlokal) — siehe project-templates/dev-standards/about-section.md,
+ * Issue #150.
+ */
+const IMPRESSUM_URL = 'https://s540d.github.io/impressum.html';
+const PRIVACY_POLICY_URL = 'https://s540d.github.io/Pflanzkalender/privacy.html';
+const GITHUB_REPO_URL = 'https://github.com/S540d/Pflanzkalender';
+const PLAY_STORE_URL = 'https://play.google.com/store/apps/details?id=com.s540d.pflanzkalender';
+const GITHUB_ISSUES_URL = 'https://github.com/S540d/Pflanzkalender/issues';
+
 export const SettingsModal: React.FC<SettingsModalProps> = ({ visible, onClose }) => {
   const { theme, themeMode, setThemeMode } = useTheme();
   const { language, setLanguage, t } = useLanguage();
@@ -247,7 +258,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ visible, onClose }
             <TouchableOpacity
               style={styles.linkItemFlex}
               onPress={() => {
-                Linking.openURL('mailto:feedback@example.com');
+                Linking.openURL(GITHUB_ISSUES_URL);
               }}
             >
               <Text style={[styles.linkText, { color: theme.primary }]}>
@@ -272,6 +283,38 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ visible, onClose }
             <Text style={[styles.infoText, { color: theme.textSecondary }]}>
               {t('settings.versionLabel') as string} {APP_VERSION}
             </Text>
+            <TouchableOpacity
+              style={styles.aboutLinkItem}
+              onPress={() => Linking.openURL(IMPRESSUM_URL)}
+            >
+              <Text style={[styles.linkText, { color: theme.primary }]}>
+                {t('settings.impressumLink') as string}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.aboutLinkItem}
+              onPress={() => Linking.openURL(PRIVACY_POLICY_URL)}
+            >
+              <Text style={[styles.linkText, { color: theme.primary }]}>
+                {t('settings.privacyPolicyLink') as string}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.aboutLinkItem}
+              onPress={() => Linking.openURL(GITHUB_REPO_URL)}
+            >
+              <Text style={[styles.linkText, { color: theme.primary }]}>
+                {t('settings.sourceCodeLink') as string}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.aboutLinkItem}
+              onPress={() => Linking.openURL(PLAY_STORE_URL)}
+            >
+              <Text style={[styles.linkText, { color: theme.primary }]}>
+                {t('settings.playStoreLink') as string}
+              </Text>
+            </TouchableOpacity>
           </View>
         </ScrollView>
       </View>
@@ -390,6 +433,10 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 8,
     alignItems: 'center',
+  },
+
+  aboutLinkItem: {
+    marginTop: 4,
   },
 
   infoText: {
