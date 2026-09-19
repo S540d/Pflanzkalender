@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Plant } from '../types';
 import { PlantSchema, parseImportData } from '../schemas/plant';
+import { withStorageError, withStorageErrorFallback } from '../utils/storageError';
 
 const STORAGE_KEYS = {
   PLANTS: '@Pflanzkalender:plants',
@@ -53,34 +54,31 @@ export const storageService = {
 
   // Guest-Status speichern
   async setGuestMode(isGuest: boolean): Promise<void> {
-    try {
-      await AsyncStorage.setItem(STORAGE_KEYS.IS_GUEST, JSON.stringify(isGuest));
-    } catch (error) {
-      console.error('Error setting guest mode:', error);
-    }
+    return withStorageError('Error setting guest mode:', () =>
+      AsyncStorage.setItem(STORAGE_KEYS.IS_GUEST, JSON.stringify(isGuest))
+    );
   },
 
   // Guest-Status laden
   async isGuestMode(): Promise<boolean> {
-    try {
-      const data = await AsyncStorage.getItem(STORAGE_KEYS.IS_GUEST);
-      return data ? JSON.parse(data) : true; // Default: Guest mode
-    } catch (error) {
-      console.error('Error checking guest mode:', error);
-      return true;
-    }
+    return withStorageErrorFallback(
+      'Error checking guest mode:',
+      async () => {
+        const data = await AsyncStorage.getItem(STORAGE_KEYS.IS_GUEST);
+        return data ? JSON.parse(data) : true; // Default: Guest mode
+      },
+      true
+    );
   },
 
   // Alle Daten löschen
   async clearAll(): Promise<void> {
-    try {
+    return withStorageError('Error clearing storage:', async () => {
       await Promise.all([
         AsyncStorage.removeItem(STORAGE_KEYS.PLANTS),
         AsyncStorage.removeItem(STORAGE_KEYS.IS_GUEST),
       ]);
-    } catch (error) {
-      console.error('Error clearing storage:', error);
-    }
+    });
   },
 
   // Import plants from JSON (delegates validation to parseImportData)
