@@ -37,27 +37,29 @@ describe('PlantManagementScreen', () => {
     jest.clearAllMocks();
   });
 
-  it('renders without crashing', () => {
-    const { root } = render(<PlantManagementScreen />, { wrapper: Wrapper });
+  it('renders without crashing', async () => {
+    const { root } = await render(<PlantManagementScreen />, { wrapper: Wrapper });
     expect(root).toBeTruthy();
   });
 
   it('renders the screen title', async () => {
-    const { findByText } = render(<PlantManagementScreen />, { wrapper: Wrapper });
+    const { findByText } = await render(<PlantManagementScreen />, { wrapper: Wrapper });
     // Title is either German or English depending on language
     expect(await findByText(/Pflanzen verwalten|Manage Plants/)).toBeTruthy();
   });
 
   it('renders the add plant button', async () => {
-    const { findByText } = render(<PlantManagementScreen />, { wrapper: Wrapper });
+    const { findByText } = await render(<PlantManagementScreen />, { wrapper: Wrapper });
     expect(await findByText(/Neue Pflanze hinzufügen|Add New Plant/)).toBeTruthy();
   });
 
   it('opens AddPlantModal when add button is pressed', async () => {
-    const { findByText, queryByText } = render(<PlantManagementScreen />, { wrapper: Wrapper });
+    const { findByText, queryByText } = await render(<PlantManagementScreen />, {
+      wrapper: Wrapper,
+    });
 
     const addButton = await findByText(/Neue Pflanze hinzufügen|Add New Plant/);
-    fireEvent.press(addButton);
+    await fireEvent.press(addButton);
 
     await waitFor(() => {
       expect(queryByText('Neue Pflanze hinzufügen')).toBeTruthy();
@@ -65,13 +67,13 @@ describe('PlantManagementScreen', () => {
   });
 
   it('shows empty state text when no plants exist', async () => {
-    const { findByText } = render(<PlantManagementScreen />, { wrapper: Wrapper });
+    const { findAllByText } = await render(<PlantManagementScreen />, { wrapper: Wrapper });
     // With mock returning null for AsyncStorage, defaults load. Wait for loading to finish.
-    // Either shows plants or the empty message.
-    const emptyOrPlants = await findByText(
+    // Either shows plants or the empty message — either way at least one match.
+    const emptyOrPlants = await findAllByText(
       /Noch keine Pflanzen vorhanden|No plants yet|Aktivitäten|Activities/
     );
-    expect(emptyOrPlants).toBeTruthy();
+    expect(emptyOrPlants.length).toBeGreaterThanOrEqual(1);
   });
 
   it('shows Alert when delete button is pressed', async () => {
@@ -96,11 +98,11 @@ describe('PlantManagementScreen', () => {
       key === '@Pflanzkalender:plants' ? Promise.resolve(testPlant) : Promise.resolve(null)
     );
 
-    const { findByLabelText } = render(<PlantManagementScreen />, { wrapper: Wrapper });
+    const { findByLabelText } = await render(<PlantManagementScreen />, { wrapper: Wrapper });
 
     // Delete-Button wird per accessibilityLabel gefunden (Vektor-Icon statt Emoji).
     const deleteButton = await findByLabelText(/löschen|delete/i, {}, { timeout: 3000 });
-    fireEvent.press(deleteButton);
+    await fireEvent.press(deleteButton);
 
     expect(alertSpy).toHaveBeenCalled();
     alertSpy.mockRestore();
@@ -140,14 +142,17 @@ describe('PlantManagementScreen', () => {
       key === '@Pflanzkalender:plants' ? Promise.resolve(testPlants) : Promise.resolve(null)
     );
 
-    const { findByText, queryByText, getByPlaceholderText } = render(<PlantManagementScreen />, {
-      wrapper: Wrapper,
-    });
+    const { findByText, queryByText, getByPlaceholderText } = await render(
+      <PlantManagementScreen />,
+      {
+        wrapper: Wrapper,
+      }
+    );
 
     await findByText('Tomaten');
 
     const searchInput = getByPlaceholderText(/suchen|Search/i);
-    fireEvent.changeText(searchInput, 'tom');
+    await fireEvent.changeText(searchInput, 'tom');
 
     await waitFor(() => {
       expect(queryByText('Tomaten')).toBeTruthy();
@@ -176,14 +181,14 @@ describe('PlantManagementScreen', () => {
       key === '@Pflanzkalender:plants' ? Promise.resolve(testPlants) : Promise.resolve(null)
     );
 
-    const { findByText, getByPlaceholderText } = render(<PlantManagementScreen />, {
+    const { findByText, getByPlaceholderText } = await render(<PlantManagementScreen />, {
       wrapper: Wrapper,
     });
 
     await findByText('Tomaten');
 
     const searchInput = getByPlaceholderText(/suchen|Search/i);
-    fireEvent.changeText(searchInput, 'xyzxyz');
+    await fireEvent.changeText(searchInput, 'xyzxyz');
 
     await waitFor(() => {
       expect(findByText(/Keine Pflanzen gefunden|No plants found/)).toBeTruthy();
@@ -223,14 +228,17 @@ describe('PlantManagementScreen', () => {
       return Promise.resolve(null);
     });
 
-    const { findByText, queryByText, getByPlaceholderText } = render(<PlantManagementScreen />, {
-      wrapper: Wrapper,
-    });
+    const { findByText, queryByText, getByPlaceholderText } = await render(
+      <PlantManagementScreen />,
+      {
+        wrapper: Wrapper,
+      }
+    );
 
     await findByText('Tomatoes');
 
     const searchInput = getByPlaceholderText(/Search/i);
-    fireEvent.changeText(searchInput, 'tom');
+    await fireEvent.changeText(searchInput, 'tom');
 
     await waitFor(() => {
       expect(queryByText('Tomatoes')).toBeTruthy();
@@ -241,7 +249,7 @@ describe('PlantManagementScreen', () => {
   });
 
   it('renders the category filter tab bar', async () => {
-    const { findByText } = render(<PlantManagementScreen />, { wrapper: Wrapper });
+    const { findByText } = await render(<PlantManagementScreen />, { wrapper: Wrapper });
     expect(await findByText(/Alle|All/)).toBeTruthy();
   });
 
@@ -276,7 +284,9 @@ describe('PlantManagementScreen', () => {
       key === '@Pflanzkalender:plants' ? Promise.resolve(testPlants) : Promise.resolve(null)
     );
 
-    const { findByText, queryByText } = render(<PlantManagementScreen />, { wrapper: Wrapper });
+    const { findByText, queryByText } = await render(<PlantManagementScreen />, {
+      wrapper: Wrapper,
+    });
 
     // Both plants visible initially
     await findByText('Tomaten');
@@ -284,7 +294,7 @@ describe('PlantManagementScreen', () => {
 
     // Press the "Blumen/Flowers" tab
     const flowerTab = await findByText(/Blumen|Flowers/);
-    fireEvent.press(flowerTab);
+    await fireEvent.press(flowerTab);
 
     await waitFor(() => {
       expect(queryByText('Rose')).toBeTruthy();
@@ -336,19 +346,22 @@ describe('PlantManagementScreen', () => {
       key === '@Pflanzkalender:plants' ? Promise.resolve(testPlants) : Promise.resolve(null)
     );
 
-    const { findByText, queryByText, getByPlaceholderText } = render(<PlantManagementScreen />, {
-      wrapper: Wrapper,
-    });
+    const { findByText, queryByText, getByPlaceholderText } = await render(
+      <PlantManagementScreen />,
+      {
+        wrapper: Wrapper,
+      }
+    );
 
     await findByText('Tomaten');
 
     // Filter by vegetable category
     const vegetableTab = await findByText(/Nutzpflanzen|Vegetables/);
-    fireEvent.press(vegetableTab);
+    await fireEvent.press(vegetableTab);
 
     // Then search for "tom"
     const searchInput = getByPlaceholderText(/suchen|Search/i);
-    fireEvent.changeText(searchInput, 'tom');
+    await fireEvent.changeText(searchInput, 'tom');
 
     await waitFor(() => {
       expect(queryByText('Tomaten')).toBeTruthy();

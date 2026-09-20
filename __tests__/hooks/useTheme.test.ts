@@ -17,8 +17,8 @@ describe('useTheme Hook', () => {
     mockSetItem.mockResolvedValue(undefined);
   });
 
-  it('returns theme object with required properties', () => {
-    const { result } = renderHook(() => useTheme());
+  it('returns theme object with required properties', async () => {
+    const { result } = await renderHook(() => useTheme());
 
     expect(result.current).toHaveProperty('theme');
     expect(result.current).toHaveProperty('themeMode');
@@ -26,8 +26,8 @@ describe('useTheme Hook', () => {
     expect(typeof result.current.setThemeMode).toBe('function');
   });
 
-  it('theme object has all color properties', () => {
-    const { result } = renderHook(() => useTheme());
+  it('theme object has all color properties', async () => {
+    const { result } = await renderHook(() => useTheme());
 
     const { theme } = result.current;
     expect(theme).toHaveProperty('background');
@@ -39,8 +39,8 @@ describe('useTheme Hook', () => {
     expect(theme).toHaveProperty('error');
   });
 
-  it('returns valid hex color strings', () => {
-    const { result } = renderHook(() => useTheme());
+  it('returns valid hex color strings', async () => {
+    const { result } = await renderHook(() => useTheme());
 
     const { theme } = result.current;
     const isValidColor = (color: string) => /^#[0-9A-Fa-f]{6}$/.test(color);
@@ -50,13 +50,13 @@ describe('useTheme Hook', () => {
     expect(isValidColor(theme.primary)).toBe(true);
   });
 
-  it('defaults to system theme mode', () => {
-    const { result } = renderHook(() => useTheme());
+  it('defaults to system theme mode', async () => {
+    const { result } = await renderHook(() => useTheme());
     expect(result.current.themeMode).toBe('system');
   });
 
   it('allows changing theme mode to dark', async () => {
-    const { result } = renderHook(() => useTheme());
+    const { result } = await renderHook(() => useTheme());
 
     await act(async () => {
       await result.current.setThemeMode('dark');
@@ -66,7 +66,7 @@ describe('useTheme Hook', () => {
   });
 
   it('allows changing theme mode to light', async () => {
-    const { result } = renderHook(() => useTheme());
+    const { result } = await renderHook(() => useTheme());
 
     await act(async () => {
       await result.current.setThemeMode('light');
@@ -76,7 +76,7 @@ describe('useTheme Hook', () => {
   });
 
   it('allows changing theme mode to system', async () => {
-    const { result } = renderHook(() => useTheme());
+    const { result } = await renderHook(() => useTheme());
 
     await act(async () => {
       await result.current.setThemeMode('dark');
@@ -89,7 +89,7 @@ describe('useTheme Hook', () => {
   });
 
   it('persists theme preference to AsyncStorage', async () => {
-    const { result } = renderHook(() => useTheme());
+    const { result } = await renderHook(() => useTheme());
 
     await act(async () => {
       await result.current.setThemeMode('dark');
@@ -101,7 +101,7 @@ describe('useTheme Hook', () => {
   it('loads persisted theme preference from AsyncStorage (dark)', async () => {
     mockGetItem.mockResolvedValueOnce('dark');
 
-    const { result } = renderHook(() => useTheme());
+    const { result } = await renderHook(() => useTheme());
 
     await waitFor(() => {
       expect(result.current.themeMode).toBe('dark');
@@ -111,7 +111,7 @@ describe('useTheme Hook', () => {
   it('loads persisted theme preference from AsyncStorage (light)', async () => {
     mockGetItem.mockResolvedValueOnce('light');
 
-    const { result } = renderHook(() => useTheme());
+    const { result } = await renderHook(() => useTheme());
 
     await waitFor(() => {
       expect(result.current.themeMode).toBe('light');
@@ -121,7 +121,7 @@ describe('useTheme Hook', () => {
   it('ignores invalid values from AsyncStorage', async () => {
     mockGetItem.mockResolvedValueOnce('invalid-mode');
 
-    const { result } = renderHook(() => useTheme());
+    const { result } = await renderHook(() => useTheme());
 
     await waitFor(() => {
       expect(result.current.themeMode).toBe('system');
@@ -129,7 +129,7 @@ describe('useTheme Hook', () => {
   });
 
   it('isDark is true when themeMode is dark', async () => {
-    const { result } = renderHook(() => useTheme());
+    const { result } = await renderHook(() => useTheme());
 
     await act(async () => {
       await result.current.setThemeMode('dark');
@@ -139,7 +139,7 @@ describe('useTheme Hook', () => {
   });
 
   it('isDark is false when themeMode is light', async () => {
-    const { result } = renderHook(() => useTheme());
+    const { result } = await renderHook(() => useTheme());
 
     await act(async () => {
       await result.current.setThemeMode('light');

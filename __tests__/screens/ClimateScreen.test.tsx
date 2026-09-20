@@ -37,92 +37,92 @@ describe('ClimateScreen', () => {
     jest.useRealTimers();
   });
 
-  it('renders without crashing', () => {
-    const { getByText } = render(<ClimateScreen />);
+  it('renders without crashing', async () => {
+    const { getByText } = await render(<ClimateScreen />);
     expect(getByText('Klimafit gärtnern')).toBeTruthy();
   });
 
-  it('shows "Zum Garten hinzufügen" button for each visible recommendation', () => {
-    const { getAllByText } = render(<ClimateScreen />);
+  it('shows "Zum Garten hinzufügen" button for each visible recommendation', async () => {
+    const { getAllByText } = await render(<ClimateScreen />);
     const buttons = getAllByText('Zum Garten hinzufügen');
     expect(buttons.length).toBeGreaterThan(0);
   });
 
   it('calls addPlant and shows "Hinzugefügt ✓" state on press', async () => {
-    const { getAllByText, queryAllByText } = render(<ClimateScreen />);
+    const { getAllByText, queryAllByText } = await render(<ClimateScreen />);
     const addButtons = getAllByText('Zum Garten hinzufügen');
-    fireEvent.press(addButtons[0]);
+    await fireEvent.press(addButtons[0]);
     expect(mockAddPlant).toHaveBeenCalledTimes(1);
     await waitFor(() => expect(queryAllByText('Hinzugefügt ✓').length).toBeGreaterThan(0));
   });
 
   it('reverts "Hinzugefügt ✓" back after 2 seconds', async () => {
-    const { getAllByText, queryAllByText } = render(<ClimateScreen />);
-    fireEvent.press(getAllByText('Zum Garten hinzufügen')[0]);
+    const { getAllByText, queryAllByText } = await render(<ClimateScreen />);
+    await fireEvent.press(getAllByText('Zum Garten hinzufügen')[0]);
     await waitFor(() => expect(queryAllByText('Hinzugefügt ✓').length).toBeGreaterThan(0));
-    act(() => {
+    await act(() => {
       jest.advanceTimersByTime(2000);
     });
     await waitFor(() => expect(queryAllByText('Hinzugefügt ✓').length).toBe(0));
   });
 
-  it('disables button and shows "Bereits im Garten" when plant already exists', () => {
+  it('disables button and shows "Bereits im Garten" when plant already exists', async () => {
     mockPlants.push({ id: '1', name: 'Süßkartoffel' });
-    const { getByText } = render(<ClimateScreen />);
+    const { getByText } = await render(<ClimateScreen />);
     expect(getByText('Bereits im Garten')).toBeTruthy();
   });
 
   it('does not call addPlant again on double-tap', async () => {
-    const { getAllByText } = render(<ClimateScreen />);
+    const { getAllByText } = await render(<ClimateScreen />);
     const addButtons = getAllByText('Zum Garten hinzufügen');
-    fireEvent.press(addButtons[0]);
-    fireEvent.press(addButtons[0]);
+    await fireEvent.press(addButtons[0]);
+    await fireEvent.press(addButtons[0]);
     expect(mockAddPlant).toHaveBeenCalledTimes(1);
   });
 
-  it('renders all 4 filter tabs', () => {
-    const { getByText } = render(<ClimateScreen />);
+  it('renders all 4 filter tabs', async () => {
+    const { getByText } = await render(<ClimateScreen />);
     expect(getByText('Alle')).toBeTruthy();
     expect(getByText('Nutzpflanzen')).toBeTruthy();
     expect(getByText('Blumen')).toBeTruthy();
     expect(getByText('Bäume')).toBeTruthy();
   });
 
-  it('filters to vegetables when Nutzpflanzen tab is pressed', () => {
-    const { getByText, queryByText } = render(<ClimateScreen />);
+  it('filters to vegetables when Nutzpflanzen tab is pressed', async () => {
+    const { getByText, queryByText } = await render(<ClimateScreen />);
 
-    fireEvent.press(getByText('Nutzpflanzen'));
+    await fireEvent.press(getByText('Nutzpflanzen'));
 
     expect(queryByText('Süßkartoffel')).toBeTruthy();
     expect(queryByText('Lavendel')).toBeNull();
     expect(queryByText('Edelkastanie')).toBeNull();
   });
 
-  it('filters to flowers when Blumen tab is pressed', () => {
-    const { getByText, queryByText } = render(<ClimateScreen />);
+  it('filters to flowers when Blumen tab is pressed', async () => {
+    const { getByText, queryByText } = await render(<ClimateScreen />);
 
-    fireEvent.press(getByText('Blumen'));
+    await fireEvent.press(getByText('Blumen'));
 
     expect(queryByText('Lavendel')).toBeTruthy();
     expect(queryByText('Süßkartoffel')).toBeNull();
     expect(queryByText('Edelkastanie')).toBeNull();
   });
 
-  it('filters to trees when Bäume tab is pressed', () => {
-    const { getByText, queryByText } = render(<ClimateScreen />);
+  it('filters to trees when Bäume tab is pressed', async () => {
+    const { getByText, queryByText } = await render(<ClimateScreen />);
 
-    fireEvent.press(getByText('Bäume'));
+    await fireEvent.press(getByText('Bäume'));
 
     expect(queryByText('Edelkastanie')).toBeTruthy();
     expect(queryByText('Süßkartoffel')).toBeNull();
     expect(queryByText('Lavendel')).toBeNull();
   });
 
-  it('shows all recommendations again when Alle tab is re-selected', () => {
-    const { getByText, queryByText } = render(<ClimateScreen />);
+  it('shows all recommendations again when Alle tab is re-selected', async () => {
+    const { getByText, queryByText } = await render(<ClimateScreen />);
 
-    fireEvent.press(getByText('Nutzpflanzen'));
-    fireEvent.press(getByText('Alle'));
+    await fireEvent.press(getByText('Nutzpflanzen'));
+    await fireEvent.press(getByText('Alle'));
 
     expect(queryByText('Süßkartoffel')).toBeTruthy();
     expect(queryByText('Lavendel')).toBeTruthy();
