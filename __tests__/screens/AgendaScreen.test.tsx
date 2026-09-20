@@ -32,8 +32,8 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => (
 );
 
 describe('AgendaScreen', () => {
-  it('renders without crashing', () => {
-    const { root } = render(<AgendaScreen />, { wrapper: Wrapper });
+  it('renders without crashing', async () => {
+    const { root } = await render(<AgendaScreen />, { wrapper: Wrapper });
     expect(root).toBeTruthy();
   });
 
@@ -42,25 +42,25 @@ describe('AgendaScreen', () => {
   });
 
   it('renders the category tab bar', async () => {
-    const { root } = render(<AgendaScreen />, { wrapper: Wrapper });
+    const { root } = await render(<AgendaScreen />, { wrapper: Wrapper });
     expect(root).toBeTruthy();
   });
 
   it('renders Alle/All category tab', async () => {
-    const { findByText } = render(<AgendaScreen />, { wrapper: Wrapper });
+    const { findByText } = await render(<AgendaScreen />, { wrapper: Wrapper });
     // CATEGORY_TABS has Alle/All as first tab
     expect(await findByText(/Alle|All/)).toBeTruthy();
   });
 
   it('renders three time-period columns', async () => {
-    const { findAllByText } = render(<AgendaScreen />, { wrapper: Wrapper });
+    const { findAllByText } = await render(<AgendaScreen />, { wrapper: Wrapper });
     // Column headers: Vorher, Aktuell, Demnächst (German default)
     const vorher = await findAllByText(/Vorher|Previous/);
     expect(vorher.length).toBeGreaterThanOrEqual(1);
   });
 
   it('renders at least 6 columns forward from current half-month', async () => {
-    const { queryAllByText } = render(<AgendaScreen />, { wrapper: Wrapper });
+    const { queryAllByText } = await render(<AgendaScreen />, { wrapper: Wrapper });
     // All 7 column titles are rendered: Vorher, Aktuell, Demnächst + 4 month names
     await waitFor(() => {
       const current = queryAllByText(/Aktuell|Current/);
@@ -76,10 +76,10 @@ describe('AgendaScreen', () => {
   });
 
   it('switches category filter and still renders all column headers', async () => {
-    const { findByText, queryAllByText } = render(<AgendaScreen />, { wrapper: Wrapper });
+    const { findByText, queryAllByText } = await render(<AgendaScreen />, { wrapper: Wrapper });
 
     const vegetableTab = await findByText(/Nutzpflanzen|Vegetables/);
-    fireEvent.press(vegetableTab);
+    await fireEvent.press(vegetableTab);
 
     // After switching to Vegetables, the three time-period columns must still be present,
     // proving the component re-rendered correctly with the new filter applied.
@@ -90,8 +90,25 @@ describe('AgendaScreen', () => {
   });
 
   it('renders "Keine Aktivitäten" / "No Activities" when empty', async () => {
-    const { findAllByText } = render(<AgendaScreen />, { wrapper: Wrapper });
-    // With empty plants (mock returns null), columns show the empty text
+    // A saved (non-default) plant with zero activities guarantees every column
+    // stays empty once loaded — relying on the transient pre-load state (plants:
+    // []) is no longer observable under RNTL v14's async render().
+    const AsyncStorage = require('@react-native-async-storage/async-storage');
+    AsyncStorage.getItem.mockResolvedValueOnce(
+      JSON.stringify([
+        {
+          id: 'no-activities-plant',
+          name: 'Test Plant',
+          isDefault: false,
+          userId: null,
+          activities: [],
+          notes: '',
+          createdAt: Date.now(),
+          updatedAt: Date.now(),
+        },
+      ])
+    );
+    const { findAllByText } = await render(<AgendaScreen />, { wrapper: Wrapper });
     const emptyTexts = await findAllByText(/Keine Aktivitäten|No Activities/);
     expect(emptyTexts.length).toBeGreaterThanOrEqual(1);
   });
@@ -128,7 +145,7 @@ describe('AgendaScreen', () => {
       key === '@Pflanzkalender:plants' ? Promise.resolve(testPlants) : Promise.resolve(null)
     );
 
-    const { findAllByText } = render(<AgendaScreen />, { wrapper: Wrapper });
+    const { findAllByText } = await render(<AgendaScreen />, { wrapper: Wrapper });
 
     // The activity label 'Aussaat' should appear in at least one column
     const labels = await findAllByText('Aussaat', {}, { timeout: 3000 });
@@ -159,7 +176,7 @@ describe('AgendaScreen', () => {
       return Promise.resolve(null);
     });
 
-    const { findAllByText, queryAllByText } = render(<AgendaScreen />, { wrapper: Wrapper });
+    const { findAllByText, queryAllByText } = await render(<AgendaScreen />, { wrapper: Wrapper });
 
     // English name must appear; German name must not
     await findAllByText('Tomatoes', {}, { timeout: 3000 });

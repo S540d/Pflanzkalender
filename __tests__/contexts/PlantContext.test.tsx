@@ -27,19 +27,26 @@ describe('PlantContext – initial load', () => {
     mockSetItem.mockResolvedValue(undefined);
   });
 
-  it('starts in loading state', () => {
-    const { result } = renderHook(() => usePlants(), { wrapper });
+  it('starts in loading state', async () => {
+    // Keep the initial AsyncStorage read pending so the loading flag is still
+    // observable — under RNTL v14's async renderHook(), a resolved mock would
+    // already have settled `loading` to false by the time we can check it.
+    let resolveGetItem: (value: string | null) => void = () => {};
+    mockGetItem.mockReturnValue(new Promise((resolve) => (resolveGetItem = resolve)));
+    const { result } = await renderHook(() => usePlants(), { wrapper });
     expect(result.current.loading).toBe(true);
+    resolveGetItem(null);
+    await waitForLoaded(result);
   });
 
   it('finishes loading and provides plants array', async () => {
-    const { result } = renderHook(() => usePlants(), { wrapper });
+    const { result } = await renderHook(() => usePlants(), { wrapper });
     await waitForLoaded(result);
     expect(Array.isArray(result.current.plants)).toBe(true);
   });
 
   it('loads default plants when storage is empty', async () => {
-    const { result } = renderHook(() => usePlants(), { wrapper });
+    const { result } = await renderHook(() => usePlants(), { wrapper });
     await waitForLoaded(result);
     expect(result.current.plants.length).toBeGreaterThan(0);
   });
@@ -63,7 +70,7 @@ describe('PlantContext – initial load', () => {
         : Promise.resolve(null)
     );
 
-    const { result } = renderHook(() => usePlants(), { wrapper });
+    const { result } = await renderHook(() => usePlants(), { wrapper });
     await waitForLoaded(result);
 
     expect(result.current.plants.some((p) => p.name === 'Gespeicherte Pflanze')).toBe(true);
@@ -74,7 +81,7 @@ describe('PlantContext – initial load', () => {
     const corruptedData = JSON.stringify([{ invalid: true }]);
     mockGetItem.mockResolvedValueOnce(corruptedData);
 
-    const { result } = renderHook(() => usePlants(), { wrapper });
+    const { result } = await renderHook(() => usePlants(), { wrapper });
     await waitForLoaded(result);
 
     expect(result.current.plants).toEqual([]);
@@ -101,7 +108,7 @@ describe('PlantContext – initial load', () => {
         : Promise.resolve(null)
     );
 
-    const { result } = renderHook(() => usePlants(), { wrapper });
+    const { result } = await renderHook(() => usePlants(), { wrapper });
     await waitForLoaded(result);
 
     const rosen = result.current.plants.find((p) => p.id === 'default-4');
@@ -141,7 +148,7 @@ describe('PlantContext – initial load', () => {
         : Promise.resolve(null)
     );
 
-    const { result } = renderHook(() => usePlants(), { wrapper });
+    const { result } = await renderHook(() => usePlants(), { wrapper });
     await waitForLoaded(result);
 
     expect(mockSetItem).not.toHaveBeenCalled();
@@ -156,12 +163,12 @@ describe('PlantContext – addPlant', () => {
   });
 
   it('adds a new plant to the list', async () => {
-    const { result } = renderHook(() => usePlants(), { wrapper });
+    const { result } = await renderHook(() => usePlants(), { wrapper });
     await waitForLoaded(result);
 
     const before = result.current.plants.length;
 
-    act(() => {
+    await act(() => {
       result.current.addPlant({
         name: 'Neue Pflanze',
         activities: [],
@@ -179,7 +186,7 @@ describe('PlantContext – addPlant', () => {
   });
 
   it('persists the added plant via AsyncStorage', async () => {
-    const { result } = renderHook(() => usePlants(), { wrapper });
+    const { result } = await renderHook(() => usePlants(), { wrapper });
     await waitForLoaded(result);
 
     await act(async () => {
@@ -196,7 +203,7 @@ describe('PlantContext – addPlant', () => {
   });
 
   it('assigns a non-empty string id to the new plant', async () => {
-    const { result } = renderHook(() => usePlants(), { wrapper });
+    const { result } = await renderHook(() => usePlants(), { wrapper });
     await waitForLoaded(result);
 
     await act(async () => {
@@ -224,7 +231,7 @@ describe('PlantContext – updatePlant', () => {
   });
 
   it('updates an existing plant', async () => {
-    const { result } = renderHook(() => usePlants(), { wrapper });
+    const { result } = await renderHook(() => usePlants(), { wrapper });
     await waitForLoaded(result);
 
     let plantId: string;
@@ -256,7 +263,7 @@ describe('PlantContext – deletePlant', () => {
   });
 
   it('removes a plant from the list', async () => {
-    const { result } = renderHook(() => usePlants(), { wrapper });
+    const { result } = await renderHook(() => usePlants(), { wrapper });
     await waitForLoaded(result);
 
     await act(async () => {
@@ -289,7 +296,7 @@ describe('PlantContext – addActivity', () => {
   });
 
   it('adds an activity to a plant', async () => {
-    const { result } = renderHook(() => usePlants(), { wrapper });
+    const { result } = await renderHook(() => usePlants(), { wrapper });
     await waitForLoaded(result);
 
     await act(async () => {
@@ -328,7 +335,7 @@ describe('PlantContext – updateActivity', () => {
   });
 
   it('updates an activity on a plant', async () => {
-    const { result } = renderHook(() => usePlants(), { wrapper });
+    const { result } = await renderHook(() => usePlants(), { wrapper });
     await waitForLoaded(result);
 
     await act(async () => {
@@ -373,7 +380,7 @@ describe('PlantContext – isCustomized flag', () => {
   });
 
   it('setzt isCustomized: true wenn addActivity aufgerufen wird', async () => {
-    const { result } = renderHook(() => usePlants(), { wrapper });
+    const { result } = await renderHook(() => usePlants(), { wrapper });
     await waitForLoaded(result);
 
     await act(async () => {
@@ -434,7 +441,7 @@ describe('PlantContext – isCustomized flag', () => {
         : Promise.resolve(null)
     );
 
-    const { result } = renderHook(() => usePlants(), { wrapper });
+    const { result } = await renderHook(() => usePlants(), { wrapper });
     await waitForLoaded(result);
 
     const plant = result.current.plants.find((p) => p.id === 'default-0')!;
@@ -451,7 +458,7 @@ describe('PlantContext – isCustomized flag', () => {
   });
 
   it('default-Pflanzen beim ersten Start haben kein isCustomized gesetzt', async () => {
-    const { result } = renderHook(() => usePlants(), { wrapper });
+    const { result } = await renderHook(() => usePlants(), { wrapper });
     await waitForLoaded(result);
 
     const defaultPlant = result.current.plants.find((p) => p.isDefault);
@@ -470,7 +477,7 @@ describe('PlantContext – deleteActivity', () => {
   });
 
   it('removes an activity from a plant', async () => {
-    const { result } = renderHook(() => usePlants(), { wrapper });
+    const { result } = await renderHook(() => usePlants(), { wrapper });
     await waitForLoaded(result);
 
     await act(async () => {
@@ -515,7 +522,7 @@ describe('PlantContext – resetToDefaults', () => {
   });
 
   it('resets plants to defaults', async () => {
-    const { result } = renderHook(() => usePlants(), { wrapper });
+    const { result } = await renderHook(() => usePlants(), { wrapper });
     await waitForLoaded(result);
 
     // Add a custom plant
@@ -542,10 +549,12 @@ describe('PlantContext – resetToDefaults', () => {
 });
 
 describe('PlantContext – usePlants hook', () => {
-  it('throws when used outside PlantProvider', () => {
+  it('throws when used outside PlantProvider', async () => {
     // Suppress console.error for this expected error
     const spy = jest.spyOn(console, 'error').mockImplementation(() => {});
-    expect(() => renderHook(() => usePlants())).toThrow(
+    // renderHook() is async under RNTL v14 — a render-time throw now rejects
+    // the returned promise instead of throwing synchronously.
+    await expect(renderHook(() => usePlants())).rejects.toThrow(
       'usePlants must be used within a PlantProvider'
     );
     spy.mockRestore();

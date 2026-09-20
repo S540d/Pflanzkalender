@@ -91,8 +91,8 @@ beforeEach(() => {
 });
 
 describe('CalendarScreen – Rendering', () => {
-  it('renders without crashing with required providers', () => {
-    const { root } = render(<CalendarScreen />, { wrapper });
+  it('renders without crashing with required providers', async () => {
+    const { root } = await render(<CalendarScreen />, { wrapper });
     expect(root).toBeTruthy();
   });
 
@@ -103,50 +103,50 @@ describe('CalendarScreen – Rendering', () => {
 
 describe('CalendarScreen – Zoom controls', () => {
   it('renders zoom bar with initial 100% label', async () => {
-    const { findByTestId } = render(<CalendarScreen />, { wrapper });
+    const { findByTestId } = await render(<CalendarScreen />, { wrapper });
     const label = await findByTestId('zoom-label');
     expect(label.props.children).toBe('100%');
   });
 
   it('decreases zoom level when − button is pressed', async () => {
-    const { findByTestId, getByTestId } = render(<CalendarScreen />, { wrapper });
+    const { findByTestId, getByTestId } = await render(<CalendarScreen />, { wrapper });
     await findByTestId('zoom-label');
-    fireEvent.press(getByTestId('zoom-out'));
+    await fireEvent.press(getByTestId('zoom-out'));
     expect(getByTestId('zoom-label').props.children).toBe('75%');
   });
 
   it('increases zoom level when + button is pressed', async () => {
-    const { findByTestId, getByTestId } = render(<CalendarScreen />, { wrapper });
+    const { findByTestId, getByTestId } = await render(<CalendarScreen />, { wrapper });
     await findByTestId('zoom-label');
-    fireEvent.press(getByTestId('zoom-in'));
+    await fireEvent.press(getByTestId('zoom-in'));
     expect(getByTestId('zoom-label').props.children).toBe('133%');
   });
 
   it('does not go below minimum zoom when − is pressed at min', async () => {
-    const { findByTestId, getByTestId } = render(<CalendarScreen />, { wrapper });
+    const { findByTestId, getByTestId } = await render(<CalendarScreen />, { wrapper });
     await findByTestId('zoom-label');
-    fireEvent.press(getByTestId('zoom-out'));
-    fireEvent.press(getByTestId('zoom-out'));
+    await fireEvent.press(getByTestId('zoom-out'));
+    await fireEvent.press(getByTestId('zoom-out'));
     expect(getByTestId('zoom-label').props.children).toBe('75%');
   });
 
   it('does not exceed maximum zoom when + is pressed at max', async () => {
-    const { findByTestId, getByTestId } = render(<CalendarScreen />, { wrapper });
+    const { findByTestId, getByTestId } = await render(<CalendarScreen />, { wrapper });
     await findByTestId('zoom-label');
-    fireEvent.press(getByTestId('zoom-in'));
-    fireEvent.press(getByTestId('zoom-in'));
+    await fireEvent.press(getByTestId('zoom-in'));
+    await fireEvent.press(getByTestId('zoom-in'));
     expect(getByTestId('zoom-label').props.children).toBe('133%');
   });
 
   it('zoom-out button has correct accessibility attributes', async () => {
-    const { findByTestId } = render(<CalendarScreen />, { wrapper });
+    const { findByTestId } = await render(<CalendarScreen />, { wrapper });
     const btn = await findByTestId('zoom-out');
     expect(btn.props.accessibilityRole).toBe('button');
     expect(btn.props.accessibilityLabel).toBe('Zoom out');
   });
 
   it('zoom-in button has correct accessibility attributes', async () => {
-    const { findByTestId } = render(<CalendarScreen />, { wrapper });
+    const { findByTestId } = await render(<CalendarScreen />, { wrapper });
     const btn = await findByTestId('zoom-in');
     expect(btn.props.accessibilityRole).toBe('button');
     expect(btn.props.accessibilityLabel).toBe('Zoom in');
@@ -171,7 +171,7 @@ describe('CalendarScreen – Drag-to-create range selection', () => {
   }
 
   it('opens AddActivityModal when onPressMonthRange is triggered', async () => {
-    const { queryByTestId } = render(<CalendarScreen />, { wrapper });
+    const { queryByTestId } = await render(<CalendarScreen />, { wrapper });
     expect(queryByTestId('add-activity-modal')).toBeFalsy();
 
     await waitForReady();
@@ -181,7 +181,7 @@ describe('CalendarScreen – Drag-to-create range selection', () => {
   });
 
   it('maps portrait indices correctly: startHalf=idx*4, endHalf=min(idx*4+3,23)', async () => {
-    const { queryByTestId } = render(<CalendarScreen />, { wrapper });
+    const { queryByTestId } = await render(<CalendarScreen />, { wrapper });
 
     await waitForReady();
     // idx 2..4 → startHalf=8, endHalf=19
@@ -194,7 +194,7 @@ describe('CalendarScreen – Drag-to-create range selection', () => {
   });
 
   it('clamps endHalf to 23 for last portrait cell', async () => {
-    const { queryByTestId } = render(<CalendarScreen />, { wrapper });
+    const { queryByTestId } = await render(<CalendarScreen />, { wrapper });
 
     await waitForReady();
     // idx 5..5 → startHalf=20, endHalf=min(23,23)=23
@@ -207,7 +207,7 @@ describe('CalendarScreen – Drag-to-create range selection', () => {
   });
 
   it('opens AddActivityModal when a single month is pressed', async () => {
-    const { queryByTestId } = render(<CalendarScreen />, { wrapper });
+    const { queryByTestId } = await render(<CalendarScreen />, { wrapper });
     expect(queryByTestId('add-activity-modal')).toBeFalsy();
 
     await waitForReady();
@@ -217,7 +217,7 @@ describe('CalendarScreen – Drag-to-create range selection', () => {
   });
 
   it('passes initialMonth (portrait: idx*4) without initialEndMonth for single-month press', async () => {
-    const { queryByTestId } = render(<CalendarScreen />, { wrapper });
+    const { queryByTestId } = await render(<CalendarScreen />, { wrapper });
 
     await waitForReady();
     // idx 1 → selectedMonth = 1*4 = 4, selectedEndMonth = undefined

@@ -4,8 +4,8 @@ import { QRCodeView } from '../../src/components/QRCodeView';
 import { QR_MAX_BYTES } from '../../src/utils/qrcode';
 
 describe('QRCodeView', () => {
-  it('renders a QR code SVG (no fallback) for a normal value', () => {
-    const { queryByText, getByTestId } = render(
+  it('renders a QR code SVG (no fallback) for a normal value', async () => {
+    const { queryByText, getByTestId } = await render(
       <QRCodeView value="Pflanzkalender" tooLargeLabel="zu groß" />
     );
     expect(queryByText('zu groß')).toBeNull();
@@ -13,14 +13,14 @@ describe('QRCodeView', () => {
     expect(getByTestId('qr-code-svg')).toBeTruthy();
   });
 
-  it('renders the fallback label when the value is too large', () => {
+  it('renders the fallback label when the value is too large', async () => {
     const huge = 'x'.repeat(QR_MAX_BYTES + 1);
-    const { getByText } = render(<QRCodeView value={huge} tooLargeLabel="zu groß" />);
+    const { getByText } = await render(<QRCodeView value={huge} tooLargeLabel="zu groß" />);
     expect(getByText('zu groß')).toBeTruthy();
   });
 
-  it('renders the fallback for an empty value', () => {
-    const { getByText } = render(<QRCodeView value="" tooLargeLabel="leer" />);
+  it('renders the fallback for an empty value', async () => {
+    const { getByText } = await render(<QRCodeView value="" tooLargeLabel="leer" />);
     expect(getByText('leer')).toBeTruthy();
   });
 });

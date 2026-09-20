@@ -20,8 +20,8 @@ afterAll(() => {
 });
 
 describe('ErrorBoundary', () => {
-  it('renders children when no error occurs', () => {
-    const { getByText } = render(
+  it('renders children when no error occurs', async () => {
+    const { getByText } = await render(
       <ErrorBoundary>
         <Text>Child component</Text>
       </ErrorBoundary>
@@ -29,8 +29,8 @@ describe('ErrorBoundary', () => {
     expect(getByText('Child component')).toBeTruthy();
   });
 
-  it('renders error UI when a child throws', () => {
-    const { getByText } = render(
+  it('renders error UI when a child throws', async () => {
+    const { getByText } = await render(
       <ErrorBoundary>
         <ThrowingChild shouldThrow={true} />
       </ErrorBoundary>
@@ -38,8 +38,8 @@ describe('ErrorBoundary', () => {
     expect(getByText('⚠️ App Fehler')).toBeTruthy();
   });
 
-  it('displays the error message text', () => {
-    const { getByText } = render(
+  it('displays the error message text', async () => {
+    const { getByText } = await render(
       <ErrorBoundary>
         <ThrowingChild shouldThrow={true} />
       </ErrorBoundary>
@@ -47,8 +47,8 @@ describe('ErrorBoundary', () => {
     expect(getByText(/Test error message/)).toBeTruthy();
   });
 
-  it('shows a reset/reload button', () => {
-    const { getByText } = render(
+  it('shows a reset/reload button', async () => {
+    const { getByText } = await render(
       <ErrorBoundary>
         <ThrowingChild shouldThrow={true} />
       </ErrorBoundary>
@@ -57,8 +57,8 @@ describe('ErrorBoundary', () => {
     expect(getByText(/zurücksetzen|Neu laden/)).toBeTruthy();
   });
 
-  it('resets error state on native when reload button pressed', () => {
-    const { getByText } = render(
+  it('resets error state on native when reload button pressed', async () => {
+    const { getByText } = await render(
       <ErrorBoundary>
         <ThrowingChild shouldThrow={true} />
       </ErrorBoundary>
@@ -68,7 +68,7 @@ describe('ErrorBoundary', () => {
     expect(getByText('⚠️ App Fehler')).toBeTruthy();
 
     // Press the reset button (native path: resets state)
-    fireEvent.press(getByText(/zurücksetzen|Neu laden/));
+    await fireEvent.press(getByText(/zurücksetzen|Neu laden/));
 
     // After reset, children would re-render. Because ThrowingChild would throw again
     // in this test setup, the error boundary re-catches it — so error UI persists.
@@ -76,8 +76,8 @@ describe('ErrorBoundary', () => {
     expect(getByText('⚠️ App Fehler')).toBeTruthy();
   });
 
-  it('calls console.error when an error is caught', () => {
-    render(
+  it('calls console.error when an error is caught', async () => {
+    await render(
       <ErrorBoundary>
         <ThrowingChild shouldThrow={true} />
       </ErrorBoundary>

@@ -70,12 +70,12 @@ describe('Tab Navigation Integration', () => {
   });
 
   it('AgendaScreen renders within shared providers without crashing', async () => {
-    const { root } = render(<AgendaScreen />, { wrapper: SharedProviders });
+    const { root } = await render(<AgendaScreen />, { wrapper: SharedProviders });
     expect(root).toBeTruthy();
   });
 
   it('ClimateScreen renders within shared providers without crashing', async () => {
-    const { root } = render(<ClimateScreen />, { wrapper: SharedProviders });
+    const { root } = await render(<ClimateScreen />, { wrapper: SharedProviders });
     expect(root).toBeTruthy();
   });
 
@@ -87,7 +87,7 @@ describe('Tab Navigation Integration', () => {
         : Promise.resolve(null)
     );
 
-    const { findAllByText } = render(<AgendaScreen />, { wrapper: SharedProviders });
+    const { findAllByText } = await render(<AgendaScreen />, { wrapper: SharedProviders });
 
     const labels = await findAllByText('Pflanzen', {}, { timeout: 3000 });
     expect(labels.length).toBeGreaterThanOrEqual(1);
@@ -101,7 +101,7 @@ describe('Tab Navigation Integration', () => {
         : Promise.resolve(null)
     );
 
-    const { findByText } = render(<ClimateScreen />, { wrapper: SharedProviders });
+    const { findByText } = await render(<ClimateScreen />, { wrapper: SharedProviders });
 
     expect(await findByText('Bereits im Garten')).toBeTruthy();
   });
@@ -115,7 +115,7 @@ describe('Tab Navigation Integration', () => {
     );
 
     // Both screens mount under the same provider tree – shared PlantContext state
-    const { findAllByText, findByText } = render(
+    const { findAllByText, findByText } = await render(
       <>
         <AgendaScreen />
         <ClimateScreen />
@@ -138,7 +138,7 @@ describe('Tab Navigation Integration', () => {
       return Promise.resolve(null);
     });
 
-    const { findAllByText } = render(<AgendaScreen />, { wrapper: SharedProviders });
+    const { findAllByText } = await render(<AgendaScreen />, { wrapper: SharedProviders });
 
     const headers = await findAllByText(/Previous|Current|Next/, {}, { timeout: 3000 });
     expect(headers.length).toBeGreaterThanOrEqual(1);
@@ -151,7 +151,7 @@ describe('Tab Navigation Integration', () => {
       return Promise.resolve(null);
     });
 
-    const { findByText } = render(<ClimateScreen />, { wrapper: SharedProviders });
+    const { findByText } = await render(<ClimateScreen />, { wrapper: SharedProviders });
     expect(await findByText('Climate-Resilient Gardening')).toBeTruthy();
   });
 });
