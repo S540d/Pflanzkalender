@@ -79,22 +79,22 @@ describe('AddActivityModal Component', () => {
     jest.clearAllMocks();
   });
 
-  it('renders when visible is true', () => {
-    const { getByText } = render(
+  it('renders when visible is true', async () => {
+    const { getByText } = await render(
       <AddActivityModal visible={true} plantName="Tomate" onClose={mockOnClose} onAdd={mockOnAdd} />
     );
     expect(getByText('Aktivität hinzufügen')).toBeTruthy();
   });
 
-  it('shows plant name in subtitle', () => {
-    const { getByText } = render(
+  it('shows plant name in subtitle', async () => {
+    const { getByText } = await render(
       <AddActivityModal visible={true} plantName="Gurke" onClose={mockOnClose} onAdd={mockOnAdd} />
     );
     expect(getByText('für Gurke')).toBeTruthy();
   });
 
-  it('does not render when visible is false', () => {
-    const { queryByText } = render(
+  it('does not render when visible is false', async () => {
+    const { queryByText } = await render(
       <AddActivityModal
         visible={false}
         plantName="Tomate"
@@ -105,15 +105,15 @@ describe('AddActivityModal Component', () => {
     expect(queryByText('Aktivität hinzufügen')).toBeNull();
   });
 
-  it('renders activity type field label', () => {
-    const { getByText } = render(
+  it('renders activity type field label', async () => {
+    const { getByText } = await render(
       <AddActivityModal visible={true} plantName="Tomate" onClose={mockOnClose} onAdd={mockOnAdd} />
     );
     expect(getByText('Aktivitätstyp *')).toBeTruthy();
   });
 
-  it('renders time period field', () => {
-    const { getByText } = render(
+  it('renders time period field', async () => {
+    const { getByText } = await render(
       <AddActivityModal visible={true} plantName="Tomate" onClose={mockOnClose} onAdd={mockOnAdd} />
     );
     expect(getByText('Zeitraum *')).toBeTruthy();
@@ -121,34 +121,34 @@ describe('AddActivityModal Component', () => {
     expect(getByText('Bis')).toBeTruthy();
   });
 
-  it('renders custom label input field', () => {
-    const { getByText } = render(
+  it('renders custom label input field', async () => {
+    const { getByText } = await render(
       <AddActivityModal visible={true} plantName="Tomate" onClose={mockOnClose} onAdd={mockOnAdd} />
     );
     expect(getByText('Eigene Bezeichnung (optional)')).toBeTruthy();
   });
 
-  it('calls onAdd when Hinzufügen button is pressed', () => {
-    const { getByText } = render(
+  it('calls onAdd when Hinzufügen button is pressed', async () => {
+    const { getByText } = await render(
       <AddActivityModal visible={true} plantName="Tomate" onClose={mockOnClose} onAdd={mockOnAdd} />
     );
-    fireEvent.press(getByText('Hinzufügen'));
+    await fireEvent.press(getByText('Hinzufügen'));
     expect(mockOnAdd).toHaveBeenCalledTimes(1);
   });
 
-  it('calls onClose when Abbrechen button is pressed', () => {
-    const { getByText } = render(
+  it('calls onClose when Abbrechen button is pressed', async () => {
+    const { getByText } = await render(
       <AddActivityModal visible={true} plantName="Tomate" onClose={mockOnClose} onAdd={mockOnAdd} />
     );
-    fireEvent.press(getByText('Abbrechen'));
+    await fireEvent.press(getByText('Abbrechen'));
     expect(mockOnClose).toHaveBeenCalledTimes(1);
   });
 
-  it('onAdd is called with correct arg shape', () => {
-    const { getByText } = render(
+  it('onAdd is called with correct arg shape', async () => {
+    const { getByText } = await render(
       <AddActivityModal visible={true} plantName="Tomate" onClose={mockOnClose} onAdd={mockOnAdd} />
     );
-    fireEvent.press(getByText('Hinzufügen'));
+    await fireEvent.press(getByText('Hinzufügen'));
     expect(mockOnAdd).toHaveBeenCalledWith(
       expect.any(String), // type
       expect.any(Number), // startMonth
@@ -158,8 +158,8 @@ describe('AddActivityModal Component', () => {
     );
   });
 
-  it('accepts initialMonth prop without crashing', () => {
-    const { root } = render(
+  it('accepts initialMonth prop without crashing', async () => {
+    const { root } = await render(
       <AddActivityModal
         visible={true}
         plantName="Tomate"
@@ -171,8 +171,8 @@ describe('AddActivityModal Component', () => {
     expect(root).toBeTruthy();
   });
 
-  it('accepts initialEndMonth prop without crashing', () => {
-    const { root } = render(
+  it('accepts initialEndMonth prop without crashing', async () => {
+    const { root } = await render(
       <AddActivityModal
         visible={true}
         plantName="Tomate"
@@ -185,8 +185,8 @@ describe('AddActivityModal Component', () => {
     expect(root).toBeTruthy();
   });
 
-  it('uses initialEndMonth as endMonth when provided', () => {
-    const { getByText } = render(
+  it('uses initialEndMonth as endMonth when provided', async () => {
+    const { getByText } = await render(
       <AddActivityModal
         visible={true}
         plantName="Tomate"
@@ -196,26 +196,26 @@ describe('AddActivityModal Component', () => {
         onAdd={mockOnAdd}
       />
     );
-    fireEvent.press(getByText('Hinzufügen'));
+    await fireEvent.press(getByText('Hinzufügen'));
     const [, startMonth, endMonth] = mockOnAdd.mock.calls[0];
     expect(startMonth).toBe(2);
     expect(endMonth).toBe(8);
   });
 
-  it('allows selecting a different activity type', () => {
-    const { getAllByText } = render(
+  it('allows selecting a different activity type', async () => {
+    const { getAllByText } = await render(
       <AddActivityModal visible={true} plantName="Tomate" onClose={mockOnClose} onAdd={mockOnAdd} />
     );
     // ACTIVITY_TYPES has multiple entries; pressing any type button should not crash
     const typeButtons = getAllByText(/Aussaat|Pflanzung|Ernte|Pflege/);
     if (typeButtons.length > 0) {
-      fireEvent.press(typeButtons[0]);
+      await fireEvent.press(typeButtons[0]);
     }
     expect(mockOnClose).not.toHaveBeenCalled();
   });
 
-  it('adjusts endMonth when a later startMonth is selected', () => {
-    const { getAllByText } = render(
+  it('adjusts endMonth when a later startMonth is selected', async () => {
+    const { getAllByText } = await render(
       <AddActivityModal
         visible={true}
         plantName="Tomate"
@@ -228,13 +228,13 @@ describe('AddActivityModal Component', () => {
     // should auto-advance endMonth. We just verify no crash occurs.
     const monthButtons = getAllByText(/Jan|Feb|Mär|Apr/);
     if (monthButtons.length > 1) {
-      fireEvent.press(monthButtons[1]);
+      await fireEvent.press(monthButtons[1]);
     }
     expect(mockOnAdd).not.toHaveBeenCalled();
   });
 
-  it('does not show a range error initially', () => {
-    const { queryByText } = render(
+  it('does not show a range error initially', async () => {
+    const { queryByText } = await render(
       <AddActivityModal visible={true} plantName="Tomate" onClose={mockOnClose} onAdd={mockOnAdd} />
     );
     expect(queryByText(/Startmonat/)).toBeNull();
