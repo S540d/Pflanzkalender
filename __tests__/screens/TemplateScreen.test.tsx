@@ -35,7 +35,7 @@ const Providers: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   </LanguageProvider>
 );
 
-const renderScreen = () => render(<TemplateScreen />, { wrapper: Providers });
+const renderScreen = async () => await render(<TemplateScreen />, { wrapper: Providers });
 
 describe('TemplateScreen', () => {
   beforeEach(() => {
@@ -45,63 +45,63 @@ describe('TemplateScreen', () => {
     (AsyncStorage.removeItem as jest.Mock).mockResolvedValue(undefined);
   });
 
-  it('renders without crashing', () => {
-    const { root } = renderScreen();
+  it('renders without crashing', async () => {
+    const { root } = await renderScreen();
     expect(root).toBeTruthy();
   });
 
-  it('renders the title text', () => {
-    const { getAllByText } = renderScreen();
+  it('renders the title text', async () => {
+    const { getAllByText } = await renderScreen();
     // Title "Vorlagen" also appears as a tab label
     expect(getAllByText(/^Vorlagen$|^Templates$/).length).toBeGreaterThan(0);
   });
 
-  it('shows community templates by default', () => {
-    const { getByText } = renderScreen();
+  it('shows community templates by default', async () => {
+    const { getByText } = await renderScreen();
     expect(getByText(/Balkon-Garten Starter|Balcony Garden Starter/)).toBeTruthy();
   });
 
-  it('shows all three community template cards', () => {
-    const { getByText } = renderScreen();
+  it('shows all three community template cards', async () => {
+    const { getByText } = await renderScreen();
     expect(getByText(/Balkon-Garten Starter|Balcony Garden Starter/)).toBeTruthy();
     expect(getByText(/Gemüsegarten Anfänger|Vegetable Garden Beginner/)).toBeTruthy();
     expect(getByText(/Kräutergarten|Herb Garden/)).toBeTruthy();
   });
 
-  it('community template cards show plant names', () => {
-    const { getByText } = renderScreen();
+  it('community template cards show plant names', async () => {
+    const { getByText } = await renderScreen();
     expect(getByText(/Tomaten/)).toBeTruthy();
     expect(getByText(/Salat/)).toBeTruthy();
   });
 
-  it('switches to Export section on tab press', () => {
-    const { getByText } = renderScreen();
-    fireEvent.press(getByText(/^Exportieren$|^Export$/));
+  it('switches to Export section on tab press', async () => {
+    const { getByText } = await renderScreen();
+    await fireEvent.press(getByText(/^Exportieren$|^Export$/));
     expect(getByText(/^EXPORTIEREN$|^EXPORT$/)).toBeTruthy();
   });
 
   it('switches to Import section on tab press', async () => {
-    const { getAllByText, getByPlaceholderText } = renderScreen();
+    const { getAllByText, getByPlaceholderText } = await renderScreen();
     // Section tabs are rendered before card buttons, so index 0 is the section tab
     const allImportLabels = getAllByText(/^Importieren$|^Import$/);
-    fireEvent.press(allImportLabels[0]);
+    await fireEvent.press(allImportLabels[0]);
     await waitFor(() => {
       expect(getByPlaceholderText(/JSON/i)).toBeTruthy();
     });
   });
 
-  it('shows at least 4 Import buttons (tab + 3 cards)', () => {
-    const { getAllByText } = renderScreen();
+  it('shows at least 4 Import buttons (tab + 3 cards)', async () => {
+    const { getAllByText } = await renderScreen();
     const importBtns = getAllByText(/^Importieren$|^Import$/);
     expect(importBtns.length).toBeGreaterThanOrEqual(4);
   });
 
   it('shows alert when pressing a community template import button', async () => {
     const alertSpy = jest.spyOn(Alert, 'alert').mockImplementation(() => {});
-    const { getAllByText } = renderScreen();
+    const { getAllByText } = await renderScreen();
     // [0] is the section tab, [1] is the first card's import button
     const importBtns = getAllByText(/^Importieren$|^Import$/);
-    fireEvent.press(importBtns[1]);
+    await fireEvent.press(importBtns[1]);
     await waitFor(() => {
       expect(alertSpy).toHaveBeenCalled();
     });
@@ -110,11 +110,11 @@ describe('TemplateScreen', () => {
 
   it('shows alert when export is triggered with no plants', async () => {
     const alertSpy = jest.spyOn(Alert, 'alert').mockImplementation(() => {});
-    const { getByText } = renderScreen();
-    fireEvent.press(getByText(/^Exportieren$|^Export$/));
+    const { getByText } = await renderScreen();
+    await fireEvent.press(getByText(/^Exportieren$|^Export$/));
     await waitFor(() => getByText(/^EXPORTIEREN$|^EXPORT$/));
     // Export button contains plant count placeholder replaced with 0
-    fireEvent.press(getByText(/📤/));
+    await fireEvent.press(getByText(/📤/));
     await waitFor(() => {
       expect(alertSpy).toHaveBeenCalled();
     });
@@ -122,9 +122,9 @@ describe('TemplateScreen', () => {
   });
 
   it('renders JSON text input on import section', async () => {
-    const { getAllByText, getByPlaceholderText } = renderScreen();
+    const { getAllByText, getByPlaceholderText } = await renderScreen();
     const allImportLabels = getAllByText(/^Importieren$|^Import$/);
-    fireEvent.press(allImportLabels[0]);
+    await fireEvent.press(allImportLabels[0]);
     await waitFor(() => {
       expect(getByPlaceholderText(/JSON/i)).toBeTruthy();
     });
@@ -132,14 +132,14 @@ describe('TemplateScreen', () => {
 
   it('shows note alert when Import button pressed with empty text', async () => {
     const alertSpy = jest.spyOn(Alert, 'alert').mockImplementation(() => {});
-    const { getAllByText } = renderScreen();
+    const { getAllByText } = await renderScreen();
     const allImportLabels = getAllByText(/^Importieren$|^Import$/);
-    fireEvent.press(allImportLabels[0]);
+    await fireEvent.press(allImportLabels[0]);
     await waitFor(() => {
       // The import action button contains the tab import label with emoji
       expect(getAllByText(/📥/).length).toBeGreaterThan(0);
     });
-    fireEvent.press(getAllByText(/📥/)[0]);
+    await fireEvent.press(getAllByText(/📥/)[0]);
     await waitFor(() => {
       expect(alertSpy).toHaveBeenCalled();
     });
@@ -161,14 +161,14 @@ describe('TemplateScreen', () => {
       },
     ]);
     const alertSpy = jest.spyOn(Alert, 'alert').mockImplementation(() => {});
-    const { getAllByText, getByPlaceholderText } = renderScreen();
+    const { getAllByText, getByPlaceholderText } = await renderScreen();
     const allImportLabels = getAllByText(/^Importieren$|^Import$/);
-    fireEvent.press(allImportLabels[0]);
+    await fireEvent.press(allImportLabels[0]);
     await waitFor(() => {
       expect(getByPlaceholderText(/JSON/i)).toBeTruthy();
     });
-    fireEvent.changeText(getByPlaceholderText(/JSON/i), '{"valid":"json"}');
-    fireEvent.press(getAllByText(/📥/)[0]);
+    await fireEvent.changeText(getByPlaceholderText(/JSON/i), '{"valid":"json"}');
+    await fireEvent.press(getAllByText(/📥/)[0]);
     await waitFor(() => {
       expect(alertSpy).toHaveBeenCalled();
       // Should show mode dialog with 3 buttons (Cancel, Append, Replace)
@@ -201,11 +201,11 @@ describe('TemplateScreen', () => {
       }
     });
 
-    const { getAllByText, getByPlaceholderText } = renderScreen();
-    fireEvent.press(getAllByText(/^Importieren$|^Import$/)[0]);
+    const { getAllByText, getByPlaceholderText } = await renderScreen();
+    await fireEvent.press(getAllByText(/^Importieren$|^Import$/)[0]);
     await waitFor(() => expect(getByPlaceholderText(/JSON/i)).toBeTruthy());
-    fireEvent.changeText(getByPlaceholderText(/JSON/i), '{"dummy":"data"}');
-    fireEvent.press(getAllByText(/📥/)[0]);
+    await fireEvent.changeText(getByPlaceholderText(/JSON/i), '{"dummy":"data"}');
+    await fireEvent.press(getAllByText(/📥/)[0]);
     await waitFor(() => expect(appendHandler).toBeDefined());
 
     // Clear previous setItem calls (initialization) before triggering append

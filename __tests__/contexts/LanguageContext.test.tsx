@@ -24,7 +24,7 @@ describe('LanguageContext – Language Management', () => {
   it('initializes with default language (de) after mount', async () => {
     (AsyncStorage.getItem as jest.Mock).mockResolvedValue(null);
 
-    const { result } = renderHook(() => useLanguage(), { wrapper });
+    const { result } = await renderHook(() => useLanguage(), { wrapper });
 
     expect(result.current.language).toBe('de');
 
@@ -36,7 +36,7 @@ describe('LanguageContext – Language Management', () => {
   it('loads persisted language from AsyncStorage on mount', async () => {
     (AsyncStorage.getItem as jest.Mock).mockResolvedValue('en');
 
-    const { result } = renderHook(() => useLanguage(), { wrapper });
+    const { result } = await renderHook(() => useLanguage(), { wrapper });
 
     await waitFor(() => {
       expect(result.current.language).toBe('en');
@@ -46,7 +46,7 @@ describe('LanguageContext – Language Management', () => {
   });
 
   it('changes language', async () => {
-    const { result } = renderHook(() => useLanguage(), { wrapper });
+    const { result } = await renderHook(() => useLanguage(), { wrapper });
 
     // wait for mount effect to finish before calling setLanguage
     await waitFor(() => expect(result.current.language).toBe('de'));
@@ -59,7 +59,7 @@ describe('LanguageContext – Language Management', () => {
   });
 
   it('persists language to AsyncStorage when changed', async () => {
-    const { result } = renderHook(() => useLanguage(), { wrapper });
+    const { result } = await renderHook(() => useLanguage(), { wrapper });
 
     await act(async () => {
       await result.current.setLanguage('en');
@@ -68,15 +68,15 @@ describe('LanguageContext – Language Management', () => {
     expect(AsyncStorage.setItem).toHaveBeenCalledWith('language', 'en');
   });
 
-  it('translates keys correctly in German', () => {
-    const { result } = renderHook(() => useLanguage(), { wrapper });
+  it('translates keys correctly in German', async () => {
+    const { result } = await renderHook(() => useLanguage(), { wrapper });
 
     const translated = result.current.t('calendar.title');
     expect(translated).toBe('Pflanzkalender');
   });
 
   it('translates keys correctly in English', async () => {
-    const { result } = renderHook(() => useLanguage(), { wrapper });
+    const { result } = await renderHook(() => useLanguage(), { wrapper });
 
     await waitFor(() => expect(result.current.language).toBe('de'));
 
@@ -88,15 +88,15 @@ describe('LanguageContext – Language Management', () => {
     expect(translated).toBe('Plant Calendar');
   });
 
-  it('returns key as fallback for unknown translation', () => {
-    const { result } = renderHook(() => useLanguage(), { wrapper });
+  it('returns key as fallback for unknown translation', async () => {
+    const { result } = await renderHook(() => useLanguage(), { wrapper });
 
     const translated = result.current.t('unknown.key');
     expect(translated).toBe('unknown.key');
   });
 
-  it('returns arrays for agenda.months', () => {
-    const { result } = renderHook(() => useLanguage(), { wrapper });
+  it('returns arrays for agenda.months', async () => {
+    const { result } = await renderHook(() => useLanguage(), { wrapper });
 
     const months = result.current.t('agenda.months');
     expect(Array.isArray(months)).toBe(true);
@@ -136,7 +136,7 @@ describe('LanguageContext – All SUPPORTED_LANGUAGES', () => {
 
   SUPPORTED_LANGUAGES.forEach(({ code, nativeLabel }) => {
     it(`can select ${nativeLabel} (${code}) and persists it`, async () => {
-      const { result } = renderHook(() => useLanguage(), { wrapper });
+      const { result } = await renderHook(() => useLanguage(), { wrapper });
 
       await waitFor(() => expect(result.current.language).toBe('de'));
 
@@ -151,7 +151,7 @@ describe('LanguageContext – All SUPPORTED_LANGUAGES', () => {
     it(`loads persisted ${nativeLabel} (${code}) from AsyncStorage`, async () => {
       (AsyncStorage.getItem as jest.Mock).mockResolvedValue(code);
 
-      const { result } = renderHook(() => useLanguage(), { wrapper });
+      const { result } = await renderHook(() => useLanguage(), { wrapper });
 
       // Only fully-localized languages (PICKER_LANGUAGES) are accepted from storage;
       // others fall back to 'de' to avoid partially-translated UI.
@@ -161,7 +161,7 @@ describe('LanguageContext – All SUPPORTED_LANGUAGES', () => {
     });
 
     it(`resolves all required UI keys for ${nativeLabel} (${code})`, async () => {
-      const { result } = renderHook(() => useLanguage(), { wrapper });
+      const { result } = await renderHook(() => useLanguage(), { wrapper });
 
       await act(async () => {
         await result.current.setLanguage(code);

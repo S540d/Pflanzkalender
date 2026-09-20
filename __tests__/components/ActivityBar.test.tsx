@@ -30,8 +30,8 @@ describe('ActivityBar Component', () => {
     label: 'Aussaat',
   };
 
-  it('renders without crashing', () => {
-    const { root } = render(<ActivityBar activity={mockActivity} />);
+  it('renders without crashing', async () => {
+    const { root } = await render(<ActivityBar activity={mockActivity} />);
 
     expect(root).toBeTruthy();
   });
@@ -40,14 +40,14 @@ describe('ActivityBar Component', () => {
     expect(typeof ActivityBar).toBe('function');
   });
 
-  it('renders activity bar with label', () => {
-    const { getByText } = render(<ActivityBar activity={mockActivity} />);
+  it('renders activity bar with label', async () => {
+    const { getByText } = await render(<ActivityBar activity={mockActivity} />);
 
     expect(getByText('Aussaat')).toBeTruthy();
   });
 
-  it('renders activity bar with correct styling', () => {
-    const { root } = render(
+  it('renders activity bar with correct styling', async () => {
+    const { root } = await render(
       <ActivityBar
         activity={{
           ...mockActivity,

@@ -87,8 +87,8 @@ describe('EditActivityModal Component', () => {
     jest.clearAllMocks();
   });
 
-  it('renders when visible and activity provided', () => {
-    const { getByText } = render(
+  it('renders when visible and activity provided', async () => {
+    const { getByText } = await render(
       <EditActivityModal
         visible={true}
         activity={mockActivity}
@@ -101,8 +101,8 @@ describe('EditActivityModal Component', () => {
     expect(getByText('Aktivität bearbeiten')).toBeTruthy();
   });
 
-  it('shows plant name as subtitle', () => {
-    const { getByText } = render(
+  it('shows plant name as subtitle', async () => {
+    const { getByText } = await render(
       <EditActivityModal
         visible={true}
         activity={mockActivity}
@@ -115,8 +115,8 @@ describe('EditActivityModal Component', () => {
     expect(getByText('Gurke')).toBeTruthy();
   });
 
-  it('renders null when activity is null', () => {
-    const { queryByText } = render(
+  it('renders null when activity is null', async () => {
+    const { queryByText } = await render(
       <EditActivityModal
         visible={true}
         activity={null}
@@ -129,8 +129,8 @@ describe('EditActivityModal Component', () => {
     expect(queryByText('Aktivität bearbeiten')).toBeNull();
   });
 
-  it('shows the activity label in the text input', () => {
-    const { getByDisplayValue } = render(
+  it('shows the activity label in the text input', async () => {
+    const { getByDisplayValue } = await render(
       <EditActivityModal
         visible={true}
         activity={mockActivity}
@@ -143,8 +143,8 @@ describe('EditActivityModal Component', () => {
     expect(getByDisplayValue('Aussaat')).toBeTruthy();
   });
 
-  it('shows Von and Bis pickers for editing the time range', () => {
-    const { getByText } = render(
+  it('shows Von and Bis pickers for editing the time range', async () => {
+    const { getByText } = await render(
       <EditActivityModal
         visible={true}
         activity={mockActivity}
@@ -159,7 +159,7 @@ describe('EditActivityModal Component', () => {
   });
 
   it('calls onUpdate with updated label and months when Speichern is pressed, then closes after the success animation', async () => {
-    const { getByText, getByDisplayValue } = render(
+    const { getByText, getByDisplayValue } = await render(
       <EditActivityModal
         visible={true}
         activity={mockActivity}
@@ -170,8 +170,8 @@ describe('EditActivityModal Component', () => {
       />
     );
 
-    fireEvent.changeText(getByDisplayValue('Aussaat'), 'Geänderte Bezeichnung');
-    fireEvent.press(getByText('Speichern'));
+    await fireEvent.changeText(getByDisplayValue('Aussaat'), 'Geänderte Bezeichnung');
+    await fireEvent.press(getByText('Speichern'));
 
     expect(mockOnUpdate).toHaveBeenCalledWith('act-1', {
       label: 'Geänderte Bezeichnung',
@@ -181,8 +181,8 @@ describe('EditActivityModal Component', () => {
     await waitFor(() => expect(mockOnClose).toHaveBeenCalledTimes(1));
   });
 
-  it('calls onClose when Abbrechen is pressed', () => {
-    const { getByText } = render(
+  it('calls onClose when Abbrechen is pressed', async () => {
+    const { getByText } = await render(
       <EditActivityModal
         visible={true}
         activity={mockActivity}
@@ -192,14 +192,14 @@ describe('EditActivityModal Component', () => {
         onDelete={mockOnDelete}
       />
     );
-    fireEvent.press(getByText('Abbrechen'));
+    await fireEvent.press(getByText('Abbrechen'));
     expect(mockOnClose).toHaveBeenCalledTimes(1);
   });
 
-  it('shows Alert.alert when Löschen is pressed', () => {
+  it('shows Alert.alert when Löschen is pressed', async () => {
     const alertSpy = jest.spyOn(Alert, 'alert');
 
-    const { getByText } = render(
+    const { getByText } = await render(
       <EditActivityModal
         visible={true}
         activity={mockActivity}
@@ -210,7 +210,7 @@ describe('EditActivityModal Component', () => {
       />
     );
 
-    fireEvent.press(getByText('Löschen'));
+    await fireEvent.press(getByText('Löschen'));
     expect(alertSpy).toHaveBeenCalledWith(
       'Aktivität löschen',
       'Aktivität wirklich löschen?',
@@ -228,7 +228,7 @@ describe('EditActivityModal Component', () => {
       deleteButton?.onPress?.();
     });
 
-    const { getByText } = render(
+    const { getByText } = await render(
       <EditActivityModal
         visible={true}
         activity={mockActivity}
@@ -239,7 +239,7 @@ describe('EditActivityModal Component', () => {
       />
     );
 
-    fireEvent.press(getByText('Löschen'));
+    await fireEvent.press(getByText('Löschen'));
 
     expect(mockOnDelete).toHaveBeenCalledWith('act-1');
     await waitFor(() => expect(mockOnClose).toHaveBeenCalledTimes(1));
@@ -247,10 +247,10 @@ describe('EditActivityModal Component', () => {
     alertSpy.mockRestore();
   });
 
-  it('does not call onUpdate when startMonth > endMonth', () => {
+  it('does not call onUpdate when startMonth > endMonth', async () => {
     const invalidActivity: Activity = { ...mockActivity, startMonth: 10, endMonth: 3 };
 
-    const { getByText } = render(
+    const { getByText } = await render(
       <EditActivityModal
         visible={true}
         activity={invalidActivity}
@@ -261,16 +261,16 @@ describe('EditActivityModal Component', () => {
       />
     );
 
-    fireEvent.press(getByText('Speichern'));
+    await fireEvent.press(getByText('Speichern'));
 
     expect(mockOnUpdate).not.toHaveBeenCalled();
     expect(mockOnClose).not.toHaveBeenCalled();
   });
 
-  it('shows error message when startMonth > endMonth on save', () => {
+  it('shows error message when startMonth > endMonth on save', async () => {
     const invalidActivity: Activity = { ...mockActivity, startMonth: 10, endMonth: 3 };
 
-    const { getByText, queryByText } = render(
+    const { getByText, queryByText } = await render(
       <EditActivityModal
         visible={true}
         activity={invalidActivity}
@@ -282,12 +282,12 @@ describe('EditActivityModal Component', () => {
     );
 
     expect(queryByText(/Startmonat/)).toBeNull();
-    fireEvent.press(getByText('Speichern'));
+    await fireEvent.press(getByText('Speichern'));
     expect(getByText(/Startmonat/)).toBeTruthy();
   });
 
-  it('syncs state when activity prop changes', () => {
-    const { rerender, getByDisplayValue } = render(
+  it('syncs state when activity prop changes', async () => {
+    const { rerender, getByDisplayValue } = await render(
       <EditActivityModal
         visible={true}
         activity={mockActivity}
@@ -299,7 +299,7 @@ describe('EditActivityModal Component', () => {
     );
 
     const updatedActivity: Activity = { ...mockActivity, label: 'Geändert' };
-    rerender(
+    await rerender(
       <EditActivityModal
         visible={true}
         activity={updatedActivity}
@@ -313,8 +313,8 @@ describe('EditActivityModal Component', () => {
     expect(getByDisplayValue('Geändert')).toBeTruthy();
   });
 
-  it('zeigt Zeitraum-verschieben-Buttons an', () => {
-    const { getByText } = render(
+  it('zeigt Zeitraum-verschieben-Buttons an', async () => {
+    const { getByText } = await render(
       <EditActivityModal
         visible={true}
         activity={mockActivity}
@@ -329,9 +329,9 @@ describe('EditActivityModal Component', () => {
     expect(getByText('Später →')).toBeTruthy();
   });
 
-  it('verschiebt Zeitraum nach vorne wenn Später → gedrückt wird', () => {
+  it('verschiebt Zeitraum nach vorne wenn Später → gedrückt wird', async () => {
     // mockActivity: startMonth=2, endMonth=4
-    const { getByText } = render(
+    const { getByText } = await render(
       <EditActivityModal
         visible={true}
         activity={mockActivity}
@@ -342,8 +342,8 @@ describe('EditActivityModal Component', () => {
       />
     );
 
-    fireEvent.press(getByText('Später →'));
-    fireEvent.press(getByText('Speichern'));
+    await fireEvent.press(getByText('Später →'));
+    await fireEvent.press(getByText('Speichern'));
 
     expect(mockOnUpdate).toHaveBeenCalledWith('act-1', {
       label: 'Aussaat',
@@ -352,9 +352,9 @@ describe('EditActivityModal Component', () => {
     });
   });
 
-  it('verschiebt Zeitraum nach hinten wenn ← Früher gedrückt wird', () => {
+  it('verschiebt Zeitraum nach hinten wenn ← Früher gedrückt wird', async () => {
     // mockActivity: startMonth=2, endMonth=4
-    const { getByText } = render(
+    const { getByText } = await render(
       <EditActivityModal
         visible={true}
         activity={mockActivity}
@@ -365,8 +365,8 @@ describe('EditActivityModal Component', () => {
       />
     );
 
-    fireEvent.press(getByText('← Früher'));
-    fireEvent.press(getByText('Speichern'));
+    await fireEvent.press(getByText('← Früher'));
+    await fireEvent.press(getByText('Speichern'));
 
     expect(mockOnUpdate).toHaveBeenCalledWith('act-1', {
       label: 'Aussaat',
@@ -375,9 +375,9 @@ describe('EditActivityModal Component', () => {
     });
   });
 
-  it('blockiert ← Früher wenn startMonth bereits 0 ist', () => {
+  it('blockiert ← Früher wenn startMonth bereits 0 ist', async () => {
     const atStart: Activity = { ...mockActivity, startMonth: 0, endMonth: 2 };
-    const { getByText } = render(
+    const { getByText } = await render(
       <EditActivityModal
         visible={true}
         activity={atStart}
@@ -388,8 +388,8 @@ describe('EditActivityModal Component', () => {
       />
     );
 
-    fireEvent.press(getByText('← Früher'));
-    fireEvent.press(getByText('Speichern'));
+    await fireEvent.press(getByText('← Früher'));
+    await fireEvent.press(getByText('Speichern'));
 
     // startMonth sollte immer noch 0 sein
     expect(mockOnUpdate).toHaveBeenCalledWith('act-1', {
@@ -399,9 +399,9 @@ describe('EditActivityModal Component', () => {
     });
   });
 
-  it('blockiert Später → wenn endMonth bereits 23 ist', () => {
+  it('blockiert Später → wenn endMonth bereits 23 ist', async () => {
     const atEnd: Activity = { ...mockActivity, startMonth: 21, endMonth: 23 };
-    const { getByText } = render(
+    const { getByText } = await render(
       <EditActivityModal
         visible={true}
         activity={atEnd}
@@ -412,8 +412,8 @@ describe('EditActivityModal Component', () => {
       />
     );
 
-    fireEvent.press(getByText('Später →'));
-    fireEvent.press(getByText('Speichern'));
+    await fireEvent.press(getByText('Später →'));
+    await fireEvent.press(getByText('Speichern'));
 
     // endMonth sollte immer noch 23 sein
     expect(mockOnUpdate).toHaveBeenCalledWith('act-1', {
@@ -423,8 +423,8 @@ describe('EditActivityModal Component', () => {
     });
   });
 
-  it('renders the month picker with month options', () => {
-    const { getAllByText } = render(
+  it('renders the month picker with month options', async () => {
+    const { getAllByText } = await render(
       <EditActivityModal
         visible={true}
         activity={mockActivity}
