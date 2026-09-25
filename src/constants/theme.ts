@@ -22,24 +22,24 @@ export const lightTheme = {
 };
 
 export const darkTheme = {
-  background: '#10130F',
-  surface: '#1B1E1B',
-  surfaceElevated: '#242824',
+  background: '#0A0C09',
+  surface: '#14170F',
+  surfaceElevated: '#1B1F19',
   primary: '#5FCB7A',
   primaryDark: '#3F9E58',
-  primaryLight: '#20301F',
+  primaryLight: '#1C2E1F',
   secondary: '#9CCC65',
   accent: '#F0915A',
-  accentLight: '#33271E',
+  accentLight: '#2E2013',
   text: '#F5F7F4',
-  textSecondary: '#A6B0A9',
-  border: '#31352F',
+  textSecondary: '#9BA69E',
+  border: '#262B23',
   /** Sehr subtile Trennlinien innerhalb dichter Raster (Kalender-Grid) – dunkler als `border`. */
-  gridLine: '#242824',
+  gridLine: '#1C201A',
   error: '#EF5350',
   success: '#5FCB7A',
   warning: '#FFA726',
-  overlay: 'rgba(0, 0, 0, 0.6)',
+  overlay: 'rgba(0, 0, 0, 0.7)',
   gradientStart: '#3AA35A',
   gradientEnd: '#1F6E38',
 };
