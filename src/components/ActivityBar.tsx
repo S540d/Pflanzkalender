@@ -179,7 +179,7 @@ export const ActivityBar: React.FC<ActivityBarProps> = ({
 
   const barStyle: StyleProp<ViewStyle> = [
     styles.activityBar,
-    shadow(1),
+    shadow(2),
     {
       left: `${startPosition}%`,
       width: `${width}%`,
@@ -246,30 +246,28 @@ const styles = StyleSheet.create({
   activityBar: {
     position: 'absolute',
     height: 30,
-    borderRadius: radius.sm,
+    borderRadius: radius.md,
     justifyContent: 'center',
-    paddingHorizontal: 6,
+    paddingHorizontal: 8,
     marginVertical: 2,
   },
   labelRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 3,
+    gap: 4,
   },
   label: {
-    fontSize: 11,
-    fontWeight: '600',
+    fontSize: 12,
+    fontWeight: '700',
     flexShrink: 1,
-    textShadowColor: 'rgba(0, 0, 0, 0.3)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 1,
+    letterSpacing: 0.1,
   },
   tooltip: {
     position: 'absolute',
     top: -50,
-    backgroundColor: 'rgba(0, 0, 0, 0.9)',
+    backgroundColor: 'rgba(20, 24, 20, 0.94)',
     padding: 8,
-    borderRadius: 6,
+    borderRadius: radius.sm,
     zIndex: 1000,
     minWidth: 150,
     shadowColor: '#000',
