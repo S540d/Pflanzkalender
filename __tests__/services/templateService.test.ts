@@ -1,4 +1,10 @@
-import { buildExportJson, importFromJson } from '../../src/services/templateService';
+import {
+  buildExportJson,
+  buildShareString,
+  importFromJson,
+} from '../../src/services/templateService';
+import { DEFAULT_PLANTS } from '../../src/constants/defaultPlants';
+import { COMMUNITY_TEMPLATES } from '../../src/constants/communityTemplates';
 import { Plant } from '../../src/types';
 
 const makePlant = (overrides: Partial<Plant> = {}): Plant => ({
@@ -111,5 +117,34 @@ describe('importFromJson', () => {
     const [imported] = importFromJson(json);
     expect(imported.location).toBe('shade');
     expect(imported.category).toBe('flower');
+  });
+
+  describe('roundtrip with built-in data (Issue #262)', () => {
+    const defaults = DEFAULT_PLANTS.map((p, i) => ({
+      ...p,
+      id: `default-${i}`,
+      createdAt: 1,
+      updatedAt: 1,
+    })) as Plant[];
+
+    it('re-imports all default plants unchanged via export JSON', () => {
+      expect(importFromJson(buildExportJson(defaults))).toEqual(defaults);
+    });
+
+    it('re-imports all default plants unchanged via compact share string', () => {
+      expect(importFromJson(buildShareString(defaults))).toEqual(defaults);
+    });
+
+    it('re-imports every community template', () => {
+      for (const tmpl of COMMUNITY_TEMPLATES) {
+        const plants = tmpl.plants.map((p, i) => ({
+          ...p,
+          id: `t-${i}`,
+          createdAt: 1,
+          updatedAt: 1,
+        })) as Plant[];
+        expect(importFromJson(buildExportJson(plants))).toEqual(plants);
+      }
+    });
   });
 });
