@@ -23,10 +23,20 @@ export const PlantSchema = z.object({
   updatedAt: z.number(),
 });
 
+// Toleranter als PlantSchema (das den Storage-Zustand strikt prüft): handbearbeitete oder
+// ältere Exporte dürfen Metadaten-Felder weglassen, sie werden mit Defaults aufgefüllt.
+export const ImportPlantSchema = PlantSchema.extend({
+  isDefault: z.boolean().default(false),
+  userId: z.string().nullable().default(null),
+  notes: z.string().default(''),
+  createdAt: z.number().default(() => Date.now()),
+  updatedAt: z.number().default(() => Date.now()),
+});
+
 export const ImportDataSchema = z.object({
   version: z.literal('1.0.0'),
-  timestamp: z.string().datetime(),
-  plants: z.array(PlantSchema),
+  timestamp: z.string().datetime().optional(),
+  plants: z.array(ImportPlantSchema),
 });
 
 export type ValidatedPlant = z.infer<typeof PlantSchema>;
