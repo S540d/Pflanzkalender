@@ -157,6 +157,9 @@ const nl: Translations = {
   'template.importModeReplace': 'Alles vervangen',
   'template.importModeAppend': 'Toevoegen',
   'template.qrShareBtn': '🔳 Delen via QR-code',
+  'template.icsBtn': '📅 Exporteren als agendabestand (.ics)',
+  'template.icsHint':
+    'Activiteiten van dit jaar als hele-dag-afspraken met herinnering (09:00 op de startdag) – te importeren in Google, Apple of Outlook.',
   'template.qrShareTitle': 'Plan delen via QR',
   'template.qrShareHint':
     'Scan met de camera van een ander apparaat en plak de tekst in “Importeren”.',
