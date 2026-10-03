@@ -560,3 +560,124 @@ describe('PlantContext – usePlants hook', () => {
     spy.mockRestore();
   });
 });
+
+describe('PlantContext – setActivityCompletion', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockGetItem.mockResolvedValue(null);
+    mockSetItem.mockResolvedValue(undefined);
+  });
+
+  const setup = async () => {
+    const { result } = await renderHook(() => usePlants(), { wrapper });
+    await waitForLoaded(result);
+    await act(async () => {
+      result.current.addPlant({
+        name: 'Journalpflanze',
+        activities: [],
+        isDefault: false,
+        userId: null,
+        notes: '',
+      });
+    });
+    const plant = result.current.plants.find((p) => p.name === 'Journalpflanze')!;
+    await act(async () => {
+      result.current.addActivity(plant.id, {
+        type: 'sow',
+        startMonth: 2,
+        endMonth: 4,
+        color: '#000',
+        label: 'Aussäen',
+      });
+    });
+    const withActivity = result.current.plants.find((p) => p.id === plant.id)!;
+    return { result, plantId: plant.id, activityId: withActivity.activities[0].id };
+  };
+
+  const getActivity = (
+    result: { current: ReturnType<typeof usePlants> },
+    plantId: string,
+    activityId: string
+  ) =>
+    result.current.plants
+      .find((p) => p.id === plantId)!
+      .activities.find((a) => a.id === activityId)!;
+
+  it('setzt einen Eintrag für das Jahr', async () => {
+    const { result, plantId, activityId } = await setup();
+    await act(async () => {
+      result.current.setActivityCompletion(plantId, activityId, 2026, {
+        date: '2026-03-10',
+        note: 'ok',
+      });
+    });
+    await waitFor(() =>
+      expect(getActivity(result, plantId, activityId).completions).toEqual({
+        '2026': { date: '2026-03-10', note: 'ok' },
+      })
+    );
+  });
+
+  it('behält andere Jahre und entfernt nur das angegebene', async () => {
+    const { result, plantId, activityId } = await setup();
+    await act(async () => {
+      result.current.setActivityCompletion(plantId, activityId, 2025, { date: '2025-03-01' });
+    });
+    await waitFor(() => expect(getActivity(result, plantId, activityId).completions).toBeDefined());
+    await act(async () => {
+      result.current.setActivityCompletion(plantId, activityId, 2026, { date: '2026-03-02' });
+    });
+    await waitFor(() =>
+      expect(Object.keys(getActivity(result, plantId, activityId).completions ?? {})).toEqual(
+        expect.arrayContaining(['2025', '2026'])
+      )
+    );
+    await act(async () => {
+      result.current.setActivityCompletion(plantId, activityId, 2026, null);
+    });
+    await waitFor(() =>
+      expect(getActivity(result, plantId, activityId).completions).toEqual({
+        '2025': { date: '2025-03-01' },
+      })
+    );
+  });
+
+  it('entfernt das completions-Feld, wenn der letzte Eintrag gelöscht wird', async () => {
+    const { result, plantId, activityId } = await setup();
+    await act(async () => {
+      result.current.setActivityCompletion(plantId, activityId, 2026, { date: '2026-03-02' });
+    });
+    await waitFor(() => expect(getActivity(result, plantId, activityId).completions).toBeDefined());
+    await act(async () => {
+      result.current.setActivityCompletion(plantId, activityId, 2026, null);
+    });
+    await waitFor(() =>
+      expect(getActivity(result, plantId, activityId).completions).toBeUndefined()
+    );
+  });
+
+  it('verändert isCustomized nicht', async () => {
+    const { result, plantId, activityId } = await setup();
+    // addActivity setzt isCustomized: true – für den Test zurück auf undefined setzen
+    await act(async () => {
+      result.current.replacePlants(
+        result.current.plants.map((p) =>
+          p.id === plantId
+            ? {
+                ...p,
+                activities: p.activities.map((a) => ({ ...a, isCustomized: undefined })),
+              }
+            : p
+        )
+      );
+    });
+    await waitFor(() =>
+      expect(getActivity(result, plantId, activityId).isCustomized).toBeUndefined()
+    );
+    await act(async () => {
+      result.current.setActivityCompletion(plantId, activityId, 2026, { date: '2026-03-02' });
+    });
+    await waitFor(() => expect(getActivity(result, plantId, activityId).completions).toBeDefined());
+    expect(getActivity(result, plantId, activityId).isCustomized).toBeUndefined();
+  });
+});

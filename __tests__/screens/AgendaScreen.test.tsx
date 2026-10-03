@@ -182,4 +182,109 @@ describe('AgendaScreen', () => {
     await findAllByText('Tomatoes', {}, { timeout: 3000 });
     expect(queryAllByText('Tomaten')).toHaveLength(0);
   });
+
+  describe('Journal (Erledigt-Abhaken)', () => {
+    const makePlants = (completions?: Record<string, { date: string; note?: string }>) =>
+      JSON.stringify([
+        {
+          id: 'jp1',
+          name: 'Journalpflanze',
+          activities: [
+            {
+              id: 'ja1',
+              type: 'sow',
+              startMonth: 0,
+              endMonth: 23,
+              color: '#4CAF50',
+              label: 'Journalaktion',
+              isCustomized: true,
+              ...(completions ? { completions } : {}),
+            },
+          ],
+          isDefault: false,
+          userId: null,
+          notes: '',
+          createdAt: 1000000,
+          updatedAt: 1000000,
+        },
+      ]);
+
+    const mockStorage = (plantsJson: string) => {
+      const AsyncStorage = require('@react-native-async-storage/async-storage');
+      AsyncStorage.getItem.mockImplementation((key: string) =>
+        key === '@Pflanzkalender:plants' ? Promise.resolve(plantsJson) : Promise.resolve(null)
+      );
+      return AsyncStorage;
+    };
+
+    const thisYear = new Date().getFullYear();
+
+    it('speichert beim Abhaken ein Erledigt-Datum (heute) für das Jahr der Spalte', async () => {
+      const AsyncStorage = mockStorage(makePlants());
+      AsyncStorage.setItem.mockClear();
+      const { findAllByTestId } = await render(<AgendaScreen />, { wrapper: Wrapper });
+
+      // Aktivität deckt alle Halbmonate ab → erscheint in mehreren Spalten
+      const [checkbox] = await findAllByTestId(
+        `agenda-check-jp1-ja1-${thisYear}`,
+        {},
+        { timeout: 3000 }
+      );
+      await fireEvent.press(checkbox);
+
+      await waitFor(() => {
+        const calls = AsyncStorage.setItem.mock.calls.filter(
+          (c: [string, string]) => c[0] === '@Pflanzkalender:plants'
+        );
+        const saved = JSON.parse(calls[calls.length - 1][1]);
+        const completion = saved[0].activities[0].completions[String(thisYear)];
+        expect(completion.date).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+        expect(completion.date.startsWith(String(thisYear))).toBe(true);
+      });
+    });
+
+    it('zeigt erledigte Einträge mit Datum und entfernt sie beim erneuten Tippen', async () => {
+      const AsyncStorage = mockStorage(
+        makePlants({ [String(thisYear)]: { date: `${thisYear}-03-15`, note: 'Sorte Rot' } })
+      );
+      AsyncStorage.setItem.mockClear();
+      const { findAllByText, findAllByTestId } = await render(<AgendaScreen />, {
+        wrapper: Wrapper,
+      });
+
+      expect(
+        (await findAllByText(new RegExp(`${thisYear}-03-15 – Sorte Rot`))).length
+      ).toBeGreaterThan(0);
+
+      await fireEvent.press((await findAllByTestId(`agenda-check-jp1-ja1-${thisYear}`))[0]);
+      await waitFor(() => {
+        const calls = AsyncStorage.setItem.mock.calls.filter(
+          (c: [string, string]) => c[0] === '@Pflanzkalender:plants'
+        );
+        const saved = JSON.parse(calls[calls.length - 1][1]);
+        expect(saved[0].activities[0].completions).toBeUndefined();
+      });
+    });
+
+    it('listet erledigte Aktivitäten in der Journal-Ansicht', async () => {
+      mockStorage(
+        makePlants({ [String(thisYear)]: { date: `${thisYear}-04-02`, note: 'Notiz!' } })
+      );
+      const { findByTestId, findByText } = await render(<AgendaScreen />, { wrapper: Wrapper });
+
+      await fireEvent.press(await findByTestId('agenda-view-journal'));
+
+      expect(await findByText(`${thisYear}-04-02`)).toBeTruthy();
+      expect(await findByText('Notiz!')).toBeTruthy();
+    });
+
+    it('zeigt einen Leerzustand, wenn nichts erledigt ist', async () => {
+      mockStorage(makePlants());
+      const { findByTestId, findByText } = await render(<AgendaScreen />, { wrapper: Wrapper });
+
+      await fireEvent.press(await findByTestId('agenda-view-journal'));
+
+      expect(await findByText(/Noch nichts erledigt|Nothing done yet/)).toBeTruthy();
+    });
+  });
 });
