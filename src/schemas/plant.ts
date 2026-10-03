@@ -1,5 +1,10 @@
 import { z } from 'zod';
 
+export const ActivityCompletionSchema = z.object({
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  note: z.string().optional(),
+});
+
 export const ActivitySchema = z.object({
   id: z.string(),
   type: z.string(),
@@ -8,6 +13,7 @@ export const ActivitySchema = z.object({
   color: z.string(),
   label: z.string(),
   isCustomized: z.boolean().optional(),
+  completions: z.record(z.string().regex(/^\d{4}$/), ActivityCompletionSchema).optional(),
 });
 
 export const PlantSchema = z.object({

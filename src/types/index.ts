@@ -1,3 +1,9 @@
+/** Erledigt-Eintrag einer Aktivität für ein bestimmtes Jahr (Journal). */
+export interface ActivityCompletion {
+  date: string; // ISO-Datum YYYY-MM-DD
+  note?: string;
+}
+
 export interface Activity {
   id: string;
   type: string;
@@ -6,6 +12,7 @@ export interface Activity {
   color: string;
   label: string;
   isCustomized?: boolean; // true = vom Nutzer verändert; schützt vor künftigen Default-Updates
+  completions?: Record<string, ActivityCompletion>; // Schlüssel = Jahr ("2026")
 }
 
 export type PlantLocation = 'sun' | 'partial-shade' | 'shade';

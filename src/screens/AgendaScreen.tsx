@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useTheme } from '../hooks/useTheme';
 import { usePlants } from '../contexts/PlantContext';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -11,9 +11,17 @@ import { getActivityTypeByType } from '../constants/activityTypes';
 import { getActivityDisplayLabel } from '../utils/activityLabel';
 import { getPlantDisplayNotes } from '../constants/plantNames';
 import { Card, Icon, type IconName } from '../components/ui';
+import { ActivityCompletionModal } from '../components/ActivityCompletionModal';
+import { ActivityJournal, type JournalEntry } from '../components/ActivityJournal';
+import { getCompletion, toIsoDate, yearForHalfMonthOffset } from '../utils/completions';
+import type { ActivityCompletion } from '../types';
 import { radius, spacing } from '../constants/designTokens';
 
 interface ActivityInfo {
+  plantId: string;
+  activityId: string;
+  year: number;
+  completion?: ActivityCompletion;
   plantName: string;
   plantEmoji: string;
   activityLabel: string;
@@ -27,9 +35,19 @@ const COLUMN_OFFSETS = [-1, 0, 1, 2, 3, 4, 5] as const;
 
 export const AgendaScreen: React.FC = () => {
   const { theme } = useTheme();
-  const { plants } = usePlants();
+  const { plants, setActivityCompletion } = usePlants();
   const { t, language } = useLanguage();
   const [activeCategory, setActiveCategory] = useState<CategoryFilter>('all');
+  const [view, setView] = useState<'upcoming' | 'journal'>('upcoming');
+  const [editing, setEditing] = useState<{
+    plantId: string;
+    activityId: string;
+    year: number;
+    plantName: string;
+    activityLabel: string;
+  } | null>(null);
+
+  const currentYear = useMemo(() => new Date().getFullYear(), []);
 
   // Current half-month index (0-23)
   const currentMonth = useMemo(() => {
@@ -45,12 +63,16 @@ export const AgendaScreen: React.FC = () => {
   }, [plants, activeCategory]);
 
   const getActivitiesForMonth = useCallback(
-    (monthIndex: number): ActivityInfo[] => {
+    (monthIndex: number, year: number): ActivityInfo[] => {
       const activities: ActivityInfo[] = [];
       filteredPlants.forEach((plant) => {
         plant.activities.forEach((activity) => {
           if (activity.startMonth <= monthIndex && activity.endMonth >= monthIndex) {
             activities.push({
+              plantId: plant.id,
+              activityId: activity.id,
+              year,
+              completion: getCompletion(activity, year),
               plantName: getPlantDisplayName(plant.name, language),
               plantEmoji: getPlantEmoji(plant.name, plant.category),
               activityLabel: getActivityDisplayLabel(activity, t),
@@ -73,10 +95,62 @@ export const AgendaScreen: React.FC = () => {
     () =>
       COLUMN_OFFSETS.map((offset) => {
         const monthIndex = (currentMonth + offset + 24) % 24;
-        return { offset, monthIndex, activities: getActivitiesForMonth(monthIndex) };
+        const year = yearForHalfMonthOffset(currentYear, currentMonth, offset);
+        return { offset, monthIndex, activities: getActivitiesForMonth(monthIndex, year) };
       }),
-    [currentMonth, getActivitiesForMonth]
+    [currentYear, currentMonth, getActivitiesForMonth]
   );
+
+  const journalEntries = useMemo<JournalEntry[]>(() => {
+    const entries: JournalEntry[] = [];
+    filteredPlants.forEach((plant) => {
+      plant.activities.forEach((activity) => {
+        const completion = getCompletion(activity, currentYear);
+        if (!completion) return;
+        entries.push({
+          key: `${plant.id}-${activity.id}`,
+          plantId: plant.id,
+          activityId: activity.id,
+          plantName: getPlantDisplayName(plant.name, language),
+          plantEmoji: getPlantEmoji(plant.name, plant.category),
+          activityLabel: getActivityDisplayLabel(activity, t),
+          activityColor: activity.color,
+          activityIcon: getActivityTypeByType(activity.type)?.icon,
+          date: completion.date,
+          note: completion.note,
+        });
+      });
+    });
+    return entries;
+  }, [filteredPlants, currentYear, language, t]);
+
+  const toggleDone = (info: ActivityInfo) => {
+    setActivityCompletion(
+      info.plantId,
+      info.activityId,
+      info.year,
+      info.completion ? null : { date: toIsoDate(new Date()) }
+    );
+  };
+
+  const openEditor = (info: ActivityInfo) => {
+    setEditing({
+      plantId: info.plantId,
+      activityId: info.activityId,
+      year: info.year,
+      plantName: info.plantName,
+      activityLabel: info.activityLabel,
+    });
+  };
+
+  const editingCompletion = editing
+    ? getCompletion(
+        plants
+          .find((p) => p.id === editing.plantId)
+          ?.activities.find((a) => a.id === editing.activityId) ?? {},
+        editing.year
+      )
+    : undefined;
 
   const getColumnTitle = (offset: number, monthIndex: number): string => {
     if (offset === -1) return String(t('agenda.previous'));
@@ -111,32 +185,78 @@ export const AgendaScreen: React.FC = () => {
             {t('agenda.noActivities')}
           </Text>
         ) : (
-          activities.map((activity, index) => (
-            <Card
-              key={index}
-              elevation={1}
-              padding={spacing.md}
-              style={[styles.card, { borderLeftWidth: 4, borderLeftColor: activity.activityColor }]}
-            >
-              <View style={styles.cardHeader}>
-                <View style={[styles.iconChip, { backgroundColor: activity.activityColor }]}>
-                  {activity.activityIcon ? (
-                    <Icon name={activity.activityIcon} size={13} color="#FFFFFF" />
-                  ) : null}
+          activities.map((activity, index) => {
+            const done = !!activity.completion;
+            return (
+              <Card
+                key={index}
+                elevation={1}
+                padding={spacing.md}
+                style={[
+                  styles.card,
+                  { borderLeftWidth: 4, borderLeftColor: activity.activityColor },
+                  done && styles.cardDone,
+                ]}
+              >
+                <View style={styles.cardHeader}>
+                  <View style={[styles.iconChip, { backgroundColor: activity.activityColor }]}>
+                    {activity.activityIcon ? (
+                      <Icon name={activity.activityIcon} size={13} color="#FFFFFF" />
+                    ) : null}
+                  </View>
+                  <Text
+                    style={[
+                      styles.activityLabel,
+                      { color: theme.text },
+                      done && styles.activityLabelDone,
+                    ]}
+                  >
+                    {activity.activityLabel}
+                  </Text>
+                  <TouchableOpacity
+                    testID={`agenda-check-${activity.plantId}-${activity.activityId}-${activity.year}`}
+                    accessibilityRole="checkbox"
+                    accessibilityState={{ checked: done }}
+                    accessibilityLabel={String(
+                      t(done ? 'completion.markOpen' : 'completion.markDone')
+                    )}
+                    onPress={() => toggleDone(activity)}
+                    onLongPress={() => openEditor(activity)}
+                    hitSlop={8}
+                    style={[
+                      styles.checkbox,
+                      { borderColor: done ? theme.primary : theme.border },
+                      done && { backgroundColor: theme.primary },
+                    ]}
+                  >
+                    {done ? <Icon name="check" size={14} color="#FFFFFF" /> : null}
+                  </TouchableOpacity>
                 </View>
-                <Text style={[styles.activityLabel, { color: theme.text }]}>
-                  {activity.activityLabel}
-                </Text>
-              </View>
-              <View style={styles.plantNameRow}>
-                <Text style={styles.plantEmoji}>{activity.plantEmoji}</Text>
-                <Text style={[styles.plantName, { color: theme.text }]}>{activity.plantName}</Text>
-              </View>
-              {activity.notes && (
-                <Text style={[styles.notes, { color: theme.textSecondary }]}>{activity.notes}</Text>
-              )}
-            </Card>
-          ))
+                <View style={styles.plantNameRow}>
+                  <Text style={styles.plantEmoji}>{activity.plantEmoji}</Text>
+                  <Text style={[styles.plantName, { color: theme.text }]}>
+                    {activity.plantName}
+                  </Text>
+                </View>
+                {activity.completion ? (
+                  <TouchableOpacity
+                    testID={`agenda-done-${activity.plantId}-${activity.activityId}-${activity.year}`}
+                    onPress={() => openEditor(activity)}
+                  >
+                    <Text style={[styles.doneInfo, { color: theme.primary }]}>
+                      ✓ {activity.completion.date}
+                      {activity.completion.note ? ` – ${activity.completion.note}` : ''}
+                    </Text>
+                  </TouchableOpacity>
+                ) : null}
+                {activity.notes && (
+                  <Text style={[styles.notes, { color: theme.textSecondary }]}>
+                    {activity.notes}
+                  </Text>
+                )}
+              </Card>
+            );
+          })
         )}
       </View>
     );
@@ -146,13 +266,72 @@ export const AgendaScreen: React.FC = () => {
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       <CategoryTabBar activeCategory={activeCategory} onCategoryChange={setActiveCategory} />
 
-      <ScrollView horizontal style={styles.scrollView}>
-        <View style={styles.columnsContainer}>
-          {columnData.map(({ offset, monthIndex, activities }) =>
-            renderColumn(monthIndex, offset, activities)
-          )}
-        </View>
-      </ScrollView>
+      <View style={styles.viewToggle}>
+        {(['upcoming', 'journal'] as const).map((mode) => {
+          const active = view === mode;
+          return (
+            <TouchableOpacity
+              key={mode}
+              testID={`agenda-view-${mode}`}
+              onPress={() => setView(mode)}
+              style={[
+                styles.viewToggleBtn,
+                { borderColor: active ? theme.primary : theme.border },
+                active && { backgroundColor: theme.primary },
+              ]}
+            >
+              <Text style={[styles.viewToggleText, { color: active ? '#FFFFFF' : theme.text }]}>
+                {String(t(mode === 'upcoming' ? 'agenda.viewUpcoming' : 'agenda.viewJournal'))}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
+      </View>
+
+      {view === 'upcoming' ? (
+        <ScrollView horizontal style={styles.scrollView}>
+          <View style={styles.columnsContainer}>
+            {columnData.map(({ offset, monthIndex, activities }) =>
+              renderColumn(monthIndex, offset, activities)
+            )}
+          </View>
+        </ScrollView>
+      ) : (
+        <ActivityJournal
+          year={currentYear}
+          entries={journalEntries}
+          onEntryPress={(entry) =>
+            setEditing({
+              plantId: entry.plantId,
+              activityId: entry.activityId,
+              year: currentYear,
+              plantName: entry.plantName,
+              activityLabel: entry.activityLabel,
+            })
+          }
+        />
+      )}
+
+      <ActivityCompletionModal
+        visible={editing !== null}
+        plantName={editing?.plantName ?? ''}
+        activityLabel={editing?.activityLabel ?? ''}
+        year={editing?.year ?? currentYear}
+        completion={editingCompletion}
+        onSave={(completion) => {
+          if (editing) {
+            setActivityCompletion(editing.plantId, editing.activityId, editing.year, completion);
+          }
+          setEditing(null);
+        }}
+        onRemove={() => {
+          if (editing) {
+            setActivityCompletion(editing.plantId, editing.activityId, editing.year, null);
+          }
+          setEditing(null);
+        }}
+        onClose={() => setEditing(null)}
+      />
     </View>
   );
 };
@@ -189,6 +368,42 @@ const styles = StyleSheet.create({
   },
   card: {
     marginBottom: spacing.sm,
+  },
+  cardDone: {
+    opacity: 0.7,
+  },
+  activityLabelDone: {
+    textDecorationLine: 'line-through',
+  },
+  checkbox: {
+    width: 24,
+    height: 24,
+    borderRadius: radius.sm,
+    borderWidth: 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: 'auto',
+  },
+  doneInfo: {
+    fontSize: 12,
+    fontWeight: '600',
+    marginBottom: 4,
+  },
+  viewToggle: {
+    flexDirection: 'row',
+    gap: spacing.sm,
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.sm,
+  },
+  viewToggleBtn: {
+    borderWidth: 1.5,
+    borderRadius: radius.lg,
+    paddingVertical: spacing.xs + 2,
+    paddingHorizontal: spacing.md,
+  },
+  viewToggleText: {
+    fontSize: 13,
+    fontWeight: '600',
   },
   cardHeader: {
     flexDirection: 'row',
