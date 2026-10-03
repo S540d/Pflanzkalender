@@ -156,6 +156,17 @@ const pl: Translations = {
   'template.importModeReplace': 'Zastąp wszystko',
   'template.importModeAppend': 'Dodaj',
   'template.qrShareBtn': '🔳 Udostępnij przez kod QR',
+  'settings.gardenSection': 'MÓJ OGRÓD',
+  'settings.gardenHint':
+    'Przesuwa wszystkie zadania w kalendarzu, agendzie i eksporcie (wcześniej: łagodny klimat, później: wysokość lub północ). Zapisane dane pozostają bez zmian.',
+  'settings.gardenOffset.m2': '1 miesiąc wcześniej',
+  'settings.gardenOffset.m1': '2 tygodnie wcześniej',
+  'settings.gardenOffset.0': 'Normalnie',
+  'settings.gardenOffset.p1': '2 tygodnie później',
+  'settings.gardenOffset.p2': '1 miesiąc później',
+  'calendar.offsetBadge': 'Ogród: {offset}',
+  'activity.edit.offsetHint':
+    'Z powodu ustawienia ogrodu ({offset}) ten okres jest w kalendarzu pokazany z przesunięciem.',
   'template.qrShareTitle': 'Udostępnij plan przez QR',
   'template.qrShareHint': 'Zeskanuj aparatem innego urządzenia i wklej tekst w „Importuj”.',
   'template.qrTooLarge': 'Za dużo danych na kod QR. Użyj eksportu do pliku.',

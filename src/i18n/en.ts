@@ -175,6 +175,17 @@ const en: Translations = {
   'template.importModeReplace': 'Replace all',
   'template.importModeAppend': 'Append',
   'template.qrShareBtn': '🔳 Share via QR code',
+  'settings.gardenSection': 'MY GARDEN',
+  'settings.gardenHint':
+    'Shifts all activities in the calendar, agenda and calendar export (earlier: mild climate, later: high altitude or north). Your saved data stays unchanged.',
+  'settings.gardenOffset.m2': '1 month earlier',
+  'settings.gardenOffset.m1': '2 weeks earlier',
+  'settings.gardenOffset.0': 'Normal',
+  'settings.gardenOffset.p1': '2 weeks later',
+  'settings.gardenOffset.p2': '1 month later',
+  'calendar.offsetBadge': 'Garden: {offset}',
+  'activity.edit.offsetHint':
+    'Because of your garden setting ({offset}), this period is shown shifted in the calendar.',
   'template.qrShareTitle': 'Share plan via QR',
   'template.qrShareHint': "Scan with another device's camera and paste the text into “Import”.",
   'template.qrTooLarge': 'Too much data for a QR code. Please use the file export.',

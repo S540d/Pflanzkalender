@@ -438,4 +438,21 @@ describe('EditActivityModal Component', () => {
     const monthItems = getAllByText(/Jan|Feb|Mär|Apr|Mai/);
     expect(monthItems.length).toBeGreaterThan(0);
   });
+
+  it('zeigt den Versatz-Hinweis nur bei displayOffset ≠ 0', async () => {
+    const props = {
+      visible: true,
+      activity: mockActivity,
+      plantName: 'Tomate',
+      onClose: mockOnClose,
+      onUpdate: mockOnUpdate,
+      onDelete: mockOnDelete,
+    };
+    const without = await render(<EditActivityModal {...props} />);
+    expect(without.queryByTestId('offset-hint')).toBeNull();
+    without.unmount();
+
+    const withOffset = await render(<EditActivityModal {...props} displayOffset={1} />);
+    expect(withOffset.getByTestId('offset-hint')).toBeTruthy();
+  });
 });

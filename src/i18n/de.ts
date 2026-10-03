@@ -177,6 +177,17 @@ const de: Translations = {
   'template.importModeReplace': 'Alles ersetzen',
   'template.importModeAppend': 'Anhängen',
   'template.qrShareBtn': '🔳 Per QR-Code teilen',
+  'settings.gardenSection': 'MEIN GARTEN',
+  'settings.gardenHint':
+    'Verschiebt alle Aktivitäten in Kalender, Agenda und Kalender-Export (früher: mildes Klima, später: Höhenlage oder Norden). Deine gespeicherten Daten bleiben unverändert.',
+  'settings.gardenOffset.m2': '1 Monat früher',
+  'settings.gardenOffset.m1': '2 Wochen früher',
+  'settings.gardenOffset.0': 'Normal',
+  'settings.gardenOffset.p1': '2 Wochen später',
+  'settings.gardenOffset.p2': '1 Monat später',
+  'calendar.offsetBadge': 'Garten: {offset}',
+  'activity.edit.offsetHint':
+    'Im Kalender wird dieser Zeitraum wegen deiner Garten-Einstellung ({offset}) verschoben angezeigt.',
   'template.qrShareTitle': 'Pflanzplan per QR teilen',
   'template.qrShareHint':
     'Mit der Kamera eines anderen Geräts scannen und den Text unter „Importieren“ einfügen.',

@@ -157,6 +157,17 @@ const nl: Translations = {
   'template.importModeReplace': 'Alles vervangen',
   'template.importModeAppend': 'Toevoegen',
   'template.qrShareBtn': '🔳 Delen via QR-code',
+  'settings.gardenSection': 'MIJN TUIN',
+  'settings.gardenHint':
+    'Verschuift alle activiteiten in kalender, agenda en export (eerder: mild klimaat; later: hoogte of noorden). Je opgeslagen gegevens blijven ongewijzigd.',
+  'settings.gardenOffset.m2': '1 maand eerder',
+  'settings.gardenOffset.m1': '2 weken eerder',
+  'settings.gardenOffset.0': 'Normaal',
+  'settings.gardenOffset.p1': '2 weken later',
+  'settings.gardenOffset.p2': '1 maand later',
+  'calendar.offsetBadge': 'Tuin: {offset}',
+  'activity.edit.offsetHint':
+    'Vanwege je tuininstelling ({offset}) wordt deze periode verschoven weergegeven in de kalender.',
   'template.qrShareTitle': 'Plan delen via QR',
   'template.qrShareHint':
     'Scan met de camera van een ander apparaat en plak de tekst in “Importeren”.',
