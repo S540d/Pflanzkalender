@@ -77,6 +77,17 @@ const nl: Translations = {
   'settings.playStoreLink': 'Play Store',
   'settings.exportSuccess': 'Export geslaagd!',
   'settings.exportError': 'Exporteren mislukt. Probeer het opnieuw.',
+  'settings.gardenSection': 'MIJN TUIN',
+  'settings.gardenHint':
+    'Verschuift alle activiteiten in kalender, agenda en export (eerder: mild klimaat; later: hoogte of noorden). Je opgeslagen gegevens blijven ongewijzigd.',
+  'settings.gardenOffset.m2': '1 maand eerder',
+  'settings.gardenOffset.m1': '2 weken eerder',
+  'settings.gardenOffset.0': 'Normaal',
+  'settings.gardenOffset.p1': '2 weken later',
+  'settings.gardenOffset.p2': '1 maand later',
+  'calendar.offsetBadge': 'Tuin: {offset}',
+  'activity.edit.offsetHint':
+    'Vanwege je tuininstelling ({offset}) wordt deze periode verschoven weergegeven in de kalender.',
   'settings.successTitle': 'Gelukt',
   'settings.feedbackLink': 'Feedback sturen',
   'settings.supportLink': 'Ko-fi',

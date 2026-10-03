@@ -12,10 +12,14 @@ import { PlantRowsContainer } from '../components/PlantRowsContainer';
 import { CategoryFilter } from '../constants/categoryTabs';
 import { Activity } from '../types';
 import { clampActivityShift } from '../utils/monthHelper';
+import { useGardenOffset } from '../contexts/GardenOffsetContext';
+import { applyGardenOffset, gardenOffsetLabelKey } from '../utils/gardenOffset';
+import { Badge } from '../components/ui';
 
 export const CalendarScreen: React.FC = () => {
   const { theme } = useTheme();
   const { t } = useLanguage();
+  const { offset: gardenOffset } = useGardenOffset();
   const { plants, loading, addActivity, updateActivity, deleteActivity } = usePlants();
   const [showAddActivity, setShowAddActivity] = useState(false);
   const [showEditActivity, setShowEditActivity] = useState(false);
@@ -60,6 +64,12 @@ export const CalendarScreen: React.FC = () => {
         : plants.filter((p) => (p.category ?? 'vegetable') === activeCategory);
     return filtered.sort((a, b) => a.name.localeCompare(b.name, 'de'));
   }, [plants, activeCategory]);
+
+  // Darstellung mit Garten-Zeitversatz; Bearbeiten/Speichern arbeitet weiter auf `sortedPlants`
+  const displayPlants = useMemo(
+    () => applyGardenOffset(sortedPlants, gardenOffset),
+    [sortedPlants, gardenOffset]
+  );
 
   const selectedPlant = sortedPlants.find((p) => p.id === selectedPlantId) || null;
   const selectedActivity =
@@ -136,6 +146,17 @@ export const CalendarScreen: React.FC = () => {
           { backgroundColor: theme.surfaceElevated, borderBottomColor: theme.border },
         ]}
       >
+        {gardenOffset !== 0 && (
+          <Badge
+            label={String(t('calendar.offsetBadge')).replace(
+              '{offset}',
+              String(t(gardenOffsetLabelKey(gardenOffset)))
+            )}
+            color={theme.primary}
+            icon="location"
+            style={styles.offsetBadge}
+          />
+        )}
         <TouchableOpacity
           testID="zoom-out"
           accessibilityRole="button"
@@ -180,7 +201,7 @@ export const CalendarScreen: React.FC = () => {
       />
 
       <PlantRowsContainer
-        sortedPlants={sortedPlants}
+        sortedPlants={displayPlants}
         isPortrait={isPortrait}
         currentHalfMonth={currentHalfMonth}
         months={months}
@@ -213,6 +234,7 @@ export const CalendarScreen: React.FC = () => {
           onClose={() => setShowEditActivity(false)}
           onUpdate={handleUpdateActivity}
           onDelete={handleDeleteActivity}
+          displayOffset={gardenOffset}
         />
       )}
     </View>
@@ -231,6 +253,9 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.sm - 2,
     borderBottomWidth: 1,
     gap: spacing.sm,
+  },
+  offsetBadge: {
+    marginRight: 'auto',
   },
   zoomButton: {
     width: 32,
