@@ -98,6 +98,11 @@ const es: Translations = {
   'plants.add': '➕ Añadir nueva planta',
   'plants.empty': 'Aún no hay plantas',
   'plants.activities': 'Actividades',
+  'plants.companions': 'Cultivos asociados',
+  'plants.companionGood': 'Buenos vecinos',
+  'plants.companionBad': 'Mejor separados',
+  'plants.companionHint':
+    'Orientación basada en tablas habituales de asociación de cultivos, sin garantía.',
   'plants.notesPlaceholder': 'Añadir notas...',
   'plants.deleteTitle': 'Eliminar planta',
   'plants.deleteMessage': '¿realmente eliminar?',
