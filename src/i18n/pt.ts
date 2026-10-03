@@ -65,6 +65,17 @@ const pt: Translations = {
   'settings.playStoreLink': 'Play Store',
   'settings.exportSuccess': 'Exportação bem-sucedida!',
   'settings.exportError': 'Exportação falhou. Tente novamente.',
+  'settings.gardenSection': 'O MEU JARDIM',
+  'settings.gardenHint':
+    'Desloca todas as atividades no calendário, na agenda e na exportação (mais cedo: clima ameno; mais tarde: altitude ou norte). Os dados guardados permanecem inalterados.',
+  'settings.gardenOffset.m2': '1 mês mais cedo',
+  'settings.gardenOffset.m1': '2 semanas mais cedo',
+  'settings.gardenOffset.0': 'Normal',
+  'settings.gardenOffset.p1': '2 semanas mais tarde',
+  'settings.gardenOffset.p2': '1 mês mais tarde',
+  'calendar.offsetBadge': 'Jardim: {offset}',
+  'activity.edit.offsetHint':
+    'Devido à definição do jardim ({offset}), este período é mostrado deslocado no calendário.',
   'settings.successTitle': 'Sucesso',
   'settings.feedbackLink': 'Enviar feedback',
   'settings.supportLink': 'Ko-fi',
@@ -157,17 +168,6 @@ const pt: Translations = {
   'template.importModeReplace': 'Substituir tudo',
   'template.importModeAppend': 'Adicionar',
   'template.qrShareBtn': '🔳 Partilhar via código QR',
-  'settings.gardenSection': 'O MEU JARDIM',
-  'settings.gardenHint':
-    'Desloca todas as atividades no calendário, na agenda e na exportação (mais cedo: clima ameno; mais tarde: altitude ou norte). Os dados guardados permanecem inalterados.',
-  'settings.gardenOffset.m2': '1 mês mais cedo',
-  'settings.gardenOffset.m1': '2 semanas mais cedo',
-  'settings.gardenOffset.0': 'Normal',
-  'settings.gardenOffset.p1': '2 semanas mais tarde',
-  'settings.gardenOffset.p2': '1 mês mais tarde',
-  'calendar.offsetBadge': 'Jardim: {offset}',
-  'activity.edit.offsetHint':
-    'Devido à definição do jardim ({offset}), este período é mostrado deslocado no calendário.',
   'template.qrShareTitle': 'Partilhar plano por QR',
   'template.qrShareHint':
     'Digitalize com a câmara de outro dispositivo e cole o texto em “Importar”.',

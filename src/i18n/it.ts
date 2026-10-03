@@ -65,6 +65,17 @@ const it: Translations = {
   'settings.playStoreLink': 'Play Store',
   'settings.exportSuccess': 'Esportazione riuscita!',
   'settings.exportError': 'Esportazione fallita. Riprova.',
+  'settings.gardenSection': 'IL MIO GIARDINO',
+  'settings.gardenHint':
+    'Sposta tutte le attività nel calendario, nell’agenda e nell’esportazione (prima: clima mite; dopo: altitudine o nord). I dati salvati restano invariati.',
+  'settings.gardenOffset.m2': '1 mese prima',
+  'settings.gardenOffset.m1': '2 settimane prima',
+  'settings.gardenOffset.0': 'Normale',
+  'settings.gardenOffset.p1': '2 settimane dopo',
+  'settings.gardenOffset.p2': '1 mese dopo',
+  'calendar.offsetBadge': 'Giardino: {offset}',
+  'activity.edit.offsetHint':
+    'In base all’impostazione del giardino ({offset}), questo periodo è mostrato spostato nel calendario.',
   'settings.successTitle': 'Successo',
   'settings.feedbackLink': 'Invia feedback',
   'settings.supportLink': 'Ko-fi',
@@ -157,17 +168,6 @@ const it: Translations = {
   'template.importModeReplace': 'Sostituisci tutto',
   'template.importModeAppend': 'Aggiungi',
   'template.qrShareBtn': '🔳 Condividi con QR code',
-  'settings.gardenSection': 'IL MIO GIARDINO',
-  'settings.gardenHint':
-    'Sposta tutte le attività nel calendario, nell’agenda e nell’esportazione (prima: clima mite; dopo: altitudine o nord). I dati salvati restano invariati.',
-  'settings.gardenOffset.m2': '1 mese prima',
-  'settings.gardenOffset.m1': '2 settimane prima',
-  'settings.gardenOffset.0': 'Normale',
-  'settings.gardenOffset.p1': '2 settimane dopo',
-  'settings.gardenOffset.p2': '1 mese dopo',
-  'calendar.offsetBadge': 'Giardino: {offset}',
-  'activity.edit.offsetHint':
-    'In base all’impostazione del giardino ({offset}), questo periodo è mostrato spostato nel calendario.',
   'template.qrShareTitle': 'Condividi piano via QR',
   'template.qrShareHint':
     'Inquadra con la fotocamera di un altro dispositivo e incolla il testo in «Importa».',

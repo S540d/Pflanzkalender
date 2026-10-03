@@ -65,6 +65,17 @@ const fr: Translations = {
   'settings.playStoreLink': 'Play Store',
   'settings.exportSuccess': 'Exportation réussie !',
   'settings.exportError': "L'exportation a échoué. Veuillez réessayer.",
+  'settings.gardenSection': 'MON JARDIN',
+  'settings.gardenHint':
+    'Décale toutes les activités dans le calendrier, l’agenda et l’export (plus tôt : climat doux, plus tard : altitude ou nord). Vos données enregistrées restent inchangées.',
+  'settings.gardenOffset.m2': '1 mois plus tôt',
+  'settings.gardenOffset.m1': '2 semaines plus tôt',
+  'settings.gardenOffset.0': 'Normal',
+  'settings.gardenOffset.p1': '2 semaines plus tard',
+  'settings.gardenOffset.p2': '1 mois plus tard',
+  'calendar.offsetBadge': 'Jardin : {offset}',
+  'activity.edit.offsetHint':
+    'En raison de votre réglage de jardin ({offset}), cette période est affichée décalée dans le calendrier.',
   'settings.successTitle': 'Succès',
   'settings.feedbackLink': 'Envoyer des commentaires',
   'settings.supportLink': 'Ko-fi',
@@ -157,17 +168,6 @@ const fr: Translations = {
   'template.importModeReplace': 'Tout remplacer',
   'template.importModeAppend': 'Ajouter',
   'template.qrShareBtn': '🔳 Partager via QR code',
-  'settings.gardenSection': 'MON JARDIN',
-  'settings.gardenHint':
-    'Décale toutes les activités dans le calendrier, l’agenda et l’export (plus tôt : climat doux, plus tard : altitude ou nord). Vos données enregistrées restent inchangées.',
-  'settings.gardenOffset.m2': '1 mois plus tôt',
-  'settings.gardenOffset.m1': '2 semaines plus tôt',
-  'settings.gardenOffset.0': 'Normal',
-  'settings.gardenOffset.p1': '2 semaines plus tard',
-  'settings.gardenOffset.p2': '1 mois plus tard',
-  'calendar.offsetBadge': 'Jardin : {offset}',
-  'activity.edit.offsetHint':
-    'En raison de votre réglage de jardin ({offset}), cette période est affichée décalée dans le calendrier.',
   'template.qrShareTitle': 'Partager le plan via QR',
   'template.qrShareHint':
     "Scannez avec l'appareil photo d'un autre appareil et collez le texte dans « Importer ».",
