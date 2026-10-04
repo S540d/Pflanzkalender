@@ -174,6 +174,9 @@ const fr: Translations = {
   'template.importModeReplace': 'Tout remplacer',
   'template.importModeAppend': 'Ajouter',
   'template.qrShareBtn': '🔳 Partager via QR code',
+  'template.icsBtn': '📅 Exporter en fichier calendrier (.ics)',
+  'template.icsHint':
+    'Les activités de cette année en événements sur la journée avec rappel (09h00 le jour de début) – importable dans Google, Apple ou Outlook.',
   'template.qrShareTitle': 'Partager le plan via QR',
   'template.qrShareHint':
     "Scannez avec l'appareil photo d'un autre appareil et collez le texte dans « Importer ».",

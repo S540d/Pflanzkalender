@@ -193,6 +193,9 @@ const de: Translations = {
   'template.importModeReplace': 'Alles ersetzen',
   'template.importModeAppend': 'Anhängen',
   'template.qrShareBtn': '🔳 Per QR-Code teilen',
+  'template.icsBtn': '📅 Als Kalender-Datei (.ics) exportieren',
+  'template.icsHint':
+    'Aktivitäten dieses Jahres als Ganztagstermine mit Erinnerung (09:00 am Starttag) – importierbar in Google, Apple oder Outlook Kalender.',
   'template.qrShareTitle': 'Pflanzplan per QR teilen',
   'template.qrShareHint':
     'Mit der Kamera eines anderen Geräts scannen und den Text unter „Importieren“ einfügen.',

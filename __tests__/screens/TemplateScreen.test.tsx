@@ -8,6 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 jest.mock('../../src/services/templateService', () => ({
   sharePlants: jest.fn().mockResolvedValue(undefined),
+  shareIcs: jest.fn().mockResolvedValue(undefined),
   importFromJson: jest.fn(),
   buildShareString: jest.fn(() => '{"version":"1.0.0","timestamp":"t","plants":[]}'),
 }));
@@ -119,6 +120,23 @@ describe('TemplateScreen', () => {
       expect(alertSpy).toHaveBeenCalled();
     });
     alertSpy.mockRestore();
+  });
+
+  it('shows the calendar (.ics) export button in the export section', async () => {
+    const { getByText } = await renderScreen();
+    await fireEvent.press(getByText(/^Exportieren$|^Export$/));
+    expect(getByText(/📅/)).toBeTruthy();
+  });
+
+  it('calls shareIcs when the calendar export button is pressed', async () => {
+    const { shareIcs } = jest.requireMock('../../src/services/templateService');
+    const { getByText } = await renderScreen();
+    await fireEvent.press(getByText(/^Exportieren$|^Export$/));
+    await waitFor(() => getByText(/^EXPORTIEREN$|^EXPORT$/));
+    await fireEvent.press(getByText(/📅/));
+    await waitFor(() => {
+      expect(shareIcs).toHaveBeenCalled();
+    });
   });
 
   it('renders JSON text input on import section', async () => {

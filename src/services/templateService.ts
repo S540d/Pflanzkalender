@@ -1,6 +1,7 @@
 import { Platform, Share } from 'react-native';
 import { Plant } from '../types';
 import { parseImportData } from '../schemas/plant';
+import { buildIcs, plantsToIcsEvents } from '../utils/icsExport';
 
 export interface ExportData {
   version: '1.0.0';
@@ -30,11 +31,15 @@ export function buildShareString(plants: Plant[]): string {
   return JSON.stringify(data);
 }
 
-export function triggerWebDownload(jsonString: string, filename: string): void {
+export function triggerWebDownload(
+  content: string,
+  filename: string,
+  mimeType = 'application/json'
+): void {
   if (Platform.OS !== 'web') return;
   // platform-safe: document can be undefined in SSR/test even when Platform.OS === 'web'
   if (typeof document === 'undefined') return;
-  const blob = new Blob([jsonString], { type: 'application/json' });
+  const blob = new Blob([content], { type: mimeType });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
@@ -63,4 +68,27 @@ export async function sharePlants(plants: Plant[]): Promise<void> {
 
 export function importFromJson(jsonString: string): Plant[] {
   return parseImportData(jsonString);
+}
+
+export interface IcsResolvers {
+  plantName: (plant: Plant) => string;
+  activityLabel: (activity: Plant['activities'][number]) => string;
+  notes?: (plant: Plant) => string | undefined;
+}
+
+/** Exportiert alle Aktivitäten des Jahres als .ics (Web: Download, Native: Share-Text). */
+export async function shareIcs(
+  plants: Plant[],
+  resolve: IcsResolvers,
+  year = new Date().getFullYear()
+): Promise<void> {
+  const ics = buildIcs(plantsToIcsEvents(plants, year, resolve), { year });
+  const filename = `Pflanzkalender_${year}.ics`;
+
+  if (Platform.OS === 'web') {
+    triggerWebDownload(ics, filename, 'text/calendar;charset=utf-8');
+    return;
+  }
+
+  await Share.share({ message: ics, title: filename });
 }

@@ -172,6 +172,9 @@ const pl: Translations = {
   'template.importModeReplace': 'Zastąp wszystko',
   'template.importModeAppend': 'Dodaj',
   'template.qrShareBtn': '🔳 Udostępnij przez kod QR',
+  'template.icsBtn': '📅 Eksportuj jako plik kalendarza (.ics)',
+  'template.icsHint':
+    'Zadania z tego roku jako wydarzenia całodniowe z przypomnieniem (09:00 w dniu rozpoczęcia) – do importu w Google, Apple lub Outlook.',
   'template.qrShareTitle': 'Udostępnij plan przez QR',
   'template.qrShareHint': 'Zeskanuj aparatem innego urządzenia i wklej tekst w „Importuj”.',
   'template.qrTooLarge': 'Za dużo danych na kod QR. Użyj eksportu do pliku.',
