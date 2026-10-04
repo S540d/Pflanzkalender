@@ -16,6 +16,7 @@ import { radius } from '../constants/designTokens';
 import { getActivityTypeByType } from '../constants/activityTypes';
 import { getActivityDisplayLabel } from '../utils/activityLabel';
 import { Icon, SuccessOverlay } from './ui';
+import { gardenOffsetLabelKey } from '../utils/gardenOffset';
 
 interface EditActivityModalProps {
   visible: boolean;
@@ -24,6 +25,8 @@ interface EditActivityModalProps {
   onClose: () => void;
   onUpdate: (activityId: string, updates: Partial<Activity>) => void;
   onDelete: (activityId: string) => void;
+  /** Garten-Zeitversatz (Halbmonate); ≠ 0 zeigt einen Hinweis, dass der Kalender verschoben anzeigt. */
+  displayOffset?: number;
 }
 
 export const EditActivityModal: React.FC<EditActivityModalProps> = ({
@@ -33,6 +36,7 @@ export const EditActivityModal: React.FC<EditActivityModalProps> = ({
   onClose,
   onUpdate,
   onDelete,
+  displayOffset = 0,
 }) => {
   const { theme } = useTheme();
   const { t } = useLanguage();
@@ -125,6 +129,17 @@ export const EditActivityModal: React.FC<EditActivityModalProps> = ({
             <Text style={[styles.label, { color: theme.text }]}>
               {t('activity.edit.periodLabel') as string}
             </Text>
+            {displayOffset !== 0 && (
+              <Text
+                testID="offset-hint"
+                style={[styles.value, { color: theme.textSecondary, marginBottom: 8 }]}
+              >
+                {String(t('activity.edit.offsetHint')).replace(
+                  '{offset}',
+                  String(t(gardenOffsetLabelKey(displayOffset)))
+                )}
+              </Text>
+            )}
             <View style={styles.shiftRow}>
               <Text style={[styles.shiftLabel, { color: theme.textSecondary }]}>
                 {t('activity.edit.shiftPeriod') as string}

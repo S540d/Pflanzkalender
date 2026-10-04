@@ -13,6 +13,8 @@ import {
 import { useTheme } from '../hooks/useTheme';
 import { sharePlants, importFromJson } from '../services/templateService';
 import { useLanguage, PICKER_LANGUAGES } from '../contexts/LanguageContext';
+import { useGardenOffset } from '../contexts/GardenOffsetContext';
+import { GARDEN_OFFSET_OPTIONS, gardenOffsetLabelKey } from '../utils/gardenOffset';
 import { usePlants } from '../contexts/PlantContext';
 import packageJson from '../../package.json';
 import { Button, Card, Icon } from './ui';
@@ -39,6 +41,7 @@ const GITHUB_ISSUES_URL = 'https://github.com/S540d/Pflanzkalender/issues';
 export const SettingsModal: React.FC<SettingsModalProps> = ({ visible, onClose }) => {
   const { theme, themeMode, setThemeMode } = useTheme();
   const { language, setLanguage, t } = useLanguage();
+  const { offset: gardenOffset, setOffset: setGardenOffset } = useGardenOffset();
   const { plants, replacePlants, appendPlants } = usePlants();
 
   const handleExport = async () => {
@@ -220,6 +223,46 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ visible, onClose }
                     ]}
                   >
                     {lang.nativeLabel}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </Card>
+
+          {/* Garden offset (display only) */}
+          <Card elevation={1} padding={spacing.lg} style={styles.card}>
+            <View style={styles.sectionTitleRow}>
+              <Icon name="location" size={16} color={theme.primary} />
+              <Text style={[styles.sectionTitle, { color: theme.textSecondary }]}>
+                {t('settings.gardenSection') as string}
+              </Text>
+            </View>
+            <Text style={[styles.infoText, { color: theme.textSecondary }]}>
+              {t('settings.gardenHint') as string}
+            </Text>
+            <View style={styles.languageGrid}>
+              {GARDEN_OFFSET_OPTIONS.map((value) => (
+                <TouchableOpacity
+                  key={value}
+                  testID={`garden-offset-${value}`}
+                  accessibilityRole="button"
+                  accessibilityState={{ selected: gardenOffset === value }}
+                  style={[
+                    styles.langButton,
+                    {
+                      backgroundColor: gardenOffset === value ? theme.primary : theme.surface,
+                      borderColor: gardenOffset === value ? theme.primary : theme.border,
+                    },
+                  ]}
+                  onPress={() => setGardenOffset(value)}
+                >
+                  <Text
+                    style={[
+                      styles.themeButtonText,
+                      { color: gardenOffset === value ? '#fff' : theme.text },
+                    ]}
+                  >
+                    {t(gardenOffsetLabelKey(value)) as string}
                   </Text>
                 </TouchableOpacity>
               ))}

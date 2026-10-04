@@ -16,6 +16,8 @@ import { ActivityJournal, type JournalEntry } from '../components/ActivityJourna
 import { getCompletion, toIsoDate, yearForHalfMonthOffset } from '../utils/completions';
 import type { ActivityCompletion } from '../types';
 import { radius, spacing } from '../constants/designTokens';
+import { useGardenOffset } from '../contexts/GardenOffsetContext';
+import { applyGardenOffset } from '../utils/gardenOffset';
 
 interface ActivityInfo {
   plantId: string;
@@ -37,6 +39,7 @@ export const AgendaScreen: React.FC = () => {
   const { theme } = useTheme();
   const { plants, setActivityCompletion } = usePlants();
   const { t, language } = useLanguage();
+  const { offset: gardenOffset } = useGardenOffset();
   const [activeCategory, setActiveCategory] = useState<CategoryFilter>('all');
   const [view, setView] = useState<'upcoming' | 'journal'>('upcoming');
   const [editing, setEditing] = useState<{
@@ -58,9 +61,13 @@ export const AgendaScreen: React.FC = () => {
   }, []);
 
   const filteredPlants = useMemo(() => {
-    if (activeCategory === 'all') return plants;
-    return plants.filter((p) => (p.category ?? 'vegetable') === activeCategory);
-  }, [plants, activeCategory]);
+    const filtered =
+      activeCategory === 'all'
+        ? plants
+        : plants.filter((p) => (p.category ?? 'vegetable') === activeCategory);
+    // Darstellung mit Garten-Zeitversatz (gespeicherte Daten bleiben unverändert)
+    return applyGardenOffset(filtered, gardenOffset);
+  }, [plants, activeCategory, gardenOffset]);
 
   const getActivitiesForMonth = useCallback(
     (monthIndex: number, year: number): ActivityInfo[] => {
@@ -169,6 +176,7 @@ export const AgendaScreen: React.FC = () => {
     return (
       <View
         key={`col-${monthIndex}-${offset}`}
+        testID={`agenda-column-${offset}`}
         style={[styles.column, isCurrent && { borderTopWidth: 3, borderTopColor: theme.primary }]}
       >
         <Text style={[styles.columnTitle, { color: isCurrent ? theme.primary : theme.text }]}>
