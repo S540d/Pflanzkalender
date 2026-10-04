@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { Plant, Activity } from '../types';
+import { Plant, Activity, ActivityCompletion } from '../types';
 import { storageService } from '../services/storage';
 import { DEFAULT_PLANTS } from '../constants/defaultPlants';
 import { withStorageError } from '../utils/storageError';
@@ -14,6 +14,12 @@ interface PlantContextType {
   addActivity: (plantId: string, activity: Omit<Activity, 'id'>) => void;
   updateActivity: (plantId: string, activityId: string, updates: Partial<Activity>) => void;
   deleteActivity: (plantId: string, activityId: string) => void;
+  setActivityCompletion: (
+    plantId: string,
+    activityId: string,
+    year: number,
+    completion: ActivityCompletion | null
+  ) => void;
   resetToDefaults: () => void;
   replacePlants: (plants: Plant[]) => void;
 }
@@ -182,6 +188,33 @@ export const PlantProvider: React.FC<PlantProviderProps> = ({ children }) => {
     savePlants(updatedPlants);
   };
 
+  // Journal-Eintrag setzen/entfernen. Bewusst OHNE isCustomized-Flag: Abhaken
+  // verändert die Aktivität nicht inhaltlich und darf Default-Updates nicht sperren.
+  const setActivityCompletion = (
+    plantId: string,
+    activityId: string,
+    year: number,
+    completion: ActivityCompletion | null
+  ) => {
+    const key = String(year);
+    const updatedPlants = plants.map((plant) =>
+      plant.id === plantId
+        ? {
+            ...plant,
+            activities: plant.activities.map((act) => {
+              if (act.id !== activityId) return act;
+              const { [key]: _removed, ...rest } = act.completions ?? {};
+              const completions = completion ? { ...rest, [key]: completion } : rest;
+              const { completions: _old, ...base } = act;
+              return Object.keys(completions).length > 0 ? { ...base, completions } : base;
+            }),
+            updatedAt: Date.now(),
+          }
+        : plant
+    );
+    savePlants(updatedPlants);
+  };
+
   const resetToDefaults = async () => {
     const defaultPlants: Plant[] = DEFAULT_PLANTS.map((p, index) => ({
       ...p,
@@ -208,6 +241,7 @@ export const PlantProvider: React.FC<PlantProviderProps> = ({ children }) => {
         addActivity,
         updateActivity,
         deleteActivity,
+        setActivityCompletion,
         resetToDefaults,
         replacePlants,
       }}
