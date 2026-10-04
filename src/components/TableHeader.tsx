@@ -2,6 +2,7 @@ import React, { useRef } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { useTheme } from '../hooks/useTheme';
 import { useLanguage } from '../contexts/LanguageContext';
+import { radius } from '../constants/designTokens';
 
 interface TableHeaderProps {
   months: string[];
@@ -34,7 +35,7 @@ export const TableHeader: React.FC<TableHeaderProps> = ({
           { borderColor: theme.border, backgroundColor: theme.surfaceElevated },
         ]}
       >
-        <Text style={[styles.headerText, { color: theme.text }]}>
+        <Text style={[styles.headerText, { color: theme.text }]} numberOfLines={1}>
           {t('table.plantColumn') as string}
         </Text>
       </View>
@@ -68,12 +69,18 @@ export const TableHeader: React.FC<TableHeaderProps> = ({
                 style={[
                   isPortrait ? styles.twoMonthCell : styles.monthCell,
                   {
-                    borderColor: theme.border,
-                    backgroundColor: isCurrentPeriod ? theme.primaryLight : theme.surface,
+                    borderColor: theme.gridLine,
+                    backgroundColor: theme.surface,
                     ...(cellWidth !== undefined ? { width: cellWidth } : {}),
                   },
                 ]}
               >
+                {isCurrentPeriod && (
+                  <View
+                    pointerEvents="none"
+                    style={[styles.currentPeriodPill, { backgroundColor: theme.primaryLight }]}
+                  />
+                )}
                 <Text
                   style={[
                     styles.monthText,
@@ -127,18 +134,26 @@ const styles = StyleSheet.create({
   monthCell: {
     width: 40,
     padding: 4,
-    borderWidth: 1,
-    borderLeftWidth: 0,
+    borderBottomWidth: 1,
+    borderRightWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },
   twoMonthCell: {
     width: 60,
     padding: 4,
-    borderWidth: 1,
-    borderLeftWidth: 0,
+    borderBottomWidth: 1,
+    borderRightWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  currentPeriodPill: {
+    position: 'absolute',
+    top: 4,
+    bottom: 4,
+    left: 2,
+    right: 2,
+    borderRadius: radius.sm,
   },
   notesCell: {
     width: 120,
@@ -148,14 +163,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   headerText: {
-    fontSize: 14,
-    fontWeight: '600',
+    fontSize: 15,
+    fontWeight: '700',
+    letterSpacing: 0.1,
   },
   monthText: {
-    fontSize: 10,
-    fontWeight: '500',
+    fontSize: 11,
+    fontWeight: '600',
   },
   halfMonthText: {
-    fontSize: 8,
+    fontSize: 9,
+    fontWeight: '500',
+    opacity: 0.85,
   },
 });

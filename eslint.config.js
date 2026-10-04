@@ -25,6 +25,7 @@ const globals = {
   URL: 'readonly',
   Blob: 'readonly',
   FileReader: 'readonly',
+  TextEncoder: 'readonly',
   document: 'readonly',
   alert: 'readonly',
 };

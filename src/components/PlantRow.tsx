@@ -162,8 +162,8 @@ export const PlantRow: React.FC<PlantRowProps> = ({
             styles.monthCell,
             {
               width: cellWidth,
-              borderColor: theme.border,
-              backgroundColor: isCurrentHalfMonth ? theme.border : 'transparent',
+              borderColor: theme.gridLine,
+              backgroundColor: isCurrentHalfMonth ? theme.primaryLight : 'transparent',
             },
           ];
 
@@ -236,7 +236,7 @@ export const PlantRow: React.FC<PlantRowProps> = ({
         </View>
       </View>
 
-      <View style={[styles.notesCell, { borderColor: theme.border }]}>
+      <View style={[styles.notesCell, { borderColor: theme.gridLine }]}>
         {isEditingNotes ? (
           <TextInput
             style={[styles.notesInput, { color: theme.textSecondary }]}
@@ -272,23 +272,22 @@ const styles = StyleSheet.create({
   },
   monthCell: {
     width: 40,
-    borderWidth: 1,
-    borderLeftWidth: 0,
-    borderTopWidth: 0,
+    borderBottomWidth: 1,
+    borderRightWidth: 1,
   },
   notesCell: {
     width: 120,
     padding: 8,
-    borderWidth: 1,
-    borderLeftWidth: 0,
-    borderTopWidth: 0,
+    borderBottomWidth: 1,
+    borderRightWidth: 1,
     justifyContent: 'center',
   },
   notes: {
-    fontSize: 11,
+    fontSize: 12,
+    lineHeight: 16,
   },
   notesInput: {
-    fontSize: 11,
+    fontSize: 12,
     padding: 0,
     minHeight: 30,
   },

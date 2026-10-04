@@ -29,7 +29,7 @@ export const Card: React.FC<CardProps> = ({
       style={[
         {
           backgroundColor: theme.surfaceElevated,
-          borderRadius: radius.lg,
+          borderRadius: radius.xl,
           padding,
           borderWidth: 1,
           borderColor: theme.border,

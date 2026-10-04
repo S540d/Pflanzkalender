@@ -126,4 +126,59 @@ describe('ImportDataSchema', () => {
       expect(result.error.issues.length).toBeGreaterThan(0);
     }
   });
+
+  it('fills defaults for omitted metadata fields', () => {
+    const result = ImportDataSchema.safeParse({
+      version: '1.0.0',
+      plants: [{ id: 'p1', name: 'Tomaten', activities: [] }],
+    });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      const [plant] = result.data.plants;
+      expect(plant.isDefault).toBe(false);
+      expect(plant.userId).toBeNull();
+      expect(plant.notes).toBe('');
+      expect(typeof plant.createdAt).toBe('number');
+      expect(typeof plant.updatedAt).toBe('number');
+    }
+  });
+
+  it('still rejects plants without name or activities', () => {
+    const noName = { version: '1.0.0', plants: [{ id: 'p1', activities: [] }] };
+    const noActivities = { version: '1.0.0', plants: [{ id: 'p1', name: 'X' }] };
+    expect(ImportDataSchema.safeParse(noName).success).toBe(false);
+    expect(ImportDataSchema.safeParse(noActivities).success).toBe(false);
+  });
+});
+
+describe('Activity completions', () => {
+  const base = {
+    id: 'a1',
+    type: 'sow',
+    startMonth: 0,
+    endMonth: 1,
+    color: '#000',
+    label: 'Aussäen',
+  };
+
+  it('akzeptiert Journal-Einträge pro Jahr', () => {
+    const r = ActivitySchema.safeParse({
+      ...base,
+      completions: { '2026': { date: '2026-03-01', note: 'Sorte X' } },
+    });
+    expect(r.success).toBe(true);
+  });
+
+  it('bleibt ohne completions gültig (Abwärtskompatibilität)', () => {
+    expect(ActivitySchema.safeParse(base).success).toBe(true);
+  });
+
+  it('lehnt ungültige Jahres-Schlüssel und Datumsformate ab', () => {
+    expect(
+      ActivitySchema.safeParse({ ...base, completions: { abc: { date: '2026-03-01' } } }).success
+    ).toBe(false);
+    expect(
+      ActivitySchema.safeParse({ ...base, completions: { '2026': { date: '1.3.2026' } } }).success
+    ).toBe(false);
+  });
 });

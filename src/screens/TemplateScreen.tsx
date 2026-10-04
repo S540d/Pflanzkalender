@@ -14,7 +14,14 @@ import { useTheme } from '../hooks/useTheme';
 import { useLanguage } from '../contexts/LanguageContext';
 import { usePlants } from '../contexts/PlantContext';
 import { COMMUNITY_TEMPLATES } from '../constants/communityTemplates';
-import { sharePlants, importFromJson, buildShareString } from '../services/templateService';
+import {
+  sharePlants,
+  shareIcs,
+  importFromJson,
+  buildShareString,
+} from '../services/templateService';
+import { getPlantDisplayName, getPlantDisplayNotes } from '../constants/plantNames';
+import { getActivityDisplayLabel } from '../utils/activityLabel';
 import { QRCodeView } from '../components/QRCodeView';
 import { utf8ByteLength, QR_MAX_BYTES } from '../utils/qrcode';
 import { Card, Icon, type IconName } from '../components/ui';
@@ -82,6 +89,25 @@ export const TemplateScreen: React.FC = () => {
       if (Platform.OS !== 'web') {
         Alert.alert(String(t('settings.successTitle')), String(t('settings.exportSuccess')));
       }
+    } catch {
+      Alert.alert(String(t('template.errorTitle')), String(t('template.exportFailed')));
+    } finally {
+      setExporting(false);
+    }
+  };
+
+  const handleExportIcs = async () => {
+    if (plants.length === 0) {
+      Alert.alert(String(t('template.noPlantsTitle')), String(t('template.noPlantsMessage')));
+      return;
+    }
+    setExporting(true);
+    try {
+      await shareIcs(plants, {
+        plantName: (plant) => getPlantDisplayName(plant.name, language),
+        activityLabel: (activity) => getActivityDisplayLabel(activity, t),
+        notes: (plant) => getPlantDisplayNotes(plant.name, plant.notes, language),
+      });
     } catch {
       Alert.alert(String(t('template.errorTitle')), String(t('template.exportFailed')));
     } finally {
@@ -258,6 +284,19 @@ export const TemplateScreen: React.FC = () => {
           >
             <Text style={styles.actionBtnText}>{exportBtnLabel}</Text>
           </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.qrBtn, { borderColor: theme.primary }]}
+            onPress={handleExportIcs}
+            disabled={exporting}
+          >
+            <Text style={[styles.qrBtnText, { color: theme.primary }]}>
+              {String(t('template.icsBtn'))}
+            </Text>
+          </TouchableOpacity>
+          <Text style={[styles.hint, { color: theme.textSecondary }]}>
+            {String(t('template.icsHint'))}
+          </Text>
 
           <TouchableOpacity
             style={[styles.qrBtn, { borderColor: theme.primary }]}

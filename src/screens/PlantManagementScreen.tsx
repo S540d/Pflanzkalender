@@ -18,6 +18,7 @@ import { Plant, PlantLocation, PlantCategory } from '../types';
 import { PLANT_LOCATION_METADATA, PLANT_CATEGORY_METADATA } from '../constants/plantMetadata';
 import { getPlantDisplayName, getPlantDisplayNotes } from '../constants/plantNames';
 import { getPlantEmoji } from '../constants/plantEmojis';
+import { getCompanions } from '../constants/companionPlanting';
 import { CategoryFilter } from '../constants/categoryTabs';
 import { CategoryTabBar } from '../components/CategoryTabBar';
 import { Button, Card, Icon } from '../components/ui';
@@ -31,8 +32,21 @@ export const PlantManagementScreen: React.FC = () => {
   const [editingPlant, setEditingPlant] = useState<Plant | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState<CategoryFilter>('all');
+  const [expandedCompanions, setExpandedCompanions] = useState<Set<string>>(new Set());
   // Metadata objects only have 'de' and 'en' — all other languages fall back to 'en'
   const metaLang: 'de' | 'en' = language === 'de' ? 'de' : 'en';
+
+  const toggleCompanions = (plantId: string) => {
+    setExpandedCompanions((prev) => {
+      const next = new Set(prev);
+      if (next.has(plantId)) next.delete(plantId);
+      else next.add(plantId);
+      return next;
+    });
+  };
+
+  const formatNames = (names: string[]) =>
+    names.map((n) => getPlantDisplayName(n, language)).join(', ');
 
   // Reset filters when navigating away from this screen
   useFocusEffect(
@@ -135,66 +149,102 @@ export const PlantManagementScreen: React.FC = () => {
                   : (t('plants.noResults') as string)}
               </Text>
             ) : (
-              filteredPlants.map((plant) => (
-                <Card key={plant.id} elevation={1} padding={spacing.sm} style={styles.plantItem}>
-                  <View style={styles.plantInfo}>
-                    <View style={styles.plantNameRow}>
-                      <Text style={styles.plantEmoji}>
-                        {getPlantEmoji(plant.name, plant.category)}
-                      </Text>
-                      <Text style={[styles.plantName, { color: theme.text }]}>
-                        {getPlantDisplayName(plant.name, language)}
-                      </Text>
-                    </View>
-                    <View style={styles.plantMeta}>
-                      {plant.category && (
-                        <Text style={[styles.plantMetaText, { color: theme.textSecondary }]}>
-                          {PLANT_CATEGORY_METADATA[plant.category].icon}{' '}
-                          {PLANT_CATEGORY_METADATA[plant.category][metaLang]}
+              filteredPlants.map((plant) => {
+                const companions = getCompanions(plant.name);
+                const hasCompanions = companions.good.length + companions.bad.length > 0;
+                const companionsOpen = expandedCompanions.has(plant.id);
+                return (
+                  <Card key={plant.id} elevation={1} padding={spacing.sm} style={styles.plantItem}>
+                    <View style={styles.plantInfo}>
+                      <View style={styles.plantNameRow}>
+                        <Text style={styles.plantEmoji}>
+                          {getPlantEmoji(plant.name, plant.category)}
+                        </Text>
+                        <Text style={[styles.plantName, { color: theme.text }]}>
+                          {getPlantDisplayName(plant.name, language)}
+                        </Text>
+                      </View>
+                      <View style={styles.plantMeta}>
+                        {plant.category && (
+                          <Text style={[styles.plantMetaText, { color: theme.textSecondary }]}>
+                            {PLANT_CATEGORY_METADATA[plant.category].icon}{' '}
+                            {PLANT_CATEGORY_METADATA[plant.category][metaLang]}
+                          </Text>
+                        )}
+                        {plant.location && (
+                          <Text style={[styles.plantMetaText, { color: theme.textSecondary }]}>
+                            {PLANT_LOCATION_METADATA[plant.location].icon}{' '}
+                            {PLANT_LOCATION_METADATA[plant.location][metaLang]}
+                          </Text>
+                        )}
+                      </View>
+                      {plant.notes && (
+                        <Text style={[styles.plantNotes, { color: theme.textSecondary }]}>
+                          {getPlantDisplayNotes(plant.name, plant.notes, language)}
                         </Text>
                       )}
-                      {plant.location && (
-                        <Text style={[styles.plantMetaText, { color: theme.textSecondary }]}>
-                          {PLANT_LOCATION_METADATA[plant.location].icon}{' '}
-                          {PLANT_LOCATION_METADATA[plant.location][metaLang]}
-                        </Text>
+                      {hasCompanions && (
+                        <TouchableOpacity
+                          testID={`companions-toggle-${plant.id}`}
+                          onPress={() => toggleCompanions(plant.id)}
+                          accessibilityRole="button"
+                          accessibilityState={{ expanded: companionsOpen }}
+                          style={styles.companionToggle}
+                        >
+                          <Text style={[styles.companionToggleText, { color: theme.primary }]}>
+                            {t('plants.companions') as string} {companionsOpen ? '▴' : '▾'}
+                          </Text>
+                        </TouchableOpacity>
                       )}
-                    </View>
-                    {plant.notes && (
-                      <Text style={[styles.plantNotes, { color: theme.textSecondary }]}>
-                        {getPlantDisplayNotes(plant.name, plant.notes, language)}
+                      {hasCompanions && companionsOpen && (
+                        <View testID={`companions-${plant.id}`} style={styles.companionBox}>
+                          {companions.good.length > 0 && (
+                            <Text style={[styles.companionText, { color: theme.text }]}>
+                              🤝 {t('plants.companionGood') as string}:{' '}
+                              {formatNames(companions.good)}
+                            </Text>
+                          )}
+                          {companions.bad.length > 0 && (
+                            <Text style={[styles.companionText, { color: theme.text }]}>
+                              ⚠️ {t('plants.companionBad') as string}: {formatNames(companions.bad)}
+                            </Text>
+                          )}
+                          <Text style={[styles.companionHint, { color: theme.textSecondary }]}>
+                            {t('plants.companionHint') as string}
+                          </Text>
+                        </View>
+                      )}
+                      <Text style={[styles.activityCount, { color: theme.textSecondary }]}>
+                        {plant.activities.length} {t('plants.activities') as string}
                       </Text>
-                    )}
-                    <Text style={[styles.activityCount, { color: theme.textSecondary }]}>
-                      {plant.activities.length} {t('plants.activities') as string}
-                    </Text>
-                  </View>
-                  <View style={styles.plantActions}>
-                    <TouchableOpacity
-                      style={[
-                        styles.actionButton,
-                        { backgroundColor: theme.surface, borderColor: theme.border },
-                      ]}
-                      onPress={() => setEditingPlant(plant)}
-                      accessibilityLabel={`${t('plants.editTitle') as string}: ${getPlantDisplayName(plant.name, language)}`}
-                      accessibilityRole="button"
-                    >
-                      <Icon name="edit" size={18} color={theme.primary} />
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      style={[
-                        styles.actionButton,
-                        { backgroundColor: theme.error, borderColor: theme.error },
-                      ]}
-                      onPress={() => handleDeletePlant(plant.id, plant.name)}
-                      accessibilityLabel={`${t('plants.deleteTitle') as string}: ${getPlantDisplayName(plant.name, language)}`}
-                      accessibilityRole="button"
-                    >
-                      <Icon name="delete" size={18} color="#FFFFFF" />
-                    </TouchableOpacity>
-                  </View>
-                </Card>
-              ))
+                    </View>
+                    <View style={styles.plantActions}>
+                      <TouchableOpacity
+                        style={[
+                          styles.actionButton,
+                          { backgroundColor: theme.surface, borderColor: theme.border },
+                        ]}
+                        onPress={() => setEditingPlant(plant)}
+                        accessibilityLabel={`${t('plants.editTitle') as string}: ${getPlantDisplayName(plant.name, language)}`}
+                        accessibilityRole="button"
+                      >
+                        <Icon name="edit" size={18} color={theme.primary} />
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        style={[
+                          styles.actionButton,
+                          { backgroundColor: theme.error, borderColor: theme.error },
+                        ]}
+                        onPress={() => handleDeletePlant(plant.id, plant.name)}
+                        accessibilityLabel={`${t('plants.deleteTitle') as string}: ${getPlantDisplayName(plant.name, language)}`}
+                        accessibilityRole="button"
+                      >
+                        <Icon name="delete" size={18} color="#FFFFFF" />
+                      </TouchableOpacity>
+                    </View>
+                  </Card>
+                );
+              })
             )}
           </View>
         </View>
@@ -292,6 +342,27 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginBottom: 8,
     lineHeight: 20,
+  },
+  companionToggle: {
+    alignSelf: 'flex-start',
+    paddingVertical: 4,
+    marginBottom: 4,
+  },
+  companionToggleText: {
+    fontSize: 13,
+    fontWeight: '600',
+  },
+  companionBox: {
+    marginBottom: 8,
+    gap: 4,
+  },
+  companionText: {
+    fontSize: 13,
+    lineHeight: 18,
+  },
+  companionHint: {
+    fontSize: 11,
+    fontStyle: 'italic',
   },
   activityCount: {
     fontSize: 12,
