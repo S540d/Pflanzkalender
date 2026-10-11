@@ -22,6 +22,8 @@ import {
 } from '../services/templateService';
 import { getPlantDisplayName, getPlantDisplayNotes } from '../constants/plantNames';
 import { getActivityDisplayLabel } from '../utils/activityLabel';
+import { useGardenOffset } from '../contexts/GardenOffsetContext';
+import { applyGardenOffset } from '../utils/gardenOffset';
 import { QRCodeView } from '../components/QRCodeView';
 import { utf8ByteLength, QR_MAX_BYTES } from '../utils/qrcode';
 import { Card, Icon, type IconName } from '../components/ui';
@@ -38,6 +40,7 @@ const SECTION_ICON: Record<Section, IconName> = {
 export const TemplateScreen: React.FC = () => {
   const { theme } = useTheme();
   const { language, t } = useLanguage();
+  const { offset: gardenOffset } = useGardenOffset();
   const { plants, replacePlants, appendPlants } = usePlants();
 
   const [activeSection, setActiveSection] = useState<Section>('templates');
@@ -103,7 +106,7 @@ export const TemplateScreen: React.FC = () => {
     }
     setExporting(true);
     try {
-      await shareIcs(plants, {
+      await shareIcs(applyGardenOffset(plants, gardenOffset), {
         plantName: (plant) => getPlantDisplayName(plant.name, language),
         activityLabel: (activity) => getActivityDisplayLabel(activity, t),
         notes: (plant) => getPlantDisplayNotes(plant.name, plant.notes, language),
