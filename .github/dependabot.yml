@@ -32,15 +32,15 @@ updates:
       npm-all:
         patterns:
           - '*'
-    # Majors gekoppelter Toolchain aussetzen (Issue project-templates#173): typescript 7 und Expo-/RN-Pakete laufen mit dem SDK, nicht einzeln (PR #297: expo-router 58 vs. expo 57, Typfehler). Per Expo-SDK-Upgrade heben, dann entfernen.
+    # Majors gekoppelter Toolchain aussetzen (Issue project-templates#173): typescript 7 und Expo-/RN-Pakete laufen mit dem SDK, nicht einzeln (PR #297: expo-router 58 vs. expo 57, Typfehler). Per Expo-SDK-Upgrade heben, dann entfernen. react-native ist 0.x – dort ist Minor = Breaking (PR #297: RN 0.87 vs. Expo 57 → RN 0.86.3).
     ignore:
       - dependency-name: 'typescript'
         update-types: ['version-update:semver-major']
       - dependency-name: 'expo-*'
         update-types: ['version-update:semver-major']
       - dependency-name: 'react-native'
-        update-types: ['version-update:semver-major']
+        update-types: ['version-update:semver-major', 'version-update:semver-minor']
       - dependency-name: 'react-native-*'
         update-types: ['version-update:semver-major']
       - dependency-name: '@react-native/*'
-        update-types: ['version-update:semver-major']
+        update-types: ['version-update:semver-major', 'version-update:semver-minor']
