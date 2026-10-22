@@ -9,6 +9,7 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 ### Hinzugefügt
 
+- Neue Startseite „Jetzt im Garten": die Aufgaben des laufenden Halbmonats zum Abhaken (mit Zähler im Kopf), darunter erledigte Aufgaben und eine Vorschau auf den nächsten Halbmonat; ohne Aufgaben erscheint „Gerade ist Gartenruhe". Der Jahreskalender ist jetzt der zweite Tab; Mehrspalten-Agenda und Journal erreicht man über „Alle anstehenden Aufgaben & Journal".
 - Kalender-Export (.ics): Alle Aktivitäten des laufenden Jahres lassen sich als Ganztagstermine mit Erinnerung (09:00 am Starttag) in Google-, Apple- oder Outlook-Kalender importieren (Vorlagen → Exportieren) (#301)
 - Erledigt-Journal: Aktivitäten in der Agenda pro Jahr abhaken (mit Datum und Notiz), neue Ansicht „Journal" für die erledigten Aktivitäten; die Einträge sind Teil von Export/Import (#302)
 - Einstellung „Mein Garten": Zeitversatz von 1 Monat früher bis 1 Monat später für Kalender und Agenda – wirkt nur auf die Darstellung, gespeicherte Daten bleiben unverändert (#303); der .ics-Export berücksichtigt den Versatz ebenfalls (#305)

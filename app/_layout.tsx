@@ -72,19 +72,27 @@ function TabsNavigator() {
         <Tabs.Screen
           name="index"
           options={{
+            title: isDe ? 'Jetzt' : 'Now',
+            tabBarIcon: ({ color, focused }) => (
+              <TabBarIcon name="sun" color={color} focused={focused} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="calendar"
+          options={{
             title: isDe ? 'Kalender' : 'Calendar',
             tabBarIcon: ({ color, focused }) => (
               <TabBarIcon name="calendar" color={color} focused={focused} />
             ),
           }}
         />
+        {/* Mehrspalten-Agenda und Journal: erreichbar über „Jetzt im Garten", kein eigener Tab. */}
         <Tabs.Screen
           name="agenda"
           options={{
             title: 'Agenda',
-            tabBarIcon: ({ color, focused }) => (
-              <TabBarIcon name="agenda" color={color} focused={focused} />
-            ),
+            href: null,
           }}
         />
         <Tabs.Screen
