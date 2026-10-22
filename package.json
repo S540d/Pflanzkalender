@@ -7,7 +7,7 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "build": "expo export --platform web && node scripts/add-pwa-meta-tags.js && node scripts/add-splash-screen.js",
+    "build": "expo export --platform web && node scripts/rename-node-modules-assets.js && node scripts/add-pwa-meta-tags.js && node scripts/add-splash-screen.js",
     "deploy": "bash scripts/deploy.sh",
     "validate": "./scripts/validate-release.sh",
     "prepare": "husky install",
@@ -43,7 +43,7 @@
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@react-native/jest-preset": "^0.86.3",
-    "@testing-library/react-native": "^14.0.1",
+    "@testing-library/react-native": "^14.1.0",
     "@types/jest": "^30.0.0",
     "@types/react": "~19.3.0",
     "@typescript-eslint/eslint-plugin": "^8.71.1",
