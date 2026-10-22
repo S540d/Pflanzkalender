@@ -4,7 +4,6 @@ import { useFocusEffect } from 'expo-router';
 import { useTheme } from '../hooks/useTheme';
 import { usePlants } from '../contexts/PlantContext';
 import { useLanguage } from '../contexts/LanguageContext';
-import { useDialog } from '../contexts/DialogContext';
 import { AddPlantModal } from '../components/AddPlantModal';
 import { EditPlantModal } from '../components/EditPlantModal';
 import { Plant, PlantLocation, PlantCategory } from '../types';
@@ -22,7 +21,6 @@ export const PlantManagementScreen: React.FC = () => {
   const { theme } = useTheme();
   const { plants, addPlant, updatePlant, deletePlant } = usePlants();
   const { t, language } = useLanguage();
-  const { alert } = useDialog();
   const [showAddPlant, setShowAddPlant] = useState(false);
   const [editingPlant, setEditingPlant] = useState<Plant | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -90,18 +88,6 @@ export const PlantManagementScreen: React.FC = () => {
   ) => {
     updatePlant(id, updates);
     setEditingPlant(null);
-  };
-
-  const handleDeletePlant = (plantId: string, plantName: string) => {
-    const message = `"${plantName}" ${t('plants.deleteMessage') as string}`;
-    alert(t('plants.deleteTitle') as string, message, [
-      { text: t('plants.deleteCancel') as string, style: 'cancel' },
-      {
-        text: t('plants.deleteConfirm') as string,
-        style: 'destructive',
-        onPress: () => deletePlant(plantId),
-      },
-    ]);
   };
 
   const isFiltered = searchQuery.trim().length > 0 || activeCategory !== 'all';
@@ -224,17 +210,6 @@ export const PlantManagementScreen: React.FC = () => {
                       >
                         <Icon name="edit" size={18} color={theme.primary} />
                       </TouchableOpacity>
-                      <TouchableOpacity
-                        style={[
-                          styles.actionButton,
-                          { backgroundColor: theme.error, borderColor: theme.error },
-                        ]}
-                        onPress={() => handleDeletePlant(plant.id, plant.name)}
-                        accessibilityLabel={`${t('plants.deleteTitle') as string}: ${getPlantDisplayName(plant.name, language)}`}
-                        accessibilityRole="button"
-                      >
-                        <Icon name="delete" size={18} color="#FFFFFF" />
-                      </TouchableOpacity>
                     </View>
                   </Card>
                 );
@@ -256,6 +231,7 @@ export const PlantManagementScreen: React.FC = () => {
           visible={true}
           plant={editingPlant}
           onClose={() => setEditingPlant(null)}
+          onDelete={deletePlant}
           onSave={handleEditPlant}
         />
       )}
