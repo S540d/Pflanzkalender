@@ -17,6 +17,7 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 ### Geändert
 
+- Kalender: Schmale Aktivitätsbalken zeigen nur noch das Icon statt eines abgeschnittenen Namens („D…", „Pf…"); eine Legende der Aktivitätstypen steht über dem Raster
 - Neues Erscheinungsbild, gemeinsam mit Safe my plants: warme Markenpalette (Papierweiß, Waldgrün, Ocker), Serifenschrift Fraunces für Überschriften, einheitliche Outline-Icons, gedämpfte Aktivitäts- und Kategoriefarben (gelten auch für bestehende Aktivitäten)
 - Einheitlicher Seitenkopf auf allen Screens; die Einstellungen öffnen sich jetzt über das ⋮ im Kopf statt über einen eigenen Tab (5 statt 6 Tabs)
 - `appVersionCode` 13 → 14 (Vorbereitung für Play-Store-Upload mit `targetSdkVersion 36`)
