@@ -44,6 +44,9 @@ jobs:
           CI: true
           TESTING: true
 
+      - name: Rename assets/node_modules (gets lost on gh-pages deploy)
+        run: node scripts/rename-node-modules-assets.js
+
       - name: Prepare testing deployment (fix paths, banner, cache-busting)
         run: node scripts/prepare-testing-deployment.js
 
