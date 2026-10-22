@@ -1,17 +1,10 @@
 import React, { useState, useMemo, useCallback } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-  Alert,
-  TextInput,
-} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput } from 'react-native';
 import { useFocusEffect } from 'expo-router';
 import { useTheme } from '../hooks/useTheme';
 import { usePlants } from '../contexts/PlantContext';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useDialog } from '../contexts/DialogContext';
 import { AddPlantModal } from '../components/AddPlantModal';
 import { EditPlantModal } from '../components/EditPlantModal';
 import { Plant, PlantLocation, PlantCategory } from '../types';
@@ -29,6 +22,7 @@ export const PlantManagementScreen: React.FC = () => {
   const { theme } = useTheme();
   const { plants, addPlant, updatePlant, deletePlant } = usePlants();
   const { t, language } = useLanguage();
+  const { alert } = useDialog();
   const [showAddPlant, setShowAddPlant] = useState(false);
   const [editingPlant, setEditingPlant] = useState<Plant | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -100,7 +94,7 @@ export const PlantManagementScreen: React.FC = () => {
 
   const handleDeletePlant = (plantId: string, plantName: string) => {
     const message = `"${plantName}" ${t('plants.deleteMessage') as string}`;
-    Alert.alert(t('plants.deleteTitle') as string, message, [
+    alert(t('plants.deleteTitle') as string, message, [
       { text: t('plants.deleteCancel') as string, style: 'cancel' },
       {
         text: t('plants.deleteConfirm') as string,
