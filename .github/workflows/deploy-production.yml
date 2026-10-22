@@ -34,6 +34,9 @@ jobs:
           NODE_ENV: production
           CI: true
 
+      - name: Rename assets/node_modules (gets lost on gh-pages deploy)
+        run: node scripts/rename-node-modules-assets.js
+
       - name: Fix paths for GitHub Pages
         run: node scripts/fix-paths.js
 
