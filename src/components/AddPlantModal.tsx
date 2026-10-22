@@ -147,7 +147,7 @@ export const AddPlantModal: React.FC<AddPlantModalProps> = ({ visible, onClose, 
                     <Text
                       style={[
                         styles.locationLabel,
-                        { color: location === opt.value ? '#fff' : theme.text },
+                        { color: location === opt.value ? theme.onPrimary : theme.text },
                       ]}
                     >
                       {PLANT_LOCATION_METADATA[opt.value][metaLang]}
@@ -178,7 +178,7 @@ export const AddPlantModal: React.FC<AddPlantModalProps> = ({ visible, onClose, 
                     <Text
                       style={[
                         styles.locationLabel,
-                        { color: category === opt.value ? '#fff' : theme.text },
+                        { color: category === opt.value ? theme.onPrimary : theme.text },
                       ]}
                     >
                       {PLANT_CATEGORY_METADATA[opt.value][metaLang]}

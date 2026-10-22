@@ -82,11 +82,15 @@ Activity {
 
 `npm ci` in CI ist streng – der Lockfile muss exakt mit package.json übereinstimmen. **Nie manuell bearbeiten.** Nach Dependency-Änderungen immer `npm install --package-lock-only --ignore-scripts` laufen lassen und den resultierenden Lockfile committen.
 
-**`--legacy-peer-deps` nötig:** Der bestehende Dependency-Baum hat einen ungelösten Peer-Konflikt (expo-router / @react-navigation). Jeder `npm install <pkg>` schlägt mit `ERESOLVE` fehl, **außer** mit `--legacy-peer-deps`. CI nutzt durchgängig `npm ci --legacy-peer-deps`. Neue Pakete immer `npm install <pkg> --save --legacy-peer-deps` installieren.
+**`--legacy-peer-deps` nötig:** Der bestehende Dependency-Baum hat einen ungelösten Peer-Konflikt (expo-router / @react-navigation). Jeder `npm install <pkg>` schlägt mit `ERESOLVE` fehl, **außer** mit `--legacy-peer-deps`. CI nutzt durchgängig `npm ci --legacy-peer-deps`. Neue Pakete immer `npm install <pkg> --save --legacy-peer-deps` installieren. Achtung: das schreibt den Lockfile ohne Peer-Pakete neu (~1300 Zeilen Diff, u. a. `react-native-reanimated` raus) – minimaler Diff stattdessen mit `npm install <pkg> --save --package-lock-only --ignore-scripts --force`, danach `npm ci --legacy-peer-deps` zur Kontrolle.
 
 ### Platform Safety
 
 `window.*`, `document.*`, `localStorage`, `Blob`, `FileReader` nur mit `Platform.OS === 'web'` Guard oder Kommentar `// platform-safe`. Für `document.*` zusätzlich `typeof document !== 'undefined'` prüfen – auch mit `Platform.OS === 'web'` kann `document` in SSR/Test-Umgebungen undefined sein. DOM-Typen (`Event`, `HTMLInputElement` etc.) müssen explizit in `eslint.config.js` unter `src/**/*.{ts,tsx}` globals eingetragen sein.
+
+### Designsprache (gemeinsam mit Safe my plants)
+
+Farben nur über `useTheme()`; Werte kommen aus `src/constants/brandPalette.ts` – **wertgleich mit Safe my plants halten**. Überschriften über `AppText` (`h1–h3` = Fraunces), Icons nur über `ui/Icon` (Outline-Glyphen), Screen-Köpfe über `components/ScreenHeader` (enthält das ⋮ für die Einstellungen). Aktivitätsfarben immer über `getActivityColor()` lesen, nicht `activity.color`.
 
 ### PlantLocation / PlantCategory Typen
 

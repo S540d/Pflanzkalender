@@ -9,11 +9,11 @@ import type { ColorValue } from 'react-native';
  */
 const ICONS = {
   // Navigation / Tabs
-  calendar: 'calendar',
-  agenda: 'list',
-  plant: 'leaf',
-  climate: 'partly-sunny',
-  templates: 'document-text',
+  calendar: 'calendar-outline',
+  agenda: 'list-outline',
+  plant: 'leaf-outline',
+  climate: 'partly-sunny-outline',
+  templates: 'document-text-outline',
   settings: 'ellipsis-vertical',
 
   // Aktionen
@@ -44,19 +44,19 @@ const ICONS = {
   // Klima / Resistenz
   heat: 'thermometer-outline',
   drought: 'water-outline',
-  globe: 'earth',
+  globe: 'earth-outline',
 
   // Meta / Standort
-  sun: 'sunny',
-  partialShade: 'partly-sunny',
-  shade: 'cloud',
-  vegetable: 'nutrition',
-  flower: 'flower',
-  tree: 'leaf',
+  sun: 'sunny-outline',
+  partialShade: 'partly-sunny-outline',
+  shade: 'cloudy-outline',
+  vegetable: 'nutrition-outline',
+  flower: 'flower-outline',
+  tree: 'leaf-outline',
   location: 'location-outline',
   note: 'document-text-outline',
   info: 'information-circle-outline',
-  language: 'language',
+  language: 'language-outline',
   theme: 'color-palette-outline',
   link: 'open-outline',
   github: 'logo-github',
@@ -70,6 +70,6 @@ interface IconProps {
   color?: ColorValue;
 }
 
-export const Icon: React.FC<IconProps> = ({ name, size = 20, color = '#000000' }) => {
+export const Icon: React.FC<IconProps> = ({ name, size = 20, color = '#1E2420' }) => {
   return <Ionicons name={ICONS[name]} size={size} color={color} />;
 };

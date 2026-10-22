@@ -1,47 +1,63 @@
+import { brandHeader, brandPalette } from './brandPalette';
+
+const L = brandPalette.light;
+const D = brandPalette.dark;
+
+/**
+ * App-Theme. Werte kommen aus der gemeinsamen Markenpalette (`brandPalette.ts`,
+ * wertgleich mit Safe my plants); Akzent des Pflanzkalenders ist Ocker.
+ */
 export const lightTheme = {
-  background: '#FAFAF7',
-  surface: '#F5F5F5',
-  surfaceElevated: '#FFFFFF',
-  primary: '#2E8F52',
-  primaryDark: '#206B3C',
-  primaryLight: '#E4F3E8',
-  secondary: '#8BC34A',
-  accent: '#E0672A',
-  accentLight: '#FBEADF',
-  text: '#16211A',
-  textSecondary: '#5E6B63',
-  border: '#E2E5E0',
+  background: L.paper,
+  surface: L.surfaceAlt,
+  surfaceElevated: L.surface,
+  primary: L.forest,
+  primaryDark: L.forest,
+  primaryLight: L.sageSurface,
+  /** Textfarbe auf `primary`-Flächen (Buttons, aktive Chips). */
+  onPrimary: L.onForest,
+  secondary: L.leaf,
+  accent: L.ochre,
+  accentLight: L.ochreSurface,
+  text: L.text,
+  textSecondary: L.textMuted,
+  border: L.border,
   /** Sehr subtile Trennlinien innerhalb dichter Raster (Kalender-Grid) – heller als `border`. */
-  gridLine: '#EEF1EC',
-  error: '#F44336',
-  success: '#2E8F52',
-  warning: '#FF9800',
+  gridLine: '#ECE8DC',
+  error: L.statusOverdue,
+  success: L.statusOk,
+  warning: L.statusSoon,
   overlay: 'rgba(20, 30, 24, 0.45)',
-  gradientStart: '#2E8F52',
-  gradientEnd: '#1D6136',
+  gradientStart: brandHeader.light.background,
+  gradientEnd: brandHeader.light.background,
+  headerTitle: brandHeader.light.title,
+  headerSubtitle: brandHeader.light.subtitle,
 };
 
-export const darkTheme = {
-  background: '#0A0C09',
-  surface: '#14170F',
-  surfaceElevated: '#1B1F19',
-  primary: '#5FCB7A',
-  primaryDark: '#3F9E58',
-  primaryLight: '#1C2E1F',
-  secondary: '#9CCC65',
-  accent: '#F0915A',
-  accentLight: '#2E2013',
-  text: '#F5F7F4',
-  textSecondary: '#9BA69E',
-  border: '#262B23',
+export const darkTheme: Theme = {
+  background: D.paper,
+  surface: D.surfaceAlt,
+  surfaceElevated: D.surface,
+  primary: D.forest,
+  primaryDark: D.forestMid,
+  primaryLight: D.sageSurface,
+  onPrimary: D.onForest,
+  secondary: D.leaf,
+  accent: D.ochre,
+  accentLight: D.ochreSurface,
+  text: D.text,
+  textSecondary: D.textMuted,
+  border: D.border,
   /** Sehr subtile Trennlinien innerhalb dichter Raster (Kalender-Grid) – dunkler als `border`. */
-  gridLine: '#1C201A',
-  error: '#EF5350',
-  success: '#5FCB7A',
-  warning: '#FFA726',
+  gridLine: '#1E241F',
+  error: D.statusOverdue,
+  success: D.statusOk,
+  warning: D.statusSoon,
   overlay: 'rgba(0, 0, 0, 0.7)',
-  gradientStart: '#3AA35A',
-  gradientEnd: '#1F6E38',
+  gradientStart: brandHeader.dark.background,
+  gradientEnd: brandHeader.dark.background,
+  headerTitle: brandHeader.dark.title,
+  headerSubtitle: brandHeader.dark.subtitle,
 };
 
 export type Theme = typeof lightTheme;

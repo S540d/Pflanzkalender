@@ -13,7 +13,7 @@ import * as Haptics from 'expo-haptics';
 import { Activity } from '../types';
 import { getContrastTextColor } from '../utils/colorUtils';
 import { MONTH_SHORT } from '../utils/monthHelper';
-import { getActivityTypeByType } from '../constants/activityTypes';
+import { getActivityColor, getActivityTypeByType } from '../constants/activityTypes';
 import { getActivityDisplayLabel } from '../utils/activityLabel';
 import { useLanguage } from '../contexts/LanguageContext';
 import { Icon } from './ui';
@@ -177,13 +177,14 @@ export const ActivityBar: React.FC<ActivityBarProps> = ({
     setWebDragging(true);
   };
 
+  const activityColor = getActivityColor(activity);
   const barStyle: StyleProp<ViewStyle> = [
     styles.activityBar,
     shadow(2),
     {
       left: `${startPosition}%`,
       width: `${width}%`,
-      backgroundColor: activity.color,
+      backgroundColor: activityColor,
       zIndex: dragPx !== 0 ? 1000 : 1,
     },
     // Animierte Werte (Entrance-Fade/Scale) zusammen mit dem Drag-Offset in
@@ -195,7 +196,7 @@ export const ActivityBar: React.FC<ActivityBarProps> = ({
     } as unknown as ViewStyle,
   ];
 
-  const contrastColor = getContrastTextColor(activity.color);
+  const contrastColor = getContrastTextColor(activityColor);
   const activityIcon = getActivityTypeByType(activity.type)?.icon;
 
   const labelNode = (

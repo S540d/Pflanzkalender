@@ -22,6 +22,7 @@ import { getCompanions } from '../constants/companionPlanting';
 import { CategoryFilter } from '../constants/categoryTabs';
 import { CategoryTabBar } from '../components/CategoryTabBar';
 import { Button, Card, Icon } from '../components/ui';
+import { ScreenHeader } from '../components/ScreenHeader';
 import { radius, spacing } from '../constants/designTokens';
 
 export const PlantManagementScreen: React.FC = () => {
@@ -113,10 +114,9 @@ export const PlantManagementScreen: React.FC = () => {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
+      <ScreenHeader title={t('plants.title') as string} />
       <ScrollView style={styles.scrollView}>
         <View style={styles.content}>
-          <Text style={[styles.title, { color: theme.text }]}>{t('plants.title') as string}</Text>
-
           <TextInput
             style={[
               styles.searchInput,
@@ -278,12 +278,6 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: spacing.md,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: '700',
-    marginBottom: spacing.md,
-    textAlign: 'center',
   },
   searchInput: {
     padding: spacing.sm,

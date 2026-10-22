@@ -1,5 +1,8 @@
 import React from 'react';
 import type { ColorValue } from 'react-native';
+import { Fraunces_600SemiBold } from '@expo-google-fonts/fraunces/600SemiBold';
+import { Fraunces_700Bold } from '@expo-google-fonts/fraunces/700Bold';
+import { useFonts } from 'expo-font';
 import { Text } from 'react-native';
 import { Tabs } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
@@ -111,13 +114,12 @@ function TabsNavigator() {
             ),
           }}
         />
+        {/* Einstellungen öffnen über das ⋮ im ScreenHeader; Route bleibt für Deep-Links erhalten. */}
         <Tabs.Screen
           name="settings"
           options={{
             title: isDe ? 'Einstellungen' : 'Settings',
-            tabBarIcon: ({ color, focused }) => (
-              <TabBarIcon name="settings" color={color} focused={focused} />
-            ),
+            href: null,
           }}
         />
       </Tabs>
@@ -126,6 +128,10 @@ function TabsNavigator() {
 }
 
 export default function RootLayout() {
+  // Display-Schrift (Fraunces) lokal gebündelt; bei Ladefehler greift die Systemschrift.
+  const [fontsLoaded, fontError] = useFonts({ Fraunces_600SemiBold, Fraunces_700Bold });
+  if (!fontsLoaded && !fontError) return null;
+
   return (
     <ErrorBoundary>
       <SafeAreaProvider>
