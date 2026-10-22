@@ -3,7 +3,7 @@ import type { ColorValue } from 'react-native';
 import { Text } from 'react-native';
 import { Tabs } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ErrorBoundary } from '../src/components/ErrorBoundary';
 import { LanguageProvider, useLanguage } from '../src/contexts/LanguageContext';
 import { PlantProvider } from '../src/contexts/PlantContext';
@@ -41,6 +41,7 @@ function TabsNavigator() {
   const { language } = useLanguage();
   const { theme, isDark } = useTheme();
   const isDe = language === 'de';
+  const insets = useSafeAreaInsets();
 
   return (
     <>
@@ -53,9 +54,10 @@ function TabsNavigator() {
           tabBarStyle: {
             backgroundColor: theme.surfaceElevated,
             borderTopColor: theme.border,
-            height: 62,
+            // Keine feste Höhe: Labels wurden im Web (Safari) abgeschnitten.
+            height: 66 + insets.bottom,
             paddingTop: 6,
-            paddingBottom: 8,
+            paddingBottom: Math.max(insets.bottom, 8),
             ...shadow(2),
           },
           tabBarLabel: ({ color, children }) => <TabBarLabel label={children} color={color} />,
