@@ -5,7 +5,6 @@ Plan your garden year at a glance: a planting calendar that shows when to sow, p
 ## Open the app
 
 - Web: [s540d.github.io/Pflanzkalender](https://s540d.github.io/Pflanzkalender/)
-- Android: [Google Play](https://play.google.com/store/apps/details?id=io.github.s540d.pflanzkalender&referrer=utm_source%3Dgithub_readme%26utm_medium%3Dreferral%26utm_campaign%3Dweb_presence)
 
 ## What you can do
 
