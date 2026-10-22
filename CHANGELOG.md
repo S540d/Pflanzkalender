@@ -17,6 +17,8 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 ### Geändert
 
+- Neues Erscheinungsbild, gemeinsam mit Safe my plants: warme Markenpalette (Papierweiß, Waldgrün, Ocker), Serifenschrift Fraunces für Überschriften, einheitliche Outline-Icons, gedämpfte Aktivitäts- und Kategoriefarben (gelten auch für bestehende Aktivitäten)
+- Einheitlicher Seitenkopf auf allen Screens; die Einstellungen öffnen sich jetzt über das ⋮ im Kopf statt über einen eigenen Tab (5 statt 6 Tabs)
 - `appVersionCode` 13 → 14 (Vorbereitung für Play-Store-Upload mit `targetSdkVersion 36`)
 - CLAUDE.md: Anleitung ergänzt, wie das Android Target API Level (Play-Store-Pflicht ab 31.08.2026: API 36 / Android 16) über die lokal generierte Bubblewrap-Hülle angehoben wird, da `android/` nicht im Repo geführt wird
 

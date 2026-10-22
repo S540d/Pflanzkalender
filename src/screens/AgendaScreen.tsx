@@ -7,10 +7,11 @@ import { CategoryFilter } from '../constants/categoryTabs';
 import { CategoryTabBar } from '../components/CategoryTabBar';
 import { getPlantDisplayName } from '../constants/plantNames';
 import { getPlantEmoji } from '../constants/plantEmojis';
-import { getActivityTypeByType } from '../constants/activityTypes';
+import { getActivityColor, getActivityTypeByType } from '../constants/activityTypes';
 import { getActivityDisplayLabel } from '../utils/activityLabel';
 import { getPlantDisplayNotes } from '../constants/plantNames';
 import { Card, Icon, type IconName } from '../components/ui';
+import { ScreenHeader } from '../components/ScreenHeader';
 import { ActivityCompletionModal } from '../components/ActivityCompletionModal';
 import { ActivityJournal, type JournalEntry } from '../components/ActivityJournal';
 import { getCompletion, toIsoDate, yearForHalfMonthOffset } from '../utils/completions';
@@ -83,7 +84,7 @@ export const AgendaScreen: React.FC = () => {
               plantName: getPlantDisplayName(plant.name, language),
               plantEmoji: getPlantEmoji(plant.name, plant.category),
               activityLabel: getActivityDisplayLabel(activity, t),
-              activityColor: activity.color,
+              activityColor: getActivityColor(activity),
               activityIcon: getActivityTypeByType(activity.type)?.icon,
               notes: getPlantDisplayNotes(plant.name, plant.notes, language),
             });
@@ -121,7 +122,7 @@ export const AgendaScreen: React.FC = () => {
           plantName: getPlantDisplayName(plant.name, language),
           plantEmoji: getPlantEmoji(plant.name, plant.category),
           activityLabel: getActivityDisplayLabel(activity, t),
-          activityColor: activity.color,
+          activityColor: getActivityColor(activity),
           activityIcon: getActivityTypeByType(activity.type)?.icon,
           date: completion.date,
           note: completion.note,
@@ -272,6 +273,7 @@ export const AgendaScreen: React.FC = () => {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
+      <ScreenHeader title="Agenda" />
       <CategoryTabBar activeCategory={activeCategory} onCategoryChange={setActiveCategory} />
 
       <View style={styles.viewToggle}>
@@ -288,7 +290,9 @@ export const AgendaScreen: React.FC = () => {
                 active && { backgroundColor: theme.primary },
               ]}
             >
-              <Text style={[styles.viewToggleText, { color: active ? '#FFFFFF' : theme.text }]}>
+              <Text
+                style={[styles.viewToggleText, { color: active ? theme.onPrimary : theme.text }]}
+              >
                 {String(t(mode === 'upcoming' ? 'agenda.viewUpcoming' : 'agenda.viewJournal'))}
               </Text>
             </TouchableOpacity>

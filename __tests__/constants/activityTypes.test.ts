@@ -1,4 +1,8 @@
-import { ACTIVITY_TYPES, getActivityTypeByType } from '../../src/constants/activityTypes';
+import {
+  ACTIVITY_TYPES,
+  getActivityColor,
+  getActivityTypeByType,
+} from '../../src/constants/activityTypes';
 
 describe('ACTIVITY_TYPES', () => {
   it('contains exactly 8 activity types', () => {
@@ -36,13 +40,13 @@ describe('getActivityTypeByType', () => {
     const result = getActivityTypeByType('sow');
     expect(result).toBeDefined();
     expect(result!.label).toBe('Aussäen');
-    expect(result!.color).toBe('#4CAF50');
+    expect(result!.color).toBe('#7A5A3A');
   });
 
   it('returns the correct entry for "harvest"', () => {
     const result = getActivityTypeByType('harvest');
     expect(result).toBeDefined();
-    expect(result!.color).toBe('#EF5350');
+    expect(result!.color).toBe('#C4513D');
   });
 
   it('returns undefined for an unknown type', () => {
@@ -55,5 +59,15 @@ describe('getActivityTypeByType', () => {
 
   it('is case-sensitive (uppercase does not match)', () => {
     expect(getActivityTypeByType('SOW')).toBeUndefined();
+  });
+});
+
+describe('getActivityColor', () => {
+  it('uses the current type color instead of the stored one', () => {
+    expect(getActivityColor({ type: 'harvest', color: '#DC143C' })).toBe('#C4513D');
+  });
+
+  it('falls back to the stored color for unknown types', () => {
+    expect(getActivityColor({ type: 'custom', color: '#123456' })).toBe('#123456');
   });
 });

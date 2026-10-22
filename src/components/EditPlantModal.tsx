@@ -159,7 +159,7 @@ export const EditPlantModal: React.FC<EditPlantModalProps> = ({
                     <Text
                       style={[
                         styles.optionLabel,
-                        { color: location === opt.value ? '#fff' : theme.text },
+                        { color: location === opt.value ? theme.onPrimary : theme.text },
                       ]}
                     >
                       {PLANT_LOCATION_METADATA[opt.value][metaLang]}
@@ -190,7 +190,7 @@ export const EditPlantModal: React.FC<EditPlantModalProps> = ({
                     <Text
                       style={[
                         styles.optionLabel,
-                        { color: category === opt.value ? '#fff' : theme.text },
+                        { color: category === opt.value ? theme.onPrimary : theme.text },
                       ]}
                     >
                       {PLANT_CATEGORY_METADATA[opt.value][metaLang]}

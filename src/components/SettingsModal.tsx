@@ -166,7 +166,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ visible, onClose }
                 <Text
                   style={[
                     styles.themeButtonText,
-                    { color: themeMode === 'dark' ? '#fff' : theme.text },
+                    { color: themeMode === 'dark' ? theme.onPrimary : theme.text },
                   ]}
                 >
                   {t('settings.dark') as string}
@@ -186,7 +186,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ visible, onClose }
                 <Text
                   style={[
                     styles.themeButtonText,
-                    { color: themeMode === 'system' ? '#fff' : theme.text },
+                    { color: themeMode === 'system' ? theme.onPrimary : theme.text },
                   ]}
                 >
                   {t('settings.system') as string}
@@ -219,7 +219,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ visible, onClose }
                   <Text
                     style={[
                       styles.themeButtonText,
-                      { color: language === lang.code ? '#fff' : theme.text },
+                      { color: language === lang.code ? theme.onPrimary : theme.text },
                     ]}
                   >
                     {lang.nativeLabel}
@@ -259,7 +259,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ visible, onClose }
                   <Text
                     style={[
                       styles.themeButtonText,
-                      { color: gardenOffset === value ? '#fff' : theme.text },
+                      { color: gardenOffset === value ? theme.onPrimary : theme.text },
                     ]}
                   >
                     {t(gardenOffsetLabelKey(value)) as string}

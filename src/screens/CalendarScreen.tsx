@@ -15,6 +15,7 @@ import { clampActivityShift } from '../utils/monthHelper';
 import { useGardenOffset } from '../contexts/GardenOffsetContext';
 import { applyGardenOffset, gardenOffsetLabelKey } from '../utils/gardenOffset';
 import { Badge } from '../components/ui';
+import { ScreenHeader } from '../components/ScreenHeader';
 
 export const CalendarScreen: React.FC = () => {
   const { theme } = useTheme();
@@ -138,6 +139,7 @@ export const CalendarScreen: React.FC = () => {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
+      <ScreenHeader large title={String(t('calendar.title'))} />
       <CategoryTabBar activeCategory={activeCategory} onCategoryChange={setActiveCategory} />
 
       <View

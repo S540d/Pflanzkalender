@@ -13,7 +13,7 @@ import { useTheme } from '../hooks/useTheme';
 import { useLanguage } from '../contexts/LanguageContext';
 import { Activity } from '../types';
 import { radius } from '../constants/designTokens';
-import { getActivityTypeByType } from '../constants/activityTypes';
+import { getActivityColor, getActivityTypeByType } from '../constants/activityTypes';
 import { getActivityDisplayLabel } from '../utils/activityLabel';
 import { Icon, SuccessOverlay } from './ui';
 import { gardenOffsetLabelKey } from '../utils/gardenOffset';
@@ -228,7 +228,7 @@ export const EditActivityModal: React.FC<EditActivityModalProps> = ({
                       <Text
                         style={[
                           styles.monthOptionText,
-                          { color: startMonth === month.value ? '#FFFFFF' : theme.text },
+                          { color: startMonth === month.value ? theme.onPrimary : theme.text },
                         ]}
                       >
                         {month.label}
@@ -271,7 +271,7 @@ export const EditActivityModal: React.FC<EditActivityModalProps> = ({
                           {
                             color:
                               endMonth === month.value
-                                ? '#FFFFFF'
+                                ? theme.onPrimary
                                 : month.value < startMonth
                                   ? theme.textSecondary
                                   : theme.text,
@@ -293,7 +293,9 @@ export const EditActivityModal: React.FC<EditActivityModalProps> = ({
           </View>
 
           <View style={[styles.section, styles.typeRow]}>
-            <View style={[styles.colorPreview, { backgroundColor: displayActivity.color }]}>
+            <View
+              style={[styles.colorPreview, { backgroundColor: getActivityColor(displayActivity) }]}
+            >
               {getActivityTypeByType(displayActivity.type)?.icon ? (
                 <Icon
                   name={getActivityTypeByType(displayActivity.type)!.icon}
