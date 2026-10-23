@@ -6,11 +6,11 @@ import {
   Modal,
   TouchableOpacity,
   TextInput,
-  Alert,
   ScrollView,
 } from 'react-native';
 import { useTheme } from '../hooks/useTheme';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useDialog } from '../contexts/DialogContext';
 import { Activity } from '../types';
 import { radius } from '../constants/designTokens';
 import { getActivityColor, getActivityTypeByType } from '../constants/activityTypes';
@@ -40,6 +40,7 @@ export const EditActivityModal: React.FC<EditActivityModalProps> = ({
 }) => {
   const { theme } = useTheme();
   const { t } = useLanguage();
+  const { alert } = useDialog();
   const [label, setLabel] = useState(activity ? getActivityDisplayLabel(activity, t) : '');
   const [startMonth, setStartMonth] = useState(activity?.startMonth ?? 0);
   const [endMonth, setEndMonth] = useState(activity?.endMonth ?? 0);
@@ -83,21 +84,17 @@ export const EditActivityModal: React.FC<EditActivityModalProps> = ({
   };
 
   const handleDelete = () => {
-    Alert.alert(
-      t('activity.edit.deleteTitle') as string,
-      t('activity.edit.deleteMessage') as string,
-      [
-        { text: t('common.cancel') as string, style: 'cancel' },
-        {
-          text: t('activity.edit.deleteConfirm') as string,
-          style: 'destructive',
-          onPress: () => {
-            onDelete(displayActivity.id);
-            setPendingAction('delete');
-          },
+    alert(t('activity.edit.deleteTitle') as string, t('activity.edit.deleteMessage') as string, [
+      { text: t('common.cancel') as string, style: 'cancel' },
+      {
+        text: t('activity.edit.deleteConfirm') as string,
+        style: 'destructive',
+        onPress: () => {
+          onDelete(displayActivity.id);
+          setPendingAction('delete');
         },
-      ]
-    );
+      },
+    ]);
   };
 
   return (

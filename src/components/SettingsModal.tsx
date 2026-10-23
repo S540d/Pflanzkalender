@@ -6,13 +6,13 @@ import {
   TouchableOpacity,
   Linking,
   ScrollView,
-  Alert,
   Modal,
   Platform,
 } from 'react-native';
 import { useTheme } from '../hooks/useTheme';
 import { sharePlants, importFromJson } from '../services/templateService';
 import { useLanguage, PICKER_LANGUAGES } from '../contexts/LanguageContext';
+import { useDialog } from '../contexts/DialogContext';
 import { useGardenOffset } from '../contexts/GardenOffsetContext';
 import { GARDEN_OFFSET_OPTIONS, gardenOffsetLabelKey } from '../utils/gardenOffset';
 import { usePlants } from '../contexts/PlantContext';
@@ -41,6 +41,7 @@ const GITHUB_ISSUES_URL = 'https://github.com/S540d/Pflanzkalender/issues';
 export const SettingsModal: React.FC<SettingsModalProps> = ({ visible, onClose }) => {
   const { theme, themeMode, setThemeMode } = useTheme();
   const { language, setLanguage, t } = useLanguage();
+  const { alert } = useDialog();
   const { offset: gardenOffset, setOffset: setGardenOffset } = useGardenOffset();
   const { plants, replacePlants, appendPlants } = usePlants();
 
@@ -48,17 +49,17 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ visible, onClose }
     try {
       await sharePlants(plants);
       if (Platform.OS !== 'web') {
-        Alert.alert(t('settings.successTitle') as string, t('settings.exportSuccess') as string);
+        alert(t('settings.successTitle') as string, t('settings.exportSuccess') as string);
       }
     } catch (error) {
-      Alert.alert(t('template.errorTitle') as string, t('settings.exportError') as string);
+      alert(t('template.errorTitle') as string, t('settings.exportError') as string);
       console.error('Export error:', error);
     }
   };
 
   const handleImport = () => {
     if (Platform.OS !== 'web') {
-      Alert.alert(t('settings.importData') as string, t('settings.importWebOnly') as string);
+      alert(t('settings.importData') as string, t('settings.importWebOnly') as string);
       return;
     }
     // platform-safe: document only available in web context
@@ -77,7 +78,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ visible, onClose }
           '{count}',
           String(normalised.length)
         );
-        Alert.alert(t('settings.importConfirmTitle') as string, msg, [
+        alert(t('settings.importConfirmTitle') as string, msg, [
           { text: t('settings.importConfirmCancel') as string, style: 'cancel' },
           {
             text: t('settings.importConfirmAppend') as string,
@@ -87,7 +88,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ visible, onClose }
                 '{count}',
                 String(normalised.length)
               );
-              Alert.alert(t('settings.successTitle') as string, successMsg);
+              alert(t('settings.successTitle') as string, successMsg);
             },
           },
           {
@@ -98,12 +99,12 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ visible, onClose }
                 '{count}',
                 String(normalised.length)
               );
-              Alert.alert(t('settings.successTitle') as string, successMsg);
+              alert(t('settings.successTitle') as string, successMsg);
             },
           },
         ]);
       } catch (error) {
-        Alert.alert(t('settings.importData') as string, t('settings.importError') as string);
+        alert(t('settings.importData') as string, t('settings.importError') as string);
         console.error('Import error:', error);
       }
       (e.target as HTMLInputElement).value = '';
