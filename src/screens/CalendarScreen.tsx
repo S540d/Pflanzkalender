@@ -7,6 +7,7 @@ import { usePlants } from '../contexts/PlantContext';
 import { AddActivityModal } from '../components/AddActivityModal';
 import { EditActivityModal } from '../components/EditActivityModal';
 import { CategoryTabBar } from '../components/CategoryTabBar';
+import { ActivityLegend } from '../components/ActivityLegend';
 import { TableHeader } from '../components/TableHeader';
 import { PlantRowsContainer } from '../components/PlantRowsContainer';
 import { CategoryFilter } from '../constants/categoryTabs';
@@ -193,6 +194,8 @@ export const CalendarScreen: React.FC = () => {
           <Text style={[styles.zoomButtonText, { color: theme.text }]}>+</Text>
         </TouchableOpacity>
       </View>
+
+      <ActivityLegend />
 
       <TableHeader
         months={months}
