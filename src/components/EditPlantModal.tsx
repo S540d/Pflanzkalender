@@ -12,9 +12,11 @@ import {
 } from 'react-native';
 import { useTheme } from '../hooks/useTheme';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useDialog } from '../contexts/DialogContext';
 import { Plant, PlantLocation, PlantCategory } from '../types';
 import { PLANT_LOCATION_METADATA, PLANT_CATEGORY_METADATA } from '../constants/plantMetadata';
 import { getPlantDisplayName } from '../constants/plantNames';
+import { Icon } from './ui';
 
 const LOCATION_OPTIONS: { value: PlantLocation; icon: string }[] = (
   Object.keys(PLANT_LOCATION_METADATA) as PlantLocation[]
@@ -35,6 +37,8 @@ interface EditPlantModalProps {
   plant: Plant;
   onClose: () => void;
   onSave: (id: string, updates: Pick<Plant, 'name' | 'notes' | 'location' | 'category'>) => void;
+  /** Wenn gesetzt, zeigt der Dialog unten „Pflanze löschen" (mit Rückfrage). */
+  onDelete?: (id: string) => void;
 }
 
 export const EditPlantModal: React.FC<EditPlantModalProps> = ({
@@ -42,9 +46,11 @@ export const EditPlantModal: React.FC<EditPlantModalProps> = ({
   plant,
   onClose,
   onSave,
+  onDelete,
 }) => {
   const { theme } = useTheme();
   const { t, language } = useLanguage();
+  const { alert } = useDialog();
   const metaLang: 'de' | 'en' = language === 'de' ? 'de' : 'en';
   const [name, setName] = useState(getPlantDisplayName(plant.name, language));
   const [notes, setNotes] = useState(plant.notes ?? '');
@@ -74,6 +80,26 @@ export const EditPlantModal: React.FC<EditPlantModalProps> = ({
 
   const handleCancel = () => {
     onClose();
+  };
+
+  const handleDelete = () => {
+    if (!onDelete) return;
+    const displayName = getPlantDisplayName(plant.name, language);
+    alert(
+      t('plants.deleteTitle') as string,
+      `"${displayName}" ${t('plants.deleteMessage') as string}`,
+      [
+        { text: t('plants.deleteCancel') as string, style: 'cancel' },
+        {
+          text: t('plants.deleteConfirm') as string,
+          style: 'destructive',
+          onPress: () => {
+            onDelete(plant.id);
+            onClose();
+          },
+        },
+      ]
+    );
   };
 
   return (
@@ -199,6 +225,20 @@ export const EditPlantModal: React.FC<EditPlantModalProps> = ({
                 ))}
               </View>
             </View>
+
+            {onDelete && (
+              <TouchableOpacity
+                testID="edit-plant-delete"
+                accessibilityRole="button"
+                onPress={handleDelete}
+                style={[styles.deleteButton, { borderColor: theme.error }]}
+              >
+                <Icon name="delete" size={18} color={theme.error} />
+                <Text style={[styles.deleteButtonText, { color: theme.error }]}>
+                  {t('plants.deleteTitle') as string}
+                </Text>
+              </TouchableOpacity>
+            )}
           </ScrollView>
 
           <View style={[styles.footer, { borderTopColor: theme.border }]}>
@@ -249,6 +289,20 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 20,
+  },
+  deleteButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    borderWidth: 1.5,
+    borderRadius: 12,
+    paddingVertical: 12,
+    marginBottom: 20,
+  },
+  deleteButtonText: {
+    fontSize: 15,
+    fontWeight: '600',
   },
   field: {
     marginBottom: 20,

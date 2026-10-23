@@ -11,6 +11,7 @@ import { ErrorBoundary } from '../src/components/ErrorBoundary';
 import { LanguageProvider, useLanguage } from '../src/contexts/LanguageContext';
 import { PlantProvider } from '../src/contexts/PlantContext';
 import { GardenOffsetProvider } from '../src/contexts/GardenOffsetContext';
+import { DialogProvider } from '../src/contexts/DialogContext';
 import { useTheme } from '../src/hooks/useTheme';
 import { Icon, type IconName } from '../src/components/ui';
 import { shadow } from '../src/constants/designTokens';
@@ -138,7 +139,9 @@ export default function RootLayout() {
         <LanguageProvider>
           <PlantProvider>
             <GardenOffsetProvider>
-              <TabsNavigator />
+              <DialogProvider>
+                <TabsNavigator />
+              </DialogProvider>
             </GardenOffsetProvider>
           </PlantProvider>
         </LanguageProvider>

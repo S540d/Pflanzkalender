@@ -84,6 +84,10 @@ Activity {
 
 **`--legacy-peer-deps` nötig:** Der bestehende Dependency-Baum hat einen ungelösten Peer-Konflikt (expo-router / @react-navigation). Jeder `npm install <pkg>` schlägt mit `ERESOLVE` fehl, **außer** mit `--legacy-peer-deps`. CI nutzt durchgängig `npm ci --legacy-peer-deps`. Neue Pakete immer `npm install <pkg> --save --legacy-peer-deps` installieren. Achtung: das schreibt den Lockfile ohne Peer-Pakete neu (~1300 Zeilen Diff, u. a. `react-native-reanimated` raus) – minimaler Diff stattdessen mit `npm install <pkg> --save --package-lock-only --ignore-scripts --force`, danach `npm ci --legacy-peer-deps` zur Kontrolle.
 
+### Dialoge: nie `Alert.alert` direkt
+
+`Alert.alert` ist in React Native Web ein No-Op (kein Dialog, `onPress` läuft nie) – im Web (PWA/TWA) wären Bestätigungen und Meldungen unsichtbar. Immer `const { alert } = useDialog()` aus `src/contexts/DialogContext.tsx` nutzen (gleiche Signatur, im Web eigener Dialog, nativ `Alert.alert`). In Tests ohne Provider fällt `alert` auf `Alert.alert` zurück (`jest.spyOn(Alert, 'alert')` funktioniert).
+
 ### Platform Safety
 
 `window.*`, `document.*`, `localStorage`, `Blob`, `FileReader` nur mit `Platform.OS === 'web'` Guard oder Kommentar `// platform-safe`. Für `document.*` zusätzlich `typeof document !== 'undefined'` prüfen – auch mit `Platform.OS === 'web'` kann `document` in SSR/Test-Umgebungen undefined sein. DOM-Typen (`Event`, `HTMLInputElement` etc.) müssen explizit in `eslint.config.js` unter `src/**/*.{ts,tsx}` globals eingetragen sein.

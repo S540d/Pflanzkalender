@@ -15,8 +15,13 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 - Mischkultur-Hinweise (gute/schlechte Nachbarn) pro Pflanze in der Pflanzenverwaltung; Orientierungswerte aus gängigen Mischkultur-Tabellen, keine Garantie (#304)
 - Erfolgs-Animation (Checkmark-Puls + Haptic-Feedback) beim Speichern/Löschen einer Aktivität (`EditActivityModal`) sowie beim Hinzufügen (`AddActivityModal`), neue wiederverwendbare `ui/SuccessOverlay`-Komponente
 
+### Behoben
+
+- Dialoge funktionieren jetzt im Web (PWA/Android-App): Beim Löschen einer Pflanze oder Aktivität, beim Import (anhängen/ersetzen) und bei allen Erfolgs- und Fehlermeldungen passierte bisher nichts, weil `Alert.alert` im Web wirkungslos ist. Ein eigener Dialog übernimmt das im Web.
+
 ### Geändert
 
+- Pflanzenverwaltung: „Pflanze löschen" steht jetzt im Bearbeiten-Dialog (mit Rückfrage) statt als roter Knopf in jeder Zeile
 - Neues Erscheinungsbild, gemeinsam mit Safe my plants: warme Markenpalette (Papierweiß, Waldgrün, Ocker), Serifenschrift Fraunces für Überschriften, einheitliche Outline-Icons, gedämpfte Aktivitäts- und Kategoriefarben (gelten auch für bestehende Aktivitäten)
 - Einheitlicher Seitenkopf auf allen Screens; die Einstellungen öffnen sich jetzt über das ⋮ im Kopf statt über einen eigenen Tab (5 statt 6 Tabs)
 - `appVersionCode` 13 → 14 (Vorbereitung für Play-Store-Upload mit `targetSdkVersion 36`)
