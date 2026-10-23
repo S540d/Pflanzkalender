@@ -1,13 +1,5 @@
 import React, { useState, useMemo, useCallback } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-  Alert,
-  TextInput,
-} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput } from 'react-native';
 import { useFocusEffect } from 'expo-router';
 import { useTheme } from '../hooks/useTheme';
 import { usePlants } from '../contexts/PlantContext';
@@ -96,18 +88,6 @@ export const PlantManagementScreen: React.FC = () => {
   ) => {
     updatePlant(id, updates);
     setEditingPlant(null);
-  };
-
-  const handleDeletePlant = (plantId: string, plantName: string) => {
-    const message = `"${plantName}" ${t('plants.deleteMessage') as string}`;
-    Alert.alert(t('plants.deleteTitle') as string, message, [
-      { text: t('plants.deleteCancel') as string, style: 'cancel' },
-      {
-        text: t('plants.deleteConfirm') as string,
-        style: 'destructive',
-        onPress: () => deletePlant(plantId),
-      },
-    ]);
   };
 
   const isFiltered = searchQuery.trim().length > 0 || activeCategory !== 'all';
@@ -230,17 +210,6 @@ export const PlantManagementScreen: React.FC = () => {
                       >
                         <Icon name="edit" size={18} color={theme.primary} />
                       </TouchableOpacity>
-                      <TouchableOpacity
-                        style={[
-                          styles.actionButton,
-                          { backgroundColor: theme.error, borderColor: theme.error },
-                        ]}
-                        onPress={() => handleDeletePlant(plant.id, plant.name)}
-                        accessibilityLabel={`${t('plants.deleteTitle') as string}: ${getPlantDisplayName(plant.name, language)}`}
-                        accessibilityRole="button"
-                      >
-                        <Icon name="delete" size={18} color="#FFFFFF" />
-                      </TouchableOpacity>
                     </View>
                   </Card>
                 );
@@ -262,6 +231,7 @@ export const PlantManagementScreen: React.FC = () => {
           visible={true}
           plant={editingPlant}
           onClose={() => setEditingPlant(null)}
+          onDelete={deletePlant}
           onSave={handleEditPlant}
         />
       )}

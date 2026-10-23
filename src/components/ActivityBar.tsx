@@ -23,6 +23,15 @@ import { radius, shadow, duration as durationTokens } from '../constants/designT
 // Drag (→ Verschieben) gewertet wird.
 const TAP_THRESHOLD = 5;
 
+// Mindestbreite (px), ab der neben dem Icon auch das Label lesbar hineinpasst
+// (Innenabstand + Icon + Lücke + ca. 6 Zeichen). Schmalere Balken zeigen nur das Icon.
+export const MIN_BAR_WIDTH_FOR_LABEL = 84;
+
+/** Breite eines Balkens in px bei `units` Anzeige-Einheiten à `cellWidth` px. */
+export function shouldShowBarLabel(units: number, cellWidth: number): boolean {
+  return units * cellWidth >= MIN_BAR_WIDTH_FOR_LABEL;
+}
+
 interface ActivityBarProps {
   activity: Activity;
   onPress?: () => void;
@@ -95,7 +104,9 @@ export const ActivityBar: React.FC<ActivityBarProps> = ({
 
   // Berechne Position und Breite basierend auf Start- und Endmonat
   const startPosition = (activity.startMonth / totalMonths) * 100;
-  const width = ((activity.endMonth - activity.startMonth + 1) / totalMonths) * 100;
+  const units = activity.endMonth - activity.startMonth + 1;
+  const width = (units / totalMonths) * 100;
+  const showLabel = shouldShowBarLabel(units, cellWidth);
 
   const getMonthLabel = (halfMonth: number) => {
     const monthIndex = Math.floor(halfMonth / 2);
@@ -199,12 +210,17 @@ export const ActivityBar: React.FC<ActivityBarProps> = ({
   const contrastColor = getContrastTextColor(activityColor);
   const activityIcon = getActivityTypeByType(activity.type)?.icon;
 
+  // Zu schmal für ein lesbares Label (sonst „D…", „Pf…"): nur Icon, zentriert.
+  // Der Name bleibt per accessibilityLabel (und Web-Tooltip) erreichbar.
+  const iconOnly = !showLabel && !!activityIcon;
   const labelNode = (
-    <View style={styles.labelRow}>
+    <View style={[styles.labelRow, iconOnly && styles.labelRowIconOnly]}>
       {activityIcon ? <Icon name={activityIcon} size={13} color={contrastColor} /> : null}
-      <Text style={[styles.label, { color: contrastColor }]} numberOfLines={1}>
-        {displayLabel}
-      </Text>
+      {!iconOnly && (
+        <Text style={[styles.label, { color: contrastColor }]} numberOfLines={1}>
+          {displayLabel}
+        </Text>
+      )}
     </View>
   );
 
@@ -256,6 +272,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
+  },
+  labelRowIconOnly: {
+    justifyContent: 'center',
   },
   label: {
     fontSize: 12,

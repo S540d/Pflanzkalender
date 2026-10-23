@@ -5,13 +5,13 @@ import {
   ScrollView,
   TouchableOpacity,
   TextInput,
-  Alert,
   StyleSheet,
   Platform,
   Modal,
 } from 'react-native';
 import { useTheme } from '../hooks/useTheme';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useDialog } from '../contexts/DialogContext';
 import { usePlants } from '../contexts/PlantContext';
 import { COMMUNITY_TEMPLATES } from '../constants/communityTemplates';
 import {
@@ -41,6 +41,7 @@ const SECTION_ICON: Record<Section, IconName> = {
 export const TemplateScreen: React.FC = () => {
   const { theme } = useTheme();
   const { language, t } = useLanguage();
+  const { alert } = useDialog();
   const { offset: gardenOffset } = useGardenOffset();
   const { plants, replacePlants, appendPlants } = usePlants();
 
@@ -58,7 +59,7 @@ export const TemplateScreen: React.FC = () => {
 
   const handleShowQr = () => {
     if (plants.length === 0) {
-      Alert.alert(String(t('template.noPlantsTitle')), String(t('template.noPlantsMessage')));
+      alert(String(t('template.noPlantsTitle')), String(t('template.noPlantsMessage')));
       return;
     }
     setShowQr(true);
@@ -74,7 +75,7 @@ export const TemplateScreen: React.FC = () => {
     appendPlants(template.plants.map((p) => ({ ...p, isDefault: false })));
 
     const name = getTemplateLocale(template.name);
-    Alert.alert(
+    alert(
       String(t('template.importedTitle')),
       String(t('template.importedMessage'))
         .replace('{count}', String(template.plants.length))
@@ -84,17 +85,17 @@ export const TemplateScreen: React.FC = () => {
 
   const handleExport = async () => {
     if (plants.length === 0) {
-      Alert.alert(String(t('template.noPlantsTitle')), String(t('template.noPlantsMessage')));
+      alert(String(t('template.noPlantsTitle')), String(t('template.noPlantsMessage')));
       return;
     }
     setExporting(true);
     try {
       await sharePlants(plants);
       if (Platform.OS !== 'web') {
-        Alert.alert(String(t('settings.successTitle')), String(t('settings.exportSuccess')));
+        alert(String(t('settings.successTitle')), String(t('settings.exportSuccess')));
       }
     } catch {
-      Alert.alert(String(t('template.errorTitle')), String(t('template.exportFailed')));
+      alert(String(t('template.errorTitle')), String(t('template.exportFailed')));
     } finally {
       setExporting(false);
     }
@@ -102,7 +103,7 @@ export const TemplateScreen: React.FC = () => {
 
   const handleExportIcs = async () => {
     if (plants.length === 0) {
-      Alert.alert(String(t('template.noPlantsTitle')), String(t('template.noPlantsMessage')));
+      alert(String(t('template.noPlantsTitle')), String(t('template.noPlantsMessage')));
       return;
     }
     setExporting(true);
@@ -113,7 +114,7 @@ export const TemplateScreen: React.FC = () => {
         notes: (plant) => getPlantDisplayNotes(plant.name, plant.notes, language),
       });
     } catch {
-      Alert.alert(String(t('template.errorTitle')), String(t('template.exportFailed')));
+      alert(String(t('template.errorTitle')), String(t('template.exportFailed')));
     } finally {
       setExporting(false);
     }
@@ -121,7 +122,7 @@ export const TemplateScreen: React.FC = () => {
 
   const handleImportJson = () => {
     if (!importText.trim()) {
-      Alert.alert(String(t('template.noteTitle')), String(t('template.pastePlease')));
+      alert(String(t('template.noteTitle')), String(t('template.pastePlease')));
       return;
     }
     let imported: ReturnType<typeof importFromJson>;
@@ -129,7 +130,7 @@ export const TemplateScreen: React.FC = () => {
       imported = importFromJson(importText.trim());
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
-      Alert.alert(String(t('template.errorTitle')), msg);
+      alert(String(t('template.errorTitle')), msg);
       return;
     }
     const normalised = imported.map((p) => ({ ...p, isDefault: false }));
@@ -139,7 +140,7 @@ export const TemplateScreen: React.FC = () => {
     );
     // Do not set importing=true before the Alert: if the dialog is dismissed
     // without a button press (e.g. Android back), the button would stay disabled.
-    Alert.alert(String(t('template.importModeTitle')), msg, [
+    alert(String(t('template.importModeTitle')), msg, [
       {
         text: String(t('common.cancel')),
         style: 'cancel',
@@ -155,7 +156,7 @@ export const TemplateScreen: React.FC = () => {
             '{count}',
             String(normalised.length)
           );
-          Alert.alert(String(t('settings.successTitle')), successMsg);
+          alert(String(t('settings.successTitle')), successMsg);
         },
       },
       {
@@ -169,7 +170,7 @@ export const TemplateScreen: React.FC = () => {
             '{count}',
             String(normalised.length)
           );
-          Alert.alert(String(t('settings.successTitle')), successMsg);
+          alert(String(t('settings.successTitle')), successMsg);
         },
       },
     ]);
