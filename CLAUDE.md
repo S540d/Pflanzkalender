@@ -92,6 +92,10 @@ Activity {
 
 `window.*`, `document.*`, `localStorage`, `Blob`, `FileReader` nur mit `Platform.OS === 'web'` Guard oder Kommentar `// platform-safe`. Für `document.*` zusätzlich `typeof document !== 'undefined'` prüfen – auch mit `Platform.OS === 'web'` kann `document` in SSR/Test-Umgebungen undefined sein. DOM-Typen (`Event`, `HTMLInputElement` etc.) müssen explizit in `eslint.config.js` unter `src/**/*.{ts,tsx}` globals eingetragen sein.
 
+### Routen und Tabs
+
+Startseite ist `app/index.tsx` → `NowScreen` („Jetzt im Garten", Tab „Jetzt"); der Jahreskalender liegt unter `app/calendar.tsx`. `agenda` (Mehrspalten-Agenda + Journal) und `settings` sind per `href: null` aus der Tab-Leiste ausgeblendet, aber als Routen erreichbar (`router.push('/agenda')`; Einstellungen über das ⋮ im `ScreenHeader`). Aufgabenkarte (`ActivityCard`), Aufgabenlogik (`utils/agendaActivities.ts`) und Abhak-/Editor-Hook (`useCompletionEditor`) teilen sich `NowScreen` und `AgendaScreen`.
+
 ### Designsprache (gemeinsam mit Safe my plants)
 
 Farben nur über `useTheme()`; Werte kommen aus `src/constants/brandPalette.ts` – **wertgleich mit Safe my plants halten**. Überschriften über `AppText` (`h1–h3` = Fraunces), Icons nur über `ui/Icon` (Outline-Glyphen), Screen-Köpfe über `components/ScreenHeader` (enthält das ⋮ für die Einstellungen). Aktivitätsfarben immer über `getActivityColor()` lesen, nicht `activity.color`.
