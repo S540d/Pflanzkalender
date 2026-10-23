@@ -1,5 +1,8 @@
 import React from 'react';
 import type { ColorValue } from 'react-native';
+import { Fraunces_600SemiBold } from '@expo-google-fonts/fraunces/600SemiBold';
+import { Fraunces_700Bold } from '@expo-google-fonts/fraunces/700Bold';
+import { useFonts } from 'expo-font';
 import { Text } from 'react-native';
 import { Tabs } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
@@ -8,6 +11,7 @@ import { ErrorBoundary } from '../src/components/ErrorBoundary';
 import { LanguageProvider, useLanguage } from '../src/contexts/LanguageContext';
 import { PlantProvider } from '../src/contexts/PlantContext';
 import { GardenOffsetProvider } from '../src/contexts/GardenOffsetContext';
+import { DialogProvider } from '../src/contexts/DialogContext';
 import { useTheme } from '../src/hooks/useTheme';
 import { Icon, type IconName } from '../src/components/ui';
 import { shadow } from '../src/constants/designTokens';
@@ -69,19 +73,27 @@ function TabsNavigator() {
         <Tabs.Screen
           name="index"
           options={{
+            title: isDe ? 'Jetzt' : 'Now',
+            tabBarIcon: ({ color, focused }) => (
+              <TabBarIcon name="sun" color={color} focused={focused} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="calendar"
+          options={{
             title: isDe ? 'Kalender' : 'Calendar',
             tabBarIcon: ({ color, focused }) => (
               <TabBarIcon name="calendar" color={color} focused={focused} />
             ),
           }}
         />
+        {/* Mehrspalten-Agenda und Journal: erreichbar über „Jetzt im Garten", kein eigener Tab. */}
         <Tabs.Screen
           name="agenda"
           options={{
             title: 'Agenda',
-            tabBarIcon: ({ color, focused }) => (
-              <TabBarIcon name="agenda" color={color} focused={focused} />
-            ),
+            href: null,
           }}
         />
         <Tabs.Screen
@@ -111,13 +123,12 @@ function TabsNavigator() {
             ),
           }}
         />
+        {/* Einstellungen öffnen über das ⋮ im ScreenHeader; Route bleibt für Deep-Links erhalten. */}
         <Tabs.Screen
           name="settings"
           options={{
             title: isDe ? 'Einstellungen' : 'Settings',
-            tabBarIcon: ({ color, focused }) => (
-              <TabBarIcon name="settings" color={color} focused={focused} />
-            ),
+            href: null,
           }}
         />
       </Tabs>
@@ -126,13 +137,19 @@ function TabsNavigator() {
 }
 
 export default function RootLayout() {
+  // Display-Schrift (Fraunces) lokal gebündelt; bei Ladefehler greift die Systemschrift.
+  const [fontsLoaded, fontError] = useFonts({ Fraunces_600SemiBold, Fraunces_700Bold });
+  if (!fontsLoaded && !fontError) return null;
+
   return (
     <ErrorBoundary>
       <SafeAreaProvider>
         <LanguageProvider>
           <PlantProvider>
             <GardenOffsetProvider>
-              <TabsNavigator />
+              <DialogProvider>
+                <TabsNavigator />
+              </DialogProvider>
             </GardenOffsetProvider>
           </PlantProvider>
         </LanguageProvider>

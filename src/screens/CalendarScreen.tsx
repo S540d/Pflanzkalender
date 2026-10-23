@@ -7,6 +7,7 @@ import { usePlants } from '../contexts/PlantContext';
 import { AddActivityModal } from '../components/AddActivityModal';
 import { EditActivityModal } from '../components/EditActivityModal';
 import { CategoryTabBar } from '../components/CategoryTabBar';
+import { ActivityLegend } from '../components/ActivityLegend';
 import { TableHeader } from '../components/TableHeader';
 import { PlantRowsContainer } from '../components/PlantRowsContainer';
 import { CategoryFilter } from '../constants/categoryTabs';
@@ -15,6 +16,7 @@ import { clampActivityShift } from '../utils/monthHelper';
 import { useGardenOffset } from '../contexts/GardenOffsetContext';
 import { applyGardenOffset, gardenOffsetLabelKey } from '../utils/gardenOffset';
 import { Badge } from '../components/ui';
+import { ScreenHeader } from '../components/ScreenHeader';
 
 export const CalendarScreen: React.FC = () => {
   const { theme } = useTheme();
@@ -138,6 +140,7 @@ export const CalendarScreen: React.FC = () => {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
+      <ScreenHeader large title={String(t('calendar.title'))} />
       <CategoryTabBar activeCategory={activeCategory} onCategoryChange={setActiveCategory} />
 
       <View
@@ -191,6 +194,8 @@ export const CalendarScreen: React.FC = () => {
           <Text style={[styles.zoomButtonText, { color: theme.text }]}>+</Text>
         </TouchableOpacity>
       </View>
+
+      <ActivityLegend />
 
       <TableHeader
         months={months}

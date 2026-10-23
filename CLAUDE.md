@@ -82,11 +82,23 @@ Activity {
 
 `npm ci` in CI ist streng – der Lockfile muss exakt mit package.json übereinstimmen. **Nie manuell bearbeiten.** Nach Dependency-Änderungen immer `npm install --package-lock-only --ignore-scripts` laufen lassen und den resultierenden Lockfile committen.
 
-**`--legacy-peer-deps` nötig:** Der bestehende Dependency-Baum hat einen ungelösten Peer-Konflikt (expo-router / @react-navigation). Jeder `npm install <pkg>` schlägt mit `ERESOLVE` fehl, **außer** mit `--legacy-peer-deps`. CI nutzt durchgängig `npm ci --legacy-peer-deps`. Neue Pakete immer `npm install <pkg> --save --legacy-peer-deps` installieren.
+**`--legacy-peer-deps` nötig:** Der bestehende Dependency-Baum hat einen ungelösten Peer-Konflikt (expo-router / @react-navigation). Jeder `npm install <pkg>` schlägt mit `ERESOLVE` fehl, **außer** mit `--legacy-peer-deps`. CI nutzt durchgängig `npm ci --legacy-peer-deps`. Neue Pakete immer `npm install <pkg> --save --legacy-peer-deps` installieren. Achtung: das schreibt den Lockfile ohne Peer-Pakete neu (~1300 Zeilen Diff, u. a. `react-native-reanimated` raus) – minimaler Diff stattdessen mit `npm install <pkg> --save --package-lock-only --ignore-scripts --force`, danach `npm ci --legacy-peer-deps` zur Kontrolle.
+
+### Dialoge: nie `Alert.alert` direkt
+
+`Alert.alert` ist in React Native Web ein No-Op (kein Dialog, `onPress` läuft nie) – im Web (PWA/TWA) wären Bestätigungen und Meldungen unsichtbar. Immer `const { alert } = useDialog()` aus `src/contexts/DialogContext.tsx` nutzen (gleiche Signatur, im Web eigener Dialog, nativ `Alert.alert`). In Tests ohne Provider fällt `alert` auf `Alert.alert` zurück (`jest.spyOn(Alert, 'alert')` funktioniert).
 
 ### Platform Safety
 
 `window.*`, `document.*`, `localStorage`, `Blob`, `FileReader` nur mit `Platform.OS === 'web'` Guard oder Kommentar `// platform-safe`. Für `document.*` zusätzlich `typeof document !== 'undefined'` prüfen – auch mit `Platform.OS === 'web'` kann `document` in SSR/Test-Umgebungen undefined sein. DOM-Typen (`Event`, `HTMLInputElement` etc.) müssen explizit in `eslint.config.js` unter `src/**/*.{ts,tsx}` globals eingetragen sein.
+
+### Routen und Tabs
+
+Startseite ist `app/index.tsx` → `NowScreen` („Jetzt im Garten", Tab „Jetzt"); der Jahreskalender liegt unter `app/calendar.tsx`. `agenda` (Mehrspalten-Agenda + Journal) und `settings` sind per `href: null` aus der Tab-Leiste ausgeblendet, aber als Routen erreichbar (`router.push('/agenda')`; Einstellungen über das ⋮ im `ScreenHeader`). Aufgabenkarte (`ActivityCard`), Aufgabenlogik (`utils/agendaActivities.ts`) und Abhak-/Editor-Hook (`useCompletionEditor`) teilen sich `NowScreen` und `AgendaScreen`.
+
+### Designsprache (gemeinsam mit Safe my plants)
+
+Farben nur über `useTheme()`; Werte kommen aus `src/constants/brandPalette.ts` – **wertgleich mit Safe my plants halten**. Überschriften über `AppText` (`h1–h3` = Fraunces), Icons nur über `ui/Icon` (Outline-Glyphen), Screen-Köpfe über `components/ScreenHeader` (enthält das ⋮ für die Einstellungen). Aktivitätsfarben immer über `getActivityColor()` lesen, nicht `activity.color`.
 
 ### PlantLocation / PlantCategory Typen
 
