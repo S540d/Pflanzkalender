@@ -94,12 +94,6 @@ meta tags, canonical, Open Graph and the `lang` attribute into `dist/index.html`
 post-build, idempotently. SEO changes belong in that script, not in a source
 HTML file — there isn't one.
 
-### Separate testing deployment
-
-`TESTING=true` switches the base path to `/Pflanzkalender-testing` and sets
-`robots: noindex, nofollow`, so the testing deployment is not indexed as
-duplicate content.
-
 ## Data Flow
 
 ### Editing a plant
@@ -119,12 +113,11 @@ JSON file → parseImportData() → Zod validation → PlantContext → storageS
 
 ## Environments
 
-| Environment | URL / Target                                    | Build                |
-| ----------- | ----------------------------------------------- | -------------------- |
-| Production  | https://s540d.github.io/Pflanzkalender/         | deploy to `main`     |
-| Testing     | https://s540d.github.io/Pflanzkalender-testing/ | `TESTING=true` build |
-| Play Store  | `io.github.s540d.pflanzkalender` (TWA)          | Gradle wrapper build |
-| Local       | Expo dev server (port printed on start)         | `npm start`          |
+| Environment | URL / Target                            | Build                |
+| ----------- | --------------------------------------- | -------------------- |
+| Production  | https://s540d.github.io/Pflanzkalender/ | deploy to `main`     |
+| Play Store  | `io.github.s540d.pflanzkalender` (TWA)  | Gradle wrapper build |
+| Local       | Expo dev server (port printed on start) | `npm start`          |
 
 ## Testing
 

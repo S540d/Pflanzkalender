@@ -4,11 +4,7 @@ const path = require('path');
 const distPath = path.join(__dirname, '..', 'dist');
 const indexPath = path.join(distPath, 'index.html');
 
-// Check if this is testing build
-const isTesting = process.env.TESTING === 'true';
-const swFileName = isTesting ? 'service-worker-testing.js' : 'service-worker.js';
-
-const swSourcePath = path.join(__dirname, '..', 'public', swFileName);
+const swSourcePath = path.join(__dirname, '..', 'public', 'service-worker.js');
 const swDestPath = path.join(distPath, 'service-worker.js');
 
 // Copy service worker to dist
@@ -28,33 +24,6 @@ const manifestSourcePath = path.join(__dirname, '..', 'public', 'manifest.json')
 const manifestDestPath = path.join(distPath, 'manifest.json');
 if (fs.existsSync(manifestSourcePath)) {
   const manifest = JSON.parse(fs.readFileSync(manifestSourcePath, 'utf8'));
-  if (isTesting) {
-    manifest.start_url = '/Pflanzkalender-testing/';
-    manifest.scope = '/Pflanzkalender-testing/';
-    manifest.name = 'Pflanzkalender (Testing)';
-    manifest.icons = manifest.icons.map((icon) => ({
-      ...icon,
-      src: icon.src.replace('/Pflanzkalender/', '/Pflanzkalender-testing/'),
-    }));
-    if (manifest.screenshots) {
-      manifest.screenshots = manifest.screenshots.map((screenshot) => ({
-        ...screenshot,
-        src: screenshot.src.replace('/Pflanzkalender/', '/Pflanzkalender-testing/'),
-      }));
-    }
-    if (manifest.shortcuts) {
-      manifest.shortcuts = manifest.shortcuts.map((shortcut) => ({
-        ...shortcut,
-        url: shortcut.url.replace('/Pflanzkalender/', '/Pflanzkalender-testing/'),
-        icons: shortcut.icons
-          ? shortcut.icons.map((icon) => ({
-              ...icon,
-              src: icon.src.replace('/Pflanzkalender/', '/Pflanzkalender-testing/'),
-            }))
-          : undefined,
-      }));
-    }
-  }
   fs.writeFileSync(manifestDestPath, JSON.stringify(manifest, null, 2), 'utf8');
   console.log('✓ Copied manifest.json to dist');
 } else {
@@ -65,7 +34,7 @@ if (fs.existsSync(manifestSourcePath)) {
 if (fs.existsSync(indexPath)) {
   let html = fs.readFileSync(indexPath, 'utf8');
 
-  const baseUrl = isTesting ? '/Pflanzkalender-testing' : '/Pflanzkalender';
+  const baseUrl = '/Pflanzkalender';
 
   const buildTimestamp = Date.now();
 
