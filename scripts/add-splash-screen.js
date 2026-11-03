@@ -4,8 +4,7 @@ const path = require('path');
 const distPath = path.join(__dirname, '..', 'dist');
 const indexPath = path.join(distPath, 'index.html');
 
-const isTesting = process.env.TESTING === 'true';
-const baseUrl = isTesting ? '/Pflanzkalender-testing' : '/Pflanzkalender';
+const baseUrl = '/Pflanzkalender';
 
 if (!fs.existsSync(indexPath)) {
   console.error('✗ dist/index.html not found');

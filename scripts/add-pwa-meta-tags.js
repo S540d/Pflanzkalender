@@ -4,9 +4,7 @@ const path = require('path');
 const distPath = path.join(__dirname, '..', 'dist');
 const indexPath = path.join(distPath, 'index.html');
 
-// Determine base URL from environment or defaults
-const isTesting = process.env.TESTING === 'true';
-const baseUrl = isTesting ? '/Pflanzkalender-testing' : '/Pflanzkalender';
+const baseUrl = '/Pflanzkalender';
 const siteUrl = `https://s540d.github.io${baseUrl}/`;
 const description =
   'Pflanzkalender: kostenlose PWA für den Gartenkalender – Aussaat, Pflanzung und Pflege für 32 vordefinierte Pflanzen in Halbmonats-Auflösung planen, offline nutzbar, ohne Login.';
@@ -36,9 +34,7 @@ if (fs.existsSync(indexPath)) {
     {
       tag: 'meta',
       attr: 'name="robots"',
-      // Only the production deployment should be indexed; the testing
-      // deployment would otherwise be crawlable duplicate content.
-      html: `<meta name="robots" content="${isTesting ? 'noindex, nofollow' : 'index, follow'}">`,
+      html: '<meta name="robots" content="index, follow">',
     },
     {
       tag: 'link',
