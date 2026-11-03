@@ -12,7 +12,7 @@ module.exports = {
     'react-native-svg': '<rootDir>/__mocks__/react-native-svg.js',
     '@react-native-async-storage/async-storage': '@react-native-async-storage/async-storage/jest',
   },
-  setupFiles: [],
+  setupFiles: ['<rootDir>/jest.setup.js'],
   collectCoverageFrom: ['src/**/*.{ts,tsx}', '!src/**/*.d.ts'],
   coverageReporters: ['text', 'lcov', 'html'],
   coverageDirectory: 'coverage',

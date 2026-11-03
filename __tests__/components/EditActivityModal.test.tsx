@@ -222,10 +222,8 @@ describe('EditActivityModal Component', () => {
 
   it('calls onDelete and onClose when delete is confirmed, after the success animation', async () => {
     const alertSpy = jest.spyOn(Alert, 'alert').mockImplementation((_title, _msg, buttons) => {
-      const deleteButton = buttons?.find(
-        (b: { style?: string; onPress?: () => void }) => b.style === 'destructive'
-      );
-      deleteButton?.onPress?.();
+      const deleteButton = buttons?.find((b) => b.style === 'destructive');
+      (deleteButton?.onPress as (() => void) | undefined)?.();
     });
 
     const { getByText } = await render(
