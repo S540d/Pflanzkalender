@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://s540d.github.io/Pflanzkalender/sitemap.xml
