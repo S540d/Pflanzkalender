@@ -16,6 +16,14 @@ import { useTheme } from '../src/hooks/useTheme';
 import { Icon, type IconName } from '../src/components/ui';
 import { shadow } from '../src/constants/designTokens';
 
+// Route bleibt erreichbar, nur der Tab-Button fehlt. Nicht `href: null` verwenden:
+// Seit expo-router 58 macht das den Tab `hidden`, und Navigation/Deep-Links darauf
+// landen auf der Startseite.
+const HIDDEN_TAB = {
+  tabBarItemStyle: { display: 'none' },
+  tabBarButton: () => null,
+} as const;
+
 function TabBarIcon({
   name,
   color,
@@ -93,7 +101,7 @@ function TabsNavigator() {
           name="agenda"
           options={{
             title: 'Agenda',
-            href: null,
+            ...HIDDEN_TAB,
           }}
         />
         <Tabs.Screen
@@ -128,7 +136,7 @@ function TabsNavigator() {
           name="settings"
           options={{
             title: isDe ? 'Einstellungen' : 'Settings',
-            href: null,
+            ...HIDDEN_TAB,
           }}
         />
       </Tabs>
