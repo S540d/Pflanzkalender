@@ -5,13 +5,13 @@ import {
   ScrollView,
   TouchableOpacity,
   TextInput,
-  Alert,
   StyleSheet,
   Platform,
   Modal,
 } from 'react-native';
 import { useTheme } from '../hooks/useTheme';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useDialog } from '../contexts/DialogContext';
 import { usePlants } from '../contexts/PlantContext';
 import { COMMUNITY_TEMPLATES } from '../constants/communityTemplates';
 import {
@@ -27,6 +27,7 @@ import { applyGardenOffset } from '../utils/gardenOffset';
 import { QRCodeView } from '../components/QRCodeView';
 import { utf8ByteLength, QR_MAX_BYTES } from '../utils/qrcode';
 import { Card, Icon, type IconName } from '../components/ui';
+import { ScreenHeader } from '../components/ScreenHeader';
 import { radius } from '../constants/designTokens';
 
 type Section = 'templates' | 'export' | 'import';
@@ -40,6 +41,7 @@ const SECTION_ICON: Record<Section, IconName> = {
 export const TemplateScreen: React.FC = () => {
   const { theme } = useTheme();
   const { language, t } = useLanguage();
+  const { alert } = useDialog();
   const { offset: gardenOffset } = useGardenOffset();
   const { plants, replacePlants, appendPlants } = usePlants();
 
@@ -57,7 +59,7 @@ export const TemplateScreen: React.FC = () => {
 
   const handleShowQr = () => {
     if (plants.length === 0) {
-      Alert.alert(String(t('template.noPlantsTitle')), String(t('template.noPlantsMessage')));
+      alert(String(t('template.noPlantsTitle')), String(t('template.noPlantsMessage')));
       return;
     }
     setShowQr(true);
@@ -73,7 +75,7 @@ export const TemplateScreen: React.FC = () => {
     appendPlants(template.plants.map((p) => ({ ...p, isDefault: false })));
 
     const name = getTemplateLocale(template.name);
-    Alert.alert(
+    alert(
       String(t('template.importedTitle')),
       String(t('template.importedMessage'))
         .replace('{count}', String(template.plants.length))
@@ -83,17 +85,17 @@ export const TemplateScreen: React.FC = () => {
 
   const handleExport = async () => {
     if (plants.length === 0) {
-      Alert.alert(String(t('template.noPlantsTitle')), String(t('template.noPlantsMessage')));
+      alert(String(t('template.noPlantsTitle')), String(t('template.noPlantsMessage')));
       return;
     }
     setExporting(true);
     try {
       await sharePlants(plants);
       if (Platform.OS !== 'web') {
-        Alert.alert(String(t('settings.successTitle')), String(t('settings.exportSuccess')));
+        alert(String(t('settings.successTitle')), String(t('settings.exportSuccess')));
       }
     } catch {
-      Alert.alert(String(t('template.errorTitle')), String(t('template.exportFailed')));
+      alert(String(t('template.errorTitle')), String(t('template.exportFailed')));
     } finally {
       setExporting(false);
     }
@@ -101,7 +103,7 @@ export const TemplateScreen: React.FC = () => {
 
   const handleExportIcs = async () => {
     if (plants.length === 0) {
-      Alert.alert(String(t('template.noPlantsTitle')), String(t('template.noPlantsMessage')));
+      alert(String(t('template.noPlantsTitle')), String(t('template.noPlantsMessage')));
       return;
     }
     setExporting(true);
@@ -112,7 +114,7 @@ export const TemplateScreen: React.FC = () => {
         notes: (plant) => getPlantDisplayNotes(plant.name, plant.notes, language),
       });
     } catch {
-      Alert.alert(String(t('template.errorTitle')), String(t('template.exportFailed')));
+      alert(String(t('template.errorTitle')), String(t('template.exportFailed')));
     } finally {
       setExporting(false);
     }
@@ -120,7 +122,7 @@ export const TemplateScreen: React.FC = () => {
 
   const handleImportJson = () => {
     if (!importText.trim()) {
-      Alert.alert(String(t('template.noteTitle')), String(t('template.pastePlease')));
+      alert(String(t('template.noteTitle')), String(t('template.pastePlease')));
       return;
     }
     let imported: ReturnType<typeof importFromJson>;
@@ -128,7 +130,7 @@ export const TemplateScreen: React.FC = () => {
       imported = importFromJson(importText.trim());
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
-      Alert.alert(String(t('template.errorTitle')), msg);
+      alert(String(t('template.errorTitle')), msg);
       return;
     }
     const normalised = imported.map((p) => ({ ...p, isDefault: false }));
@@ -138,7 +140,7 @@ export const TemplateScreen: React.FC = () => {
     );
     // Do not set importing=true before the Alert: if the dialog is dismissed
     // without a button press (e.g. Android back), the button would stay disabled.
-    Alert.alert(String(t('template.importModeTitle')), msg, [
+    alert(String(t('template.importModeTitle')), msg, [
       {
         text: String(t('common.cancel')),
         style: 'cancel',
@@ -154,7 +156,7 @@ export const TemplateScreen: React.FC = () => {
             '{count}',
             String(normalised.length)
           );
-          Alert.alert(String(t('settings.successTitle')), successMsg);
+          alert(String(t('settings.successTitle')), successMsg);
         },
       },
       {
@@ -168,7 +170,7 @@ export const TemplateScreen: React.FC = () => {
             '{count}',
             String(normalised.length)
           );
-          Alert.alert(String(t('settings.successTitle')), successMsg);
+          alert(String(t('settings.successTitle')), successMsg);
         },
       },
     ]);
@@ -203,197 +205,203 @@ export const TemplateScreen: React.FC = () => {
   const exportBtnLabel = String(t('template.exportBtn')).replace('{count}', String(plants.length));
 
   return (
-    <ScrollView style={[styles.container, { backgroundColor: theme.background }]}>
-      <Text style={[styles.title, { color: theme.text }]}>{String(t('template.title'))}</Text>
-
-      {/* Section switcher */}
-      <View style={styles.tabRow}>
-        {(['templates', 'export', 'import'] as Section[]).map((section) => {
-          const isActive = activeSection === section;
-          return (
-            <TouchableOpacity
-              key={section}
-              style={[
-                styles.tabBtn,
-                {
-                  borderColor: isActive ? theme.primary : theme.border,
-                  backgroundColor: isActive ? theme.primary : theme.surface,
-                },
-              ]}
-              onPress={() => setActiveSection(section)}
-            >
-              <Icon
-                name={SECTION_ICON[section]}
-                size={15}
-                color={isActive ? '#fff' : theme.textSecondary}
-              />
-              <Text style={[styles.tabBtnText, { color: isActive ? '#fff' : theme.textSecondary }]}>
-                {sectionLabel(section)}
-              </Text>
-            </TouchableOpacity>
-          );
-        })}
-      </View>
-
-      {/* Community Templates */}
-      {activeSection === 'templates' && (
-        <View style={styles.section}>
-          <Text style={[styles.sectionHeader, { color: theme.textSecondary }]}>
-            {String(t('template.community'))}
-          </Text>
-          {COMMUNITY_TEMPLATES.map((tmpl) => (
-            <Card key={tmpl.id} elevation={1} padding={14} style={styles.card}>
-              <View style={styles.cardHeader}>
-                <Text style={styles.cardIcon}>{tmpl.icon}</Text>
-                <View style={styles.cardTitleBlock}>
-                  <Text style={[styles.cardTitle, { color: theme.text }]}>
-                    {getTemplateLocale(tmpl.name)}
-                  </Text>
-                  <Text style={[styles.cardDesc, { color: theme.textSecondary }]}>
-                    {getTemplateLocale(tmpl.description)}
-                  </Text>
-                </View>
-              </View>
-              <Text style={[styles.cardPlants, { color: theme.textSecondary }]}>
-                {tmpl.plants.map((p) => p.name).join(' · ')}
-              </Text>
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
+      <ScreenHeader title={String(t('template.title'))} />
+      <ScrollView style={styles.container} contentContainerStyle={styles.scrollContent}>
+        {/* Section switcher */}
+        <View style={styles.tabRow}>
+          {(['templates', 'export', 'import'] as Section[]).map((section) => {
+            const isActive = activeSection === section;
+            return (
               <TouchableOpacity
-                style={[styles.importBtn, { backgroundColor: theme.primary }]}
-                onPress={() => handleImportTemplate(tmpl.id)}
+                key={section}
+                style={[
+                  styles.tabBtn,
+                  {
+                    borderColor: isActive ? theme.primary : theme.border,
+                    backgroundColor: isActive ? theme.primary : theme.surface,
+                  },
+                ]}
+                onPress={() => setActiveSection(section)}
               >
-                <Text style={styles.importBtnText}>{String(t('template.importBtn'))}</Text>
+                <Icon
+                  name={SECTION_ICON[section]}
+                  size={15}
+                  color={isActive ? theme.onPrimary : theme.textSecondary}
+                />
+                <Text
+                  style={[
+                    styles.tabBtnText,
+                    { color: isActive ? theme.onPrimary : theme.textSecondary },
+                  ]}
+                >
+                  {sectionLabel(section)}
+                </Text>
               </TouchableOpacity>
-            </Card>
-          ))}
+            );
+          })}
         </View>
-      )}
 
-      {/* Export */}
-      {activeSection === 'export' && (
-        <View style={styles.section}>
-          <Text style={[styles.sectionHeader, { color: theme.textSecondary }]}>
-            {String(t('template.exportSection'))}
-          </Text>
-          <Text style={[styles.hint, { color: theme.textSecondary }]}>
-            {String(t('template.exportHint'))}
-          </Text>
-          <TouchableOpacity
-            style={[
-              styles.actionBtn,
-              { backgroundColor: theme.primary, opacity: exporting ? 0.6 : 1 },
-            ]}
-            onPress={handleExport}
-            disabled={exporting}
-          >
-            <Text style={styles.actionBtnText}>{exportBtnLabel}</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[styles.qrBtn, { borderColor: theme.primary }]}
-            onPress={handleExportIcs}
-            disabled={exporting}
-          >
-            <Text style={[styles.qrBtnText, { color: theme.primary }]}>
-              {String(t('template.icsBtn'))}
+        {/* Community Templates */}
+        {activeSection === 'templates' && (
+          <View style={styles.section}>
+            <Text style={[styles.sectionHeader, { color: theme.textSecondary }]}>
+              {String(t('template.community'))}
             </Text>
-          </TouchableOpacity>
-          <Text style={[styles.hint, { color: theme.textSecondary }]}>
-            {String(t('template.icsHint'))}
-          </Text>
+            {COMMUNITY_TEMPLATES.map((tmpl) => (
+              <Card key={tmpl.id} elevation={1} padding={14} style={styles.card}>
+                <View style={styles.cardHeader}>
+                  <Text style={styles.cardIcon}>{tmpl.icon}</Text>
+                  <View style={styles.cardTitleBlock}>
+                    <Text style={[styles.cardTitle, { color: theme.text }]}>
+                      {getTemplateLocale(tmpl.name)}
+                    </Text>
+                    <Text style={[styles.cardDesc, { color: theme.textSecondary }]}>
+                      {getTemplateLocale(tmpl.description)}
+                    </Text>
+                  </View>
+                </View>
+                <Text style={[styles.cardPlants, { color: theme.textSecondary }]}>
+                  {tmpl.plants.map((p) => p.name).join(' · ')}
+                </Text>
+                <TouchableOpacity
+                  style={[styles.importBtn, { backgroundColor: theme.primary }]}
+                  onPress={() => handleImportTemplate(tmpl.id)}
+                >
+                  <Text style={styles.importBtnText}>{String(t('template.importBtn'))}</Text>
+                </TouchableOpacity>
+              </Card>
+            ))}
+          </View>
+        )}
 
-          <TouchableOpacity
-            style={[styles.qrBtn, { borderColor: theme.primary }]}
-            onPress={handleShowQr}
-          >
-            <Text style={[styles.qrBtnText, { color: theme.primary }]}>
-              {String(t('template.qrShareBtn'))}
+        {/* Export */}
+        {activeSection === 'export' && (
+          <View style={styles.section}>
+            <Text style={[styles.sectionHeader, { color: theme.textSecondary }]}>
+              {String(t('template.exportSection'))}
             </Text>
-          </TouchableOpacity>
-        </View>
-      )}
-
-      {/* Import */}
-      {activeSection === 'import' && (
-        <View style={styles.section}>
-          <Text style={[styles.sectionHeader, { color: theme.textSecondary }]}>
-            {String(t('template.importSection'))}
-          </Text>
-          <Text style={[styles.hint, { color: theme.textSecondary }]}>
-            {String(t('template.importHint'))}
-          </Text>
-
-          {Platform.OS === 'web' && (
+            <Text style={[styles.hint, { color: theme.textSecondary }]}>
+              {String(t('template.exportHint'))}
+            </Text>
             <TouchableOpacity
-              style={[styles.fileBtn, { borderColor: theme.border }]}
-              onPress={handleChooseFile}
+              style={[
+                styles.actionBtn,
+                { backgroundColor: theme.primary, opacity: exporting ? 0.6 : 1 },
+              ]}
+              onPress={handleExport}
+              disabled={exporting}
             >
-              <Text style={[styles.fileBtnText, { color: theme.text }]}>
-                {String(t('template.chooseFile'))}
+              <Text style={styles.actionBtnText}>{exportBtnLabel}</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.qrBtn, { borderColor: theme.primary }]}
+              onPress={handleExportIcs}
+              disabled={exporting}
+            >
+              <Text style={[styles.qrBtnText, { color: theme.primary }]}>
+                {String(t('template.icsBtn'))}
               </Text>
             </TouchableOpacity>
-          )}
-
-          <TextInput
-            style={[
-              styles.jsonInput,
-              { backgroundColor: theme.surface, color: theme.text, borderColor: theme.border },
-            ]}
-            multiline
-            numberOfLines={8}
-            placeholder={String(t('template.pasteJson'))}
-            placeholderTextColor={theme.textSecondary}
-            value={importText}
-            onChangeText={setImportText}
-            textAlignVertical="top"
-          />
-
-          <TouchableOpacity
-            style={[
-              styles.actionBtn,
-              { backgroundColor: theme.primary, opacity: importing ? 0.6 : 1 },
-            ]}
-            onPress={handleImportJson}
-            disabled={importing}
-          >
-            <Text style={styles.actionBtnText}>{`📥 ${String(t('template.tabImport'))}`}</Text>
-          </TouchableOpacity>
-        </View>
-      )}
-
-      <View style={styles.spacer} />
-
-      {/* QR-Code Share Modal */}
-      <Modal
-        visible={showQr}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setShowQr(false)}
-      >
-        <View style={[styles.qrOverlay, { backgroundColor: theme.overlay }]}>
-          <View style={[styles.qrModal, { backgroundColor: theme.surfaceElevated }]}>
-            <Text style={[styles.qrTitle, { color: theme.text }]}>
-              {String(t('template.qrShareTitle'))}
+            <Text style={[styles.hint, { color: theme.textSecondary }]}>
+              {String(t('template.icsHint'))}
             </Text>
-            <Text style={[styles.qrHint, { color: theme.textSecondary }]}>
-              {qrTooLarge ? String(t('template.qrTooLarge')) : String(t('template.qrShareHint'))}
-            </Text>
-            <View style={styles.qrCodeWrap}>
-              <QRCodeView
-                value={shareString}
-                size={240}
-                tooLargeLabel={String(t('template.qrTooLarge'))}
-              />
-            </View>
+
             <TouchableOpacity
-              style={[styles.actionBtn, { backgroundColor: theme.primary }]}
-              onPress={() => setShowQr(false)}
+              style={[styles.qrBtn, { borderColor: theme.primary }]}
+              onPress={handleShowQr}
             >
-              <Text style={styles.actionBtnText}>{String(t('settings.close'))}</Text>
+              <Text style={[styles.qrBtnText, { color: theme.primary }]}>
+                {String(t('template.qrShareBtn'))}
+              </Text>
             </TouchableOpacity>
           </View>
-        </View>
-      </Modal>
-    </ScrollView>
+        )}
+
+        {/* Import */}
+        {activeSection === 'import' && (
+          <View style={styles.section}>
+            <Text style={[styles.sectionHeader, { color: theme.textSecondary }]}>
+              {String(t('template.importSection'))}
+            </Text>
+            <Text style={[styles.hint, { color: theme.textSecondary }]}>
+              {String(t('template.importHint'))}
+            </Text>
+
+            {Platform.OS === 'web' && (
+              <TouchableOpacity
+                style={[styles.fileBtn, { borderColor: theme.border }]}
+                onPress={handleChooseFile}
+              >
+                <Text style={[styles.fileBtnText, { color: theme.text }]}>
+                  {String(t('template.chooseFile'))}
+                </Text>
+              </TouchableOpacity>
+            )}
+
+            <TextInput
+              style={[
+                styles.jsonInput,
+                { backgroundColor: theme.surface, color: theme.text, borderColor: theme.border },
+              ]}
+              multiline
+              numberOfLines={8}
+              placeholder={String(t('template.pasteJson'))}
+              placeholderTextColor={theme.textSecondary}
+              value={importText}
+              onChangeText={setImportText}
+              textAlignVertical="top"
+            />
+
+            <TouchableOpacity
+              style={[
+                styles.actionBtn,
+                { backgroundColor: theme.primary, opacity: importing ? 0.6 : 1 },
+              ]}
+              onPress={handleImportJson}
+              disabled={importing}
+            >
+              <Text style={styles.actionBtnText}>{`📥 ${String(t('template.tabImport'))}`}</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+
+        <View style={styles.spacer} />
+
+        {/* QR-Code Share Modal */}
+        <Modal
+          visible={showQr}
+          transparent
+          animationType="fade"
+          onRequestClose={() => setShowQr(false)}
+        >
+          <View style={[styles.qrOverlay, { backgroundColor: theme.overlay }]}>
+            <View style={[styles.qrModal, { backgroundColor: theme.surfaceElevated }]}>
+              <Text style={[styles.qrTitle, { color: theme.text }]}>
+                {String(t('template.qrShareTitle'))}
+              </Text>
+              <Text style={[styles.qrHint, { color: theme.textSecondary }]}>
+                {qrTooLarge ? String(t('template.qrTooLarge')) : String(t('template.qrShareHint'))}
+              </Text>
+              <View style={styles.qrCodeWrap}>
+                <QRCodeView
+                  value={shareString}
+                  size={240}
+                  tooLargeLabel={String(t('template.qrTooLarge'))}
+                />
+              </View>
+              <TouchableOpacity
+                style={[styles.actionBtn, { backgroundColor: theme.primary }]}
+                onPress={() => setShowQr(false)}
+              >
+                <Text style={styles.actionBtnText}>{String(t('settings.close'))}</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+      </ScrollView>
+    </View>
   );
 };
 
@@ -402,11 +410,8 @@ const makeStyles = () =>
     container: {
       flex: 1,
     },
-    title: {
-      fontSize: 22,
-      fontWeight: 'bold',
-      padding: 16,
-      paddingBottom: 8,
+    scrollContent: {
+      paddingTop: 16,
     },
     tabRow: {
       flexDirection: 'row',

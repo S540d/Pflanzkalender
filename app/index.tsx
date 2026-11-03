@@ -1,3 +1,3 @@
-import { CalendarScreen } from '../src/screens/CalendarScreen';
+import { NowScreen } from '../src/screens/NowScreen';
 
-export default CalendarScreen;
+export default NowScreen;

@@ -9,14 +9,23 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 ### Hinzugefügt
 
+- Neue Startseite „Jetzt im Garten": die Aufgaben des laufenden Halbmonats zum Abhaken (mit Zähler im Kopf), darunter erledigte Aufgaben und eine Vorschau auf den nächsten Halbmonat; ohne Aufgaben erscheint „Gerade ist Gartenruhe". Der Jahreskalender ist jetzt der zweite Tab; Mehrspalten-Agenda und Journal erreicht man über „Alle anstehenden Aufgaben & Journal".
 - Kalender-Export (.ics): Alle Aktivitäten des laufenden Jahres lassen sich als Ganztagstermine mit Erinnerung (09:00 am Starttag) in Google-, Apple- oder Outlook-Kalender importieren (Vorlagen → Exportieren) (#301)
 - Erledigt-Journal: Aktivitäten in der Agenda pro Jahr abhaken (mit Datum und Notiz), neue Ansicht „Journal" für die erledigten Aktivitäten; die Einträge sind Teil von Export/Import (#302)
 - Einstellung „Mein Garten": Zeitversatz von 1 Monat früher bis 1 Monat später für Kalender und Agenda – wirkt nur auf die Darstellung, gespeicherte Daten bleiben unverändert (#303); der .ics-Export berücksichtigt den Versatz ebenfalls (#305)
 - Mischkultur-Hinweise (gute/schlechte Nachbarn) pro Pflanze in der Pflanzenverwaltung; Orientierungswerte aus gängigen Mischkultur-Tabellen, keine Garantie (#304)
 - Erfolgs-Animation (Checkmark-Puls + Haptic-Feedback) beim Speichern/Löschen einer Aktivität (`EditActivityModal`) sowie beim Hinzufügen (`AddActivityModal`), neue wiederverwendbare `ui/SuccessOverlay`-Komponente
 
+### Behoben
+
+- Dialoge funktionieren jetzt im Web (PWA/Android-App): Beim Löschen einer Pflanze oder Aktivität, beim Import (anhängen/ersetzen) und bei allen Erfolgs- und Fehlermeldungen passierte bisher nichts, weil `Alert.alert` im Web wirkungslos ist. Ein eigener Dialog übernimmt das im Web.
+
 ### Geändert
 
+- Kalender: Schmale Aktivitätsbalken zeigen nur noch das Icon statt eines abgeschnittenen Namens („D…", „Pf…"); eine Legende der Aktivitätstypen steht über dem Raster
+- Pflanzenverwaltung: „Pflanze löschen" steht jetzt im Bearbeiten-Dialog (mit Rückfrage) statt als roter Knopf in jeder Zeile
+- Neues Erscheinungsbild, gemeinsam mit Safe my plants: warme Markenpalette (Papierweiß, Waldgrün, Ocker), Serifenschrift Fraunces für Überschriften, einheitliche Outline-Icons, gedämpfte Aktivitäts- und Kategoriefarben (gelten auch für bestehende Aktivitäten)
+- Einheitlicher Seitenkopf auf allen Screens; die Einstellungen öffnen sich jetzt über das ⋮ im Kopf statt über einen eigenen Tab (5 statt 6 Tabs)
 - `appVersionCode` 13 → 14 (Vorbereitung für Play-Store-Upload mit `targetSdkVersion 36`)
 - CLAUDE.md: Anleitung ergänzt, wie das Android Target API Level (Play-Store-Pflicht ab 31.08.2026: API 36 / Android 16) über die lokal generierte Bubblewrap-Hülle angehoben wird, da `android/` nicht im Repo geführt wird
 

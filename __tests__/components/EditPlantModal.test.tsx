@@ -1,4 +1,5 @@
 import React from 'react';
+import { Alert } from 'react-native';
 import { render, fireEvent } from '@testing-library/react-native';
 import { EditPlantModal } from '../../src/components/EditPlantModal';
 import { Plant } from '../../src/types';
@@ -28,6 +29,10 @@ jest.mock('../../src/contexts/LanguageContext', () => ({
         'plants.fieldCategory': 'Kategorie',
         'plants.editSave': 'Speichern',
         'common.cancel': 'Abbrechen',
+        'plants.deleteTitle': 'Pflanze löschen',
+        'plants.deleteMessage': 'wirklich löschen?',
+        'plants.deleteConfirm': 'Löschen',
+        'plants.deleteCancel': 'Abbrechen',
       };
       return map[key] ?? key;
     },
@@ -177,5 +182,78 @@ describe('EditPlantModal Component', () => {
       />
     );
     expect(getByDisplayValue('Minze')).toBeTruthy();
+  });
+
+  describe('Löschen', () => {
+    it('zeigt „Pflanze löschen" nur, wenn onDelete übergeben wird', async () => {
+      const without = await render(
+        <EditPlantModal visible plant={mockPlant} onClose={mockOnClose} onSave={mockOnSave} />
+      );
+      expect(without.queryByTestId('edit-plant-delete')).toBeNull();
+      await without.unmount();
+
+      const withDelete = await render(
+        <EditPlantModal
+          visible
+          plant={mockPlant}
+          onClose={mockOnClose}
+          onSave={mockOnSave}
+          onDelete={jest.fn()}
+        />
+      );
+      expect(withDelete.getByTestId('edit-plant-delete')).toBeTruthy();
+    });
+
+    it('fragt nach und löscht erst nach Bestätigung, dann schließt der Dialog', async () => {
+      const onDelete = jest.fn();
+      const alertSpy = jest.spyOn(Alert, 'alert').mockImplementation(() => {});
+      const { getByTestId } = await render(
+        <EditPlantModal
+          visible
+          plant={mockPlant}
+          onClose={mockOnClose}
+          onSave={mockOnSave}
+          onDelete={onDelete}
+        />
+      );
+
+      await fireEvent.press(getByTestId('edit-plant-delete'));
+
+      expect(alertSpy).toHaveBeenCalledWith(
+        'Pflanze löschen',
+        '"Tomate" wirklich löschen?',
+        expect.any(Array)
+      );
+      expect(onDelete).not.toHaveBeenCalled();
+
+      const buttons = alertSpy.mock.calls[0][2] as { style?: string; onPress?: () => void }[];
+      buttons.find((b) => b.style === 'destructive')?.onPress?.();
+
+      expect(onDelete).toHaveBeenCalledWith('plant-1');
+      expect(mockOnClose).toHaveBeenCalledTimes(1);
+      alertSpy.mockRestore();
+    });
+
+    it('löscht nicht, wenn die Rückfrage abgebrochen wird', async () => {
+      const onDelete = jest.fn();
+      const alertSpy = jest.spyOn(Alert, 'alert').mockImplementation(() => {});
+      const { getByTestId } = await render(
+        <EditPlantModal
+          visible
+          plant={mockPlant}
+          onClose={mockOnClose}
+          onSave={mockOnSave}
+          onDelete={onDelete}
+        />
+      );
+
+      await fireEvent.press(getByTestId('edit-plant-delete'));
+      const buttons = alertSpy.mock.calls[0][2] as { style?: string; onPress?: () => void }[];
+      buttons.find((b) => b.style === 'cancel')?.onPress?.();
+
+      expect(onDelete).not.toHaveBeenCalled();
+      expect(mockOnClose).not.toHaveBeenCalled();
+      alertSpy.mockRestore();
+    });
   });
 });

@@ -172,7 +172,7 @@ export const AddActivityModal: React.FC<AddActivityModalProps> = ({
                           style={[
                             styles.monthOptionText,
                             {
-                              color: startMonth === month.value ? '#FFFFFF' : theme.text,
+                              color: startMonth === month.value ? theme.onPrimary : theme.text,
                             },
                           ]}
                         >
@@ -217,7 +217,7 @@ export const AddActivityModal: React.FC<AddActivityModalProps> = ({
                             {
                               color:
                                 endMonth === month.value
-                                  ? '#FFFFFF'
+                                  ? theme.onPrimary
                                   : month.value < startMonth
                                     ? theme.textSecondary
                                     : theme.text,

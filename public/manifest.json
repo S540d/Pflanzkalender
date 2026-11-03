@@ -40,7 +40,7 @@
       "name": "Kalender",
       "short_name": "Kalender",
       "description": "Pflanzkalender anzeigen",
-      "url": "/Pflanzkalender/",
+      "url": "/Pflanzkalender/calendar",
       "icons": [
         {
           "src": "/Pflanzkalender/icon-192.png",

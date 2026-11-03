@@ -21,7 +21,7 @@ export const CATEGORY_TABS: CategoryTab[] = [
     labelEn: 'All',
     icon: '🌿',
     iconName: 'plant',
-    color: '#4CAF50',
+    color: '#2F5D43', // Waldgrün
   },
   {
     value: 'vegetable',
@@ -29,7 +29,7 @@ export const CATEGORY_TABS: CategoryTab[] = [
     labelEn: 'Vegetables',
     icon: '🥦',
     iconName: 'vegetable',
-    color: '#F57C00',
+    color: '#B5703F', // Kürbis gedämpft
   },
   {
     value: 'flower',
@@ -37,7 +37,7 @@ export const CATEGORY_TABS: CategoryTab[] = [
     labelEn: 'Flowers',
     icon: '🌸',
     iconName: 'flower',
-    color: '#E91E63',
+    color: '#B4566E', // Altrosa
   },
   {
     value: 'tree',
@@ -45,6 +45,6 @@ export const CATEGORY_TABS: CategoryTab[] = [
     labelEn: 'Trees',
     icon: '🌳',
     iconName: 'tree',
-    color: '#2E7D32',
+    color: '#4E7A4A', // Moosgrün
   },
 ];

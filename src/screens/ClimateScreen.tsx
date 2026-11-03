@@ -5,6 +5,7 @@ import { useLanguage } from '../contexts/LanguageContext';
 import { usePlants } from '../contexts/PlantContext';
 import { ClimateRecommendation, RECOMMENDATIONS } from '../constants/climateRecommendations';
 import { Card, Icon, type IconName } from '../components/ui';
+import { ScreenHeader } from '../components/ScreenHeader';
 import { radius, spacing } from '../constants/designTokens';
 
 type FilterCategory = 'all' | 'vegetable' | 'flower' | 'tree';
@@ -105,11 +106,9 @@ export const ClimateScreen: React.FC = () => {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
+      <ScreenHeader title={titleText} subtitle={subtitleText} />
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         <View style={styles.content}>
-          <Text style={[styles.title, { color: theme.text }]}>{titleText}</Text>
-          <Text style={[styles.subtitle, { color: theme.textSecondary }]}>{subtitleText}</Text>
-
           {/* Filter Tabs */}
           <ScrollView
             horizontal
@@ -132,8 +131,10 @@ export const ClimateScreen: React.FC = () => {
                   ]}
                   accessibilityLabel={language === 'de' ? tab.de : tab.en}
                 >
-                  <Icon name={tab.icon} size={16} color={isActive ? '#FFFFFF' : theme.text} />
-                  <Text style={[styles.tabLabel, { color: isActive ? '#fff' : theme.text }]}>
+                  <Icon name={tab.icon} size={16} color={isActive ? theme.onPrimary : theme.text} />
+                  <Text
+                    style={[styles.tabLabel, { color: isActive ? theme.onPrimary : theme.text }]}
+                  >
                     {language === 'de' ? tab.de : tab.en}
                   </Text>
                 </TouchableOpacity>
@@ -207,7 +208,7 @@ export const ClimateScreen: React.FC = () => {
                       styles.addButton,
                       {
                         backgroundColor: justAdded
-                          ? '#4CAF50'
+                          ? theme.success
                           : inGarden
                             ? theme.border
                             : theme.primary,
@@ -218,7 +219,7 @@ export const ClimateScreen: React.FC = () => {
                     <Text
                       style={[
                         styles.addButtonText,
-                        { color: inGarden ? theme.textSecondary : '#fff' },
+                        { color: inGarden ? theme.textSecondary : theme.onPrimary },
                       ]}
                     >
                       {justAdded ? addedLabel : inGarden ? alreadyLabel : addLabel}
@@ -243,18 +244,6 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: '700',
-    marginBottom: 6,
-    textAlign: 'center',
-  },
-  subtitle: {
-    fontSize: 14,
-    textAlign: 'center',
-    marginBottom: 20,
-    lineHeight: 20,
   },
   tabsScroll: {
     marginBottom: 20,

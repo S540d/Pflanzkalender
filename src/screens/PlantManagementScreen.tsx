@@ -1,13 +1,5 @@
 import React, { useState, useMemo, useCallback } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-  Alert,
-  TextInput,
-} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput } from 'react-native';
 import { useFocusEffect } from 'expo-router';
 import { useTheme } from '../hooks/useTheme';
 import { usePlants } from '../contexts/PlantContext';
@@ -22,6 +14,7 @@ import { getCompanions } from '../constants/companionPlanting';
 import { CategoryFilter } from '../constants/categoryTabs';
 import { CategoryTabBar } from '../components/CategoryTabBar';
 import { Button, Card, Icon } from '../components/ui';
+import { ScreenHeader } from '../components/ScreenHeader';
 import { radius, spacing } from '../constants/designTokens';
 
 export const PlantManagementScreen: React.FC = () => {
@@ -97,26 +90,13 @@ export const PlantManagementScreen: React.FC = () => {
     setEditingPlant(null);
   };
 
-  const handleDeletePlant = (plantId: string, plantName: string) => {
-    const message = `"${plantName}" ${t('plants.deleteMessage') as string}`;
-    Alert.alert(t('plants.deleteTitle') as string, message, [
-      { text: t('plants.deleteCancel') as string, style: 'cancel' },
-      {
-        text: t('plants.deleteConfirm') as string,
-        style: 'destructive',
-        onPress: () => deletePlant(plantId),
-      },
-    ]);
-  };
-
   const isFiltered = searchQuery.trim().length > 0 || activeCategory !== 'all';
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
+      <ScreenHeader title={t('plants.title') as string} />
       <ScrollView style={styles.scrollView}>
         <View style={styles.content}>
-          <Text style={[styles.title, { color: theme.text }]}>{t('plants.title') as string}</Text>
-
           <TextInput
             style={[
               styles.searchInput,
@@ -230,17 +210,6 @@ export const PlantManagementScreen: React.FC = () => {
                       >
                         <Icon name="edit" size={18} color={theme.primary} />
                       </TouchableOpacity>
-                      <TouchableOpacity
-                        style={[
-                          styles.actionButton,
-                          { backgroundColor: theme.error, borderColor: theme.error },
-                        ]}
-                        onPress={() => handleDeletePlant(plant.id, plant.name)}
-                        accessibilityLabel={`${t('plants.deleteTitle') as string}: ${getPlantDisplayName(plant.name, language)}`}
-                        accessibilityRole="button"
-                      >
-                        <Icon name="delete" size={18} color="#FFFFFF" />
-                      </TouchableOpacity>
                     </View>
                   </Card>
                 );
@@ -262,6 +231,7 @@ export const PlantManagementScreen: React.FC = () => {
           visible={true}
           plant={editingPlant}
           onClose={() => setEditingPlant(null)}
+          onDelete={deletePlant}
           onSave={handleEditPlant}
         />
       )}
@@ -278,12 +248,6 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: spacing.md,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: '700',
-    marginBottom: spacing.md,
-    textAlign: 'center',
   },
   searchInput: {
     padding: spacing.sm,

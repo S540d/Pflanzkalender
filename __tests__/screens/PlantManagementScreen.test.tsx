@@ -76,8 +76,8 @@ describe('PlantManagementScreen', () => {
     expect(emptyOrPlants.length).toBeGreaterThanOrEqual(1);
   });
 
-  it('shows Alert when delete button is pressed', async () => {
-    const alertSpy = jest.spyOn(Alert, 'alert');
+  it('hat keinen Löschen-Knopf mehr in der Zeile; Löschen läuft über den Bearbeiten-Dialog', async () => {
+    const alertSpy = jest.spyOn(Alert, 'alert').mockImplementation(() => {});
     const AsyncStorage = require('@react-native-async-storage/async-storage');
 
     const testPlant = JSON.stringify([
@@ -98,12 +98,18 @@ describe('PlantManagementScreen', () => {
       key === '@Pflanzkalender:plants' ? Promise.resolve(testPlant) : Promise.resolve(null)
     );
 
-    const { findByLabelText } = await render(<PlantManagementScreen />, { wrapper: Wrapper });
+    const { findByLabelText, queryByLabelText, findByTestId } = await render(
+      <PlantManagementScreen />,
+      { wrapper: Wrapper }
+    );
 
-    // Delete-Button wird per accessibilityLabel gefunden (Vektor-Icon statt Emoji).
-    const deleteButton = await findByLabelText(/löschen|delete/i, {}, { timeout: 3000 });
-    await fireEvent.press(deleteButton);
+    // Edit-Knopf der Zeile; einen Löschen-Knopf in der Zeile gibt es nicht mehr.
+    const editButton = await findByLabelText(/bearbeiten|edit/i, {}, { timeout: 3000 });
+    expect(queryByLabelText(/Pflanze löschen: |Delete plant: /i)).toBeNull();
+    await fireEvent.press(editButton);
 
+    // Im Bearbeiten-Dialog: „Pflanze löschen" fragt nach.
+    await fireEvent.press(await findByTestId('edit-plant-delete'));
     expect(alertSpy).toHaveBeenCalled();
     alertSpy.mockRestore();
     AsyncStorage.getItem.mockResolvedValue(null);

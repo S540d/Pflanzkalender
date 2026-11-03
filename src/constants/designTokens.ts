@@ -8,6 +8,7 @@
  *   import { spacing, radius, typography, shadow } from '@/constants/designTokens';
  */
 import { Platform, type TextStyle, type ViewStyle } from 'react-native';
+import { brandFonts, brandShape } from './brandPalette';
 
 /** 4px-Basis-Raster. */
 export const spacing = {
@@ -23,8 +24,8 @@ export const spacing = {
 /** Eckenradien – von dezent (Inputs) bis Pille (Chips). */
 export const radius = {
   sm: 6,
-  md: 10,
-  lg: 16,
+  md: brandShape.radiusControl,
+  lg: brandShape.radiusCard,
   xl: 20,
   pill: 999,
 } as const;
@@ -34,9 +35,11 @@ export const radius = {
  * bessere Lesbarkeit. `fontWeight` als string-Literal für RN-Typkompatibilität.
  */
 export const typography = {
-  h1: { fontSize: 26, fontWeight: '700', lineHeight: 32 },
-  h2: { fontSize: 21, fontWeight: '700', lineHeight: 28 },
-  h3: { fontSize: 17, fontWeight: '600', lineHeight: 24 },
+  // Überschriften in der Display-Schrift (Fraunces, gemeinsam mit Safe my plants).
+  // Kein fontWeight: das Gewicht steckt im Schriftschnitt.
+  h1: { fontSize: 28, fontFamily: brandFonts.display, lineHeight: 36 },
+  h2: { fontSize: 22, fontFamily: brandFonts.display, lineHeight: 30 },
+  h3: { fontSize: 18, fontFamily: brandFonts.display, lineHeight: 24 },
   body: { fontSize: 16, fontWeight: '400', lineHeight: 23 },
   bodyStrong: { fontSize: 16, fontWeight: '600', lineHeight: 23 },
   bodySm: { fontSize: 14, fontWeight: '400', lineHeight: 20 },
@@ -52,7 +55,7 @@ export type TypographyVariant = keyof typeof typography;
  */
 export type ShadowLevel = 0 | 1 | 2 | 3;
 
-export function shadow(level: ShadowLevel, color = '#000000'): ViewStyle {
+export function shadow(level: ShadowLevel, color = '#2B2418'): ViewStyle {
   if (level === 0) {
     return Platform.OS === 'android' ? { elevation: 0 } : {};
   }
