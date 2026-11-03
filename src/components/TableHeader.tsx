@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, type ScrollViewInstance } from 'react-native';
 import { useTheme } from '../hooks/useTheme';
 import { useLanguage } from '../contexts/LanguageContext';
 import { radius } from '../constants/designTokens';
@@ -10,7 +10,7 @@ interface TableHeaderProps {
   currentHalfMonth: number;
   cellWidth?: number;
   onHeaderScroll?: (offset: number) => void;
-  headerScrollRef?: React.RefObject<ScrollView | null>;
+  headerScrollRef?: React.RefObject<ScrollViewInstance | null>;
 }
 
 export const TableHeader: React.FC<TableHeaderProps> = ({
@@ -23,7 +23,7 @@ export const TableHeader: React.FC<TableHeaderProps> = ({
 }) => {
   const { theme } = useTheme();
   const { t } = useLanguage();
-  const localRef = useRef<ScrollView>(null);
+  const localRef = useRef<ScrollViewInstance>(null);
   const ref = headerScrollRef || localRef;
 
   return (

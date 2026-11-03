@@ -148,6 +148,7 @@ module.exports = [
       'coverage/**',
       'scripts/**',
       'jest.config.js',
+      'jest.setup.js',
       '__mocks__/**',
     ],
   },
