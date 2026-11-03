@@ -32,36 +32,13 @@ npm start
 - [ ] Mobile Ansicht funktioniert
 - [ ] PWA Features funktionieren
 
-#### 2️⃣ Testing Environment Deploy
-
-```bash
-# Merge in testing branch für automatisches Deploy
-git checkout testing
-git merge <dein-branch-name>
-git push origin testing
-```
-
-**Automatisch passiert:**
-
-- ✅ Deploy auf `gh-pages-testing` Branch
-- ✅ Verfügbar unter: https://s540d.github.io/Pflanzkalender-testing/
-- ✅ Testing-Marker wird hinzugefügt
-
-**Partner testet online:**
-
-- [ ] Testing URL funktioniert
-- [ ] Alle Features funktionieren wie lokal
-- [ ] Performance ist gut
-- [ ] Service Worker funktioniert
-- [ ] Cache wird korrekt aktualisiert
-
-#### 3️⃣ Partner Review & Approval
+#### 2️⃣ Partner Review & Approval
 
 - [ ] **Partner hat approved** (erforderlich für Merge)
 - [ ] Alle Checkboxen sind abgehakt
 - [ ] Keine offenen Conversations
 
-#### 4️⃣ Production Deploy
+#### 3️⃣ Production Deploy
 
 Nach Approval: **Automatischer Deploy** auf `gh-pages` (Production) durch GitHub Action
 
@@ -86,6 +63,5 @@ Nach Approval: **Automatischer Deploy** auf `gh-pages` (Production) durch GitHub
 Dieser PR folgt dem automatisierten Test-Workflow aus Issue #74:
 
 - ✅ Kein direkter Deploy auf Production
-- ✅ Testing Environment verfügbar
 - ✅ Partner Approval erforderlich
 - ✅ Branch Protection aktiv

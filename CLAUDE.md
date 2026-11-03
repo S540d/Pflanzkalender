@@ -127,7 +127,7 @@ Jedes Test-Pflanzenobjekt braucht **alle** Pflichtfelder aus `PlantSchema` (inkl
 ### Expo Router + GitHub Pages
 
 - Entry-Point ist `expo-router/entry`. Kein `App.tsx`/`index.ts`; Routen sind Dateien in `app/`.
-- GitHub-Pages-Subpfad kommt von `experiments.baseUrl` in `app.config.js` (Prod: `/Pflanzkalender`, Testing via `TESTING=true`: `/Pflanzkalender-testing`) – **nicht** von `scripts/fix-paths.js` (dessen Regex-Rewrites laufen leer, nicht „reparieren").
+- GitHub-Pages-Subpfad kommt von `experiments.baseUrl` in `app.config.js` (`/Pflanzkalender`) – **nicht** von `scripts/fix-paths.js` (dessen Regex-Rewrites laufen leer, nicht „reparieren").
 - `web.output: 'single'` (SPA). Deep-Links funktionieren auf GitHub Pages nur, weil `dist/index.html` im Deploy nach `dist/404.html` kopiert wird – diesen Copy-Schritt nie entfernen.
 - Settings-Tab-Icon ist `⋮` (U+22EE), nicht das Zahnrad-Emoji – CI bricht sonst ab.
 
@@ -165,15 +165,15 @@ Bleiben Feature-Branches nach einem Squash-Merge im Remote stehen, schlägt jede
 main (production) ← testing ← feature/issue-XXX
 ```
 
-| Branch              | Zweck                                                                                         |
-| ------------------- | --------------------------------------------------------------------------------------------- |
-| `main`              | Production                                                                                    |
-| `testing`           | Integration + Deploy auf `gh-pages-testing` → https://s540d.github.io/Pflanzkalender-testing/ |
-| `feature/issue-XXX` | Feature-Branches (kurzlebig, nach Merge löschen)                                              |
+| Branch              | Zweck                                            |
+| ------------------- | ------------------------------------------------ |
+| `main`              | Production                                       |
+| `testing`           | Integration (kein eigenes Deployment)            |
+| `feature/issue-XXX` | Feature-Branches (kurzlebig, nach Merge löschen) |
 
 Workflow: `feature/issue-XXX` → PR auf `testing` → CI grün → Merge (squash + delete-branch) → PR `testing → main`.
 
-**Deploy-Trigger:** `deploy-production.yml` bei Push auf `main` (+ `workflow_dispatch`), `deploy-testing.yml` bei Push auf `testing` (+ `workflow_dispatch`). `scripts/add-service-worker.js` injiziert die SW-Registrierung im Production-Deploy – nicht deaktivieren, sonst sehen Nutzer mit altem SW immer die gecachte Version.
+**Deploy-Trigger:** `deploy-production.yml` bei Push auf `main` (+ `workflow_dispatch`). `scripts/add-service-worker.js` injiziert die SW-Registrierung im Production-Deploy – nicht deaktivieren, sonst sehen Nutzer mit altem SW immer die gecachte Version.
 
 ---
 
