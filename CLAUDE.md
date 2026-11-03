@@ -21,8 +21,8 @@ Repo: https://github.com/s540d/Pflanzkalender
 
 ## Tech Stack
 
-Expo `^57.0.18`, React `19.2.3`, React Native `0.86.3`, React Native Web `~0.21.0`,
-TypeScript `~6.0.3`, expo-router `~57.0.17`, AsyncStorage `^3.1.1`.
+Expo `^58.0.22`, React `19.3.1`, React Native `0.88.1`, React Native Web `~0.21.4`,
+TypeScript `~6.0.3`, expo-router `~58.0.29`, AsyncStorage `^3.1.1`.
 Build: `expo export --platform web` → Metro Bundler. Deploy: GitHub Pages via
 `gh-pages` unter `/Pflanzkalender/`.
 

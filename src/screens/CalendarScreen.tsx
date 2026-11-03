@@ -1,5 +1,12 @@
 import React, { useState, useMemo, useRef } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Dimensions, ScrollView } from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Dimensions,
+  type ScrollViewInstance,
+} from 'react-native';
 import { useTheme } from '../hooks/useTheme';
 import { radius, spacing } from '../constants/designTokens';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -31,8 +38,8 @@ export const CalendarScreen: React.FC = () => {
   const [selectedEndMonth, setSelectedEndMonth] = useState<number | undefined>(undefined);
   const [activeCategory, setActiveCategory] = useState<CategoryFilter>('all');
   const [zoomLevel, setZoomLevel] = useState(2);
-  const fixedScrollRef = useRef<ScrollView>(null);
-  const headerScrollRef = useRef<ScrollView>(null);
+  const fixedScrollRef = useRef<ScrollViewInstance>(null);
+  const headerScrollRef = useRef<ScrollViewInstance>(null);
 
   const { width, height } = Dimensions.get('window');
   const isPortrait = height > width;

@@ -1,5 +1,12 @@
 import React, { useRef } from 'react';
-import { View, Text, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  ActivityIndicator,
+  type ScrollViewInstance,
+} from 'react-native';
 import { useTheme } from '../hooks/useTheme';
 import { useLanguage } from '../contexts/LanguageContext';
 import { Plant } from '../types';
@@ -25,8 +32,8 @@ interface PlantRowsContainerProps {
   onPressMonthRange: (plantId: string, startMonth: number, endMonth: number) => void;
   onMoveActivity?: (plantId: string, activityId: string, deltaUnits: number) => void;
   onFixedScrollOffset?: (offset: number) => void;
-  fixedScrollRef?: React.RefObject<ScrollView | null>;
-  headerScrollRef?: React.RefObject<ScrollView | null>;
+  fixedScrollRef?: React.RefObject<ScrollViewInstance | null>;
+  headerScrollRef?: React.RefObject<ScrollViewInstance | null>;
   loading?: boolean;
 }
 
@@ -47,7 +54,7 @@ export const PlantRowsContainer: React.FC<PlantRowsContainerProps> = ({
 }) => {
   const { theme } = useTheme();
   const { language, t } = useLanguage();
-  const localFixedScrollRef = useRef<ScrollView>(null);
+  const localFixedScrollRef = useRef<ScrollViewInstance>(null);
   const cellWidth = cellWidthProp ?? (isPortrait ? 60 : 40);
   const fixedScrollRef = externalFixedScrollRef || localFixedScrollRef;
 

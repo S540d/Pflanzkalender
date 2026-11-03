@@ -215,7 +215,7 @@ describe('TemplateScreen', () => {
     const alertSpy = jest.spyOn(Alert, 'alert').mockImplementation((_title, _msg, buttons) => {
       if (Array.isArray(buttons)) {
         const appendBtn = buttons.find((b) => /Anhängen|Append/i.test(String(b.text)));
-        appendHandler = appendBtn?.onPress ?? undefined;
+        appendHandler = (appendBtn?.onPress as (() => void) | undefined) ?? undefined;
       }
     });
 
