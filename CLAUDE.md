@@ -153,9 +153,9 @@ in Patch-Skripten (macOS-sed ersetzt sonst lautlos nichts). Vollständige
 Reihenfolge, Verifikationsbefehle und Standard-Runbook für einen reinen
 Play-Store-Build: [`docs/TWA-BUILD.md`](docs/TWA-BUILD.md).
 
-### Squash-Merge: Feature-Branches nach Merge löschen
+### Merge-Methode: Merge-Commit (kein Squash)
 
-Bleiben Feature-Branches nach einem Squash-Merge im Remote stehen, schlägt jeder spätere Merge oder Rebase mit ihnen mit add/add-Konflikten fehl – Git erkennt die Inhaltsgleichheit der squash-erzeugten Commits nicht. **Immer Branch nach Merge löschen.** Falls schon zu spät: Diff `branch..main` als Patch ausschneiden, auf einen frischen Branch von main anwenden, alten Branch wegwerfen. Dieselbe Falle betrifft auch Release-PRs `testing → main` – siehe [`docs/private/INCIDENTS.md`](docs/private/INCIDENTS.md) für zwei konkrete Fälle und die Standard-Lösung.
+Squash-Merges sind im Repository bewusst deaktiviert; PRs (Feature → `testing` und Release `testing → main`) werden per **Merge-Commit** gemergt. Hintergrund: Squash erzeugt neue Commits, die Git nicht als inhaltsgleich erkennt – stehengebliebene Branches und Release-PRs liefen dadurch in add/add-Konflikte (Fälle in [`docs/private/INCIDENTS.md`](docs/private/INCIDENTS.md)). Feature-Branches trotzdem nach dem Merge löschen.
 
 ---
 
@@ -171,7 +171,7 @@ main (production) ← testing ← feature/issue-XXX
 | `testing`           | Integration (kein eigenes Deployment)            |
 | `feature/issue-XXX` | Feature-Branches (kurzlebig, nach Merge löschen) |
 
-Workflow: `feature/issue-XXX` → PR auf `testing` → CI grün → Merge (squash + delete-branch) → PR `testing → main`.
+Workflow: `feature/issue-XXX` → PR auf `testing` → CI grün → Merge-Commit + Branch löschen → PR `testing → main`.
 
 **Deploy-Trigger:** `deploy-production.yml` bei Push auf `main` (+ `workflow_dispatch`). `scripts/add-service-worker.js` injiziert die SW-Registrierung im Production-Deploy – nicht deaktivieren, sonst sehen Nutzer mit altem SW immer die gecachte Version.
 
