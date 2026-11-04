@@ -94,7 +94,7 @@ Activity {
 
 ### Routen und Tabs
 
-Startseite ist `app/index.tsx` → `NowScreen` („Jetzt im Garten", Tab „Jetzt"); der Jahreskalender liegt unter `app/calendar.tsx`. `agenda` (Mehrspalten-Agenda + Journal) und `settings` sind per `href: null` aus der Tab-Leiste ausgeblendet, aber als Routen erreichbar (`router.push('/agenda')`; Einstellungen über das ⋮ im `ScreenHeader`). Aufgabenkarte (`ActivityCard`), Aufgabenlogik (`utils/agendaActivities.ts`) und Abhak-/Editor-Hook (`useCompletionEditor`) teilen sich `NowScreen` und `AgendaScreen`.
+Startseite ist `app/index.tsx` → `NowScreen` („Jetzt im Garten", Tab „Jetzt"); der Jahreskalender liegt unter `app/calendar.tsx`. `agenda` (Mehrspalten-Agenda + Journal) und `settings` sind per `HIDDEN_TAB` (`tabBarItemStyle: { display: 'none' }`, `tabBarButton: () => null`) aus der Tab-Leiste ausgeblendet, aber als Routen erreichbar – **nicht `href: null`**: seit expo-router 58 macht das den Tab `hidden`, Navigation und Deep-Links landen dann auf der Startseite (#340) (`router.push('/agenda')`; Einstellungen über das ⋮ im `ScreenHeader`). Aufgabenkarte (`ActivityCard`), Aufgabenlogik (`utils/agendaActivities.ts`) und Abhak-/Editor-Hook (`useCompletionEditor`) teilen sich `NowScreen` und `AgendaScreen`.
 
 ### Designsprache (gemeinsam mit Safe my plants)
 
