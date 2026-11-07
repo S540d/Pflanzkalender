@@ -1,9 +1,39 @@
-# Dependabot – kostenlose Dependency-Updates + Security-Alerts.
-# Ersetzt zusammen mit codeql.yml den kostenpflichtigen Anthropic-API-Scan.
+# Dependabot – Variante für Expo-/React-Native-Projekte.
+# Quelle: project-templates/automation-templates/dependabot.expo.yml
+#
+# Basis ist dependabot.yml (gleiche Drosselung, gleiche zwei npm-Gruppen,
+# Kommentare dort). Zusätzlich: ignore für SDK-gebundene Pakete
+# (Energy_Price_Germany#543, DrawFromMemory#389).
+#
+# Warum: Dependabot kennt die Bindung an das Expo-SDK nicht. Es hebt
+# Pakete über den Stand von bundledNativeModules.json hinaus an (expo-router 58
+# auf SDK 55, async-storage 3 obwohl auch SDK 58 bei 2.x bleibt) — solche PRs
+# sind selbst nach einem SDK-Upgrade inhaltlich falsch.
+# SDK-gebundene Pakete werden NUR im Rahmen eines geplanten SDK-Upgrades
+# angehoben: `npx expo install expo@^<N> && npx expo install --fix`, mit
+# Gerätetest, als eigenes Issue.
+#
+# Was weiter über Dependabot läuft:
+#   - Patches aller Pakete (auch react-native-*, react) – innerhalb eines SDK
+#     unkritisch
+#   - Minors von expo/expo-* (SDK-intern, z. B. 55.0.6 → 55.1.0)
+#   - Dev-Tooling (eslint, jest, prettier …) in npm-minor-patch / npm-major
+#
+# Bei react-native (0.x) sind Minor-Sprünge breaking (0.83 → 0.88), bei
+# react / react-native-* hängen Minors am SDK – deshalb dort Minor mit ignorieren.
+#
+# Security-Updates sind davon NICHT betroffen (GitHub-Doku, Stand 2026-11):
+# update-types wirkt nur auf Version-Updates, und mit gesetztem target-branch
+# gilt die ganze Konfiguration nicht für Security-PRs. Die kommen also weiter,
+# allerdings gegen main (Umleitung nach testing: siehe project-templates#185).
+# Ein Security-Fix, der nur per SDK-Major lösbar ist, wird über das Audit-Gate
+# befristet erlaubt und mit dem SDK-Upgrade aufgelöst.
+#
+# Repo-spezifische Zusätze (z. B. typescript-Major wegen ts-jest-peer) unten
+# im ignore-Block mit Begründung + Issue-Verweis ergänzen.
 
 version: 2
 updates:
-  # GitHub-Actions-Versionen (gilt für ALLE Repos, auch ohne package.json).
   - package-ecosystem: 'github-actions'
     directory: '/'
     target-branch: 'testing'
@@ -18,7 +48,6 @@ updates:
         patterns:
           - '*'
 
-  # NPM/Yarn/PNPM-Abhängigkeiten.
   - package-ecosystem: 'npm'
     directory: '/'
     target-branch: 'testing'
@@ -28,23 +57,57 @@ updates:
     commit-message:
       prefix: 'chore'
     groups:
-      # Kein update-types-Filter → Major landet mit im Sammel-PR.
-      npm-all:
+      # Minor/Patch gesammelt – blockiert nicht mehr durch einen einzelnen Major.
+      npm-minor-patch:
+        update-types: ['minor', 'patch']
         patterns:
           - '*'
-    # Majors gekoppelter Toolchain aussetzen (Issue project-templates#173): typescript 7 und Expo-/RN-Pakete laufen mit dem SDK, nicht einzeln (PR #297: expo-router 58 vs. expo 57, Typfehler). Per Expo-SDK-Upgrade heben, dann entfernen. react-native ist 0.x – dort ist Minor = Breaking (PR #297: RN 0.87 vs. Expo 57 → RN 0.86.3).
+      # Majors gesammelt – Breaking Changes stehen im PR-Body, dort prüfen.
+      npm-major:
+        update-types: ['major']
+        patterns:
+          - '*'
     ignore:
-      - dependency-name: 'typescript'
-        update-types: ['version-update:semver-major']
+      # ── Expo-SDK: Majors nur per SDK-Upgrade ────────────────────────────
       - dependency-name: 'expo'
         update-types: ['version-update:semver-major']
       - dependency-name: 'expo-*'
         update-types: ['version-update:semver-major']
+      - dependency-name: '@expo/*'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'babel-preset-expo'
+        update-types: ['version-update:semver-major']
       - dependency-name: 'jest-expo'
         update-types: ['version-update:semver-major']
+      # ── React / React Native: Major + Minor ans SDK gebunden ────────────
+      - dependency-name: 'react'
+        update-types: ['version-update:semver-major', 'version-update:semver-minor']
+      - dependency-name: 'react-dom'
+        update-types: ['version-update:semver-major', 'version-update:semver-minor']
+      - dependency-name: 'react-test-renderer'
+        update-types: ['version-update:semver-major', 'version-update:semver-minor']
+      - dependency-name: '@types/react'
+        update-types: ['version-update:semver-major', 'version-update:semver-minor']
       - dependency-name: 'react-native'
         update-types: ['version-update:semver-major', 'version-update:semver-minor']
-      - dependency-name: 'react-native-*'
-        update-types: ['version-update:semver-major']
       - dependency-name: '@react-native/*'
         update-types: ['version-update:semver-major', 'version-update:semver-minor']
+      # ── Native Module aus bundledNativeModules.json ─────────────────────
+      # Generische Muster statt Paketliste, damit neue Module automatisch
+      # erfasst sind. Nebenwirkung: auch react-native-web hängt am SDK – passt.
+      - dependency-name: 'react-native-*'
+        update-types: ['version-update:semver-major', 'version-update:semver-minor']
+      - dependency-name: '@react-native-async-storage/*'
+        update-types: ['version-update:semver-major', 'version-update:semver-minor']
+      - dependency-name: '@react-native-community/*'
+        update-types: ['version-update:semver-major', 'version-update:semver-minor']
+      - dependency-name: '@react-native-picker/*'
+        update-types: ['version-update:semver-major', 'version-update:semver-minor']
+      - dependency-name: '@shopify/react-native-skia'
+        update-types: ['version-update:semver-major', 'version-update:semver-minor']
+      - dependency-name: 'lottie-react-native'
+        update-types: ['version-update:semver-major', 'version-update:semver-minor']
+      # ── Repo-spezifisch (mit Begründung + Issue) ────────────────────────
+      # typescript-Major aussetzen (Issue project-templates#173, PR #297: Typfehler mit TS 7). Entfernen, sobald die Toolchain TS 7 unterstützt.
+      - dependency-name: 'typescript'
+        update-types: ['version-update:semver-major']
