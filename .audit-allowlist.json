@@ -1,0 +1,4 @@
+{
+  "_comment": "Befristete Ausnahmen für scripts/audit-gate.mjs (Vorlage: DrawFromMemory, project-templates#171). Nur Findings ohne kurzfristigen Fix aufnehmen, jeweils mit Begründung und Ablaufdatum. Nach Ablauf schlägt das Gate fehl -> neu bewerten.",
+  "advisories": []
+}
