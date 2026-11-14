@@ -37,60 +37,60 @@
 
 version: 2
 updates:
-  - package-ecosystem: "github-actions"
-    directory: "/"
-    target-branch: "testing"
+  - package-ecosystem: 'github-actions'
+    directory: '/'
+    target-branch: 'testing'
     schedule:
-      interval: "monthly"
+      interval: 'monthly'
     open-pull-requests-limit: 5
     commit-message:
-      prefix: "ci"
+      prefix: 'ci'
     groups:
       # Kein update-types-Filter → Major landet mit im Sammel-PR.
       actions-all:
         patterns:
-          - "*"
+          - '*'
 
-  - package-ecosystem: "npm"
-    directory: "/"
-    target-branch: "testing"
+  - package-ecosystem: 'npm'
+    directory: '/'
+    target-branch: 'testing'
     schedule:
-      interval: "monthly"
+      interval: 'monthly'
     open-pull-requests-limit: 5
     commit-message:
-      prefix: "chore"
+      prefix: 'chore'
     groups:
       # Minor/Patch gesammelt – ein PR pro Monat.
       npm-minor-patch:
-        update-types: ["minor", "patch"]
+        update-types: ['minor', 'patch']
         patterns:
-          - "*"
+          - '*'
     ignore:
       # ── Majors nie über Dependabot (Major-Report, s. dependabot.yml) ────
-      - dependency-name: "*"
-        update-types: ["version-update:semver-major"]
+      - dependency-name: '*'
+        update-types: ['version-update:semver-major']
       # ── SDK-gebunden: keine Updates (ohne update-types = alle) ──────────
       # Expo selbst
-      - dependency-name: "expo"
-      - dependency-name: "expo-*"
-      - dependency-name: "@expo/*"
-      - dependency-name: "babel-preset-expo"
-      - dependency-name: "jest-expo"
-      - dependency-name: "eslint-config-expo"
+      - dependency-name: 'expo'
+      - dependency-name: 'expo-*'
+      - dependency-name: '@expo/*'
+      - dependency-name: 'babel-preset-expo'
+      - dependency-name: 'jest-expo'
+      - dependency-name: 'eslint-config-expo'
       # React / React Native (exakt gepinnt; Test-Renderer + Typen laufen mit)
-      - dependency-name: "react"
-      - dependency-name: "react-dom"
-      - dependency-name: "react-test-renderer"
-      - dependency-name: "@types/react"
-      - dependency-name: "react-native"
-      - dependency-name: "@react-native/*"
+      - dependency-name: 'react'
+      - dependency-name: 'react-dom'
+      - dependency-name: 'react-test-renderer'
+      - dependency-name: '@types/react'
+      - dependency-name: 'react-native'
+      - dependency-name: '@react-native/*'
       # Native Module aus bundledNativeModules.json. Generische Muster statt
       # Paketliste, damit neue Module automatisch erfasst sind. Nebenwirkung:
       # auch react-native-web hängt am SDK – passt.
-      - dependency-name: "react-native-*"
-      - dependency-name: "@react-native-async-storage/*"
-      - dependency-name: "@react-native-community/*"
-      - dependency-name: "@react-native-picker/*"
-      - dependency-name: "@shopify/react-native-skia"
-      - dependency-name: "lottie-react-native"
+      - dependency-name: 'react-native-*'
+      - dependency-name: '@react-native-async-storage/*'
+      - dependency-name: '@react-native-community/*'
+      - dependency-name: '@react-native-picker/*'
+      - dependency-name: '@shopify/react-native-skia'
+      - dependency-name: 'lottie-react-native'
       # ── Repo-spezifisch (mit Begründung + Issue) ────────────────────────
