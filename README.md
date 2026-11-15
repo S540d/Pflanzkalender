@@ -23,4 +23,4 @@ Your data stays on your device. No login, no personal data collected.
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+PolyForm Noncommercial 1.0.0 (non-commercial use) — see [LICENSE](LICENSE).
