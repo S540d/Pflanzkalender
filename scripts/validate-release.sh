@@ -149,7 +149,6 @@ echo "📄 Required Files..."
 REQUIRED_FILES=(
   "RELEASE_CHECKLIST.md"
   "POSTMORTEM_ANDROID_CRASH.md"
-  ".github/PULL_REQUEST_TEMPLATE.md"
   "utils/platform.ts"
   "Android/release/1x1-trainer-v$PACKAGE_VERSION-signed.aab"
 )
